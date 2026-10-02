@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { ButtonLink, Mascot, type MascotColor } from "@/components/ui";
 import type { LessonPlay } from "@/server/lesson-play";
 import type { PlayStep } from "@/lib/rules/lesson-play";
-import { baseId, completeStep, createSession, currentStepId, isFinished, progressOf, type ItemResult, type Session } from "@/lib/rules/lesson-session";
+import { baseId, completeStep, createSession, currentStepId, isFinished, progressOf, rewindStep, type ItemResult, type Session } from "@/lib/rules/lesson-session";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import { ExitDialog } from "./ExitDialog";
 import { LessonFoot, LessonFrame, LessonMain } from "./LessonFrame";
-import { StubStep } from "./StubStep";
+import { StepView } from "./StepView";
 import styles from "./lesson.module.css";
 import { clearProgress, parseSaved, readSavedRaw, saveProgress } from "./resume";
 
@@ -80,6 +80,14 @@ export function LessonPlayer({ plan, learnerId, mascot }: Props) {
     }, 0);
   }
 
+  // Xem lại thẻ trước: chỉ giữa các thẻ từ liền nhau.
+  const prevId = session && session.position > 0 ? session.order[session.position - 1] : null;
+  const canRewind = step?.kind === "word_card" && prevId !== null && stepsById.get(baseId(prevId))?.kind === "word_card" && session !== null && rewindStep(session) !== session;
+  function handleBack() {
+    if (!state || !session) return;
+    setLocal({ ...state, session: rewindStep(session) });
+  }
+
   function stop() {
     if (session) saveProgress(learnerId, plan.lessonId, state!);
     setStopped(true);
@@ -113,7 +121,9 @@ export function LessonPlayer({ plan, learnerId, mascot }: Props) {
 
   return (
     <LessonFrame level={plan.levelNumber} mascot={mascot} value={value} max={max} onExit={() => setExitOpen(true)}>
-      {step && stepId && !finished && <StubStep key={stepId} step={step} active={!exitOpen} onComplete={handleComplete} />}
+      {step && stepId && !finished && (
+        <StepView key={stepId} step={step} active={!exitOpen} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
+      )}
       {finished && (
         <>
           <LessonMain>

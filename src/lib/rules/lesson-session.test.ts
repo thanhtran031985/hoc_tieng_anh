@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { baseId, completeStep, createSession, currentStepId, isFinished, isRetryId, progressOf, restoreSession, scoredItems, type ItemResult } from "./lesson-session.ts";
+import { baseId, completeStep, rewindStep, createSession, currentStepId, isFinished, isRetryId, progressOf, restoreSession, scoredItems, type ItemResult } from "./lesson-session.ts";
 
 const item = (wordId: number, over: Partial<ItemResult> = {}): ItemResult => ({ wordId, firstTryCorrect: true, wrong: 0, revealed: false, picks: [], scored: true, ...over });
 
@@ -65,5 +65,17 @@ describe("lesson-session", () => {
     assert.equal(restoreSession({ ...saved, results: [] }, valid), null);
     assert.equal(restoreSession("x", valid), null);
     assert.equal(restoreSession(null, valid), null);
+  });
+
+  it("rewindStep lùi về thẻ trước khi bước trước không có mục chấm, không lùi qua câu đã chấm", () => {
+    let s = createSession(["a", "b", "c"]);
+    s = completeStep(s, { stepId: "a", items: [] });
+    s = completeStep(s, { stepId: "b", items: [item(1)] });
+    assert.equal(rewindStep(s), s);
+    const cards = completeStep(createSession(["a", "b"]), { stepId: "a", items: [] });
+    const back = rewindStep(cards);
+    assert.equal(back.position, 0);
+    assert.equal(back.results.length, 0);
+    assert.equal(rewindStep(createSession(["a"])).position, 0);
   });
 });

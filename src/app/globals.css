@@ -338,6 +338,13 @@
   --size-lesson-foot-s: 96px;
   --size-lesson-stage: 960px;
   --size-count-min: 56px;
+  --size-flashcard-w: 920px;
+  --size-flashcard-h: 460px;
+  --size-flashcard-art: 260px;
+  --size-arrow: 72px;
+  --size-dot: 12px;
+  --size-dot-on: 32px;
+  --flip-duration: 520ms;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;

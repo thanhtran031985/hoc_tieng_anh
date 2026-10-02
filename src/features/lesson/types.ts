@@ -6,6 +6,10 @@ export type StepProps<K extends PlayStepKind = PlayStepKind> = {
   step: Extract<PlayStep, { kind: K }>;
   /** Tắt phím tắt khi hộp thoại (thoát bài) đang mở. */
   active: boolean;
+  /** Chủ đề của bài (nhãn "Trái cây · Fruits"). */
+  unit: { title: string; titleVi: string };
+  /** Có khi bé được xem lại thẻ trước (chỉ các thẻ từ liền nhau). */
+  onBack?: () => void;
   /** Gọi một lần khi bé xong bước. `items` rỗng với bước không chấm (thẻ từ, lật thẻ). */
   onComplete: (items: ItemResult[]) => void;
 };

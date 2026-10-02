@@ -68,6 +68,13 @@ export function completeStep(session: Session, result: StepResult): Session {
   };
 }
 
+/** Lùi một bước (xem lại thẻ từ trước): chỉ khi bước trước không có mục chấm và không phải bước làm lại. */
+export function rewindStep(session: Session): Session {
+  const last = session.results[session.results.length - 1];
+  if (!last || session.position === 0 || isRetryId(last.stepId) || last.items.length > 0) return session;
+  return { order: session.order, position: session.position - 1, results: session.results.slice(0, -1) };
+}
+
 /** Mọi mục tính điểm của lượt học (để tính sao). */
 export function scoredItems(session: Session): ItemResult[] {
   return session.results.flatMap((r) => r.items).filter((item) => item.scored);
