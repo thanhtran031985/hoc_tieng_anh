@@ -13,3 +13,5 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 02/10/2026 | Migration sinh bằng `prisma migrate diff --from-config-datasource` rồi `migrate deploy` | `migrate dev` từ chối chạy ở môi trường không tương tác |
 | 02/10/2026 | Thứ, tháng, `English`, `Vietnamese` viết hoa trong khung; script kiểm tra cho phép các từ này | Danh từ riêng; viết thường sẽ sai chính tả |
 | 02/10/2026 | Từ nhiều chữ (`ice cream`, `wake up`, `next to`…) và `o'clock` được giữ trong danh sách từ mục tiêu | Là đơn vị từ vựng của Starters/Movers |
+| 02/10/2026 | Số từ mục tiêu cấp 6–10: 400, 400, 400, 500, 500 (suy từ số từ cộng dồn PRD A1: 1.700, 2.100, 2.500, 3.000, 3.500) | PRD chỉ ghi số cộng dồn cho THCS |
+| 02/10/2026 | Mỗi cấp THCS 10 chủ đề (task.md cho 10–12) | Đủ phủ các chủ điểm trong mô tả cấp ở PRD |

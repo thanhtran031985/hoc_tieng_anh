@@ -6,7 +6,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 |---|---|---|---|
 | 0 | Cột và trạng thái mới cho units | ✅ | 02/10/2026 |
 | 1 | Khung cấp 1–5 (Tiểu học) | ✅ | 02/10/2026 |
-| 2 | Khung cấp 6–10 | ⬜ | |
+| 2 | Khung cấp 6–10 | ✅ | 02/10/2026 |
 | 3 | Hàm tạo bài tự động | ⬜ | |
 | 4 | Từ vựng cấp 3 | ⬜ | |
 | 5 | Hình minh họa cấp 3 | ⬜ | |
@@ -28,6 +28,11 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Việc thủ công: không. Khi duyệt có sửa 2 từ trùng (`break` ở cấp 4 đổi thành `grow`; `coach` ở cấp 5 đổi thành `carriage`).
 - Đã xóa thư mục `05-content-l1-l2/` (task bản cũ) theo yêu cầu.
 
+### Bước 2 — Khung cấp 6–10 (02/10/2026)
+- Đã làm: bạn duyệt đề xuất ([curriculum-proposal-l6-l10.md](curriculum-proposal-l6-l10.md)); viết `level-06…10.json` (10 chủ đề mỗi cấp, 401/401/400/492/500 từ; cấp 6–9 `source` = "THCS", cấp 10 = "A2 Key / B1 Preliminary"); `check-curriculum.mjs` thêm số từ mục tiêu cấp 6–10 (suy từ số từ cộng dồn của PRD) và thêm các danh từ riêng được viết hoa (Christmas, Easter, Halloween, Thanksgiving, Tet).
+- Kiểm tra: `node scripts/check-curriculum.mjs` đạt, 10 cấp, 3494 từ khác nhau (PRD cộng dồn ≈ 3.500), không trùng giữa các cấp, mỗi cấp 10 chủ đề; seed 2 lần: lần 1 tạo 50 chủ đề mới, lần 2 tạo 0 (tổng 90, cả 10 cấp có chủ đề `planned`); tsc và lint sạch.
+- Việc thủ công: cấp 9 hụt 8 từ so với 500 (492, trong ngưỡng 10%). Danh sách từ cấp 6–10 là bản đầu để làm khung; khi soạn chi tiết (GĐ sau) có thể thêm/bớt.
+
 ## Bước tiếp theo
 
-Bước 2 — Khung cấp 6–10. Cần bạn duyệt danh sách chủ đề (10–12 mỗi cấp) trước khi viết danh sách từ.
+Bước 3 — Hàm tạo bài tự động (`src/lib/rules/lesson-builder.ts` + test bằng `node --test`).

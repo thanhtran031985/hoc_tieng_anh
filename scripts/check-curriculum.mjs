@@ -3,14 +3,14 @@
 import { existsSync, readFileSync } from "node:fs";
 
 const DIR = new URL("../prisma/seed/curriculum/", import.meta.url);
-// Số từ mới mỗi cấp theo PRD Phần A1 (cấp 6–10 chưa quy định số từ).
-const TARGET = { 1: 150, 2: 200, 3: 250, 4: 300, 5: 400 };
+// Số từ mới mỗi cấp: cấp 1–5 theo PRD Phần A1; cấp 6–10 suy từ số từ cộng dồn của PRD (1.700, 2.100, 2.500, 3.000, 3.500).
+const TARGET = { 1: 150, 2: 200, 3: 250, 4: 300, 5: 400, 6: 400, 7: 400, 8: 400, 9: 500, 10: 500 };
 const TOPICS = { tieuHoc: [6, 8], thcs: [10, 12] };
 // Danh từ riêng được viết hoa.
 const PROPER = new Set([
   "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
-  "English", "Vietnamese",
+  "English", "Vietnamese", "Christmas", "Easter", "Halloween", "Thanksgiving", "Tet",
 ]);
 const WORD_PATTERN = /^[a-z][a-z' -]*$/i;
 
