@@ -9,7 +9,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 2 | Khung cấp 6–10 | ✅ | 02/10/2026 |
 | 3 | Hàm tạo bài tự động | ✅ | 02/10/2026 |
 | 4 | Từ vựng cấp 3 | ✅ | 02/10/2026 |
-| 5 | Hình minh họa cấp 3 | ⬜ | |
+| 5 | Hình minh họa cấp 3 | ✅ | 02/10/2026 |
 | 6 | Bài học cấp 3 và seed | ⬜ | |
 | 7 | Từ vựng, hình, bài học cấp 4 | ⬜ | |
 | 8 | Từ vựng, hình, bài học cấp 2 | ⬜ | |
@@ -43,6 +43,11 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Kiểm tra: `node scripts/check-content.mjs 3` đạt: đúng 250 từ, mỗi chủ đề khớp từng từ với `target_words`; đủ trường; phiên âm trong `/…/`; câu ví dụ ≤ 12 từ, chứa từ đó và chỉ dùng từ cấp 1–3 hoặc từ thông dụng (danh sách trong script); `tsc`, `lint` sạch.
 - Việc thủ công: nên đọc lướt phiên âm và câu tiếng Việt vài chủ đề (tôi soạn, chưa có người rà).
 
+### Bước 5 — Hình minh họa cấp 3 (02/10/2026)
+- Đã làm: bộ khối vẽ `scripts/pictures/lib.mjs` (viền dragon-line 3px, khối màu phẳng, khung 120×120); hình cấp 3 trong `scripts/pictures/level-03.mjs` (+ `level-03-more.mjs`); `scripts/gen-pictures.mjs` sinh 160 tệp SVG vào `public/media/pictures/<từ>.svg`; `src/lib/picture-path.ts` (tên tệp và URL theo từ); `WordPicture` nhận thêm `src` (đường dẫn tệp), từ không có hình vẫn hiện khung trống; script `scripts/check-pictures.mjs`.
+- Kiểm tra: `node scripts/check-pictures.mjs 3` đạt: 160/250 từ có hình; mọi tệp là SVG 120×120, không có `<text>`, `<script>`, `<image>`, đúng màu viền dragon-line, không hình mồ côi. Đã xem các hình trên trang xem thử (Edge không đầu) và vẽ lại hình yếu (strong, bridge, road, lake, ship, summer). tsc, lint sạch.
+- Việc thủ công: nên xem lướt các hình (chạy `node scripts/gen-pictures.mjs --sheet duong-dan.html` rồi mở tệp HTML). 90 từ trừu tượng không có hình (xem decisions.md).
+
 ## Bước tiếp theo
 
-Bước 5 — Hình minh họa cấp 3: SVG cho từ cụ thể (`public/media/pictures/<word>.svg`), mở rộng `WordPicture` để đọc tệp hình.
+Bước 6 — Bài học cấp 3 và seed: `prisma/seed/content.ts` ghi từ, chủ đề từ, bài học và các bước (dùng `buildLessons`), đổi chủ đề cấp 3 sang `published`.
