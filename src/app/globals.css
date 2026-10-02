@@ -351,6 +351,10 @@
   --size-chip-h: 60px;
   --size-slot-h: 60px;
   --size-tip-dragon: 110px;
+  --size-pick-pic: 340px;
+  --size-pick-opts: 420px;
+  --size-pick-card-h: 104px;
+  --size-snd: 44px;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;

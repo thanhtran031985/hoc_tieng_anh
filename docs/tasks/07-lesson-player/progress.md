@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 1 | Thẻ từ (Screen08) | ✅ | 03/10/2026 |
 | 2 | Nghe và chọn hình (Screen07) | ✅ | 03/10/2026 |
 | 3 | Nối từ với hình (Screen09) | ✅ | 03/10/2026 |
-| 4 | Chọn từ đúng cho hình (Screen18) | ⬜ | |
+| 4 | Chọn từ đúng cho hình (Screen18) | ✅ | 03/10/2026 |
 | 5 | Lật thẻ ghép cặp (Screen10) | ⬜ | |
 | 6 | Kết thúc bài và lưu kết quả (Screen12) | ⬜ | |
 
@@ -39,6 +39,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Kiểm tra (Edge không đầu, database tạm, bài 13 có 6 cặp): bàn phím (nhấc, Esc bỏ nhấc không mở hộp thoại, thả sai rồi đúng, đủ 6 cặp ra dải xanh, Enter sang bước kế); chuột kéo thả (kéo sai chip về khay, kéo đúng nối được); bấm chip → nhấc, bấm lại → bỏ; Tab+Enter nhấc và thả; không cuộn và không tràn ngang ở 1366×768, 1440×900, 1920×1080 (đã sửa hàng hình tràn khi có 6 cặp và rồng che thẻ); không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
 - Việc thủ công: không.
 
+### Bước 4 — Chọn từ đúng cho hình (Screen18) (03/10/2026)
+- Đã làm: `PickWordStep` + `pick-word.module.css` (hình lớn có rồng, 3 thẻ chữ có nhãn phím và loa; chọn thẻ nào Bông đọc từ đó; Gợi ý ⟦H⟧ làm mờ 1 từ; Kiểm tra ⟦Enter⟧), dùng lại `useChoiceFlow` và `ChoiceFeedback` của bước 2 (lời nhắn gợi ý đổi thành "Nhìn hình thật kỹ nha" cho dạng chọn chữ). Sửa độ ưu tiên CSS (`.words > .word`, `.opts > .opt`, `.pics > .pic`) vì CSS của `ChoiceCard` đè lên.
+- Token mới: `--size-pick-pic`, `--size-pick-opts`, `--size-pick-card-h`, `--size-snd`.
+- Kiểm tra (Edge không đầu, database tạm): 6 câu chọn từ: H làm mờ 1 từ ("Còn 2 từ thôi!"); đúng → "Tuyệt vời!" + từ, phiên âm, nghĩa; sai lần 1 → "yes là vâng, có. Bé nhìn hình thật kỹ nha…"; sai lần 2 tự gợi ý; sai lần 3 → xem đáp án, tổng bước 22 → 26 sau 4 lần xem đáp án; không cuộn ở 1366×768, 1440×900, 1920×1080; không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
+- Việc thủ công: không.
+
 ## Bước tiếp theo
 
-Bước 4 — Chọn từ đúng cho hình (Screen18)
+Bước 5 — Lật thẻ ghép cặp (Screen10)

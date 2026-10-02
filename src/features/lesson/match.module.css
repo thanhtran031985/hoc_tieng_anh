@@ -22,7 +22,7 @@
   );
   gap: var(--space-6);
 }
-.pic {
+.pics > .pic {
   padding: var(--space-4);
 }
 .pic svg,

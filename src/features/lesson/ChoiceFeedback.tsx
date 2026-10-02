@@ -59,7 +59,7 @@ export function ChoiceFeedback({ phase, tries, target, lastWrong, kind, onContin
   const picked = lastWrong;
   const detail =
     tries >= 2
-      ? "Bông bật gợi ý cho bé rồi đó. Nghe lại thật kỹ nha!"
+      ? `Bông bật gợi ý cho bé rồi đó. ${kind === "picture" ? "Nghe lại" : "Nhìn hình"} thật kỹ nha!`
       : picked
         ? kind === "picture"
           ? `Đây là ${picked.meaningVi}. Bé nghe lại thật kỹ nha, Bông tin bé làm được!`

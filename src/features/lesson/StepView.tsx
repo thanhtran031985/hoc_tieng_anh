@@ -3,6 +3,7 @@
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { ListenChooseStep } from "./ListenChooseStep";
 import { MatchStep } from "./MatchStep";
+import { PickWordStep } from "./PickWordStep";
 import { StubStep } from "./StubStep";
 import type { StepProps } from "./types";
 import { WordCardStep } from "./WordCardStep";
@@ -16,6 +17,8 @@ export function StepView({ step, ...rest }: StepProps & { step: PlayStep }) {
       return <ListenChooseStep step={step} {...rest} />;
     case "match_pairs":
       return <MatchStep step={step} {...rest} />;
+    case "choose_word_for_picture":
+      return <PickWordStep step={step} {...rest} />;
     default:
       return <StubStep step={step} {...rest} />;
   }

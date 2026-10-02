@@ -40,7 +40,7 @@
   grid-template-columns: repeat(var(--cols), min(var(--size-choice-pic), 33vh));
   gap: var(--space-6);
 }
-.opt {
+.opts > .opt {
   aspect-ratio: 1;
   padding: 0;
 }
