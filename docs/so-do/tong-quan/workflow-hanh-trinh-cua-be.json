@@ -9,7 +9,7 @@
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "b303db0eaaf6a304baf300f76c928bf40a60d6bb"
+      "revision": "b8ab74e5831796745aadce981cf10af9fff78f4c"
     },
     "legend": {
       "mode": "auto",
@@ -279,6 +279,28 @@
       ]
     },
     {
+      "id": "timeup",
+      "lane": "hoc",
+      "col": 5,
+      "type": "frontend",
+      "label": "Hết giờ học",
+      "sublabel": "/time-up · thêm giờ",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/server/active-learner.ts",
+          "line": 44,
+          "end_line": 49,
+          "label": "hết giờ thì về /time-up"
+        },
+        {
+          "path": "src/features/time-up/TimeUpView.tsx",
+          "line": 24,
+          "label": "TimeUpView"
+        }
+      ]
+    },
+    {
       "id": "levels",
       "lane": "khac",
       "col": 2,
@@ -388,24 +410,29 @@
       "to": "home",
       "label": "Bắt đầu học",
       "variant": "emphasis"
+    },
+    {
+      "id": "e-end-timeup",
+      "from": "end",
+      "to": "timeup",
+      "label": "hết giờ"
     }
   ],
   "cards": [
     {
       "dot": "emerald",
-      "title": "Đã làm (task 01–09)",
+      "title": "Đã làm (task 01–10)",
       "items": [
         "Đăng nhập, chọn hồ sơ, tạo hồ sơ 3 bước, bài xếp lớp 12 câu",
         "Trang chủ, tổng quan 10 cấp, bản đồ đảo",
         "Học trọn bài (5 dạng), nhận sao và xu, mở bài sau",
-        "Ôn tập hôm nay theo 5 hộp; Sổ từ theo mức thuộc"
+        "Ôn tập hôm nay theo 5 hộp; Sổ từ; hết giờ học thì rồng đi ngủ"
       ]
     },
     {
       "dot": "amber",
       "title": "Chưa làm",
       "items": [
-        "Hết giờ học (task 10)",
         "Bộ sưu tập, Phòng của tớ (GĐ2): hai nút lớn còn là Sắp có"
       ]
     }

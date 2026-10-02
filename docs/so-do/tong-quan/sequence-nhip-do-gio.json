@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Task 10: nhịp đo giờ học và lúc hết giờ",
+    "locale": "vi",
+    "output": "docs/so-do/tong-quan/sequence-nhip-do-gio.html",
+    "viewBox": [
+      1080,
+      580
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "b8ab74e5831796745aadce981cf10af9fff78f4c"
+    }
+  },
+  "participants": [
+    {
+      "id": "be",
+      "type": "external",
+      "label": "Bé",
+      "sublabel": "trình duyệt"
+    },
+    {
+      "id": "clock",
+      "type": "frontend",
+      "label": "Đồng hồ học",
+      "sublabel": "StudyClock",
+      "sources": [
+        {
+          "path": "src/features/study-clock/StudyClock.tsx",
+          "line": 64,
+          "end_line": 145,
+          "label": "StudyClock"
+        }
+      ]
+    },
+    {
+      "id": "action",
+      "type": "backend",
+      "label": "Server action",
+      "sublabel": "recordStudyMinuteAction",
+      "sources": [
+        {
+          "path": "src/features/study-clock/actions.ts",
+          "line": 20,
+          "end_line": 28,
+          "label": "hồ sơ đang chọn"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "security",
+      "label": "Quy tắc",
+      "sublabel": "studyAllowance",
+      "sources": [
+        {
+          "path": "src/lib/rules/study-time.ts",
+          "line": 24,
+          "end_line": 30,
+          "label": "hết giờ khi chạm giới hạn"
+        }
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "MySQL",
+      "sublabel": "study_sessions",
+      "sources": [
+        {
+          "path": "src/server/study-time.ts",
+          "line": 56,
+          "end_line": 63,
+          "label": "ghi 1 phút, bỏ nhịp dồn"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 235,
+      "label": "Đo"
+    },
+    {
+      "from": 245,
+      "to": 402,
+      "label": "Ghi và tính"
+    },
+    {
+      "from": 410,
+      "to": 480,
+      "label": "Hết giờ"
+    }
+  ],
+  "messages": [
+    {
+      "id": "thao-tac",
+      "from": "be",
+      "to": "clock",
+      "y": 165,
+      "label": "đủ 60 giây có thao tác",
+      "variant": "default"
+    },
+    {
+      "id": "gui",
+      "from": "clock",
+      "to": "action",
+      "y": 200,
+      "label": "gửi nhịp 1 phút",
+      "variant": "emphasis"
+    },
+    {
+      "id": "kiem-tra",
+      "from": "action",
+      "to": "db",
+      "y": 232,
+      "label": "nhịp cách ≥ 50 giây?",
+      "variant": "security"
+    },
+    {
+      "id": "kiem-tra-ok",
+      "from": "db",
+      "to": "action",
+      "y": 260,
+      "label": "nhịp trước",
+      "variant": "return"
+    },
+    {
+      "id": "ghi",
+      "from": "action",
+      "to": "db",
+      "y": 295,
+      "label": "ghi 1 phút",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ghi-ok",
+      "from": "db",
+      "to": "action",
+      "y": 323,
+      "label": "tổng phút hôm nay",
+      "variant": "return"
+    },
+    {
+      "id": "tinh",
+      "from": "action",
+      "to": "rules",
+      "y": 357,
+      "label": "giới hạn + phút thêm",
+      "variant": "default"
+    },
+    {
+      "id": "tinh-ok",
+      "from": "rules",
+      "to": "action",
+      "y": 385,
+      "label": "còn bao nhiêu phút",
+      "variant": "return"
+    },
+    {
+      "id": "tra-ve",
+      "from": "action",
+      "to": "clock",
+      "y": 420,
+      "label": "trạng thái giờ học",
+      "variant": "return"
+    },
+    {
+      "id": "het-gio",
+      "from": "clock",
+      "to": "be",
+      "y": 450,
+      "label": "xong câu → Hết giờ học",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "clock",
+      "from": 160,
+      "to": 455,
+      "type": "frontend"
+    },
+    {
+      "participant": "action",
+      "from": 195,
+      "to": 425,
+      "type": "backend"
+    },
+    {
+      "participant": "rules",
+      "from": 352,
+      "to": 390,
+      "type": "security"
+    },
+    {
+      "participant": "db",
+      "from": 227,
+      "to": 265,
+      "type": "database"
+    },
+    {
+      "participant": "db",
+      "from": 290,
+      "to": 328,
+      "type": "database"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Đo giờ",
+      "items": [
+        "Chỉ tính khi tab đang hiện và bé thao tác trong 60 giây gần nhất",
+        "Server bỏ nhịp dồn: mỗi hồ sơ tối đa 1 phút mỗi 50 giây"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Hết giờ",
+      "items": [
+        "Mọi trang của bé về /time-up; kết quả bài đang làm vẫn được lưu",
+        "Thêm 10 phút cần PIN hoặc mật khẩu bố mẹ"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa làm",
+      "items": [
+        "Đặt giới hạn bằng giao diện (task 11); khung giờ được học (GĐ2)"
+      ]
+    }
+  ]
+}

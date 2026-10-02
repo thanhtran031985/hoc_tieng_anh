@@ -2,14 +2,14 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Kiến trúc hệ thống đã có trong code (sau task 09)",
+    "title": "Kiến trúc hệ thống đã có trong code (sau task 10)",
     "locale": "vi",
     "quality_profile": "showcase",
     "output": "docs/so-do/tong-quan/architecture-he-thong.html",
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "b303db0eaaf6a304baf300f76c928bf40a60d6bb"
+      "revision": "b8ab74e5831796745aadce981cf10af9fff78f4c"
     }
   },
   "components": [
@@ -100,7 +100,7 @@
       "id": "kid",
       "type": "frontend",
       "label": "Màn của bé",
-      "sublabel": "/home /map /lesson /review…",
+      "sublabel": "/home /map /lesson /time-up…",
       "pos": [
         480,
         300
@@ -249,8 +249,9 @@
         },
         {
           "path": "src/server/active-learner.ts",
-          "line": 40,
-          "label": "requireActiveLearner"
+          "line": 44,
+          "end_line": 49,
+          "label": "requireActiveLearner + giờ học"
         },
         {
           "path": "src/server/parent-gate.ts",
@@ -285,7 +286,7 @@
       "id": "modules",
       "type": "backend",
       "label": "Hàm đọc, ghi dữ liệu",
-      "sublabel": "src/server: bài, ôn, xếp lớp",
+      "sublabel": "src/server: bài, ôn, giờ học",
       "pos": [
         480,
         560
@@ -306,9 +307,9 @@
           "label": "completeReview"
         },
         {
-          "path": "src/server/placement.ts",
-          "line": 123,
-          "label": "completePlacement"
+          "path": "src/server/study-time.ts",
+          "line": 56,
+          "label": "recordStudyMinute"
         }
       ]
     },
@@ -316,7 +317,7 @@
       "id": "rules",
       "type": "backend",
       "label": "Quy tắc (hàm thuần)",
-      "sublabel": "mở khóa, sao, 5 hộp, xếp lớp",
+      "sublabel": "mở khóa, sao, 5 hộp, giờ học",
       "pos": [
         700,
         560
@@ -337,9 +338,9 @@
           "label": "nextReview"
         },
         {
-          "path": "src/lib/rules/placement.ts",
-          "line": 37,
-          "label": "answerPlacement"
+          "path": "src/lib/rules/study-time.ts",
+          "line": 24,
+          "label": "studyAllowance"
         }
       ]
     },
@@ -561,7 +562,7 @@
       "dot": "amber",
       "title": "Chưa có trong code",
       "items": [
-        "Bộ sưu tập, giờ học (GĐ2 trở đi)",
+        "Bộ sưu tập, khung giờ học (GĐ2 trở đi)",
         "Kho tệp tải lên và quản trị nội dung (task 12)"
       ]
     }

@@ -9,3 +9,10 @@
 - Chặn ở server bằng `requireActiveLearner({ allowTimeUp })`; server action và `/time-up`, `/profiles` bỏ qua để không mất kết quả bé vừa làm. Hết giờ giữa bài: làm nốt câu rồi mới chuyển `/time-up`.
 - Thêm giờ: PIN/mật khẩu bố mẹ (dùng chung hàm kiểm với cổng bố mẹ, có giới hạn thử); mỗi lần +10 phút và luôn còn ít nhất 10 phút.
 - Không làm: khung giờ được học trong ngày (GĐ2), màn đặt giới hạn (task 11), cảnh báo trước khi hết giờ.
+
+### 03/10/2026 — Tổng kết: khác với task.md gốc
+- Đo giờ bằng nhịp mỗi phút từ trình duyệt (không đổi database); cuối bài học không còn ghi `study_sessions`; dòng phiên ôn chỉ là đánh dấu `minutes: 0`.
+- Thêm `bonus` (phút thêm theo ngày) vào `learners.settings`; tách `checkParentSecret` để dùng chung với cổng bố mẹ.
+- Sửa kèm: regex ngày của `bonus` bị mất dấu  khi tạo file, bắt được lúc thử PIN đúng.
+- Không làm: khung giờ được học trong ngày (GĐ2), màn đặt giới hạn (task 11), cảnh báo trước khi hết giờ.
+- Sơ đồ: thêm `sequence-nhip-do-gio`; vẽ lại hành trình của bé và kiến trúc.

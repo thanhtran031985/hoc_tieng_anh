@@ -1,6 +1,6 @@
-# So sánh code với PRD và task.md — tổng quan (sau task 09)
+# So sánh code với PRD và task.md — tổng quan (sau task 10)
 
-Cập nhật: 03/10/2026 · Bản chốt code: `b303db0` · Phạm vi: các task 01–09 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
+Cập nhật: 03/10/2026 · Bản chốt code: `b8ab74e` · Phạm vi: các task 01–10 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
 
 Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý chính của PRD; **nhỏ** = lệch nhẹ, hoặc đã nằm trong kế hoạch của task sau.
 
@@ -13,7 +13,7 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 5 | nhỏ | Không có ô "Nhớ đăng nhập trên máy này"; phiên luôn nhớ 30 ngày. | `src/auth.config.ts:7-12` | PRD dòng 132 (C1) |
 | 6 | nhỏ (GĐ3) | Hồ sơ THCS chưa có PIN riêng (cột `learners.pin` có, chưa có màn đặt và hỏi PIN). | `prisma/schema.prisma:74` | PRD dòng 137 (C2) |
 | 7 | nhỏ | Từ trang chủ, nút "Bản đồ" đi thẳng bản đồ cấp hiện tại; màn "Tổng quan 10 cấp" chỉ tới được từ nút quay lại của bản đồ hoặc nút "Xem các cấp". Theo đúng thiết kế `Screen04`, nhưng khác sơ đồ điều hướng PRD. | `src/features/home/NavTiles.tsx:11`, `src/features/home/MissionCard.tsx:105` | PRD dòng 117 |
-| 8 | nhỏ | Lời chào của Bông cố định theo tình huống, chưa theo thời điểm trong ngày; chưa có hình mặt trời lặn cho giờ học còn lại (task 10). | `src/app/(kid)/home/page.tsx:17-35` | PRD dòng 157, 161 (C5a) |
+| 8 | nhỏ | Lời chào của Bông cố định theo tình huống, chưa theo thời điểm trong ngày; trang chủ có "x/y phút · còn N phút" nhưng chưa có hình mặt trời lặn khi sắp hết giờ (chưa làm cảnh báo trước khi hết giờ). | `src/app/(kid)/home/page.tsx:17-35`, `src/features/home/LevelCard.tsx:43` | PRD dòng 157, 161 (C5a) |
 | 9 | nhỏ | Bấm một cấp trên tổng quan là vào bản đồ hoặc hiện hộp thoại; chưa có thông tin "cấp đó học gì, bao nhiêu chủ đề, hoàn thành bao nhiêu %". | `src/features/levels/LevelsMap.tsx:33-38` | PRD dòng 178 (C6a) |
 | 10 | nhỏ (nội dung) | PRD nói mỗi vùng có 4–6 chặng; trong database 12 trong 32 chủ đề cấp 1–4 chỉ có 2–3 bài (cấp 1: 7 chủ đề, cấp 2: 4, cấp 3: 1). Lý do: bài chia theo 5–8 từ (task 05). Chưa có cổng Bài thi lên cấp ở cuối đảo (GĐ2) và chưa có xem trước khi rê chuột (chỉ bấm). | `src/lib/rules/lesson-builder.ts:65`, `src/features/island-map/IslandMap.tsx` | PRD dòng 183, 185, 186 (C6b) |
 | 11 | nhỏ | Hàm `finishLessonAttempt`, `logAnswer`, `upsertReviewCard`, `listDueReviewCards` trong `progress.ts` không còn ai gọi: kết quả bài học ghi qua `completeLesson`, kết quả ôn qua `completeReview`. Chưa dọn (ngoài phạm vi task 08). | `src/server/progress.ts`, `src/server/lesson-complete.ts:23`, `src/server/review.ts:112` | task 07, 08 |
@@ -32,6 +32,8 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 24 | nhỏ | Dừng giữa phiên ôn thì không ghi gì lên server; tiến độ dở chỉ giữ trên máy theo ngày. Sổ từ chưa lọc theo mức, chưa in; từ chưa thuộc bài nào của chủ đề đã xuất bản chỉ hiện ở "Tất cả". | `src/features/review/ReviewPlayer.tsx:36`, `src/server/notebook.ts:30` | PRD C12 |
 | 25 | nhỏ | Bài xếp lớp: 12 câu cố định (PRD 10–15), câu lấy từ từ có hình của chủ đề đã xuất bản theo cấp, không theo thứ tự "con vật → màu → số…" của bản xem trước; chỉ nghe-chọn-hình; chưa có đề xuất từ nhận xét THCS (ngữ pháp, đọc). Cấp đề xuất chỉ để gợi ý, bé hoặc bố mẹ đổi được. | `src/lib/rules/placement.ts:5-13`, `src/server/placement.ts:63` | PRD C4 |
 | 26 | nhỏ | Không có cờ "đã xếp lớp" trong database: bài xếp lớp chỉ vào được khi bé chưa học bài nào và chưa có nhật ký `exam`; bố mẹ xếp lại (task 11) chưa có. Nút quay lại ở màn giới thiệu về `/profiles` (hồ sơ đã được tạo), khác bản xem trước. | `src/server/placement.ts:55-60` | PRD C4, Screen15 |
+| 27 | nhỏ | Giới hạn giờ đo ở trình duyệt: tính khi tab đang hiện và bé thao tác trong 60 giây, gửi nhịp mỗi phút; phần lẻ dưới 1 phút ở lại localStorage. Server chỉ chống nhịp dồn (≥ 50 giây), không phát hiện máy bé cố ý chạy giả thao tác. Chưa có khung giờ được học (GĐ2). | `src/features/study-clock/StudyClock.tsx:64`, `src/server/study-time.ts:56` | PRD D7 |
+| 28 | nhỏ | Thêm giờ bằng PIN/mật khẩu bố mẹ ghi vào `learners.settings.bonus` (mỗi lần +10 phút, đúng ngày); bố mẹ chưa đặt giới hạn bằng giao diện được (task 11, hiện đặt bằng SQL). Cuối bài học không còn ghi `study_sessions` (đã có nhịp mỗi phút). | `src/server/study-time.ts:86-100`, `src/lib/schemas/learner-settings.ts` | task 10 |
 
 ## Khớp với PRD (đã kiểm)
 
