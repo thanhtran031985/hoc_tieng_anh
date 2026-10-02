@@ -345,6 +345,10 @@
   --size-dot: 12px;
   --size-dot-on: 32px;
   --flip-duration: 520ms;
+  --perspective-flashcard: 1800px;
+  --perspective-memory: 1400px;
+  --star-stagger: 350ms;
+  --confetti-fall: 4s;
   --size-choice-pic: 272px;
   --size-q-dragon: 120px;
   --size-match-pic: 250px;

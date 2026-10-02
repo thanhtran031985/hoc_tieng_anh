@@ -35,8 +35,8 @@
   width: var(--size-bigstar);
   height: var(--size-bigstar);
   color: var(--star);
-  animation: starIn 600ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
-  animation-delay: calc(var(--n) * 350ms);
+  animation: starIn var(--duration-celebrate) cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  animation-delay: calc(var(--n) * var(--star-stagger));
 }
 .bigStarMid {
   width: var(--size-bigstar-mid);
@@ -205,7 +205,7 @@
   height: var(--space-4);
   border-radius: var(--radius-sm);
   background: var(--level-1);
-  animation: fall 4s linear infinite;
+  animation: fall var(--confetti-fall) linear infinite;
   animation-delay: var(--d);
 }
 .confetti i:nth-child(6n + 2) {

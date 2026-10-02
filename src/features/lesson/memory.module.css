@@ -22,7 +22,7 @@
   display: grid;
   grid-template-columns: repeat(var(--cols), calc(min(var(--size-memory-card), 27vh) * 0.84));
   gap: var(--space-5);
-  perspective: 1400px;
+  perspective: var(--perspective-memory);
 }
 .card {
   height: min(var(--size-memory-card), 27vh);
@@ -44,7 +44,7 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 420ms cubic-bezier(0.3, 1.25, 0.5, 1);
+  transition: transform var(--flip-duration) cubic-bezier(0.3, 1.25, 0.5, 1);
 }
 .up .inner {
   transform: rotateY(180deg);

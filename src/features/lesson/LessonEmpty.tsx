@@ -1,11 +1,15 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { ButtonLink, DataState, type MascotColor } from "@/components/ui";
 import { LessonFoot, LessonFrame, LessonMain } from "./LessonFrame";
 
 /** Bài chưa có câu hỏi nào dùng được (Screen07, trạng thái trống). */
 export function LessonEmpty({ level, mascot }: { level: number; mascot: MascotColor }) {
+  const router = useRouter();
   const mapHref = `/map/${level}`;
   return (
-    <LessonFrame level={level} mascot={mascot} value={0} max={0} onExit={() => {}}>
+    <LessonFrame level={level} mascot={mascot} value={0} max={0} onExit={() => router.push(mapHref)} head={<></>}>
       <LessonMain>
         <DataState
           kind="empty"

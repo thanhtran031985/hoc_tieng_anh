@@ -48,7 +48,7 @@
 .card {
   width: min(var(--size-flashcard-w), 64vw);
   height: min(var(--size-flashcard-h), 56vh);
-  perspective: 1800px;
+  perspective: var(--perspective-flashcard);
   cursor: pointer;
 }
 .inner {

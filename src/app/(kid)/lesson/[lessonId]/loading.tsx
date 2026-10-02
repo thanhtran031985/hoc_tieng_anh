@@ -7,7 +7,7 @@ export default function LessonLoading() {
     <div className={styles.screen} aria-busy="true">
       <header className={styles.head}>
         <Skeleton width="var(--size-btn-s)" height="var(--size-btn-s)" radius="round" />
-        <Skeleton width="100%" height="var(--size-progress)" radius="pill" />
+        <Skeleton width="auto" height="var(--size-progress)" radius="pill" style={{ flex: 1, minWidth: 0 }} />
         <Skeleton width="var(--size-count-min)" height="var(--space-5)" radius="pill" />
       </header>
       <main className={styles.main}>
