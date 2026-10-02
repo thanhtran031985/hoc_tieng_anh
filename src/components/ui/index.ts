@@ -6,3 +6,4 @@ export { KeyHint, type KeyHintProps } from "./KeyHint/KeyHint";
 export { Mascot, type Expr, type MascotColor, type MascotProps } from "./Mascot/Mascot";
 export { WordPicture, type WordPictureProps } from "./WordPicture/WordPicture";
 export { PICTURE_NAMES, type PictureName } from "./WordPicture/pictures";
+export { SpeakerButton, type SpeakerButtonProps, type SpeakerButtonSize } from "./SpeakerButton/SpeakerButton";

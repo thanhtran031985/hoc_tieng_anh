@@ -7,6 +7,7 @@ import {
   KeyHint,
   Mascot,
   PICTURE_NAMES,
+  SpeakerButton,
   WordPicture,
   type ButtonVariant,
   type Expr,
@@ -48,6 +49,25 @@ const mascotColors: { color: MascotColor; title: string }[] = [
   { color: "nang", title: "Rồng Nắng" },
   { color: "tim", title: "Rồng Tím" },
 ];
+
+// Tệp WAV im lặng 0,3 giây (chỉ để thử nhánh phát tệp âm thanh của nút loa).
+function silentWavDataUrl(): string {
+  const samples = 2400;
+  const buffer = Buffer.alloc(44 + samples * 2);
+  buffer.write("RIFF", 0);
+  buffer.writeUInt32LE(36 + samples * 2, 4);
+  buffer.write("WAVEfmt ", 8);
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);
+  buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(8000, 24);
+  buffer.writeUInt32LE(16000, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
+  buffer.write("data", 36);
+  buffer.writeUInt32LE(samples * 2, 40);
+  return `data:audio/wav;base64,${buffer.toString("base64")}`;
+}
 
 function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: React.ReactNode }) {
   return (
@@ -182,6 +202,49 @@ export default function DevUiPage() {
             </li>
           ))}
         </ul>
+      </Section>
+
+      <Section
+        id="sec-speaker"
+        title="Nút loa"
+        note="Bấm để nghe bằng giọng đọc của trình duyệt (giọng Mỹ; có audioUrl thì phát tệp). Khi đang phát có vòng sóng."
+      >
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-col items-center gap-2">
+            <SpeakerButton word="cat" size="l" label="Nghe câu hỏi" />
+            <span className="font-body text-caption text-ink-soft">L · 112px · câu hỏi nghe</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <SpeakerButton word="dog" size="m" />
+            <span className="font-body text-caption text-ink-soft">M · 56px · thẻ từ</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="inline-flex items-center gap-3 rounded-pill bg-surface py-2 pl-3 pr-4 shadow-card">
+              <SpeakerButton word="apple" size="s" />
+              <span className="font-display text-word">apple</span>
+            </span>
+            <span className="font-body text-caption text-ink-soft">S · 40px · cạnh mỗi từ</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="inline-flex items-center gap-3 rounded-pill bg-surface py-2 pl-3 pr-4 shadow-card">
+              <SpeakerButton word="I eat an apple." size="s" label="Nghe câu ví dụ" />
+              <span className="font-body text-body">I eat an apple.</span>
+            </span>
+            <span className="font-body text-caption text-ink-soft">Câu ví dụ</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <SpeakerButton word="bird" size="m" accent="en-GB" />
+            <span className="font-body text-caption text-ink-soft">Giọng Anh (en-GB)</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <SpeakerButton word="fish" size="m" audioUrl={silentWavDataUrl()} />
+            <span className="font-body text-caption text-ink-soft">Có tệp âm thanh</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <SpeakerButton word="duck" size="m" data-playing="true" />
+            <span className="font-body text-caption text-ink-soft">Đang phát (ép)</span>
+          </div>
+        </div>
       </Section>
 
       <Section id="sec-hotkeys" title="Phím tắt (useHotkeys)" note="Bấm 1–4, A–D, Enter, Space, ← →, Esc. Gõ trong ô nhập thì phím tắt không chạy.">

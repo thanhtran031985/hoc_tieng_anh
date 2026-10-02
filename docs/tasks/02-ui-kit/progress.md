@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 |---|---|---|---|
 | 0 | Button, KeyHint, Icons | ✅ | Trang xem: /dev/ui |
 | 1 | Mascot và WordPicture | ✅ | Trang xem: /dev/ui |
-| 2 | SpeakerButton | ⬜ | |
+| 2 | SpeakerButton | ✅ | Trang xem: /dev/ui |
 | 3 | Card, thẻ đáp án, ProgressBar, StatChip, Topbar | ⬜ | |
 | 4 | Dialog, FeedbackBar, DataStates, khung xương | ⬜ | |
 
@@ -32,6 +32,16 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 - Token thêm: `--dragon-bob` 6px, `--dragon-hop` 16px, `--dragon-breathe` 2px, `--dragon-float` 6px.
 - Việc cần làm thủ công: mở `/dev/ui`, xem rồng nhún/vẫy tay và thử bật "giảm chuyển động" của hệ điều hành.
 
+### Bước 2 — SpeakerButton (02/10/2026)
+- Tạo `src/components/ui/SpeakerButton` (`.tsx`, `.module.css`), `src/lib/speech.ts`; thêm mục Nút loa vào `/dev/ui` (3 cỡ, câu ví dụ, giọng Anh, tệp âm thanh, trạng thái đang phát) và token `--size-speaker-m`.
+- Kiểm tra (chạy trong Chrome headless, `speechSynthesis.speak` được thay bằng bản ghi để đo):
+  - Bấm nút "dog" gọi đọc đúng chữ `dog`, `lang=en-US`, `rate=0.82`; bấm câu ví dụ đọc đúng `I eat an apple.`; nút giọng Anh đọc `en-GB`.
+  - Có `audioUrl` thì phát tệp (không gọi giọng đọc).
+  - Đang phát: `data-playing`, vòng sóng (`::after` có hoạt ảnh `ring`, độ mờ đổi); đọc xong thì vòng tắt. Giảm chuyển động: vòng đứng yên, độ mờ 0,6.
+  - `aria-label`: "Nghe: <từ>" mặc định, hoặc nhãn riêng ("Nghe câu hỏi", "Nghe câu ví dụ").
+  - Không hex/px trong code mới; `tsc`, `lint` không lỗi.
+- Việc cần làm thủ công: mở `/dev/ui`, bấm các nút loa và nghe giọng thật (Chrome/Edge); nghe giọng trên máy học sinh vì danh sách giọng phụ thuộc hệ điều hành.
+
 ## Bước tiếp theo
 
-Bước 2 — SpeakerButton (kế hoạch ở `plan.md`).
+Bước 3 — Card, thẻ đáp án, ProgressBar, StatChip, Topbar (kế hoạch ở `plan.md`).

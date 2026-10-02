@@ -40,3 +40,9 @@
 - Màu rồng: `Mascot` nhận prop `color` (`ngoc|dao|nang|tim`) đặt `data-dragon` trên chính SVG; `globals.css` có `[data-dragon="dao|nang|tim"]` nên đặt một lần trên `<html>` hoặc vùng chứa cũng được (thay cho lớp `dragon-dao`…).
 - Hoạt ảnh trong `Mascot.module.css` (`:global(.dg-wave)` v.v. vì ruột SVG là chuỗi HTML). Gốc xoay đổi từ px sang phần trăm khung nhìn 200×210 (69% 62,857143% và 50% 61,904762%), cho kết quả giống hệt. Biên độ nhún/nhảy/thở/lơ lửng là token mới `--dragon-bob|hop|breathe|float`. `prefers-reduced-motion` tắt mọi hoạt ảnh (đã kiểm tra bằng giả lập).
 - `WordPicture` với từ chưa có hình hiện khung SVG trống (như bản gốc) để giữ bố cục.
+
+### 02/10/2026 — SpeakerButton và phát âm (Bước 2)
+- `src/lib/speech.ts`: `playPronunciation(text, { audioUrl, accent, rate, onEnd })` trả về hàm dừng; `stopPronunciation()`. Có `audioUrl` thì phát tệp, lỗi tải hoặc bị chặn phát thì dùng `speechSynthesis`; không có thì dùng thẳng giọng trình duyệt. Chọn giọng đúng vùng (`en-US` hoặc `en-GB`), không có thì giọng tiếng Anh bất kỳ; tốc độ mặc định 0,82 như bản thiết kế. Mỗi lần phát dừng lần trước. Chọn giọng ở mỗi lần bấm (bản gốc lưu giọng ngay lần đầu, có thể bị rỗng vì danh sách giọng nạp chậm).
+- Hiệu ứng vòng sóng chạy theo trạng thái thật (`data-playing` từ lúc bấm tới `onend`/`onerror`/hết tệp), không còn chạy cố định 2 vòng. Trình duyệt không báo lúc đọc xong thì tắt sau `max(1300 ms, 150 ms × số ký tự)`. Giảm chuyển động: vòng đứng yên (độ mờ 0,6) để vẫn biết nút đang phát.
+- Giọng Mỹ/Anh và tốc độ là props `accent`, `rate`; màn dùng truyền theo cài đặt hồ sơ (task 11 làm cài đặt). Phím Space = nghe lại là việc của màn bài học (`useHotkeys` rồi bấm nút qua `ref`).
+- Token thêm: `--size-speaker-m` 56px. Rời màn thì nút ngừng đọc.

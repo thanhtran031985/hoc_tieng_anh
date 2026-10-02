@@ -1,0 +1,87 @@
+.speak {
+  border: 0;
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-round);
+  position: relative;
+  flex: none;
+  background: var(--brand-soft);
+  color: var(--brand-shade);
+  box-shadow: 0 var(--lip-s) 0 0 var(--brand-soft-shade);
+  transition:
+    transform var(--duration-fast),
+    box-shadow var(--duration-fast);
+}
+.s {
+  width: var(--size-speaker-s);
+  height: var(--size-speaker-s);
+}
+.m {
+  width: var(--size-speaker-m);
+  height: var(--size-speaker-m);
+}
+.l {
+  width: var(--size-speaker-l);
+  height: var(--size-speaker-l);
+  background: var(--brand);
+  color: var(--ink-on-dark);
+  box-shadow: 0 var(--lip-l) 0 0 var(--brand-shade);
+}
+.speak:hover {
+  transform: translateY(calc(-1 * var(--lift)));
+}
+.speak:active {
+  transform: translateY(var(--sink-s));
+  box-shadow: 0 var(--lip-flat) 0 0 var(--brand-soft-shade);
+}
+.l:active {
+  box-shadow: 0 calc(2 * var(--lip-flat)) 0 0 var(--brand-shade);
+}
+
+/* Vòng sóng khi đang phát. */
+.speak::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--border-thick));
+  border-radius: inherit;
+  border: var(--border-thick) solid var(--brand);
+  opacity: 0;
+  pointer-events: none;
+}
+.speak[data-playing]::after {
+  animation: ring 1.2s ease-out infinite;
+}
+.speak[data-playing] svg {
+  animation: pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes ring {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Giảm chuyển động: giữ một vòng đứng yên để vẫn biết nút đang phát. */
+@media (prefers-reduced-motion: reduce) {
+  .speak[data-playing]::after,
+  .speak[data-playing] svg {
+    animation: none !important;
+  }
+  .speak[data-playing]::after {
+    opacity: 0.6;
+  }
+  .speak {
+    transition-duration: 1ms !important;
+  }
+}
