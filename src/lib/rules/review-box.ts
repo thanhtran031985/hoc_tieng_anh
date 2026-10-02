@@ -16,6 +16,22 @@ export function intervalDays(box: number): number {
   return BOX_INTERVAL_DAYS[index];
 }
 
+/** Tên mức thuộc theo số hộp 1–5 (Sổ từ, màn Ôn tập). */
+export const MASTERY_NAMES = ["Mới gặp", "Đang nhớ", "Khá nhớ", "Nhớ tốt", "Thuộc lòng"] as const;
+
+/** Mức thuộc của từ = số hộp, kẹp vào 1–5. */
+export function masteryOf(card: Pick<ReviewCardState, "box">): number {
+  return Math.min(MAX_BOX, Math.max(1, Math.trunc(card.box)));
+}
+
+/** Nhãn lịch ôn của một hộp, sinh từ `BOX_INTERVAL_DAYS`: "Ôn sau 3 ngày", "Ôn sau 1 tuần", "Ôn sau 1 tháng". */
+export function intervalLabel(box: number): string {
+  const days = intervalDays(box);
+  if (days >= 30) return `Ôn sau ${Math.round(days / 30)} tháng`;
+  if (days >= 7 && days % 7 === 0) return `Ôn sau ${days / 7} tuần`;
+  return `Ôn sau ${days} ngày`;
+}
+
 /** Hộp 5 và đã đúng thì tính là "đã thuộc". */
 export const isMastered = (card: ReviewCardState) => card.box >= MAX_BOX && card.correctCount > 0;
 
