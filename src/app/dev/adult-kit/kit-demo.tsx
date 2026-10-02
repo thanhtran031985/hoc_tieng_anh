@@ -135,7 +135,7 @@ export function KitDemo() {
 
       <AdultGrid>
         <div className={adultStyles.s4}>
-          <AdultSkeleton height="var(--space-24)" />
+          <AdultSkeleton height="calc(var(--space-16) + var(--space-8))" />
         </div>
         <AdultCard span={4}>
           <AdultEmpty title="Chưa có hoạt động" text="Mọi bài học, bài thi và ghi âm của con sẽ hiện ở đây." />

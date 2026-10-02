@@ -12,10 +12,10 @@ export default function ParentOverviewLoading() {
       </div>
       <AdultGrid>
         <div style={{ gridColumn: "span 8" }}>
-          <AdultSkeleton height="var(--space-24)" />
+          <AdultSkeleton height="calc(var(--space-16) + var(--space-8))" />
         </div>
         <div style={{ gridColumn: "span 4" }}>
-          <AdultSkeleton height="var(--space-24)" />
+          <AdultSkeleton height="calc(var(--space-16) + var(--space-8))" />
         </div>
       </AdultGrid>
     </div>

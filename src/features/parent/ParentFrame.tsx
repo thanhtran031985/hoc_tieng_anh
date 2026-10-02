@@ -29,7 +29,7 @@ export function ParentFrame({ user, kids, onLock, logout, children }: Props) {
       area="parent"
       active={settings ? "settings" : "overview"}
       title={settings ? "Cài đặt" : kid ? `Tổng quan · ${kid.name}` : "Tổng quan"}
-      crumb={settings ? "Thời gian học, giao diện, hồ sơ và bảo mật" : crumb}
+      crumb={settings ? "Tài khoản gia đình" : crumb}
       kids={kid ? { list: kids, selectedId: kid.id } : undefined}
       user={user}
       onLock={onLock}

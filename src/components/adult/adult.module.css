@@ -226,6 +226,7 @@
   line-height: var(--text-adm-h1--line-height);
 }
 .topR {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -241,6 +242,8 @@
   margin: 0 auto;
 }
 .kids {
+  max-width: 100%;
+  overflow-x: auto;
   display: inline-flex;
   gap: var(--lip-flat);
   padding: var(--space-1);
@@ -249,6 +252,8 @@
   margin-right: var(--space-2);
 }
 .kid {
+  flex: none;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
