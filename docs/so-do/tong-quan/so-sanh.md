@@ -1,6 +1,6 @@
-# So sánh code với PRD và task.md — tổng quan (sau task 07)
+# So sánh code với PRD và task.md — tổng quan (sau task 08)
 
-Cập nhật: 03/10/2026 · Bản chốt code: `2cebd5b` · Phạm vi: các task 01–07 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
+Cập nhật: 03/10/2026 · Bản chốt code: `f30365f` · Phạm vi: các task 01–08 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
 
 Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý chính của PRD; **nhỏ** = lệch nhẹ, hoặc đã nằm trong kế hoạch của task sau.
 
@@ -16,8 +16,8 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 8 | nhỏ | Lời chào của Bông cố định theo tình huống, chưa theo thời điểm trong ngày; chưa có hình mặt trời lặn cho giờ học còn lại (task 10). | `src/app/(kid)/home/page.tsx:17-35` | PRD dòng 157, 161 (C5a) |
 | 9 | nhỏ | Bấm một cấp trên tổng quan là vào bản đồ hoặc hiện hộp thoại; chưa có thông tin "cấp đó học gì, bao nhiêu chủ đề, hoàn thành bao nhiêu %". | `src/features/levels/LevelsMap.tsx:33-38` | PRD dòng 178 (C6a) |
 | 10 | nhỏ (nội dung) | PRD nói mỗi vùng có 4–6 chặng; trong database 12 trong 32 chủ đề cấp 1–4 chỉ có 2–3 bài (cấp 1: 7 chủ đề, cấp 2: 4, cấp 3: 1). Lý do: bài chia theo 5–8 từ (task 05). Chưa có cổng Bài thi lên cấp ở cuối đảo (GĐ2) và chưa có xem trước khi rê chuột (chỉ bấm). | `src/lib/rules/lesson-builder.ts:65`, `src/features/island-map/IslandMap.tsx` | PRD dòng 183, 185, 186 (C6b) |
-| 11 | nhỏ | Hàm `finishLessonAttempt`, `logAnswer`, `upsertReviewCard` trong `progress.ts` không còn ai gọi: kết quả bài học ghi qua `completeLesson` (một transaction). Có thể dọn ở task 08. | `src/server/progress.ts:36,59,83`, `src/server/lesson-complete.ts:23` | task 07 |
-| 12 | nhỏ | Sao tính theo tỷ lệ đúng (3 sao ≥ 90%, 2 sao ≥ 70%) theo thiết kế, không theo PRD Phần F (đếm lần sai); đã ghi ở README. Thưởng xu theo PRD (10 + 5 mỗi sao); hộp ôn tập 1/3/7/14/30 ngày đã có hàm thuần nhưng chưa có màn Ôn tập (task 08). | `src/lib/rules/lesson-score.ts:15`, `src/lib/rules/review-box.ts:26` | PRD dòng 376–397 |
+| 11 | nhỏ | Hàm `finishLessonAttempt`, `logAnswer`, `upsertReviewCard`, `listDueReviewCards` trong `progress.ts` không còn ai gọi: kết quả bài học ghi qua `completeLesson`, kết quả ôn qua `completeReview`. Chưa dọn (ngoài phạm vi task 08). | `src/server/progress.ts`, `src/server/lesson-complete.ts:23`, `src/server/review.ts:112` | task 07, 08 |
+| 12 | nhỏ | Sao bài học tính theo tỷ lệ đúng (3 sao ≥ 90%, 2 sao ≥ 70%) theo thiết kế, không theo PRD Phần F (đếm lần sai); đã ghi ở README. Thưởng xu theo PRD (10 + 5 mỗi sao). Hộp ôn tập 1/3/7/14/30 ngày đã có màn Ôn tập (task 08). | `src/lib/rules/lesson-score.ts:15`, `src/lib/rules/review-box.ts:42` | PRD dòng 376–397 |
 | 13 | nhỏ | Mở khóa khớp PRD (bài đầu luôn mở; từ 1 sao mở bài sau; trùm mở khi xong mọi bài). Thêm một quyết định PRD không nói: trùm **không chặn** chủ đề kế. Chưa có bố mẹ mở khóa tay (task 11) và bài thi lên cấp (GĐ2). | `src/lib/rules/unlock.ts:1-6,40-71` | PRD dòng 402–405; `docs/tasks/06-home-map/decisions.md` |
 | 14 | nhỏ | `proxy.ts` chỉ chuyển hướng `/profiles`, `/home`, `/parent`, `/admin`; các màn khác của bé (`/levels`, `/map`…) dựa vào `requireUser` ở layout. Không phải lỗ hổng (server vẫn chặn), chỉ không nhất quán. | `src/proxy.ts:9`, `src/app/(kid)/layout.tsx:5` | — |
 | 15 | nhỏ (GĐ3) | Bé lớp 6 trở lên vẫn dùng giao diện Tiểu học (chưa có bộ THCS). | `src/lib/learner-rules.ts:13` | PRD dòng 417 |
@@ -25,6 +25,11 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 17 | nhỏ | Bài học chưa có: khởi động ôn lại từ cũ, 3 câu thử thách cuối bài, âm thanh hiệu ứng và nút tắt nhạc nền, chế độ toàn màn hình. Có trò chơi lật thẻ (trong bài có từ 4 từ có hình). | `src/features/lesson/` | PRD dòng 90–99, 193–203 |
 | 18 | nhỏ | Sao, xu do server tính nhưng đúng/sai từng mục do client báo (đáp án nằm ở client để phản hồi tức thì). Chấp nhận cho ứng dụng học của bé; chưa có kiểm tra chống gian lận. | `src/server/lesson-complete.ts:58-62` | — |
 | 19 | nhỏ | Bài đã seed trước task 07 chưa có bước lật thẻ cho tới khi chạy lại `npx prisma db seed`. | `src/lib/rules/lesson-builder.ts:92` | — |
+| 20 | nhỏ | Từ không có hình không vào phiên Ôn tập (ba dạng câu hỏi đều cần hình); số "từ cần ôn" ở trang chủ cũng chỉ đếm từ có hình. Dữ liệu cấp 3–4 còn nhiều từ thiếu hình. | `src/server/review.ts:21` | PRD C8, C11 |
+| 21 | nhỏ | Thưởng ôn tập: mỗi từ 1 sao (theo thiết kế) + 1 xu (Tiểu học, PRD Phần F) hoặc 2 XP (THCS); bản xem trước ghi "+12 sao, +20 xu" chỉ là số mẫu. | `src/lib/rules/review-play.ts:55` | PRD Phần F, Screen20 |
+| 22 | nhỏ | Lịch hộp theo PRD (1/3/7/14/30 ngày), không theo chữ cứng của bản xem trước (2/4 ngày); màu mức thuộc theo thiết kế, không theo PRD C12 (đỏ nhạt, cam…). | `src/lib/rules/review-box.ts:6,28` | PRD C12, Screen19 |
+| 23 | nhỏ (GĐ3) | THCS chưa có câu ngữ pháp từng sai trong phiên ôn (chưa có bài ngữ pháp); phiên chỉ có từ vựng, tối đa 20 mục. | `src/lib/rules/review-play.ts:10-12` | PRD C11 |
+| 24 | nhỏ | Dừng giữa phiên ôn thì không ghi gì lên server; tiến độ dở chỉ giữ trên máy theo ngày. Sổ từ chưa lọc theo mức, chưa in; từ chưa thuộc bài nào của chủ đề đã xuất bản chỉ hiện ở "Tất cả". | `src/features/review/ReviewPlayer.tsx:36`, `src/server/notebook.ts:30` | PRD C12 |
 
 ## Khớp với PRD (đã kiểm)
 

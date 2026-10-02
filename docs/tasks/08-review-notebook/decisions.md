@@ -18,3 +18,11 @@
 ### 03/10/2026 — Phần tự suy ra
 - Hộp thoại phóng to thẻ trong Sổ từ (nghe từ và câu ví dụ): thiết kế chỉ có thẻ nhỏ + loa; dựng từ `Dialog`, `SpeakerButton`, `WordPicture` theo PRD C12.
 - Màn "Hẹn cậu lần sau nhé!" (Screen20 trạng thái trống) dùng khi bé dừng giữa phiên; không ghi gì lên server, tiến độ dở giữ ở `localStorage`.
+
+### 03/10/2026 — Tổng kết: khác với task.md gốc
+- Giữ `src/lib/rules/review-box.ts` (task 07) thay vì tạo `review.ts`; thêm `review-play.ts` cho phiên ôn.
+- Chỉ từ có hình vào phiên ôn và vào số "từ cần ôn" ở trang chủ; tối đa 15 mục Tiểu học, 20 THCS (chưa có câu ngữ pháp).
+- Thưởng: 1 sao + 1 xu (TH) hoặc 2 XP (THCS) mỗi từ; chỉ ghi khi ôn xong hết phiên; dừng giữa chừng không ghi lên server.
+- Lịch hộp theo PRD (1/3/7/14/30 ngày), màu theo token thiết kế; nhãn lịch sinh từ `BOX_INTERVAL_DAYS`.
+- Xem lớn thẻ trong Sổ từ tự dựng (thiết kế không có); chưa lọc theo mức, chưa in sổ.
+- Sơ đồ: thêm `lifecycle-5-hop-on-tap`, vẽ lại hành trình của bé và kiến trúc; `workflow-khu-nguoi-lon` và `sequence-ket-thuc-bai` không đổi (task 08 không chạm).

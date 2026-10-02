@@ -2,134 +2,551 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Kiến trúc hệ thống đã có trong code (sau task 07)",
+    "title": "Kiến trúc hệ thống đã có trong code (sau task 08)",
     "locale": "vi",
     "quality_profile": "showcase",
     "output": "docs/so-do/tong-quan/architecture-he-thong.html",
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "2cebd5b9c8a5197c1de5ad6b8704fb63ad1d8df2"
+      "revision": "f30365ff7a306531251e16efb1464b6c4ccd4333"
     }
   },
   "components": [
-    { "id": "browser", "type": "external", "label": "Bé và bố mẹ", "sublabel": "trình duyệt máy tính", "pos": [480, 40], "size": [170, 64] },
     {
-      "id": "media", "type": "database", "label": "Hình minh họa", "sublabel": "public/media/pictures", "pos": [760, 40], "size": [170, 64],
-      "sources": [{ "path": "src/lib/picture-path.ts", "line": 14, "label": "pictureUrl" }]
-    },
-    {
-      "id": "proxy", "type": "security", "label": "Chuyển hướng", "sublabel": "src/proxy.ts", "pos": [480, 170], "size": [170, 64],
-      "sources": [{ "path": "src/proxy.ts", "line": 9, "end_line": 19, "label": "chưa đăng nhập về /login" }]
-    },
-    {
-      "id": "auth", "type": "frontend", "label": "Màn đăng nhập", "sublabel": "/login · /register", "pos": [260, 300], "size": [170, 64],
-      "sources": [
-        { "path": "src/app/(auth)/login/page.tsx", "line": 6, "label": "LoginPage" },
-        { "path": "src/app/(auth)/register/page.tsx", "line": 6, "label": "RegisterPage" }
+      "id": "browser",
+      "type": "external",
+      "label": "Bé và bố mẹ",
+      "sublabel": "trình duyệt máy tính",
+      "pos": [
+        480,
+        40
+      ],
+      "size": [
+        170,
+        64
       ]
     },
     {
-      "id": "kid", "type": "frontend", "label": "Màn của bé", "sublabel": "/home /map /lesson", "pos": [480, 300], "size": [170, 64],
+      "id": "media",
+      "type": "database",
+      "label": "Hình minh họa",
+      "sublabel": "public/media/pictures",
+      "pos": [
+        760,
+        40
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/app/(kid)/layout.tsx", "line": 4, "end_line": 6, "label": "cần đăng nhập" },
-        { "path": "src/app/(kid)/home/page.tsx", "line": 37, "label": "HomePage" }
+        {
+          "path": "src/lib/picture-path.ts",
+          "line": 14,
+          "label": "pictureUrl"
+        }
       ]
     },
     {
-      "id": "adult", "type": "frontend", "label": "Màn bố mẹ, quản trị", "sublabel": "/parent · /admin (giữ chỗ)", "pos": [700, 300], "size": [170, 64],
+      "id": "proxy",
+      "type": "security",
+      "label": "Chuyển hướng",
+      "sublabel": "src/proxy.ts",
+      "pos": [
+        480,
+        170
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/app/(parent)/layout.tsx", "line": 4, "end_line": 7, "label": "cổng bố mẹ" },
-        { "path": "src/app/(admin)/admin/page.tsx", "line": 10, "label": "requireRole admin" }
+        {
+          "path": "src/proxy.ts",
+          "line": 9,
+          "end_line": 19,
+          "label": "chưa đăng nhập về /login"
+        }
       ]
     },
     {
-      "id": "uploads", "type": "database", "label": "Kho tệp tải lên", "sublabel": "chưa làm · task 12", "pos": [940, 300], "size": [170, 64],
-      "sources": [{ "path": "docs/PRD.md", "line": 496, "label": "PRD H1: lưu ngoài public/" }]
-    },
-    {
-      "id": "nextauth", "type": "security", "label": "NextAuth", "sublabel": "signIn, signOut, JWT 30 ngày", "pos": [40, 430], "size": [170, 64],
+      "id": "auth",
+      "type": "frontend",
+      "label": "Màn đăng nhập",
+      "sublabel": "/login · /register",
+      "pos": [
+        260,
+        300
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/auth.ts", "line": 17, "label": "Credentials + bcrypt" },
-        { "path": "src/auth.config.ts", "line": 12, "label": "session JWT" }
+        {
+          "path": "src/app/(auth)/login/page.tsx",
+          "line": 6,
+          "label": "LoginPage"
+        },
+        {
+          "path": "src/app/(auth)/register/page.tsx",
+          "line": 6,
+          "label": "RegisterPage"
+        }
       ]
     },
     {
-      "id": "actions", "type": "backend", "label": "Server actions", "sublabel": "hồ sơ, cổng bố mẹ, kết quả bài", "pos": [260, 430], "size": [170, 64],
+      "id": "kid",
+      "type": "frontend",
+      "label": "Màn của bé",
+      "sublabel": "/home /map /lesson /review /notebook",
+      "pos": [
+        480,
+        300
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/features/auth/actions.ts", "line": 36, "label": "loginAction" },
-        { "path": "src/features/parent/actions.ts", "line": 18, "label": "unlockParentAction" },
-        { "path": "src/features/lesson/actions.ts", "line": 16, "label": "completeLessonAction" }
+        {
+          "path": "src/app/(kid)/layout.tsx",
+          "line": 4,
+          "end_line": 6,
+          "label": "cần đăng nhập"
+        },
+        {
+          "path": "src/app/(kid)/home/page.tsx",
+          "line": 37,
+          "label": "HomePage"
+        }
       ]
     },
     {
-      "id": "guards", "type": "security", "label": "Kiểm tra quyền", "sublabel": "requireUser · requireActiveLearner", "pos": [480, 430], "size": [170, 64],
+      "id": "adult",
+      "type": "frontend",
+      "label": "Màn bố mẹ, quản trị",
+      "sublabel": "/parent · /admin (giữ chỗ)",
+      "pos": [
+        700,
+        300
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/server/session.ts", "line": 24, "label": "requireUser" },
-        { "path": "src/server/active-learner.ts", "line": 40, "label": "requireActiveLearner" },
-        { "path": "src/server/parent-gate.ts", "line": 35, "label": "requireParentGate" }
+        {
+          "path": "src/app/(parent)/layout.tsx",
+          "line": 4,
+          "end_line": 7,
+          "label": "cổng bố mẹ"
+        },
+        {
+          "path": "src/app/(admin)/admin/page.tsx",
+          "line": 10,
+          "label": "requireRole admin"
+        }
       ]
     },
     {
-      "id": "schemas", "type": "backend", "label": "Zod dùng chung", "sublabel": "kiểm dữ liệu vào", "pos": [260, 560], "size": [170, 64],
-      "sources": [{ "path": "src/lib/schemas/index.ts", "line": 1, "end_line": 8, "label": "kiểm dữ liệu vào" }]
-    },
-    {
-      "id": "modules", "type": "backend", "label": "Hàm đọc, ghi dữ liệu", "sublabel": "src/server: home, map, lesson", "pos": [480, 560], "size": [170, 64],
+      "id": "uploads",
+      "type": "database",
+      "label": "Kho tệp tải lên",
+      "sublabel": "chưa làm · task 12",
+      "pos": [
+        940,
+        300
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/server/learners.ts", "line": 47, "label": "requireLearner" },
-        { "path": "src/server/map.ts", "line": 93, "label": "getIslandMap" },
-        { "path": "src/server/lesson-complete.ts", "line": 23, "label": "completeLesson" }
+        {
+          "path": "docs/PRD.md",
+          "line": 496,
+          "label": "PRD H1: lưu ngoài public/"
+        }
       ]
     },
     {
-      "id": "rules", "type": "backend", "label": "Quy tắc (hàm thuần)", "sublabel": "mở khóa, sao, thẻ ôn", "pos": [700, 560], "size": [170, 64],
+      "id": "nextauth",
+      "type": "security",
+      "label": "NextAuth",
+      "sublabel": "signIn, signOut, JWT 30 ngày",
+      "pos": [
+        40,
+        430
+      ],
+      "size": [
+        170,
+        64
+      ],
       "sources": [
-        { "path": "src/lib/rules/unlock.ts", "line": 40, "label": "computeLessonStates" },
-        { "path": "src/lib/rules/lesson-score.ts", "line": 15, "label": "starsFor" },
-        { "path": "src/lib/rules/review-box.ts", "line": 26, "label": "nextReview" }
+        {
+          "path": "src/auth.ts",
+          "line": 17,
+          "label": "Credentials + bcrypt"
+        },
+        {
+          "path": "src/auth.config.ts",
+          "line": 12,
+          "label": "session JWT"
+        }
       ]
     },
     {
-      "id": "prisma", "type": "backend", "label": "Prisma Client", "sublabel": "adapter MariaDB", "pos": [480, 690], "size": [170, 64],
-      "sources": [{ "path": "src/server/db.ts", "line": 8, "end_line": 13, "label": "createClient" }]
+      "id": "actions",
+      "type": "backend",
+      "label": "Server actions",
+      "sublabel": "hồ sơ, cổng, bài, ôn tập",
+      "pos": [
+        260,
+        430
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/features/lesson/actions.ts",
+          "line": 16,
+          "label": "completeLessonAction"
+        },
+        {
+          "path": "src/features/review/actions.ts",
+          "line": 16,
+          "label": "completeReviewAction"
+        },
+        {
+          "path": "src/features/parent/actions.ts",
+          "line": 18,
+          "label": "unlockParentAction"
+        }
+      ]
     },
     {
-      "id": "mysql", "type": "database", "label": "MySQL / MariaDB", "sublabel": "hoc_tieng_anh", "pos": [480, 820], "size": [170, 64],
-      "sources": [{ "path": "prisma/schema.prisma", "line": 12, "label": "datasource db" }]
+      "id": "guards",
+      "type": "security",
+      "label": "Kiểm tra quyền",
+      "sublabel": "requireUser · requireActiveLearner",
+      "pos": [
+        480,
+        430
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/server/session.ts",
+          "line": 24,
+          "label": "requireUser"
+        },
+        {
+          "path": "src/server/active-learner.ts",
+          "line": 40,
+          "label": "requireActiveLearner"
+        },
+        {
+          "path": "src/server/parent-gate.ts",
+          "line": 35,
+          "label": "requireParentGate"
+        }
+      ]
     },
     {
-      "id": "seed", "type": "backend", "label": "Seed dữ liệu", "sublabel": "npx prisma db seed", "pos": [700, 820], "size": [170, 64],
-      "sources": [{ "path": "prisma/seed.ts", "line": 102, "label": "npx prisma db seed" }]
+      "id": "schemas",
+      "type": "backend",
+      "label": "Zod dùng chung",
+      "sublabel": "kiểm dữ liệu vào",
+      "pos": [
+        260,
+        560
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/lib/schemas/index.ts",
+          "line": 1,
+          "end_line": 9,
+          "label": "kiểm dữ liệu vào"
+        }
+      ]
+    },
+    {
+      "id": "modules",
+      "type": "backend",
+      "label": "Hàm đọc, ghi dữ liệu",
+      "sublabel": "src/server: bài, ôn tập, sổ từ",
+      "pos": [
+        480,
+        560
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/server/learners.ts",
+          "line": 47,
+          "label": "requireLearner"
+        },
+        {
+          "path": "src/server/review.ts",
+          "line": 112,
+          "label": "completeReview"
+        },
+        {
+          "path": "src/server/notebook.ts",
+          "line": 30,
+          "label": "getNotebook"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "backend",
+      "label": "Quy tắc (hàm thuần)",
+      "sublabel": "mở khóa, sao, 5 hộp, phiên ôn",
+      "pos": [
+        700,
+        560
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/lib/rules/lesson-score.ts",
+          "line": 15,
+          "label": "starsFor"
+        },
+        {
+          "path": "src/lib/rules/review-box.ts",
+          "line": 42,
+          "label": "nextReview"
+        },
+        {
+          "path": "src/lib/rules/review-play.ts",
+          "line": 25,
+          "label": "buildReviewSteps"
+        }
+      ]
+    },
+    {
+      "id": "prisma",
+      "type": "backend",
+      "label": "Prisma Client",
+      "sublabel": "adapter MariaDB",
+      "pos": [
+        480,
+        690
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/server/db.ts",
+          "line": 8,
+          "end_line": 13,
+          "label": "createClient"
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "type": "database",
+      "label": "MySQL / MariaDB",
+      "sublabel": "hoc_tieng_anh",
+      "pos": [
+        480,
+        820
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "prisma/schema.prisma",
+          "line": 12,
+          "label": "datasource db"
+        }
+      ]
+    },
+    {
+      "id": "seed",
+      "type": "backend",
+      "label": "Seed dữ liệu",
+      "sublabel": "npx prisma db seed",
+      "pos": [
+        700,
+        820
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "prisma/seed.ts",
+          "line": 102,
+          "label": "npx prisma db seed"
+        }
+      ]
     }
   ],
   "boundaries": [
     {
       "kind": "region",
       "label": "Dự án Next.js (App Router, chạy trên Node)",
-      "wraps": ["proxy", "auth", "kid", "adult", "nextauth", "actions", "guards", "schemas", "modules", "rules", "prisma"]
+      "wraps": [
+        "proxy",
+        "auth",
+        "kid",
+        "adult",
+        "nextauth",
+        "actions",
+        "guards",
+        "schemas",
+        "modules",
+        "rules",
+        "prisma"
+      ]
     },
-    { "kind": "region", "label": "MySQL trên máy XAMPP (MariaDB) hoặc hosting (MySQL 8)", "wraps": ["mysql", "seed"] }
+    {
+      "kind": "region",
+      "label": "MySQL trên máy XAMPP (MariaDB) hoặc hosting (MySQL 8)",
+      "wraps": [
+        "mysql",
+        "seed"
+      ]
+    }
   ],
   "connections": [
-    { "id": "c-browser-proxy", "from": "browser", "to": "proxy", "label": "HTTP", "variant": "emphasis" },
-    { "id": "c-browser-media", "from": "browser", "to": "media", "label": "GET /media/…" },
-    { "id": "c-proxy-kid", "from": "proxy", "to": "kid", "label": "đã đăng nhập", "variant": "emphasis" },
-    { "id": "c-proxy-auth", "from": "proxy", "to": "auth" },
-    { "id": "c-proxy-adult", "from": "proxy", "to": "adult" },
-    { "id": "c-auth-actions", "from": "auth", "to": "actions", "label": "biểu mẫu" },
-    { "id": "c-kid-actions", "from": "kid", "to": "actions", "label": "chọn, tạo hồ sơ" },
-    { "id": "c-kid-guards", "from": "kid", "to": "guards", "label": "đọc dữ liệu", "variant": "emphasis" },
-    { "id": "c-adult-guards", "from": "adult", "to": "guards", "label": "cổng, role", "variant": "security" },
-    { "id": "c-actions-nextauth", "from": "actions", "to": "nextauth" },
-    { "id": "c-actions-guards", "from": "actions", "to": "guards", "label": "requireUser" },
-    { "id": "c-guards-modules", "from": "guards", "to": "modules", "label": "userId + learnerId", "variant": "emphasis" },
-    { "id": "c-modules-schemas", "from": "modules", "to": "schemas" },
-    { "id": "c-modules-rules", "from": "modules", "to": "rules", "label": "quy tắc" },
-    { "id": "c-modules-prisma", "from": "modules", "to": "prisma", "label": "truy vấn", "variant": "emphasis" },
-    { "id": "c-prisma-mysql", "from": "prisma", "to": "mysql", "label": "SQL", "variant": "emphasis" },
-    { "id": "c-seed-mysql", "from": "seed", "to": "mysql" },
-    { "id": "c-adult-uploads", "from": "adult", "to": "uploads", "label": "chưa có", "variant": "dashed" }
+    {
+      "id": "c-browser-proxy",
+      "from": "browser",
+      "to": "proxy",
+      "label": "HTTP",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-browser-media",
+      "from": "browser",
+      "to": "media",
+      "label": "GET /media/…"
+    },
+    {
+      "id": "c-proxy-kid",
+      "from": "proxy",
+      "to": "kid",
+      "label": "đã đăng nhập",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-proxy-auth",
+      "from": "proxy",
+      "to": "auth"
+    },
+    {
+      "id": "c-proxy-adult",
+      "from": "proxy",
+      "to": "adult"
+    },
+    {
+      "id": "c-auth-actions",
+      "from": "auth",
+      "to": "actions",
+      "label": "biểu mẫu"
+    },
+    {
+      "id": "c-kid-actions",
+      "from": "kid",
+      "to": "actions",
+      "label": "chọn, tạo hồ sơ"
+    },
+    {
+      "id": "c-kid-guards",
+      "from": "kid",
+      "to": "guards",
+      "label": "đọc dữ liệu",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-adult-guards",
+      "from": "adult",
+      "to": "guards",
+      "label": "cổng, role",
+      "variant": "security"
+    },
+    {
+      "id": "c-actions-nextauth",
+      "from": "actions",
+      "to": "nextauth"
+    },
+    {
+      "id": "c-actions-guards",
+      "from": "actions",
+      "to": "guards",
+      "label": "requireUser"
+    },
+    {
+      "id": "c-guards-modules",
+      "from": "guards",
+      "to": "modules",
+      "label": "userId + learnerId",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-modules-schemas",
+      "from": "modules",
+      "to": "schemas"
+    },
+    {
+      "id": "c-modules-rules",
+      "from": "modules",
+      "to": "rules",
+      "label": "quy tắc"
+    },
+    {
+      "id": "c-modules-prisma",
+      "from": "modules",
+      "to": "prisma",
+      "label": "truy vấn",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-prisma-mysql",
+      "from": "prisma",
+      "to": "mysql",
+      "label": "SQL",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-seed-mysql",
+      "from": "seed",
+      "to": "mysql"
+    },
+    {
+      "id": "c-adult-uploads",
+      "from": "adult",
+      "to": "uploads",
+      "label": "chưa có",
+      "variant": "dashed"
+    }
   ],
   "cards": [
     {
@@ -144,7 +561,7 @@
       "dot": "amber",
       "title": "Chưa có trong code",
       "items": [
-        "Ôn tập, Sổ từ (task 08); bộ sưu tập, giờ học (GĐ2 trở đi)",
+        "Bộ sưu tập, giờ học (GĐ2 trở đi)",
         "Kho tệp tải lên và quản trị nội dung (task 12)"
       ]
     }
