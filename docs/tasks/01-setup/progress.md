@@ -1,6 +1,6 @@
 # Tiến độ — 01-setup — Khởi tạo dự án
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 02/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -49,6 +49,10 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 - Kiểm tra: `npm run tasks:dashboard` báo "Cảnh báo: 0", đọc được 12 task, task 01 hiện 3/4 bước ✅ trước khi cập nhật bước này.
 - Việc cần làm thủ công: mở `docs/tasks/dashboard.html` trong trình duyệt xem sơ đồ phụ thuộc.
 
+### Kiểm tra cuối task (02/10/2026)
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` đều không lỗi (build ra `/`, `/_not-found`, `/dev-tokens`). Đã đổi task 01 thành ✅ trong `docs/tasks/README.md`.
+- Lưu ý còn lại: `npm audit` báo 4 lỗi mức high ở gói đã cài, chưa xử lý; chưa push lên GitHub.
+
 ## Bước tiếp theo
 
-Kiểm tra cuối task (`tsc`, `lint`, `build`), rồi đổi trạng thái task 01 thành ✅ trong `docs/tasks/README.md`.
+Task 01 đã xong. Task kế tiếp: 02-ui-kit hoặc 03-db-core (cùng phụ thuộc 01).
