@@ -18,3 +18,12 @@ export const learnerInputSchema = z.object({
 });
 
 export type LearnerInput = z.infer<typeof learnerInputSchema>;
+
+/** Hồ sơ tạo ở luồng 3 bước: tên tối đa 16 chữ, tên rồng tối đa 12 chữ (theo thiết kế). Bố mẹ đổi được sau ở phần cài đặt. */
+export const createLearnerFormSchema = learnerInputSchema.extend({
+  name: z.string().trim().min(1, "Nhập tên của bé").max(16, "Tên tối đa 16 chữ"),
+  schoolGrade: z.number().int().min(1, "Chọn lớp của bé").max(9),
+  mascotName: z.string().trim().min(1, "Đặt tên cho bạn rồng").max(12, "Tên rồng tối đa 12 chữ"),
+});
+
+export type CreateLearnerForm = z.infer<typeof createLearnerFormSchema>;

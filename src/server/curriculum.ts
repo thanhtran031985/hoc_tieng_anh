@@ -16,6 +16,11 @@ export function listStages() {
   });
 }
 
+/** 10 cấp (số và tên) theo thứ tự. */
+export function listLevels() {
+  return db.level.findMany({ select: { number: true, name: true }, orderBy: { number: "asc" } });
+}
+
 export function getLevelByNumber(number: number) {
   return db.level.findUnique({ where: { number } });
 }
