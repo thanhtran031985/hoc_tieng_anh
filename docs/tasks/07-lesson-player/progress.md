@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 0 | Khung bài học và luồng câu hỏi | ✅ | 03/10/2026 |
 | 1 | Thẻ từ (Screen08) | ✅ | 03/10/2026 |
 | 2 | Nghe và chọn hình (Screen07) | ✅ | 03/10/2026 |
-| 3 | Nối từ với hình (Screen09) | ⬜ | |
+| 3 | Nối từ với hình (Screen09) | ✅ | 03/10/2026 |
 | 4 | Chọn từ đúng cho hình (Screen18) | ⬜ | |
 | 5 | Lật thẻ ghép cặp (Screen10) | ⬜ | |
 | 6 | Kết thúc bài và lưu kết quả (Screen12) | ⬜ | |
@@ -33,6 +33,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Kiểm tra (Edge không đầu, database tạm): Enter khi chưa chọn không kiểm tra; H bỏ 1 hình ("Còn 2 hình thôi!", nút Gợi ý tắt); chọn đúng → thẻ xanh ✓ + dải "Tuyệt vời!" + từ, phiên âm, nghĩa, Enter sang câu kế; sai lần 1 → "Chưa đúng rồi, thử lại nhé!" ("Đây là xin lỗi…"); sai lần 2 → tự bật gợi ý; sai lần 3 → "Mình xem đáp án nhé!", đáp án đúng sáng xanh, tổng số bước 22 → 23 (câu làm lại ở cuối); không cuộn ở 1366×768; không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
 - Việc thủ công: không.
 
+### Bước 3 — Nối từ với hình (Screen09) (03/10/2026)
+- Đã làm: `MatchStep` + `match.module.css`: hàng hình có ô thả, khay chip từ (mỗi chip có loa và nhãn phím), rồng + bóng thoại, "Làm lại" và bộ đếm "n/N cặp đã nối", dải "Nối đúng hết rồi!". Kéo thả bằng con trỏ (pointer events; kéo dưới 4px coi là bấm), bấm chip rồi bấm hình, bàn phím: 1–6 nhấc từ ở khay rồi 1–6 thả vào hình, Esc bỏ nhấc, Tab + Enter/Space (nhấc xong focus nhảy tới hình đầu chưa nối). Thả sai: chip về khay, thẻ lắc nhẹ, bóng thoại "Gần đúng rồi! Đây là …", không phạt. `useHotkeys` thêm `capture` để Esc của bước nối chạy trước Esc mở hộp thoại thoát.
+- Token mới: `--size-match-pic`, `--size-chip-h`, `--size-slot-h`, `--size-tip-dragon`.
+- Kiểm tra (Edge không đầu, database tạm, bài 13 có 6 cặp): bàn phím (nhấc, Esc bỏ nhấc không mở hộp thoại, thả sai rồi đúng, đủ 6 cặp ra dải xanh, Enter sang bước kế); chuột kéo thả (kéo sai chip về khay, kéo đúng nối được); bấm chip → nhấc, bấm lại → bỏ; Tab+Enter nhấc và thả; không cuộn và không tràn ngang ở 1366×768, 1440×900, 1920×1080 (đã sửa hàng hình tràn khi có 6 cặp và rồng che thẻ); không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
+- Việc thủ công: không.
+
 ## Bước tiếp theo
 
-Bước 3 — Nối từ với hình (Screen09)
+Bước 4 — Chọn từ đúng cho hình (Screen18)

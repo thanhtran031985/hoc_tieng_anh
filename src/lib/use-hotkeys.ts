@@ -13,6 +13,11 @@ export type UseHotkeysOptions = {
    * rồi nhấn Space để nghe lại hoặc Enter để kiểm tra. Vùng có `data-hotkey-skip` (vd nút thoát) và hộp thoại vẫn tự xử lý phím của nó.
    */
   captureNative?: boolean;
+  /**
+   * Bắt phím ở pha capture để chạy trước các phím tắt của màn bao ngoài (vd màn con nhận Esc để bỏ nhấc từ trước khi trình học mở
+   * hộp thoại thoát). Handler đã xử lý thì chặn mặc định, nên phím tắt bao ngoài tự bỏ qua.
+   */
+  capture?: boolean;
 };
 
 function normalize(event: KeyboardEvent): string {
@@ -34,7 +39,7 @@ function activatesNatively(target: EventTarget | null): boolean {
  * Phím tắt dùng chung cho bài học: 1–4 (hoặc A–D), Enter, Space, ←/→, Esc.
  * Không chạy khi đang gõ trong ô nhập, khi giữ Ctrl/Alt/Meta, hoặc khi phím lặp.
  */
-export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = false }: UseHotkeysOptions = {}) {
+export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = false, capture = false }: UseHotkeysOptions = {}) {
   const handlers = useRef(map);
   useEffect(() => {
     handlers.current = map;
@@ -55,7 +60,7 @@ export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = fal
       event.preventDefault();
       handler(event);
     }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [enabled, captureNative]);
+    window.addEventListener("keydown", onKeyDown, capture);
+    return () => window.removeEventListener("keydown", onKeyDown, capture);
+  }, [enabled, captureNative, capture]);
 }

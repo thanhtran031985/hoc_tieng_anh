@@ -1,0 +1,153 @@
+/* Nối từ với hình (Screen09): hàng hình có ô thả, khay chip từ, rồng + bóng thoại. */
+.board {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+}
+.pics {
+  display: grid;
+  /* Cột co theo chiều rộng khi bài có nhiều cặp để hàng hình không tràn ngang. */
+  grid-template-columns: repeat(
+    var(--cols),
+    min(
+      var(--size-match-pic),
+      28vh,
+      calc(
+        (100vw - 2 * var(--space-10) - (var(--cols) - 1) * var(--space-6)) /
+          var(--cols)
+      )
+    )
+  );
+  gap: var(--space-6);
+}
+.pic {
+  padding: var(--space-4);
+}
+.pic svg,
+.pic img {
+  width: 70%;
+  height: auto;
+}
+.over {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.slot {
+  width: 100%;
+  height: var(--size-slot-h);
+  box-sizing: border-box;
+  border: var(--border-thick) dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.slotDone {
+  border-style: solid;
+  border-color: var(--success);
+  background: var(--success-soft);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: var(--text-word--line-height);
+}
+
+.bottom {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+.tray {
+  flex: 1;
+  max-width: calc(var(--size-lesson-stage) + var(--space-12));
+  min-height: calc(var(--size-chip-h) + 2 * var(--space-5));
+  box-sizing: border-box;
+  padding: var(--space-5) var(--space-8);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  background: var(--surface-soft);
+  border-radius: var(--radius-xl);
+}
+.trayEmpty {
+  color: var(--ink-soft);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.chip {
+  height: var(--size-chip-h);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-5);
+  border: var(--border-thick) solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: 0 var(--lip-s) 0 var(--line);
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: var(--text-word--line-height);
+  font-weight: 700;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition:
+    transform var(--duration-fast),
+    border-color var(--duration-fast);
+}
+.chip:hover {
+  border-color: var(--brand-soft-shade);
+}
+.held {
+  transform: translateY(calc(-1 * var(--lift-stop))) rotate(-2deg);
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.dragging {
+  position: relative;
+  z-index: var(--z-sticky);
+  pointer-events: none;
+  cursor: grabbing;
+  transition: none;
+  box-shadow: var(--shadow-dialog);
+  border-color: var(--brand);
+}
+.holding .chip:not(.held) {
+  opacity: 0.75;
+}
+
+.tip {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  width: calc(var(--size-tip-dragon) * 2.2);
+}
+.tip svg {
+  width: min(var(--size-tip-dragon), 13vh);
+  height: auto;
+}
+.count {
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: var(--text-body--font-weight);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+}
