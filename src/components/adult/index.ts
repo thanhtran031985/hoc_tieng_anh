@@ -5,6 +5,7 @@ export { AdultCard, AdultCardHead, AdultGrid } from "./Card";
 export { AdultDialog, type AdultDialogAction } from "./AdultDialog";
 export { AdultDrawer } from "./AdultDrawer";
 export { AdultInput, AdultSelect, AdultTextarea } from "./AdultField";
+export { AdultPinInput } from "./AdultPinInput";
 export { AdultSegmented } from "./AdultSegmented";
 export { AdultShell, type ShellKid } from "./AdultShell";
 export { AdultTable, type AdultColumn, type AdultFilter } from "./AdultTable";
