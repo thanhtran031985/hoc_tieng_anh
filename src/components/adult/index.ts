@@ -1,0 +1,19 @@
+// Bộ thành phần khu người lớn (bố mẹ + quản trị). Dùng chung cho task 11 và 12.
+export { AdultArea } from "./AdultArea";
+export { AdultButton, AdultButtonLink, AdultIconButton, type AdultButtonProps, type AdultButtonVariant } from "./AdultButton";
+export { AdultCard, AdultCardHead, AdultGrid } from "./Card";
+export { AdultDialog, type AdultDialogAction } from "./AdultDialog";
+export { AdultDrawer } from "./AdultDrawer";
+export { AdultInput, AdultSelect, AdultTextarea } from "./AdultField";
+export { AdultSegmented } from "./AdultSegmented";
+export { AdultShell, type ShellKid } from "./AdultShell";
+export { AdultTable, type AdultColumn, type AdultFilter } from "./AdultTable";
+export { AdultToggle } from "./AdultToggle";
+export { Kpi } from "./Kpi";
+export { AdultEmpty, AdultError, AdultSkeleton } from "./States";
+export { Status, type StatusKind } from "./Status";
+export { ToastProvider, useToast } from "./Toast";
+export { HBars, type HBarRow } from "./charts/HBars";
+export { LineChart, type LinePoint } from "./charts/LineChart";
+export { VBars, type VBarDatum } from "./charts/VBars";
+export { default as adultStyles } from "./adult.module.css";

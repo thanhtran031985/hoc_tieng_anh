@@ -217,6 +217,64 @@
   --adm-drawer: 480px;
   --adm-drawer-wide: 720px;
   --adm-content-max: 1280px;
+  /* Khu người lớn: thang chữ Be Vietnam Pro (DESIGN_SYSTEM mục 3) và kích thước thành phần. */
+  --text-adm-h1: 24px;
+  --text-adm-h1--line-height: 32px;
+  --text-adm-h1--font-weight: 700;
+  --text-adm-h2: 17px;
+  --text-adm-h2--line-height: 24px;
+  --text-adm-h2--font-weight: 600;
+  --text-adm-h3: 15px;
+  --text-adm-h3--line-height: 22px;
+  --text-adm-h3--font-weight: 600;
+  --text-adm-body: 14px;
+  --text-adm-body--line-height: 22px;
+  --text-adm-body--font-weight: 400;
+  --text-adm-small: 13px;
+  --text-adm-small--line-height: 18px;
+  --text-adm-small--font-weight: 400;
+  --text-adm-label: 12px;
+  --text-adm-label--line-height: 16px;
+  --text-adm-label--font-weight: 600;
+  --text-adm-kpi: 28px;
+  --text-adm-kpi--line-height: 34px;
+  --text-adm-kpi--font-weight: 700;
+  --text-adm-button: 14px;
+  --text-adm-button--line-height: 20px;
+  --text-adm-button--font-weight: 600;
+  --text-adm-en: 15px;
+  --text-adm-en--line-height: 22px;
+  --text-adm-en--font-weight: 500;
+  --adm-btn-s: 30px;
+  --adm-icon-btn: 32px;
+  --adm-kpi-icon: 30px;
+  --adm-avatar: 32px;
+  --adm-switch-w: 42px;
+  --adm-switch-h: 24px;
+  --adm-switch-knob: 18px;
+  --adm-search-w: 260px;
+  --adm-filter-max: 180px;
+  --adm-pager-btn: 32px;
+  --adm-select-w-s: 80px;
+  --adm-chart-axis: 40px;
+  --adm-chart-label: 24px;
+  --adm-chart-line-h: 200px;
+  --adm-chart-h: 180px;
+  --adm-bar-max: 32px;
+  --adm-dot: 14px;
+  --adm-hrow-label: 110px;
+  --adm-hrow-value: 44px;
+  --adm-dialog-w: 460px;
+  --adm-dialog-w-wide: 560px;
+  --adm-state-icon: 52px;
+  --adm-state-mascot: 64px;
+  --adm-pin-cell: 56px;
+  --adm-pin-dot: 12px;
+  --adm-gate-card: 420px;
+  --adm-lock-icon: 48px;
+  --adm-settings-nav: 220px;
+  --adm-tab-h: 40px;
+  --adm-toast-offset: 24px;
   --size-star-pip: 28px;
   --size-memory-box: 184px;
 
@@ -681,4 +739,24 @@ input:focus-visible,
 textarea:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
+}
+
+/* Theme THCS sáng: dùng cho khu người lớn (bố mẹ, quản trị) — đặt data-theme="thcs" trên vùng chứa (components/adult/AdultArea).
+   Chỉ ghi các token đổi giá trị so với :root (docs/DESIGN_SYSTEM.md mục 15); màn Tiểu học không bị ảnh hưởng. */
+[data-theme="thcs"] {
+  --bg: #f6f7fb;
+  --surface-soft: #eff1f7;
+  --surface-sunk: #e3e7f0;
+  --line: #dfe3ed;
+  --line-strong: #858ca3;
+  --ink: #151a2d;
+  --ink-soft: #4a5170;
+  --ink-disabled: #9aa0b4;
+  --brand: #3355e0;
+  --brand-shade: #2140b8;
+  --brand-hover: #2a49cc;
+  --brand-soft: #e8edfd;
+  --brand-soft-shade: #cdd7fb;
+  --scrim: rgba(14, 17, 32, 0.5);
+  --info-soft: #ece9ff;
 }

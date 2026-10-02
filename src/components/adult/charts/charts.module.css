@@ -1,0 +1,206 @@
+/* Biểu đồ khu người lớn (SVG/HTML, không thư viện ngoài): chart-1 là chuỗi chính, chart-ref là đường tham chiếu nét đứt. */
+.chart {
+  position: relative;
+  padding-left: var(--adm-chart-axis);
+}
+.plot {
+  position: relative;
+  height: var(--chart-h, var(--adm-chart-h));
+}
+.axis {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.axis span {
+  position: absolute;
+  left: calc(-1 * var(--adm-chart-axis));
+  width: calc(var(--adm-chart-axis) - var(--space-2));
+  text-align: right;
+  transform: translateY(50%);
+  font-size: var(--text-adm-label);
+  line-height: var(--text-adm-label--line-height);
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.axis i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--border-thin);
+  background: var(--chart-grid);
+}
+.cols {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+.bar {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: var(--adm-radius-sm);
+}
+.barM {
+  width: min(var(--adm-bar-max), 70%);
+  border-radius: var(--adm-radius-sm) var(--adm-radius-sm) 0 0;
+}
+.bar:hover .barM,
+.bar:focus-visible .barM {
+  filter: brightness(1.12);
+}
+.barV {
+  margin-bottom: var(--lip-flat);
+  font-size: var(--text-adm-label);
+  line-height: var(--text-adm-label--line-height);
+  font-weight: 600;
+  color: var(--ink);
+}
+.keys {
+  display: flex;
+  gap: var(--space-1);
+  height: var(--adm-chart-label);
+}
+.keys span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+  line-height: var(--adm-chart-label);
+  font-size: var(--text-adm-small);
+  color: var(--ink-soft);
+}
+.ref {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: var(--lip-s) dashed var(--chart-ref);
+  pointer-events: none;
+}
+.ref span {
+  position: absolute;
+  right: 0;
+  top: calc(-1 * var(--space-5));
+  padding: 0 var(--space-1);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+}
+.tip {
+  position: absolute;
+  z-index: var(--z-sticky);
+  transform: translate(-50%, -100%);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--adm-radius-sm);
+  background: var(--ink);
+  color: var(--surface);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tip[hidden] {
+  display: none;
+}
+
+/* Cột ngang */
+.hbars {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.hrow {
+  display: grid;
+  grid-template-columns: var(--adm-hrow-label) 1fr var(--adm-hrow-value);
+  gap: var(--space-3);
+  align-items: center;
+  border-radius: var(--adm-radius-sm);
+}
+.hrow > b {
+  text-align: right;
+}
+.htrk {
+  position: relative;
+  height: var(--space-3);
+  background: var(--surface-sunk);
+  border-radius: var(--lip-s);
+}
+.htrk i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--lip-s);
+}
+.htick {
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  bottom: calc(-1 * var(--space-1));
+  width: var(--lip-flat);
+  background: var(--chart-ref);
+}
+.legend {
+  display: flex;
+  gap: var(--space-4);
+  color: var(--ink-soft);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.legend i {
+  display: inline-block;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--lip-s);
+}
+.legend i.legendTick {
+  width: var(--lip-flat);
+  height: var(--space-4);
+  border-radius: 0;
+  background: var(--chart-ref);
+}
+
+/* Đường */
+.line {
+  padding-left: 0;
+  height: var(--adm-chart-line-h);
+}
+.line svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+.svgt {
+  font-size: var(--text-adm-label);
+  fill: var(--ink-soft);
+}
+.svgv {
+  font-weight: 700;
+  fill: var(--ink);
+}
+.dot {
+  position: absolute;
+  width: var(--adm-dot);
+  height: var(--adm-dot);
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-round);
+  border: var(--lip-m) solid var(--chart-1);
+  background: var(--surface);
+  cursor: pointer;
+}
+.dot:hover,
+.dotOn {
+  background: var(--chart-1);
+}
