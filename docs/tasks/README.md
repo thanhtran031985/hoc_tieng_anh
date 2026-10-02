@@ -9,7 +9,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 03 | [03-db-core](03-db-core/task.md) — Cơ sở dữ liệu lõi và lộ trình 10 cấp | ✅ | 01 | `feat/03-db-core` |
 | 04 | [04-auth-profiles](04-auth-profiles/task.md) — Đăng nhập gia đình và hồ sơ bé | ✅ | 02, 03 | `feat/04-auth-profiles` |
 | 05 | [05-content-l1-l4](05-content-l1-l4/task.md) — Khung chương trình 10 cấp và nội dung cấp 1–4 | ✅ | 03 | `feat/05-content-l1-l4` |
-| 06 | [06-home-map](06-home-map/task.md) — Trang chủ và bản đồ | ⬜ | 02, 04, 05 | `feat/06-home-map` |
+| 06 | [06-home-map](06-home-map/task.md) — Trang chủ và bản đồ | 🔄 | 02, 04, 05 | `feat/06-home-map` |
 | 07 | [07-lesson-player](07-lesson-player/task.md) — Khung bài học và 4 dạng bài cơ bản | ⬜ | 02, 05, 06 | `feat/07-lesson-player` |
 | 08 | [08-review-notebook](08-review-notebook/task.md) — Ôn tập lặp lại và Sổ từ | ⬜ | 07 | `feat/08-review-notebook` |
 | 09 | [09-placement](09-placement/task.md) — Bài xếp lớp | ⬜ | 05, 07 | `feat/09-placement` |
