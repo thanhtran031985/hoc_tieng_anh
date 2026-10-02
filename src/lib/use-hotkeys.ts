@@ -2,12 +2,17 @@
 
 import { useEffect, useRef } from "react";
 
-/** Tên phím dùng trong bản đồ phím: "1".."4", "a".."d", "Enter", "Space", "ArrowLeft", "ArrowRight", "Escape". */
+/** Tên phím dùng trong bản đồ phím: "1".."4", "a".."d", "h", "Enter", "Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Escape". */
 export type HotkeyMap = Record<string, (event: KeyboardEvent) => void>;
 
 export type UseHotkeysOptions = {
   /** Tắt tạm (vd khi hộp thoại đang mở). Mặc định bật. */
   enabled?: boolean;
+  /**
+   * Chạy Enter/Space cả khi focus đang ở trên một nút (và chặn hành vi mặc định của nút). Dùng ở màn học, nơi bé vừa bấm một thẻ đáp án
+   * rồi nhấn Space để nghe lại hoặc Enter để kiểm tra. Vùng có `data-hotkey-skip` (vd nút thoát) và hộp thoại vẫn tự xử lý phím của nó.
+   */
+  captureNative?: boolean;
 };
 
 function normalize(event: KeyboardEvent): string {
@@ -29,7 +34,7 @@ function activatesNatively(target: EventTarget | null): boolean {
  * Phím tắt dùng chung cho bài học: 1–4 (hoặc A–D), Enter, Space, ←/→, Esc.
  * Không chạy khi đang gõ trong ô nhập, khi giữ Ctrl/Alt/Meta, hoặc khi phím lặp.
  */
-export function useHotkeys(map: HotkeyMap, { enabled = true }: UseHotkeysOptions = {}) {
+export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = false }: UseHotkeysOptions = {}) {
   const handlers = useRef(map);
   useEffect(() => {
     handlers.current = map;
@@ -43,11 +48,14 @@ export function useHotkeys(map: HotkeyMap, { enabled = true }: UseHotkeysOptions
       const name = normalize(event);
       const handler = handlers.current[name];
       if (!handler) return;
-      if ((name === "Enter" || name === "Space") && activatesNatively(event.target)) return;
+      if ((name === "Enter" || name === "Space") && activatesNatively(event.target)) {
+        const skip = event.target instanceof HTMLElement && event.target.closest("[data-hotkey-skip], [role=\"dialog\"]") !== null;
+        if (!captureNative || skip) return;
+      }
       event.preventDefault();
       handler(event);
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [enabled]);
+  }, [enabled, captureNative]);
 }

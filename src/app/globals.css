@@ -331,6 +331,14 @@
   --sink-tile: 6px;
   --lift-stop: 6px;
 
+  /* Khung bài học (task 07): thanh đầu, chân bài, vùng hoạt động, bộ đếm "n/N". */
+  --size-lesson-head: 88px;
+  --size-lesson-head-s: 72px;
+  --size-lesson-foot: 112px;
+  --size-lesson-foot-s: 96px;
+  --size-lesson-stage: 960px;
+  --size-count-min: 56px;
+
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;
   --dragon-hop: 16px;

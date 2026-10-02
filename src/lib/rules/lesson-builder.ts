@@ -1,6 +1,7 @@
 // Tạo bài học tự động từ danh sách từ của một chủ đề (hàm thuần, không đụng database). Dùng ở seed (task 05) và nhập Excel (task 12).
 // Import tương đối có đuôi .ts để Node chạy thẳng được (seed, test).
 import { lessonStepConfigSchemas, type ActivityType } from "../schemas/lesson-step-config.ts";
+import { seededRandom, shuffled } from "./random.ts";
 
 export type BuilderWord = {
   /** Từ tiếng Anh, dùng để khớp với bản ghi `words` khi ghi vào DB. */
@@ -50,32 +51,6 @@ export function splitLessonSizes(wordCount: number): number[] {
 function makeStep(activityType: ActivityType, word: string | null, config: Record<string, unknown>): BuiltStep {
   // Qua Zod để cấu hình luôn đúng schema và có đủ giá trị mặc định.
   return { activityType, word, config: lessonStepConfigSchemas[activityType].parse(config) };
-}
-
-/** Bộ sinh số ngẫu nhiên có hạt giống (mulberry32), để seed chạy lại ra cùng kết quả. */
-function seededRandom(seed: string) {
-  let h = 1779033703 ^ seed.length;
-  for (let i = 0; i < seed.length; i++) {
-    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
-    h = (h << 13) | (h >>> 19);
-  }
-  let a = h >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function shuffled<T>(items: readonly T[], random: () => number): T[] {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
 }
 
 /**
