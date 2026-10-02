@@ -42,3 +42,11 @@
 - Bấm cấp đang học vào thẳng bản đồ; cấp đã qua hỏi "Ôn lại?" (Enter = Ôn lại); cấp khóa mở hộp thoại giải thích, không chặn gắt. Dùng đúng lời của thiết kế.
 - Cấp THCS (6–10) vẫn hiện trên con đường; chưa có bản đồ thành phố nên bản đồ cấp 5–10 hiện "Sắp có" (Bước 3).
 - Lời gợi ý của Bông chỉ hiện với bé mới ở cấp 1 chưa xong bài nào.
+
+### 03/10/2026 — Bản đồ đảo
+- Vùng = chủ đề, chặng = bài thường, trùm = bài `unit_test`; mỗi trang 4 vùng, mở bản đồ thì vào trang có chặng đang học. Số chặng 3–6 của mỗi vùng được rải đều dọc đường 5 điểm của thiết kế (`zoneNodePositions`, có test); đúng 5 chặng thì dùng nguyên tọa độ thiết kế.
+- Chặng khóa vẫn bấm được để đọc lời nhắn nhẹ nhàng (đúng thiết kế) nhưng không có nút vào bài; trùm khóa tương tự.
+- Thẻ nổi rộng 400px (thiết kế 340px) vì mỗi chặng có 5–8 từ, xếp 2 cột, mỗi từ có hình (nếu có), loa và chữ.
+- Nhãn dưới ô trùm chỉ ghi "Trận trùm" (tên chủ đề đã có ở nhãn vùng); tên đầy đủ nằm trong `aria-label` và thẻ nổi. Hai nhãn vùng ở hàng dưới dịch ngang để không chồng lên nhãn trùm khi tên chủ đề dài.
+- Cấp còn khóa với bé: `/map/N` chuyển về `/levels` (không lộ nội dung); cấp chưa có chủ đề đã xuất bản hiện "Đảo/Thành phố N này đang được xây" + nút Mở Sổ từ (đang dẫn tới màn "Sắp có").
+- Chặng xong ở cấp 4 có màu cấp (xanh) gần giống màu chặng đang học (`brand`); phân biệt nhờ ô lớn hơn, vầng sáng, nhịp sáng và rồng đứng trên, đúng thiết kế.

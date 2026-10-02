@@ -1,13 +1,13 @@
 # Tiến độ — 06-home-map — Trang chủ và bản đồ
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
+Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Quy tắc mở khóa và chuỗi ngày | ✅ | 02/10/2026 |
 | 1 | Trang chủ (Screen04) và màn "Sắp có" | ✅ | 02/10/2026 |
 | 2 | Tổng quan 10 cấp (Screen05) | ✅ | 02/10/2026 |
-| 3 | Bản đồ đảo (Screen06) | ⬜ | |
+| 3 | Bản đồ đảo (Screen06) | ✅ | 03/10/2026 |
 
 ## Nhật ký
 
@@ -24,4 +24,4 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 
 ## Bước tiếp theo
 
-Bước 3: bản đồ đảo (Screen06): `getIslandMap`, `/map`, `/map/[level]`, 2 trang × 4 vùng, thẻ nổi của chặng.
+Hết các bước của task.md. Chạy `/finish-task` để rà soát, kiểm tra cuối task (`tsc`, `lint`, `build`; thử ở 1366×768 và 1920×1080) và đóng task.

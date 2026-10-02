@@ -320,6 +320,14 @@
   --size-tip-max: 340px;
   --shadow-badge: 0 3px 0 rgba(43, 36, 64, 0.2);
 
+  /* Bản đồ đảo (Screen06). */
+  --size-map-island: 1376px;
+  --size-pop: 400px;
+  --size-pages-row: 48px;
+  --node-halo: rgba(255, 255, 255, 0.7);
+  --node-halo-fade: rgba(255, 255, 255, 0.25);
+  --size-node-star: 20px;
+
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;
   --dragon-hop: 16px;
