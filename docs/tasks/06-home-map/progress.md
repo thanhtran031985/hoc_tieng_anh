@@ -1,6 +1,6 @@
 # Tiến độ — 06-home-map — Trang chủ và bản đồ
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 03/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -24,7 +24,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 
 ## Bước tiếp theo
 
-Giai đoạn C xong (tự kiểm tra sạch). Chờ bạn test thủ công theo checklist bên dưới rồi báo "test ok". Chưa đóng task.
+Hoàn thành. Checklist test thủ công bên dưới do bạn tự test sau khi đóng task (chưa tích).
 
 ### Sửa sau rà soát (03/10/2026)
 - Mục 1 (px cố định): `globals.css` thêm `--lift-tile: 3px`, `--sink-tile: 6px`, `--lift-stop: 6px`; `home.module.css`, `levels.module.css`, `island-map.module.css` dùng token (`--lip-flat` cho `±1px`).
@@ -37,7 +37,7 @@ Giai đoạn C xong (tự kiểm tra sạch). Chờ bạn test thủ công theo 
 - `npx tsc --noEmit`, `npm run lint`, `npm test` (50/50), `npm run build` đều sạch.
 - Ảnh chụp bằng trang tạm (đã xóa) cho các trạng thái trước đây chưa chụp: bản đồ đang tải, bản đồ lỗi, tổng quan 10 cấp lỗi và đang tải; ở 1440×900 và 1366×768 đều không cuộn.
 
-### Checklist test thủ công
+### Checklist test thủ công (bạn test sau khi đóng task, chưa tích)
 Chuẩn bị: database có seed (`npx prisma db seed`), `npm run dev`, đăng nhập, chọn một bé. Để thử các trạng thái cần dữ liệu, chạy SQL (thay `<learner_id>` bằng id của bé trong bảng `learners`):
 ```sql
 -- Bé xong 3 bài đầu của cấp 1 (1–3 sao): chặng sáng lên, bài kế thành "đang học"

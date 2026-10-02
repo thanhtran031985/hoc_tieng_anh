@@ -59,3 +59,12 @@
 ### 03/10/2026 — Sửa 3 mục sau rà soát
 - Bạn chọn sửa cả 3. Mục 3: giữ tiêu đề "Đảo này đang được xây" của thiết kế Screen06 và thêm nhãn "Sắp có" để khớp task.md.
 - Token mới thêm vào `globals.css`: `--lift-tile`, `--sink-tile`, `--lift-stop`.
+
+### 03/10/2026 — Tổng kết: khác với task.md gốc
+- Bản đồ chia 2 trang × 4 vùng (thiết kế chỉ vẽ 4 vùng, dữ liệu có 8 chủ đề mỗi cấp); bạn đã chọn.
+- Trận trùm không chặn chủ đề kế (PRD không nói rõ); bố mẹ mở khóa tay và bài thi lên cấp thuộc task 09/11.
+- Thêm màn "Sắp có" dùng chung cho 5 route giữ chỗ (`/collection`, `/room`, `/notebook`, `/review`, `/lesson/[lessonId]`) để mọi nút đều có đích; task 07/08 thay bằng màn thật.
+- Chuỗi ngày: task này chỉ hiển thị; hàm ghi `recordStudyDay` chờ task 07/08 gọi.
+- Cấp chưa có bài hiện tiêu đề "Đảo này đang được xây" của thiết kế, kèm nhãn "Sắp có" theo task.md.
+- Điểm bảo mật `/admin` chưa qua cổng bố mẹ: chuyển sang task 12.
+- Checklist test thủ công chưa chạy khi đóng task; bạn test sau.

@@ -1,12 +1,12 @@
 # So sánh code với PRD và task.md — tổng quan (sau task 06)
 
-Cập nhật: 03/10/2026 · Bản chốt code: `53db618` · Phạm vi: các task 01–06 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
+Cập nhật: 03/10/2026 · Bản chốt code: `31f4010` · Phạm vi: các task 01–06 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
 
 Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý chính của PRD; **nhỏ** = lệch nhẹ, hoặc đã nằm trong kế hoạch của task sau.
 
 | # | Mức | Điểm khác | Code (file:dòng) | PRD / task.md |
 |---|---|---|---|---|
-| 1 | **quan trọng** | Trang `/admin` chỉ cần role `admin`, **không cần mở cổng bố mẹ**. Tài khoản đăng ký đầu tiên tự thành `admin`, nên tài khoản gia đình thường là admin: máy đang đăng nhập thì bé gõ `/admin` là vào được, không cần PIN. Hiện trang chỉ là giữ chỗ nên chưa lộ dữ liệu, nhưng task 12 phải chặn trước khi có nội dung. | `src/app/(admin)/admin/page.tsx:11`, `src/server/session.ts:31-35`, `src/server/users.ts:8-10` | PRD dòng 126: Cổng bố mẹ → Khu vực bố mẹ → Quản trị nội dung |
+| 1 | **quan trọng** | Trang `/admin` chỉ cần role `admin`, **không cần mở cổng bố mẹ**. Tài khoản đăng ký đầu tiên tự thành `admin`, nên tài khoản gia đình thường là admin: máy đang đăng nhập thì bé gõ `/admin` là vào được, không cần PIN. Hiện trang chỉ là giữ chỗ nên chưa lộ dữ liệu, nhưng task 12 phải chặn trước khi có nội dung (bạn đã quyết định làm ở task 12; việc cần làm ghi ở `docs/tasks/12-admin-content/decisions.md`). | `src/app/(admin)/admin/page.tsx:11`, `src/server/session.ts:31-35`, `src/server/users.ts:8-10` | PRD dòng 126: Cổng bố mẹ → Khu vực bố mẹ → Quản trị nội dung |
 | 2 | nhỏ | Cổng bố mẹ chỉ có ở màn chọn hồ sơ. Trang chủ chỉ có hộp Cài đặt (Đổi bé, Đăng xuất), không có nút vào khu bố mẹ. | `src/app/(kid)/profiles/page.tsx:24`, `src/features/kid/KidTopbar.tsx:39-42` | PRD dòng 126 ("Ở mọi màn"), dòng 138 |
 | 3 | nhỏ (task 09) | Tạo hồ sơ xong đi thẳng `/home`, chưa có bài xếp lớp. | `src/features/profiles/create/CreateProfileFlow.tsx:36-38` | PRD dòng 114, 146–152 (C4) |
 | 4 | nhỏ | Tạo hồ sơ chỉ hỏi tên, lớp, bạn rồng; chưa hỏi năm sinh và sách tiếng Anh ở trường (cột `birth_year`, `textbook` đã có trong database nhưng không có ô nhập). | `src/features/profiles/create/CreateProfileFlow.tsx:36`, `prisma/schema.prisma:54-57` | PRD dòng 142 (C3) |

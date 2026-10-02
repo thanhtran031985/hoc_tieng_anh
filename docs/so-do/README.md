@@ -9,4 +9,5 @@ Chạy lại bằng lệnh `/ve-so-do tong-quan` (hoặc `/ve-so-do NN-slug` cho
 | [Hành trình của bé](tong-quan/workflow-hanh-trinh-cua-be.html) | workflow | tổng quan (01–06) | 03/10/2026 |
 | [Khu bố mẹ và quản trị](tong-quan/workflow-khu-nguoi-lon.html) | workflow | tổng quan (01–06) | 03/10/2026 |
 | [Kiến trúc hệ thống](tong-quan/architecture-he-thong.html) | architecture | tổng quan (01–06) | 03/10/2026 |
+| [Chặng và trận trùm mở khóa thế nào](tong-quan/lifecycle-chang-va-trum.html) | lifecycle | 06-home-map | 03/10/2026 |
 | [So sánh code với PRD](tong-quan/so-sanh.md) | ghi chú | tổng quan (01–06) | 03/10/2026 |
