@@ -91,17 +91,17 @@
           <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">⋯</button>
         </div>
       </div>
-      <p class="subtitle">Sinh lúc 2026-10-02 14:02 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
+      <p class="subtitle">Sinh lúc 2026-10-02 14:20 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
     </div>
 
     <div class="stats">
       <div class="stat"><div class="stat-value">12</div><div class="stat-label">tổng số task</div></div>
       <div class="stat"><div class="stat-value" style="color:#34d399">1</div><div class="stat-label">✅ xong</div></div>
       <div class="stat"><div class="stat-value"><span style="color:#22d3ee">0</span> / <span style="color:#94a3b8">11</span></div><div class="stat-label">🔄 đang làm / ⬜ chưa làm</div></div>
-      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">bước đã xong (4/4)</div></div>
+      <div class="stat"><div class="stat-value">56%</div><div class="stat-label">bước đã xong (5/9)</div></div>
     </div>
 
-    
+    <div class="card warnings"><div class="card-header"><div class="card-dot" style="background:#fbbf24"></div><h3>Cảnh báo (1)</h3></div><ul><li>• Task 02: README ghi ⬜ nhưng progress.md ghi &quot;Trạng thái chung&quot; 🔄.</li></ul></div>
 
     <h2 class="section-title">Sơ đồ phụ thuộc</h2>
     <div class="diagram-container">
@@ -157,10 +157,10 @@
           <text x="568" y="51" font-size="12" text-anchor="end">⬜</text>
           <text x="386" y="50" fill="white" font-size="12" font-weight="600">02-ui-kit</text>
           <text x="362" y="70" fill="#94a3b8" font-size="9">Bộ thành phần giao diện Tiểu học</text>
-          <text x="362" y="92" fill="#cbd5e1" font-size="9">chưa có tiến độ</text>
-          <text x="568" y="92" fill="#94a3b8" font-size="9" text-anchor="end"></text>
+          <text x="362" y="92" fill="#cbd5e1" font-size="9">1/5 bước</text>
+          <text x="568" y="92" fill="#94a3b8" font-size="9" text-anchor="end">20%</text>
           <rect x="362" y="102" width="206" height="5" rx="2.5" fill="#1e293b"/>
-          <rect x="362" y="102" width="0" height="5" rx="2.5" fill="#34d399"/>
+          <rect x="362" y="102" width="41" height="5" rx="2.5" fill="#34d399"/>
         </g>
         <g>
           <title>03 — 03-db-core: Cơ sở dữ liệu lõi và lộ trình 10 cấp (chưa làm)</title>
@@ -326,9 +326,9 @@
           <span class="badge" style="color:#94a3b8;border-color:#94a3b8">⬜ chưa làm</span>
         </div>
         <p class="task-title">Bộ thành phần giao diện Tiểu học</p>
-        <p class="meta">Nhánh: <code>feat/02-ui-kit</code> · Phụ thuộc: 01</p>
-        
-        <p class="muted">chưa có tiến độ</p>
+        <p class="meta">Nhánh: <code>feat/02-ui-kit</code> · Cập nhật: 02/10/2026 · Phụ thuộc: 01</p>
+        <div class="bar"><div class="bar-fill" style="width:20%"></div></div><div class="bar-label">1/5 bước · 20%</div>
+        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Button, KeyHint, Icons</div><div class="note">Trang xem: /dev/ui</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 1 · Mascot và WordPicture</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 2 · SpeakerButton</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 3 · Card, thẻ đáp án, ProgressBar, StatChip, Topbar</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 4 · Dialog, FeedbackBar, DataStates, khung xương</div></div></li></ul>
         <p class="links"><a href="02-ui-kit/task.md">task.md</a> · <a href="02-ui-kit/progress.md">progress.md</a></p>
       </div>
       <div class="card task-card">
@@ -460,8 +460,10 @@
   </div>
 
   <script type="application/json" id="tasks-data">{
-  "generatedAt": "2026-10-02 14:02 (UTC+07:00)",
-  "warnings": [],
+  "generatedAt": "2026-10-02 14:20 (UTC+07:00)",
+  "warnings": [
+    "Task 02: README ghi ⬜ nhưng progress.md ghi \"Trạng thái chung\" 🔄."
+  ],
   "tasks": [
     {
       "nn": "01",
@@ -524,9 +526,50 @@
       "branch": "feat/02-ui-kit",
       "inReadme": true,
       "hasFolder": true,
-      "progress": null,
-      "stepsTotal": 0,
-      "stepsDone": 0,
+      "progress": {
+        "overall": "doing",
+        "updated": "02/10/2026",
+        "steps": [
+          {
+            "step": "0",
+            "numbered": true,
+            "name": "Button, KeyHint, Icons",
+            "status": "done",
+            "note": "Trang xem: /dev/ui"
+          },
+          {
+            "step": "1",
+            "numbered": true,
+            "name": "Mascot và WordPicture",
+            "status": "todo",
+            "note": ""
+          },
+          {
+            "step": "2",
+            "numbered": true,
+            "name": "SpeakerButton",
+            "status": "todo",
+            "note": ""
+          },
+          {
+            "step": "3",
+            "numbered": true,
+            "name": "Card, thẻ đáp án, ProgressBar, StatChip, Topbar",
+            "status": "todo",
+            "note": ""
+          },
+          {
+            "step": "4",
+            "numbered": true,
+            "name": "Dialog, FeedbackBar, DataStates, khung xương",
+            "status": "todo",
+            "note": ""
+          }
+        ],
+        "hasTable": true
+      },
+      "stepsTotal": 5,
+      "stepsDone": 1,
       "level": 1
     },
     {

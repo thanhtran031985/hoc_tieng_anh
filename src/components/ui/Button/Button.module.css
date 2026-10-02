@@ -1,0 +1,159 @@
+.btn {
+  --lip: var(--brand-shade);
+  --face: var(--brand);
+  --face-hover: var(--brand-hover);
+  --txt: var(--ink-on-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  transition:
+    transform var(--duration-fast) ease,
+    box-shadow var(--duration-fast) ease,
+    background-color var(--duration-base) ease;
+  background: var(--face);
+  color: var(--txt);
+  box-shadow: 0 var(--lip-m) 0 0 var(--lip);
+}
+
+.s {
+  height: var(--size-btn-s);
+  padding: 0 var(--space-4);
+  font-size: var(--text-label);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 var(--lip-s) 0 0 var(--lip);
+}
+.m {
+  height: var(--size-btn-m);
+  padding: 0 var(--space-6);
+  font-size: var(--text-button);
+}
+.l {
+  height: var(--size-btn-l);
+  padding: 0 var(--space-8);
+  font-size: var(--text-button-l);
+  border-radius: var(--radius-lg);
+}
+.block {
+  width: 100%;
+}
+
+/* Trạng thái ép (data-state) chỉ dùng ở trang /dev/ui để chụp rê chuột, nhấn, focus. */
+.btn:hover:not(:disabled),
+.btn[data-state="hover"] {
+  background: var(--face-hover);
+  transform: translateY(calc(-1 * var(--lift)));
+  box-shadow: 0 var(--lip-l) 0 0 var(--lip);
+}
+.btn:active:not(:disabled),
+.btn[data-state="active"] {
+  transform: translateY(var(--sink-m));
+  box-shadow: 0 var(--lip-flat) 0 0 var(--lip);
+}
+.s:active:not(:disabled),
+.s[data-state="active"] {
+  transform: translateY(var(--sink-s));
+}
+.btn[data-state="focus"] {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.btn:disabled {
+  --face: var(--surface-sunk);
+  --lip: var(--star-empty);
+  --txt: var(--ink-disabled);
+  cursor: not-allowed;
+}
+
+.secondary {
+  --face: var(--surface);
+  --face-hover: var(--surface-soft);
+  --lip: var(--line-strong);
+  --txt: var(--ink);
+  box-shadow:
+    inset 0 0 0 var(--border-thin) var(--line-strong),
+    0 calc(var(--lip-m) - var(--lip-flat)) 0 0 var(--lip);
+}
+.secondary:hover:not(:disabled),
+.secondary[data-state="hover"] {
+  box-shadow:
+    inset 0 0 0 var(--border-thin) var(--line-strong),
+    0 calc(var(--lip-l) - var(--lip-flat)) 0 0 var(--lip);
+}
+.secondary:active:not(:disabled),
+.secondary[data-state="active"] {
+  box-shadow:
+    inset 0 0 0 var(--border-thin) var(--line-strong),
+    0 var(--lip-flat) 0 0 var(--lip);
+}
+.secondary:disabled {
+  box-shadow: 0 calc(var(--lip-m) - var(--lip-flat)) 0 0 var(--lip);
+}
+
+.level {
+  --face: var(--lv);
+  --face-hover: var(--lv);
+  --lip: var(--lv-shade);
+  --txt: var(--on-lv);
+}
+.level:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.success {
+  --face: var(--success);
+  --face-hover: var(--success);
+  --lip: var(--success-shade);
+  --txt: var(--ink-on-dark);
+}
+.success:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.retry {
+  --face: var(--retry);
+  --face-hover: var(--retry);
+  --lip: var(--retry-shade);
+  --txt: var(--ink);
+}
+.retry:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.ghost {
+  --face: transparent;
+  --face-hover: var(--surface-soft);
+  --lip: transparent;
+  --txt: var(--ink-soft);
+  box-shadow: none;
+}
+.ghost:hover:not(:disabled),
+.ghost:active:not(:disabled) {
+  box-shadow: none;
+  transform: none;
+  color: var(--ink);
+}
+
+/* Nhãn phím trong nút kế thừa màu chữ của nút. */
+.btn kbd {
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+  opacity: 0.85;
+  height: var(--size-key-in-btn);
+  margin-left: var(--space-1);
+}
+.btn:disabled kbd {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition-duration: 1ms !important;
+  }
+}

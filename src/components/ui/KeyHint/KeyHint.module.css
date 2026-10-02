@@ -1,0 +1,25 @@
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--size-key);
+  height: var(--size-key);
+  padding: 0 var(--pad-key);
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: var(--text-key--line-height);
+  font-weight: var(--text-key--font-weight);
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: var(--border-thin) solid var(--line-strong);
+  border-bottom-width: var(--border-thick);
+  border-radius: var(--radius-sm);
+}
+
+.corner {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 1;
+}

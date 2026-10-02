@@ -58,6 +58,7 @@ Không bắt đầu làm task khi tôi chưa yêu cầu.
   3. Báo cáo ngắn: đã làm gì, kết quả kiểm tra, việc tôi cần làm thủ công.
   4. Đề xuất commit message dạng `NN-slug: step N — <mô tả>`. Chỉ commit khi tôi đồng ý.
   5. DỪNG và chờ tôi trả lời "continue".
+  6. Luôn luôn chạy plan mode để lên kế hoạch thực hiện mỗi task.
 - Khi tôi duyệt một kế hoạch ở Plan mode: lưu kế hoạch đó vào `plan.md` của task.
 - Khi có quyết định mới hoặc thay đổi so với `task.md`: ghi vào `decisions.md`.
 - Khi task hoàn thành: đổi trạng thái trong `docs/tasks/README.md` thành ✅.

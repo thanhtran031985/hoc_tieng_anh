@@ -34,6 +34,8 @@
   --star-empty: #e6dccb;
   --coin: #ffb300;
   --streak: #ff7a3d;
+  --streak-shade: #d9541a;
+  --star-empty-line: #d6c8b0;
   --success: #22873f;
   --success-shade: #176a31;
   --success-soft: #dcf5e2;
@@ -137,6 +139,20 @@
   --z-feedback: 40;
   --z-dialog: 50;
   --z-burst: 60;
+
+  /* Kích thước chi tiết của thành phần (thêm ở task 02, chưa có trong tokens.json).
+     Gờ 3D của nút kẹo dẻo, độ nhô khi rê chuột, độ lún khi nhấn, nhãn phím. */
+  --lip-flat: 1px;
+  --lip-s: 4px;
+  --lip-m: 6px;
+  --lip-l: 8px;
+  --lift: 2px;
+  --sink-s: 3px;
+  --sink-m: 5px;
+  --focus-offset: 3px;
+  --size-key: 26px;
+  --size-key-in-btn: 24px;
+  --pad-key: 7px;
 }
 
 /* ---- Màu theo cấp: đặt data-level="1..10" trên vùng chứa (từ designs/components/bundle.css) ---- */
@@ -402,4 +418,15 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Viền focus bàn phím: rõ trên mọi nền. Ô nhập dùng bóng focus thay cho viền. */
+:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
