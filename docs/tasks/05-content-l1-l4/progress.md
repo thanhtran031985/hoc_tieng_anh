@@ -8,7 +8,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 1 | Khung cấp 1–5 (Tiểu học) | ✅ | 02/10/2026 |
 | 2 | Khung cấp 6–10 | ✅ | 02/10/2026 |
 | 3 | Hàm tạo bài tự động | ✅ | 02/10/2026 |
-| 4 | Từ vựng cấp 3 | ⬜ | |
+| 4 | Từ vựng cấp 3 | ✅ | 02/10/2026 |
 | 5 | Hình minh họa cấp 3 | ⬜ | |
 | 6 | Bài học cấp 3 và seed | ⬜ | |
 | 7 | Từ vựng, hình, bài học cấp 4 | ⬜ | |
@@ -38,6 +38,11 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Kiểm tra: 12 test đạt: 13 từ → 2 bài (7 + 6 từ) + 1 trận trùm; thứ tự bước thẻ từ → nghe chọn hình → nối cặp → chọn từ cho hình; từ thiếu hình chỉ có thẻ từ; chủ đề không có hình thì không có trận trùm; trận trùm ≤ 12 bước, xen hai dạng, cùng kết quả khi chạy lại. `npx tsc --noEmit`, `npm run lint`, `npm run build` sạch.
 - Việc thủ công: không.
 
+### Bước 4 — Từ vựng cấp 3 (02/10/2026)
+- Đã làm: soạn 250 từ cấp 3 trong `prisma/seed/content/level-03/<slug>.json` (8 tệp, mỗi từ có phiên âm, loại từ, nghĩa tiếng Việt, câu ví dụ Anh và Việt); schema Zod dùng chung `src/lib/schemas/content.ts`; script `scripts/check-content.mjs`.
+- Kiểm tra: `node scripts/check-content.mjs 3` đạt: đúng 250 từ, mỗi chủ đề khớp từng từ với `target_words`; đủ trường; phiên âm trong `/…/`; câu ví dụ ≤ 12 từ, chứa từ đó và chỉ dùng từ cấp 1–3 hoặc từ thông dụng (danh sách trong script); `tsc`, `lint` sạch.
+- Việc thủ công: nên đọc lướt phiên âm và câu tiếng Việt vài chủ đề (tôi soạn, chưa có người rà).
+
 ## Bước tiếp theo
 
-Bước 4 — Từ vựng cấp 3 (≈250 từ: phiên âm, loại từ, nghĩa, câu ví dụ Anh và Việt) trong `prisma/seed/content/level-03/<slug>.json`.
+Bước 5 — Hình minh họa cấp 3: SVG cho từ cụ thể (`public/media/pictures/<word>.svg`), mở rộng `WordPicture` để đọc tệp hình.

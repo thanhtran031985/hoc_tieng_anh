@@ -20,3 +20,5 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 02/10/2026 | Trận trùm là bài `kind = unit_test`, tối đa 12 bước, xen nghe-chọn-hình và chọn-từ-cho-hình, trộn có hạt giống (cùng kết quả khi seed lại); chủ đề không có từ nào có hình thì không có trận trùm | Trận trùm cần hình; chạy seed lại không đổi nội dung |
 | 02/10/2026 | Số lựa chọn mỗi câu = min(3, số từ có hình) cho nghe-chọn-hình, min(3, số từ) cho chọn-từ-cho-hình; dưới 2 thì bỏ dạng đó | Cần đủ đáp án nhiễu |
 | 02/10/2026 | Thêm `npm test` = `node --test "src/**/*.test.ts"` | Chưa có test runner; Node có sẵn, không cài package |
+| 02/10/2026 | Câu ví dụ được kiểm "đúng cấp" bằng script: chỉ dùng từ mục tiêu cấp 1…N (tách theo chữ), tên riêng (Tom, Anna…) và danh sách từ thông dụng trong `scripts/check-content.mjs` (đại từ, trợ động từ, giới từ và động từ cơ bản như like, want, go, see, make, watch, start) | Từ cấp 4 như have, do, go, get là cấu trúc cơ bản nên không thể cấm ở cấp 3 |
+| 02/10/2026 | Loại từ lưu bằng tiếng Anh (noun, verb, adjective…), giao diện tự đổi sang nhãn tiếng Việt khi hiển thị | Cột `part_of_speech` là dữ liệu, không phải chữ giao diện |
