@@ -26,13 +26,16 @@ export type PlayStep =
   | { id: string; kind: "word_card"; word: PlayWord; showExample: boolean; ordinal: number; total: number }
   | { id: string; kind: "listen_choose_picture"; target: PlayWord; options: PlayWord[]; autoPlay: boolean }
   | { id: string; kind: "choose_word_for_picture"; target: PlayWord; options: PlayWord[] }
-  | { id: string; kind: "match_pairs"; pairs: PlayWord[] };
+  | { id: string; kind: "match_pairs"; pairs: PlayWord[] }
+  | { id: string; kind: "memory_game"; pairs: PlayWord[] };
 
 export type PlayStepKind = PlayStep["kind"];
 
 const DEFAULT_OPTIONS = 3;
 const DEFAULT_PAIRS = 4;
 const MIN_PAIRS = 2;
+const DEFAULT_MEMORY_PAIRS = 6;
+const MIN_MEMORY_PAIRS = 3;
 
 const hasPicture = (w: PlayWord | null): w is PlayWord => w !== null && w.image !== null;
 
@@ -84,6 +87,13 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
         const pairs = lessonPictureWords.slice(0, config.pairCount ?? DEFAULT_PAIRS);
         if (pairs.length < MIN_PAIRS) break;
         play.push({ id, kind: "match_pairs", pairs });
+        break;
+      }
+      case "memory_game": {
+        // Từ của bài trước, thiếu thì lấy thêm từ có hình của chủ đề cho đủ cặp.
+        const pairs = uniqueById([...lessonPictureWords, ...pictureWords]).slice(0, config.pairCount ?? DEFAULT_MEMORY_PAIRS);
+        if (pairs.length < MIN_MEMORY_PAIRS) break;
+        play.push({ id, kind: "memory_game", pairs });
         break;
       }
       default:

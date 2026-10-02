@@ -38,6 +38,8 @@ export const MAX_BOSS_STEPS = 12;
 const MAX_OPTIONS = 3;
 const MIN_PAIRS = 3;
 const MAX_PAIRS = 6;
+/** Bài có ít nhất chừng này từ có hình mới có trò chơi lật thẻ. */
+const MIN_MEMORY_WORDS = 4;
 
 /** Chia n từ thành các bài gần bằng nhau, mỗi bài tối đa 8 từ (13 → 7 + 6). Trả về số từ mỗi bài. */
 export function splitLessonSizes(wordCount: number): number[] {
@@ -55,7 +57,7 @@ function makeStep(activityType: ActivityType, word: string | null, config: Recor
 
 /**
  * Tạo các bài của một chủ đề: các bài thường rồi một trận trùm.
- * Mỗi bài thường: thẻ từ cho từng từ → nghe và chọn hình → nối từ với hình → chọn từ đúng cho hình.
+ * Mỗi bài thường: thẻ từ cho từng từ → nghe và chọn hình → nối từ với hình → lật thẻ ghép cặp → chọn từ đúng cho hình.
  * Trận trùm (`unit_test`): trộn từ cả chủ đề, xen nghe-chọn-hình và chọn-từ-cho-hình.
  * Số lựa chọn mỗi câu không vượt quá số từ (có hình) của chủ đề; ít hơn 2 thì bỏ dạng đó.
  * Chủ đề không có từ nào thì trả về mảng rỗng; không có từ nào có hình thì không có trận trùm.
@@ -84,6 +86,10 @@ export function buildLessons(words: readonly BuilderWord[], options: BuildOption
     if (canListen) steps.push(...withPicture.map((w) => listenStep(w.word)));
     if (withPicture.length >= MIN_PAIRS) {
       steps.push(makeStep("match_pairs", null, { pairCount: Math.min(withPicture.length, MAX_PAIRS) }));
+    }
+    if (withPicture.length >= MIN_MEMORY_WORDS) {
+      // Thiếu từ có hình trong bài thì trình học lấy thêm từ cùng chủ đề cho đủ cặp.
+      steps.push(makeStep("memory_game", null, { pairCount: Math.min(pictureCount, MAX_PAIRS) }));
     }
     if (canChoose) steps.push(...withPicture.map((w) => chooseStep(w.word)));
 

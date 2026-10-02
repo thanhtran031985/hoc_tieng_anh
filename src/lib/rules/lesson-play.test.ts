@@ -86,4 +86,19 @@ describe("buildPlaySteps", () => {
     const lonely = buildPlaySteps([step(1, "word_card", unit[0]), step(2, "match_pairs", null, { pairCount: 4 })], unit, "seed");
     assert.ok(!lonely.some((p) => p.kind === "match_pairs"));
   });
+
+  it("lật thẻ: ưu tiên từ có hình của bài, thiếu thì lấy thêm từ có hình của chủ đề, cần ít nhất 3 cặp", () => {
+    const many = [1, 2, 3, 4, 5, 6, 7].map((i) => word(i, `w${i}`));
+    const steps = [step(1, "word_card", many[0]), step(2, "word_card", many[1]), step(3, "word_card", many[2]), step(4, "memory_game", null, { pairCount: 6 })];
+    const memory = buildPlaySteps(steps, many, "seed").find((p) => p.kind === "memory_game");
+    assert.ok(memory && memory.kind === "memory_game");
+    assert.equal(memory.pairs.length, 6);
+    assert.deepEqual(
+      memory.pairs.slice(0, 3).map((p) => p.word),
+      ["w1", "w2", "w3"],
+    );
+    assert.equal(new Set(memory.pairs.map((p) => p.id)).size, 6);
+    const tiny = buildPlaySteps([step(1, "word_card", many[0]), step(2, "memory_game", null, { pairCount: 6 })], many.slice(0, 2), "seed");
+    assert.ok(!tiny.some((p) => p.kind === "memory_game"));
+  });
 });

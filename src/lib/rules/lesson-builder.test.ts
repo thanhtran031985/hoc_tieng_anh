@@ -36,18 +36,28 @@ describe("buildLessons", () => {
     assert.equal(lessons[2].title, "Trận trùm: Fruit");
   });
 
-  it("thứ tự bước trong bài: thẻ từ → nghe chọn hình → nối cặp → chọn từ cho hình", () => {
+  it("thứ tự bước trong bài: thẻ từ → nghe chọn hình → nối cặp → lật thẻ → chọn từ cho hình", () => {
     const [lesson] = buildLessons(makeWords(5));
     assert.deepEqual(types(lesson.steps), [
       ...Array(5).fill("word_card"),
       ...Array(5).fill("listen_choose_picture"),
       "match_pairs",
+      "memory_game",
       ...Array(5).fill("choose_word_for_picture"),
     ]);
     // Mỗi từ có thẻ từ, và mỗi bước chọn gắn với đúng từ của bài.
     const cardWords = lesson.steps.filter((s) => s.activityType === "word_card").map((s) => s.word);
     assert.deepEqual(cardWords, ["word1", "word2", "word3", "word4", "word5"]);
     assert.equal(lesson.steps.find((s) => s.activityType === "match_pairs")?.word, null);
+  });
+
+  it("lật thẻ chỉ có khi bài có từ 4 từ có hình trở lên; số cặp tối đa 6 và không vượt số từ có hình của chủ đề", () => {
+    const three = buildLessons(makeWords(3))[0];
+    assert.ok(!types(three.steps).includes("memory_game"));
+    const [lesson] = buildLessons(makeWords(5));
+    assert.equal(lesson.steps.find((s) => s.activityType === "memory_game")?.config.pairCount, 5);
+    const big = buildLessons(makeWords(14))[0];
+    assert.equal(big.steps.find((s) => s.activityType === "memory_game")?.config.pairCount, 6);
   });
 
   it("từ thiếu hình không có câu nghe chọn hình, nối cặp hay chọn từ cho hình, nhưng vẫn có thẻ từ", () => {

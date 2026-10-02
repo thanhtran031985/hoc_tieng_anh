@@ -9,7 +9,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 2 | Nghe và chọn hình (Screen07) | ✅ | 03/10/2026 |
 | 3 | Nối từ với hình (Screen09) | ✅ | 03/10/2026 |
 | 4 | Chọn từ đúng cho hình (Screen18) | ✅ | 03/10/2026 |
-| 5 | Lật thẻ ghép cặp (Screen10) | ⬜ | |
+| 5 | Lật thẻ ghép cặp (Screen10) | ✅ | 03/10/2026 |
 | 6 | Kết thúc bài và lưu kết quả (Screen12) | ⬜ | |
 
 ## Nhật ký
@@ -45,6 +45,13 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Kiểm tra (Edge không đầu, database tạm): 6 câu chọn từ: H làm mờ 1 từ ("Còn 2 từ thôi!"); đúng → "Tuyệt vời!" + từ, phiên âm, nghĩa; sai lần 1 → "yes là vâng, có. Bé nhìn hình thật kỹ nha…"; sai lần 2 tự gợi ý; sai lần 3 → xem đáp án, tổng bước 22 → 26 sau 4 lần xem đáp án; không cuộn ở 1366×768, 1440×900, 1920×1080; không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
 - Việc thủ công: không.
 
+### Bước 5 — Lật thẻ ghép cặp (Screen10) (03/10/2026)
+- Đã làm: loại bài `memory_game` (`ACTIVITY_TYPES` + schema `pairCount` 3–6 trong `lesson-step-config.ts`; `lesson-builder.ts` thêm bước sau nối cặp cho bài có từ 4 từ có hình; `lesson-play.ts` dựng cặp từ của bài rồi lấy thêm từ có hình của chủ đề cho đủ cặp); `MemoryStep` + `memory.module.css` (12 thẻ = 6 hình + 6 chữ, thẻ úp màu cấp có sao, lật 3D, đếm "n/6 cặp" và "n lượt", không đếm giờ, thẻ không khớp viền cam rồi úp lại sau 1,1 giây, khớp thì ở lại và đọc từ, mũi tên di chuyển focus ←→ ±1 ↑↓ ±1 hàng, Enter/Space lật, Chơi lại, dải "Ghép xong 6 cặp!"). Giữ thanh tiến độ của bài ở đầu màn thay vì thanh riêng của trò chơi (khác bản xem trước, để tiến độ bài đi liền mạch).
+- Token mới: `--size-memory-card`, `--size-tip-dragon-s`.
+- Test thêm: 3 test builder/play (65/65): bài có từ 4 từ có hình mới có lật thẻ, pairCount tối đa 6, lấy thêm từ chủ đề cho đủ cặp, bỏ khi dưới 3 cặp.
+- Kiểm tra (Edge không đầu, database tạm đã seed lại): 12 thẻ; lật 2 thẻ không khớp → viền cam, lượt tăng, lời "Chưa khớp rồi…"; ghép đủ 6 cặp → dải "Ghép xong 6 cặp!", Enter sang bước kế; mũi tên di chuyển focus đúng, Enter lật; không có đồng hồ; không cuộn ở 1366×768, 1440×900, 1920×1080; không lỗi console. `tsc`, `lint` sạch.
+- Việc thủ công: chạy `npx prisma db seed` trên database thật để có bước lật thẻ (seed bỏ qua chủ đề đã có tiến độ học; player vẫn chạy bình thường khi bài chưa có bước này).
+
 ## Bước tiếp theo
 
-Bước 5 — Lật thẻ ghép cặp (Screen10)
+Bước 6 — Kết thúc bài và lưu kết quả (Screen12)
