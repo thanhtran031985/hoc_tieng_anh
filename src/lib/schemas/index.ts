@@ -1,3 +1,4 @@
+export * from "./answer-log";
 export * from "./learner";
 export * from "./learner-settings";
 export * from "./lesson-step-config";

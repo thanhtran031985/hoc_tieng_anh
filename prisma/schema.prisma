@@ -77,8 +77,13 @@ model Learner {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
-  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  currentLevel Level? @relation("LearnerCurrentLevel", fields: [currentLevelId], references: [id], onDelete: SetNull)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentLevel   Level?           @relation("LearnerCurrentLevel", fields: [currentLevelId], references: [id], onDelete: SetNull)
+  lessonProgress LessonProgress[]
+  lessonAttempts LessonAttempt[]
+  answerLogs     AnswerLog[]
+  reviewCards    ReviewCard[]
+  studySessions  StudySession[]
 
   @@index([userId])
   @@index([currentLevelId])
@@ -165,8 +170,10 @@ model Lesson {
   minutes   Int           @default(10) @db.TinyInt
   status    ContentStatus @default(draft)
 
-  unit  Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  steps LessonStep[]
+  unit     Unit             @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  steps    LessonStep[]
+  progress LessonProgress[]
+  attempts LessonAttempt[]
 
   @@index([unitId, sortOrder])
   @@map("lessons")
@@ -215,9 +222,11 @@ model Word {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  level  Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
-  topics WordTopic[]
-  steps  LessonStep[]
+  level       Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  topics      WordTopic[]
+  steps       LessonStep[]
+  answerLogs  AnswerLog[]
+  reviewCards ReviewCard[]
 
   @@index([word])
   @@index([levelId])
@@ -262,8 +271,10 @@ model Question {
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
-  level Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
-  steps LessonStep[]
+  level       Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  steps       LessonStep[]
+  answerLogs  AnswerLog[]
+  reviewCards ReviewCard[]
 
   @@index([levelId, type])
   @@map("questions")
@@ -280,4 +291,120 @@ model Media {
   createdAt DateTime  @default(now()) @map("created_at")
 
   @@map("media")
+}
+
+// ---------------------------------------------------------------------------
+// Kết quả học
+// ---------------------------------------------------------------------------
+
+enum AnswerSource {
+  lesson
+  review
+  exam
+}
+
+/// Kết quả tốt nhất của mỗi bài (mỗi bé một dòng cho mỗi bài).
+model LessonProgress {
+  id          Int       @id @default(autoincrement())
+  learnerId   Int       @map("learner_id")
+  lessonId    Int       @map("lesson_id")
+  bestStars   Int       @default(0) @map("best_stars") @db.TinyInt
+  attempts    Int       @default(0)
+  completedAt DateTime? @map("completed_at")
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  lesson  Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([learnerId, lessonId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+/// Từng lần học một bài.
+model LessonAttempt {
+  id         Int       @id @default(autoincrement())
+  learnerId  Int       @map("learner_id")
+  lessonId   Int       @map("lesson_id")
+  startedAt  DateTime  @default(now()) @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+  correct    Int       @default(0)
+  wrong      Int       @default(0)
+  stars      Int       @default(0) @db.TinyInt
+  xp         Int       @default(0)
+  coins      Int       @default(0)
+
+  learner    Learner     @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  lesson     Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answerLogs AnswerLog[]
+
+  @@index([learnerId, lessonId])
+  @@index([learnerId, startedAt])
+  @@index([lessonId])
+  @@map("lesson_attempts")
+}
+
+/// Từng câu trả lời, dùng để thống kê kỹ năng và tìm từ hay sai.
+model AnswerLog {
+  id         BigInt       @id @default(autoincrement())
+  learnerId  Int          @map("learner_id")
+  questionId Int?         @map("question_id")
+  wordId     Int?         @map("word_id")
+  source     AnswerSource
+  attemptId  Int?         @map("attempt_id")
+  isCorrect  Boolean      @map("is_correct")
+  /// Câu trả lời của bé. Schema: src/lib/schemas/answer-log.ts.
+  answer     Json?
+  timeMs     Int?         @map("time_ms")
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  learner  Learner        @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  question Question?      @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  word     Word?          @relation(fields: [wordId], references: [id], onDelete: SetNull)
+  attempt  LessonAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+
+  @@index([learnerId, createdAt])
+  @@index([learnerId, wordId])
+  @@index([questionId])
+  @@index([wordId])
+  @@index([attemptId])
+  @@map("answer_logs")
+}
+
+/// Thẻ ôn tập lặp lại (5 hộp): mỗi thẻ gắn với một từ hoặc một câu hỏi.
+model ReviewCard {
+  id             Int       @id @default(autoincrement())
+  learnerId      Int       @map("learner_id")
+  wordId         Int?      @map("word_id")
+  questionId     Int?      @map("question_id")
+  /// Hộp 1–5.
+  box            Int       @default(1) @db.TinyInt
+  dueOn          DateTime  @map("due_on") @db.Date
+  correctCount   Int       @default(0) @map("correct_count")
+  wrongCount     Int       @default(0) @map("wrong_count")
+  lastReviewedAt DateTime? @map("last_reviewed_at")
+
+  learner  Learner   @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  word     Word?     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([learnerId, wordId])
+  @@unique([learnerId, questionId])
+  @@index([learnerId, dueOn])
+  @@index([wordId])
+  @@index([questionId])
+  @@map("review_cards")
+}
+
+/// Phiên học, để tính phút học và giới hạn giờ.
+model StudySession {
+  id        Int       @id @default(autoincrement())
+  learnerId Int       @map("learner_id")
+  startedAt DateTime  @default(now()) @map("started_at")
+  endedAt   DateTime? @map("ended_at")
+  minutes   Int       @default(0)
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+
+  @@index([learnerId, startedAt])
+  @@map("study_sessions")
 }
