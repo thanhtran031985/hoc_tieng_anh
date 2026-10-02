@@ -224,11 +224,11 @@
     box-shadow var(--duration-fast);
 }
 .tile:hover {
-  transform: translateY(-3px);
+  transform: translateY(calc(-1 * var(--lift-tile)));
   box-shadow: var(--shadow-tile-hover);
 }
 .tile:active {
-  transform: translateY(6px);
+  transform: translateY(var(--sink-tile));
   box-shadow: var(--shadow-tile-active);
 }
 .tileIcon {

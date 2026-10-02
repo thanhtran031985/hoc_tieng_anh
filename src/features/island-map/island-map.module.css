@@ -79,6 +79,10 @@
   margin-top: var(--space-2);
   display: flex;
 }
+.stars svg {
+  width: var(--size-node-star);
+  height: var(--size-node-star);
+}
 .boss {
   width: 7.2%;
   border-radius: 32%;
@@ -208,7 +212,7 @@
   content: "";
   position: absolute;
   left: var(--tail-x, 50%);
-  bottom: calc(-1 * var(--bubble-tail-offset) - 1px);
+  bottom: calc(-1 * var(--bubble-tail-offset) - var(--lip-flat));
   width: var(--bubble-tail);
   height: var(--bubble-tail);
   background: var(--surface);
@@ -220,7 +224,7 @@
 }
 .below::after {
   bottom: auto;
-  top: calc(-1 * var(--bubble-tail-offset) - 1px);
+  top: calc(-1 * var(--bubble-tail-offset) - var(--lip-flat));
 }
 .popLabel {
   color: var(--ink-soft);
@@ -316,6 +320,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.emptyBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+.soon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--level-1-soft);
+  color: var(--level-1-ink);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
 }
 .skNode {
   position: absolute;

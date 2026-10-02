@@ -327,6 +327,9 @@
   --node-halo: rgba(255, 255, 255, 0.7);
   --node-halo-fade: rgba(255, 255, 255, 0.25);
   --size-node-star: 20px;
+  --lift-tile: 3px;
+  --sink-tile: 6px;
+  --lift-stop: 6px;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;

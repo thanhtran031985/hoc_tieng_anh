@@ -24,4 +24,10 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 
 ## Bước tiếp theo
 
-Hết các bước của task.md. Chạy `/finish-task` để rà soát, kiểm tra cuối task (`tsc`, `lint`, `build`; thử ở 1366×768 và 1920×1080) và đóng task.
+Đã sửa 3 mục sau rà soát (Giai đoạn B). Tiếp theo: Giai đoạn C (kiểm tra cuối, checklist test thủ công). Chưa đóng task.
+
+### Sửa sau rà soát (03/10/2026)
+- Mục 1 (px cố định): `globals.css` thêm `--lift-tile: 3px`, `--sink-tile: 6px`, `--lift-stop: 6px`; `home.module.css`, `levels.module.css`, `island-map.module.css` dùng token (`--lip-flat` cho `±1px`).
+- Mục 2 (token thừa): `Stars` dùng `--size-node-star` qua `.stars svg`.
+- Mục 3 (chữ "Sắp có"): `IslandEmpty` thêm nhãn "Sắp có" phía trên thẻ trống.
+- Kiểm tra: `tsc`, `lint` sạch; ảnh chụp `/map/3` (1440×900, 1366×768), `/map/6`, `/levels`, `/home`: không cuộn, ngôi sao vẫn 20px.

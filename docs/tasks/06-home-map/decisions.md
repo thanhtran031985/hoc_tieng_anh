@@ -50,3 +50,12 @@
 - Nhãn dưới ô trùm chỉ ghi "Trận trùm" (tên chủ đề đã có ở nhãn vùng); tên đầy đủ nằm trong `aria-label` và thẻ nổi. Hai nhãn vùng ở hàng dưới dịch ngang để không chồng lên nhãn trùm khi tên chủ đề dài.
 - Cấp còn khóa với bé: `/map/N` chuyển về `/levels` (không lộ nội dung); cấp chưa có chủ đề đã xuất bản hiện "Đảo/Thành phố N này đang được xây" + nút Mở Sổ từ (đang dẫn tới màn "Sắp có").
 - Chặng xong ở cấp 4 có màu cấp (xanh) gần giống màu chặng đang học (`brand`); phân biệt nhờ ô lớn hơn, vầng sáng, nhịp sáng và rồng đứng trên, đúng thiết kế.
+
+### 03/10/2026 — Điểm bảo mật `/admin` chuyển sang task 12
+- Bối cảnh: khi vẽ sơ đồ tổng quan thấy `/admin` chỉ cần role `admin`, không cần mở cổng bố mẹ (`src/app/(admin)/admin/page.tsx:11`); tài khoản đăng ký đầu tiên tự là admin (`src/server/users.ts:8-10`). PRD dòng 126 ghi quản trị nằm sau khu bố mẹ.
+- Quyết định (bạn chọn): không sửa ở task 06, làm đúng ở task 12. Đã ghi vào `docs/tasks/12-admin-content/decisions.md`.
+- Ảnh hưởng: hiện `/admin` chỉ là trang giữ chỗ nên chưa lộ dữ liệu; task 12 phải chặn trước khi có nội dung.
+
+### 03/10/2026 — Sửa 3 mục sau rà soát
+- Bạn chọn sửa cả 3. Mục 3: giữ tiêu đề "Đảo này đang được xây" của thiết kế Screen06 và thêm nhãn "Sắp có" để khớp task.md.
+- Token mới thêm vào `globals.css`: `--lift-tile`, `--sink-tile`, `--lift-stop`.

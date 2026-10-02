@@ -22,7 +22,7 @@ function Stars({ value }: { value: number }) {
   return (
     <span className={styles.stars} aria-hidden="true">
       {[1, 2, 3].map((i) => (
-        <Icon key={i} name={i <= value ? "star" : "starEmpty"} size={20} />
+        <Icon key={i} name={i <= value ? "star" : "starEmpty"} />
       ))}
     </span>
   );
