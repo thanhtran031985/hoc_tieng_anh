@@ -37,3 +37,8 @@
 - Nút Cài đặt (bánh răng) mở hộp thoại có "Đổi bé" và "Đăng xuất" (giữ chức năng của trang giữ chỗ cũ); khu vực bố mẹ vào qua cổng PIN ở màn chọn hồ sơ, sẽ thêm lối vào ở task 11.
 - Cấp đã xong hết hoặc chưa có nội dung: thẻ "Bài tiếp theo" đổi thành "Bé đã xong cấp này!" / "Cấp N sắp có" kèm nút "Xem các cấp" (Enter).
 - Thêm `shortcut` cho `ButtonLink` để hiện nhãn phím Enter trên nút điều hướng.
+
+### 02/10/2026 — Tổng quan 10 cấp
+- Bấm cấp đang học vào thẳng bản đồ; cấp đã qua hỏi "Ôn lại?" (Enter = Ôn lại); cấp khóa mở hộp thoại giải thích, không chặn gắt. Dùng đúng lời của thiết kế.
+- Cấp THCS (6–10) vẫn hiện trên con đường; chưa có bản đồ thành phố nên bản đồ cấp 5–10 hiện "Sắp có" (Bước 3).
+- Lời gợi ý của Bông chỉ hiện với bé mới ở cấp 1 chưa xong bài nào.

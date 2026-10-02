@@ -1,0 +1,250 @@
+/* Tổng quan 10 cấp (Screen05): con đường lớn trên biển qua 5 đảo Tiểu học (hàng dưới) và 5 thành phố THCS (hàng trên). */
+.lvw {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.lvmap {
+  position: relative;
+  width: min(var(--size-levels-map), calc(100vw - var(--space-16)), calc((100vh - var(--size-topbar) - var(--size-legend-room)) * 1.946));
+  aspect-ratio: 1440 / 740;
+}
+.road {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---- Điểm dừng ---- */
+.stop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 17%;
+  aspect-ratio: 1.6;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-xl);
+  padding: 0;
+  color: inherit;
+}
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--duration-base);
+}
+.stop:hover .art {
+  transform: translateY(-6px) scale(1.03);
+}
+.locked .art {
+  filter: grayscale(0.85) brightness(1.12);
+  opacity: 0.7;
+}
+.lab {
+  position: absolute;
+  left: 50%;
+  top: 92%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--surface);
+  color: var(--lv-ink);
+  padding: var(--space-1) calc(var(--space-3) + var(--border-thin));
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  box-shadow: 0 var(--sink-s) 0 var(--line);
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.lab b {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+}
+.locked .lab {
+  color: var(--ink-soft);
+}
+.badge {
+  position: absolute;
+  top: 2%;
+  right: 14%;
+  width: var(--badge-size);
+  height: var(--badge-size);
+  border-radius: var(--radius-round);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-badge);
+}
+.done .badge {
+  background: var(--success);
+  color: var(--ink-on-dark);
+}
+.locked .badge {
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+.cur::before {
+  content: "";
+  position: absolute;
+  inset: 6% 2% -2%;
+  border-radius: var(--radius-round);
+  background: var(--surface);
+  opacity: 0.55;
+  animation: glow 1.8s ease-in-out infinite;
+}
+@keyframes glow {
+  50% {
+    transform: scale(1.08);
+    opacity: 0.25;
+  }
+}
+
+/* "Bé đang ở đây": ảnh bé nhảy nhẹ phía trên điểm dừng đang học. */
+.pin {
+  position: absolute;
+  left: 50%;
+  bottom: 62%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.pinIn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: hop 1.4s ease-in-out infinite;
+}
+.pinIn::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border: calc(var(--space-2) + 1px) solid transparent;
+  border-top-color: var(--surface);
+  margin-top: var(--space-1);
+}
+.pinAvatar {
+  border-radius: var(--radius-round);
+  box-shadow:
+    0 0 0 var(--border-thick) var(--surface),
+    0 0 0 calc(var(--border-thick) + var(--space-1) - 1px) var(--lv);
+}
+.here {
+  margin-bottom: var(--space-2);
+  background: var(--lv);
+  color: var(--on-lv);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+@keyframes hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(calc(-1 * var(--dragon-hop))) rotate(-2deg);
+  }
+  60% {
+    transform: translateY(0) scaleY(0.97);
+  }
+}
+
+/* ---- Nhãn vùng, chú giải, lời gợi ý ---- */
+.zone {
+  position: absolute;
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--surface);
+  padding: var(--space-2) calc(var(--space-3) + var(--border-thin));
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+}
+.legend {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+}
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--surface);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+}
+.legend i {
+  width: var(--size-legend-dot);
+  height: var(--size-legend-dot);
+  border-radius: var(--radius-round);
+  display: grid;
+  place-items: center;
+  color: var(--ink-on-dark);
+}
+.legendDone {
+  background: var(--success);
+}
+.legendNow {
+  background: var(--level-3);
+}
+.legendLocked {
+  background: var(--surface-sunk);
+  color: var(--ink-soft) !important;
+}
+.tip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -30%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.tipBubble {
+  max-width: var(--size-tip-max);
+}
+.tipBubble::after {
+  left: auto;
+  right: calc(-1 * var(--bubble-tail-offset));
+  top: 40%;
+  bottom: auto;
+}
+
+/* ---- Khung xương khi tải ---- */
+.skStop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 2.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art,
+  .cur::before,
+  .pinIn {
+    animation: none;
+    transition-duration: 1ms !important;
+  }
+}

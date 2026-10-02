@@ -313,6 +313,13 @@
   --size-soon-text: 560px;
   --size-soon-block: 64px;
 
+  /* Tổng quan 10 cấp (Screen05). */
+  --size-levels-map: 1344px;
+  --size-legend-room: 110px;
+  --size-legend-dot: 22px;
+  --size-tip-max: 340px;
+  --shadow-badge: 0 3px 0 rgba(43, 36, 64, 0.2);
+
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;
   --dragon-hop: 16px;

@@ -1,10 +1,8 @@
 import { ButtonLink, Icon, Mascot } from "@/components/ui";
 import { HomeHotkeys } from "@/features/home/HomeHotkeys";
 import { KidTopbar } from "@/features/kid/KidTopbar";
-import { toHair, toMascotColor } from "@/features/kid/learner-art";
+import { toMascotColor, topbarProps } from "@/features/kid/learner-art";
 import kid from "@/features/kid/kid.module.css";
-import { today } from "@/lib/rules/dates";
-import { streakForDisplay } from "@/lib/rules/streak";
 import { requireActiveLearner } from "@/server/active-learner";
 import styles from "./coming-soon.module.css";
 
@@ -74,14 +72,7 @@ export async function ComingSoon({ feature }: { feature: ComingSoonFeature }) {
 
   return (
     <div className={kid.screen}>
-      <KidTopbar
-        learner={{ name: learner.name, level: learner.currentLevel?.number ?? 1, levelName: learner.currentLevel?.name ?? "", hair: toHair(learner.avatar) }}
-        stars={learner.stars}
-        coins={learner.coins}
-        streak={streakForDisplay(learner, today())}
-        backHref="/home"
-        backLabel="Về trang chủ"
-      />
+      <KidTopbar {...topbarProps(learner)} backHref="/home" backLabel="Về trang chủ" />
       <main className={styles.cs}>
         <div className={styles.site}>
           <Mascot expr="xaydung" color={toMascotColor(learner.mascot)} className={styles.mascot} />

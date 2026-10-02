@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 |---|---|---|---|
 | 0 | Quy tắc mở khóa và chuỗi ngày | ✅ | 02/10/2026 |
 | 1 | Trang chủ (Screen04) và màn "Sắp có" | ✅ | 02/10/2026 |
-| 2 | Tổng quan 10 cấp (Screen05) | ⬜ | |
+| 2 | Tổng quan 10 cấp (Screen05) | ✅ | 02/10/2026 |
 | 3 | Bản đồ đảo (Screen06) | ⬜ | |
 
 ## Nhật ký
@@ -24,4 +24,4 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 
 ## Bước tiếp theo
 
-Bước 2: tổng quan 10 cấp (Screen05): `getLevelsOverview`, `/levels`, điểm dừng, hộp thoại cấp khóa.
+Bước 3: bản đồ đảo (Screen06): `getIslandMap`, `/map`, `/map/[level]`, 2 trang × 4 vùng, thẻ nổi của chặng.

@@ -7,9 +7,7 @@ import { NavTiles } from "@/features/home/NavTiles";
 import styles from "@/features/home/home.module.css";
 import kid from "@/features/kid/kid.module.css";
 import { KidTopbar } from "@/features/kid/KidTopbar";
-import { toHair, toMascotColor } from "@/features/kid/learner-art";
-import { streakForDisplay } from "@/lib/rules/streak";
-import { today } from "@/lib/rules/dates";
+import { toMascotColor, topbarProps } from "@/features/kid/learner-art";
 import { requireActiveLearner } from "@/server/active-learner";
 import { getHomeData, type HomeData } from "@/server/home";
 import { requireUser } from "@/server/session";
@@ -49,19 +47,12 @@ export default async function HomePage() {
 
   const levelNumber = data?.levelNumber ?? learner.currentLevel?.number ?? 1;
   const levelName = data?.levelName ?? learner.currentLevel?.name ?? "";
-  const streak = streakForDisplay(learner, today());
   const { expr, text } = greeting(learner.name, data);
   const enterHref = data ? (data.next ? `/lesson/${data.next.lessonId}` : "/levels") : null;
 
   return (
     <div className={kid.screen}>
-      <KidTopbar
-        settings
-        learner={{ name: learner.name, level: levelNumber, levelName, hair: toHair(learner.avatar) }}
-        stars={learner.stars}
-        coins={learner.coins}
-        streak={streak}
-      />
+      <KidTopbar settings {...topbarProps(learner, { number: levelNumber, name: levelName })} />
       <main className={kid.body}>
         <h1 className="sr-only">Trang chủ của {learner.name}</h1>
         <div className={styles.hm}>
