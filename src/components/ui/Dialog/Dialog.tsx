@@ -11,6 +11,9 @@ export type DialogAction = {
   /** Nhãn phím hiển thị ("Enter", "Esc"). Nút có nhãn phím phản hồi đúng phím đó. */
   shortcut?: string;
   onClick?: () => void;
+  /** Giữ hộp thoại mở sau khi bấm (vd nhập sai PIN, cần báo lỗi ngay trong hộp). Mặc định đóng. */
+  keepOpen?: boolean;
+  disabled?: boolean;
 };
 
 export type DialogProps = {
@@ -48,12 +51,13 @@ export function Dialog({ open, onClose, title, body, expr, actions }: DialogProp
     const dialog = dialogRef.current;
     if (!dialog) return;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const focusables = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE));
+    // Bỏ qua phần tử đang ẩn (hidden, display: none) để vòng Tab không lọt ra ngoài.
+    const focusables = () => Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.getClientRects().length > 0);
     focusables()[0]?.focus({ preventScroll: true });
 
     function run(action?: DialogAction) {
       action?.onClick?.();
-      latest.current.onClose();
+      if (!action?.keepOpen) latest.current.onClose();
     }
 
     function onKeyDown(event: KeyboardEvent) {
@@ -141,8 +145,9 @@ export function Dialog({ open, onClose, title, body, expr, actions }: DialogProp
               shortcut={action.shortcut}
               onClick={() => {
                 action.onClick?.();
-                onClose();
+                if (!action.keepOpen) onClose();
               }}
+              disabled={action.disabled}
               data-dialog-action={index}
             />
           ))}

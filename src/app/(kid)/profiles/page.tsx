@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink, DataState, Icon, Mascot } from "@/components/ui";
 import { LogoutButton } from "@/features/auth/LogoutButton";
+import { ParentGate } from "@/features/parent/ParentGate";
 import { ProfileCard } from "@/features/profiles/ProfileCard";
 import { ProfilesTop } from "@/features/profiles/ProfilesTop";
 import styles from "@/features/profiles/profiles.module.css";
@@ -20,6 +21,7 @@ export default async function ProfilesPage() {
   return (
     <div className={styles.screen}>
       <ProfilesTop>
+        <ParentGate hasPin={user.hasParentPin} />
         <LogoutButton />
       </ProfilesTop>
       <main className={styles.main}>

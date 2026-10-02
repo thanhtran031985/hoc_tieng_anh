@@ -5,7 +5,14 @@ import { z } from "zod";
 export const MIN_PASSWORD_LENGTH = 8;
 export const MAX_PASSWORD_LENGTH = 72;
 
-const email = z.string().trim().toLowerCase().min(1, "Nhập email").max(191).pipe(z.email("Email chưa đúng, kiểm tra lại nhé"));
+// Kiểm tra email đơn giản (có đúng một @, không có khoảng trắng) để chấp nhận cả địa chỉ nội bộ như admin@localhost.
+const email = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(1, "Nhập email")
+  .max(191)
+  .regex(/^[^\s@]+@[^\s@]+$/, "Email chưa đúng, kiểm tra lại nhé");
 
 export const loginSchema = z.object({
   email,
