@@ -10,7 +10,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 3 | Hàm tạo bài tự động | ✅ | 02/10/2026 |
 | 4 | Từ vựng cấp 3 | ✅ | 02/10/2026 |
 | 5 | Hình minh họa cấp 3 | ✅ | 02/10/2026 |
-| 6 | Bài học cấp 3 và seed | ⬜ | |
+| 6 | Bài học cấp 3 và seed | ✅ | 02/10/2026 |
 | 7 | Từ vựng, hình, bài học cấp 4 | ⬜ | |
 | 8 | Từ vựng, hình, bài học cấp 2 | ⬜ | |
 | 9 | Từ vựng, hình, bài học cấp 1 | ⬜ | |
@@ -48,6 +48,12 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Kiểm tra: `node scripts/check-pictures.mjs 3` đạt: 160/250 từ có hình; mọi tệp là SVG 120×120, không có `<text>`, `<script>`, `<image>`, đúng màu viền dragon-line, không hình mồ côi. Đã xem các hình trên trang xem thử (Edge không đầu) và vẽ lại hình yếu (strong, bridge, road, lake, ship, summer). tsc, lint sạch.
 - Việc thủ công: nên xem lướt các hình (chạy `node scripts/gen-pictures.mjs --sheet duong-dan.html` rồi mở tệp HTML). 90 từ trừu tượng không có hình (xem decisions.md).
 
+### Bước 6 — Bài học cấp 3 và seed (02/10/2026)
+- Đã làm: `prisma/seed/content.ts` (đọc `content/level-NN/*.json`, kiểm bằng Zod, ghi từ, chủ đề từ, liên kết từ–chủ đề, bài học và bước bằng `buildLessons` trong một giao dịch mỗi chủ đề, đổi chủ đề sang `published`; đặt `words.image` theo tệp hình có thật); gọi từ `prisma/seed.ts` sau khung chương trình.
+- Kiểm tra: `npx prisma db seed` chạy 2 lần cho cùng kết quả (8 chủ đề cấp 3 `published`, 250 từ, 8 chủ đề từ, 250 liên kết, 41 bài, 679 bước, không trùng); mỗi chủ đề có 3–5 bài thường và 1 trận trùm (`unit_test`, ≤ 12 bước); 160 từ có `image`; `match_pairs` không có `wordId`, `pairCount` đúng; tsc và lint sạch.
+- Số bài theo chủ đề (bài thường + trận trùm): daily-routines 4+1, days-months-seasons 4+1, weather-nature 2+1, sports 3+1… (xem đầu ra seed); chủ đề ít hình (ngày tháng) có bài chỉ gồm thẻ từ.
+- Việc thủ công: không.
+
 ## Bước tiếp theo
 
-Bước 6 — Bài học cấp 3 và seed: `prisma/seed/content.ts` ghi từ, chủ đề từ, bài học và các bước (dùng `buildLessons`), đổi chủ đề cấp 3 sang `published`.
+Bước 7 — Từ vựng, hình, bài học cấp 4 (≈300 từ).
