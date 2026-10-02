@@ -15,7 +15,7 @@ export default function IslandMapLoading() {
           <div className={styles.imap}>
             <IslandArt zoneCount={4} skeleton />
             {ZONE_SLOTS.flatMap((slot, z) => [...zoneNodePositions(slot, 5), slot.boss].map((p, i) => (
-              <Skeleton key={`${z}-${i}`} className={styles.skNode} width="100%" height="auto" radius="round" style={toPercent(p)} />
+              <Skeleton key={`${z}-${i}`} className={styles.skNode} width="4.6%" height="auto" radius="round" style={toPercent(p)} />
             )))}
           </div>
         </div>
