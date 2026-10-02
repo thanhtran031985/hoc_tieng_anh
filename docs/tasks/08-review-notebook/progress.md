@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 |------|-----|------------|---------|
 | 0 | Hàm 5 hộp | ✅ | `review-box.ts` đã có từ task 07; thêm `intervalLabel`, `MASTERY_NAMES`, `masteryOf` + test chuỗi đúng/sai (79/79) |
 | 1 | Ôn tập hôm nay | ✅ | Screen19/20 + câu hỏi dùng lại khung bài học; `server/review.ts`; test 85/85 |
-| 2 | Sổ từ (Screen13) | ⬜ | |
+| 2 | Sổ từ (Screen13) | ✅ | `server/notebook.ts`, `src/features/notebook/`, trang `/notebook`; lưới cuộn bên trong |
 
 ## Nhật ký
 ### Bước 0 — Hàm 5 hộp (03/10/2026)
@@ -21,5 +21,11 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Kết quả kiểm tra (DB tạm, CDP, 1366×768): 9 thẻ (8 đến hạn, 1 hộp 5 chưa đến hạn) → màn bắt đầu đúng số theo hộp; chơi bằng bàn phím cả 3 dạng; hộp lên/về đúng (đúng +1 hộp, hẹn +1/+3/+7/+14/+30 ngày; sai về hộp 1 hẹn ngày mai); sao +8, xu +8, chuỗi ngày 1, 10 `answer_logs` source review, 1 `study_sessions`; từ chưa đến hạn không bị đụng; thanh trên cùng cập nhật sau khi lưu; màn trống, màn tải đúng, không cuộn.
 - Việc tôi cần làm thủ công: không (checklist ở cuối task).
 
+### Bước 2 — Sổ từ (03/10/2026)
+- Đã làm: `getNotebook` (từ có thẻ ôn + mức thuộc = số hộp + chủ đề qua bài học, sắp mức thấp lên trước); `NotebookView` (tiêu đề + chú giải 5 mức, chip lọc chủ đề dạng radiogroup có ← →, lưới thẻ `MasteryPips` viền + chấm + chữ, hộp thoại xem lớn có loa cho từ và câu ví dụ), `/notebook` có loading/error và trạng thái trống.
+- File tạo/sửa: `src/server/notebook.ts`, `src/features/notebook/*`, `src/app/(kid)/notebook/*`, tokens mới `--size-pip`, `--size-swatch`, `--size-chip-filter`, `--size-notebook-card`, `--size-notebook-sk`.
+- Kết quả kiểm tra (DB tạm, CDP): 46 thẻ → "46 từ", chip Tất cả 46 / 14 / 20 / 12 khớp; thứ tự mức 1→5 tăng dần; lọc bằng → đổi lưới (20 thẻ); mở xem lớn có loa, câu ví dụ; trống/tải đẹp; 1366×768 và 1440×900 trang không cuộn (lưới cuộn bên trong); `npx tsc`, `npm run lint`, `npm run build` sạch.
+- Việc tôi cần làm thủ công: không (checklist ở cuối task).
+
 ## Bước tiếp theo
-Bước 2 — Sổ từ (Screen13).
+Rà soát cuối task (/finish-task).

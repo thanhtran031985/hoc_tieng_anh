@@ -1,0 +1,247 @@
+/* Sổ từ (Screen13): tiêu đề + chú giải mức, chip lọc chủ đề, lưới thẻ từ cuộn bên trong (trang không cuộn). */
+.nb {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-12) var(--space-6);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.title {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.total {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+.lg {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+}
+.lg i {
+  width: var(--size-swatch);
+  height: var(--size-swatch);
+  box-sizing: border-box;
+  border-radius: var(--radius-round);
+  border: var(--border-thick) solid var(--m);
+  background: var(--surface);
+}
+
+/* Màn cao đúng bằng cửa sổ: chỉ lưới thẻ cuộn bên trong. */
+.screen {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ---- Chip lọc ---- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.chip {
+  height: var(--size-chip-filter);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-5);
+  border: var(--border-thin) solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 var(--lip-s) 0 var(--line);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1;
+  font-weight: 800;
+  transition: transform var(--duration-fast);
+}
+.chip:hover {
+  transform: translateY(calc(-1 * var(--lift)));
+}
+.chipOn {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--surface);
+}
+.chipN {
+  opacity: 0.7;
+  font-weight: 700;
+}
+
+/* ---- Lưới thẻ ---- */
+.gridw {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-1) var(--space-2) var(--space-3);
+}
+.wg {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--size-notebook-card), 1fr));
+  gap: var(--space-5);
+}
+.wc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: var(--border-thick) solid var(--m);
+  box-shadow: 0 var(--lip-m) 0 var(--m);
+  border-radius: var(--radius-lg);
+}
+.wordRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+}
+.speak {
+  position: relative;
+  z-index: 1;
+}
+.en {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+/* Cả thẻ bấm được để xem lớn; nút loa nằm trên (z-index) nên vẫn bấm riêng được. */
+.en::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+}
+.en:focus-visible::after {
+  outline: var(--border-thick) solid var(--brand);
+  outline-offset: var(--lip-flat);
+}
+.vi {
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---- Chấm mức thuộc ---- */
+.pips {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.pips i {
+  width: var(--size-pip);
+  height: var(--size-pip);
+  border-radius: var(--radius-round);
+  background: var(--surface-sunk);
+}
+.pips .pipOn {
+  background: var(--m);
+}
+.pips b {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+}
+
+/* ---- Xem lớn ---- */
+.zoom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+.zoomWord {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.ipa {
+  color: var(--ink-soft);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+}
+.zoomVi {
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+}
+.example {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-soft);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+}
+.example span {
+  display: flex;
+  flex-direction: column;
+}
+.exVi {
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+}
+
+/* ---- Đang tải ---- */
+.skCard {
+  height: var(--size-notebook-sk);
+}
+
+@media (max-width: 1400px) {
+  .nb {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}

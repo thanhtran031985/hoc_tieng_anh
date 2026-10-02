@@ -374,6 +374,11 @@
   --size-box-sk: 230px;
   --size-hop: 26px;
   --size-move-pic: 52px;
+  --size-pip: 10px;
+  --size-swatch: 22px;
+  --size-chip-filter: 48px;
+  --size-notebook-card: 196px;
+  --size-notebook-sk: 214px;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;
