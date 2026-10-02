@@ -9,7 +9,7 @@
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "31f40102f868403b85b0fdd14e6ff2f44df45ce5"
+      "revision": "2cebd5b9c8a5197c1de5ad6b8704fb63ad1d8df2"
     },
     "legend": {
       "mode": "auto",
@@ -26,7 +26,6 @@
   ],
   "groups": [
     { "id": "g_xepLop", "label": "Chưa làm · task 09", "lane": "vao", "fromCol": 3, "toCol": 3, "variant": "dashed" },
-    { "id": "g_baiHoc", "label": "Chưa làm · task 07", "lane": "hoc", "fromCol": 3, "toCol": 4, "variant": "dashed" },
     { "id": "g_nutPhu", "label": "Chưa làm · task 08 và GĐ2", "lane": "khac", "fromCol": 0, "toCol": 0, "variant": "dashed" }
   ],
   "mainPath": ["login", "profiles", "home", "map", "lesson", "end"],
@@ -77,16 +76,20 @@
       ]
     },
     {
-      "id": "lesson", "lane": "hoc", "col": 3, "type": "messagebus",
-      "label": "Bài học", "sublabel": "đang là 'Sắp có'", "tag": "task 07", "width": 126,
+      "id": "lesson", "lane": "hoc", "col": 3, "type": "frontend",
+      "label": "Bài học", "sublabel": "/lesson/[id] · 5 dạng bài", "width": 126,
       "sources": [
-        { "path": "src/app/(kid)/lesson/[lessonId]/page.tsx", "line": 7, "end_line": 8, "label": "giữ chỗ ComingSoon" }
+        { "path": "src/app/(kid)/lesson/[lessonId]/page.tsx", "line": 14, "end_line": 33, "label": "bài khóa về bản đồ" },
+        { "path": "src/features/lesson/LessonPlayer.tsx", "line": 46, "label": "LessonPlayer" }
       ]
     },
     {
-      "id": "end", "lane": "hoc", "col": 4, "type": "messagebus",
-      "label": "Kết thúc bài", "sublabel": "sao, xu, mở bài sau", "tag": "task 07", "width": 126,
-      "sources": [{ "path": "docs/PRD.md", "line": 258, "label": "PRD C10" }]
+      "id": "end", "lane": "hoc", "col": 4, "type": "frontend",
+      "label": "Kết thúc bài", "sublabel": "sao, xu, mở bài sau", "width": 126,
+      "sources": [
+        { "path": "src/features/lesson/LessonEnd.tsx", "line": 35, "label": "LessonEnd" },
+        { "path": "src/server/lesson-complete.ts", "line": 23, "label": "completeLesson" }
+      ]
     },
     {
       "id": "levels", "lane": "khac", "col": 2, "type": "frontend",
@@ -112,8 +115,8 @@
     { "id": "e-create-home", "from": "create", "to": "home", "label": "Bắt đầu học" },
     { "id": "e-create-placement", "from": "create", "to": "placement", "variant": "dashed", "role": "branch" },
     { "id": "e-home-map", "from": "home", "to": "map", "label": "Bản đồ", "variant": "emphasis" },
-    { "id": "e-map-lesson", "from": "map", "to": "lesson", "label": "Bắt đầu", "variant": "dashed" },
-    { "id": "e-lesson-end", "from": "lesson", "to": "end", "variant": "dashed" },
+    { "id": "e-map-lesson", "from": "map", "to": "lesson", "label": "Bắt đầu", "variant": "emphasis" },
+    { "id": "e-lesson-end", "from": "lesson", "to": "end", "label": "xong bài", "variant": "emphasis" },
     { "id": "e-home-levels", "from": "home", "to": "levels", "label": "Xem các cấp" },
     { "id": "e-levels-map", "from": "levels", "to": "map", "label": "chọn cấp" },
     { "id": "e-home-later", "from": "home", "to": "later", "label": "nút lớn", "variant": "dashed" }
@@ -121,18 +124,19 @@
   "cards": [
     {
       "dot": "emerald",
-      "title": "Đã làm (task 01–06)",
+      "title": "Đã làm (task 01–07)",
       "items": [
         "Đăng nhập, chọn hồ sơ, tạo hồ sơ 3 bước",
         "Trang chủ, tổng quan 10 cấp, bản đồ đảo",
-        "Bài đầu luôn mở; xong bài (từ 1 sao) mới mở bài sau"
+        "Bài đầu luôn mở; xong bài (từ 1 sao) mới mở bài sau",
+        "Học trọn bài (thẻ từ, nghe chọn, nối, lật thẻ, chọn từ), nhận sao và xu"
       ]
     },
     {
       "dot": "amber",
       "title": "Chưa làm",
       "items": [
-        "Bài xếp lớp (task 09), bài học và kết thúc bài (task 07)",
+        "Bài xếp lớp (task 09)",
         "Ôn tập, Sổ từ (task 08); Bộ sưu tập, Phòng của tớ (GĐ2)",
         "Hết giờ học (task 10)"
       ]

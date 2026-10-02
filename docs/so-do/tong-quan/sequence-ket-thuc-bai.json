@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Task 07: bé xong bài thì kết quả được lưu thế nào",
+    "locale": "vi",
+    "output": "docs/so-do/tong-quan/sequence-ket-thuc-bai.html",
+    "viewBox": [1080, 580],
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "2cebd5b9c8a5197c1de5ad6b8704fb63ad1d8df2"
+    }
+  },
+  "participants": [
+    { "id": "be", "type": "external", "label": "Bé", "sublabel": "trình duyệt" },
+    {
+      "id": "player", "type": "frontend", "label": "Trình học", "sublabel": "LessonPlayer",
+      "sources": [{ "path": "src/features/lesson/LessonPlayer.tsx", "line": 84, "end_line": 108, "label": "runSave" }]
+    },
+    {
+      "id": "action", "type": "backend", "label": "Server action", "sublabel": "completeLessonAction",
+      "sources": [{ "path": "src/features/lesson/actions.ts", "line": 16, "end_line": 27, "label": "Zod + hồ sơ đang chọn" }]
+    },
+    {
+      "id": "rules", "type": "security", "label": "Quy tắc", "sublabel": "sao, xu, hộp ôn",
+      "sources": [
+        { "path": "src/lib/rules/lesson-score.ts", "line": 15, "end_line": 21, "label": "starsFor" },
+        { "path": "src/lib/rules/review-box.ts", "line": 26, "end_line": 31, "label": "nextReview" }
+      ]
+    },
+    {
+      "id": "db", "type": "database", "label": "MySQL", "sublabel": "hoc_tieng_anh",
+      "sources": [{ "path": "src/server/lesson-complete.ts", "line": 75, "end_line": 120, "label": "một transaction" }]
+    }
+  ],
+  "segments": [
+    { "from": 150, "to": 235, "label": "Gửi" },
+    { "from": 245, "to": 402, "label": "Tính và ghi" },
+    { "from": 410, "to": 480, "label": "Trả về" }
+  ],
+  "messages": [
+    { "id": "xong-bai", "from": "be", "to": "player", "y": 165, "label": "xong câu cuối", "variant": "default" },
+    { "id": "gui", "from": "player", "to": "action", "y": 200, "label": "kết quả từng mục", "variant": "emphasis" },
+    { "id": "kiem-tra", "from": "action", "to": "db", "y": 232, "label": "hồ sơ, bài đã mở?", "variant": "security" },
+    { "id": "kiem-tra-ok", "from": "db", "to": "action", "y": 260, "label": "chặng của cấp", "variant": "return" },
+    { "id": "tinh", "from": "action", "to": "rules", "y": 295, "label": "tính sao, xu, thẻ", "variant": "default" },
+    { "id": "tinh-ok", "from": "rules", "to": "action", "y": 323, "label": "3 sao, 25 xu…", "variant": "return" },
+    { "id": "ghi", "from": "action", "to": "db", "y": 357, "label": "ghi cùng lúc", "variant": "emphasis" },
+    { "id": "ghi-ok", "from": "db", "to": "action", "y": 385, "label": "xong", "variant": "return" },
+    { "id": "tra-ve", "from": "action", "to": "player", "y": 420, "label": "sao, xu, bài kế", "variant": "return" },
+    { "id": "hien", "from": "player", "to": "be", "y": 450, "label": "màn kết thúc", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "player", "from": 160, "to": 455, "type": "frontend" },
+    { "participant": "action", "from": 195, "to": 425, "type": "backend" },
+    { "participant": "rules", "from": 290, "to": 328, "type": "security" },
+    { "participant": "db", "from": 227, "to": 265, "type": "database" },
+    { "participant": "db", "from": 352, "to": 390, "type": "database" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Ghi một lần",
+      "items": [
+        "Lượt học, nhật ký, tiến độ bài, sao xu, chuỗi ngày, thẻ ôn, phiên học nằm trong một transaction",
+        "Gửi lại cùng giờ bắt đầu thì chỉ ghi một lần"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Không tin client",
+      "items": [
+        "Client chỉ gửi đúng/sai từng mục; sao và xu do server tính",
+        "Bài còn khóa hoặc từ ngoài bài bị bỏ qua"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Khi lỗi mạng",
+      "items": [
+        "Kết quả vẫn nằm trong localStorage, màn kết thúc có nút Thử lại",
+        "Chưa làm: bố mẹ xem báo cáo (task 11)"
+      ]
+    }
+  ]
+}

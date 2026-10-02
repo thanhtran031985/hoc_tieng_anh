@@ -21,3 +21,11 @@
 - Thẻ ôn tập tạo ở `review-box.ts`: từ mới vào hộp 1, đến hạn ngày mai; từ đã có thẻ thì đúng lên hộp, sai về hộp 1.
 - Trò chơi lật thẻ giữ thanh tiến độ của bài ở đầu màn (bản xem trước dùng thanh riêng không có tiến độ) để tiến độ đi liền mạch.
 - `useHotkeys` thêm `capture` để bước nối nhận Esc (bỏ nhấc từ) trước Esc mở hộp thoại thoát.
+
+### 03/10/2026 — Tổng kết: khác với task.md gốc
+- Thêm loại bài `memory_game` vào `lesson_steps` (task.md chỉ ghi "game lật thẻ"): bài có từ 4 từ có hình mới có; cần chạy lại `npx prisma db seed` để bài cũ có bước này.
+- Sao tính theo tỷ lệ đúng của thiết kế (khác PRD Phần F, đã ghi ở README); sao, xu, XP do server tính từ kết quả từng mục.
+- Giữ tiến độ dở bằng `localStorage` (không thêm cột database); gửi lại kết quả được dedupe bằng giờ bắt đầu bài.
+- Trò chơi lật thẻ giữ thanh tiến độ của bài; chưa có "+xu" riêng cho trò chơi.
+- Không làm: âm thanh hiệu ứng và nút tắt nhạc nền, chế độ toàn màn hình (PRD Phần B); khởi động ôn lại từ cũ và 3 câu thử thách trong một bài (PRD C7); báo cáo bố mẹ.
+- Sửa kèm ngoài phạm vi: thu gọn thẻ nổi của chặng trên bản đồ ở màn thấp (lỗi từ task 06).

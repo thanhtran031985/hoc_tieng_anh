@@ -356,3 +356,18 @@
     transition-duration: 1ms !important;
   }
 }
+
+/* Màn thấp (≤ 800px): thu gọn thẻ nổi của chặng (bài 7 từ có 4 hàng từ) để nút "Bắt đầu" không bị cắt dưới đáy. */
+@media (max-height: 800px) {
+  .pop {
+    padding: var(--space-4);
+    gap: var(--space-2);
+  }
+  .popTitle {
+    font-size: var(--text-body-l);
+    line-height: var(--text-body-l--line-height);
+  }
+  .words {
+    gap: var(--space-1);
+  }
+}

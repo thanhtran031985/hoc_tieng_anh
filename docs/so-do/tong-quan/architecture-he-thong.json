@@ -2,14 +2,14 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Kiến trúc hệ thống đã có trong code (sau task 06)",
+    "title": "Kiến trúc hệ thống đã có trong code (sau task 07)",
     "locale": "vi",
     "quality_profile": "showcase",
     "output": "docs/so-do/tong-quan/architecture-he-thong.html",
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "31f40102f868403b85b0fdd14e6ff2f44df45ce5"
+      "revision": "2cebd5b9c8a5197c1de5ad6b8704fb63ad1d8df2"
     }
   },
   "components": [
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "id": "kid", "type": "frontend", "label": "Màn của bé", "sublabel": "/profiles /home /levels /map", "pos": [480, 300], "size": [170, 64],
+      "id": "kid", "type": "frontend", "label": "Màn của bé", "sublabel": "/home /map /lesson", "pos": [480, 300], "size": [170, 64],
       "sources": [
         { "path": "src/app/(kid)/layout.tsx", "line": 4, "end_line": 6, "label": "cần đăng nhập" },
         { "path": "src/app/(kid)/home/page.tsx", "line": 37, "label": "HomePage" }
@@ -55,11 +55,11 @@
       ]
     },
     {
-      "id": "actions", "type": "backend", "label": "Server actions", "sublabel": "đăng nhập, hồ sơ, cổng bố mẹ", "pos": [260, 430], "size": [170, 64],
+      "id": "actions", "type": "backend", "label": "Server actions", "sublabel": "hồ sơ, cổng bố mẹ, kết quả bài", "pos": [260, 430], "size": [170, 64],
       "sources": [
         { "path": "src/features/auth/actions.ts", "line": 36, "label": "loginAction" },
-        { "path": "src/features/profiles/actions.ts", "line": 12, "label": "selectLearnerAction" },
-        { "path": "src/features/parent/actions.ts", "line": 18, "label": "unlockParentAction" }
+        { "path": "src/features/parent/actions.ts", "line": 18, "label": "unlockParentAction" },
+        { "path": "src/features/lesson/actions.ts", "line": 16, "label": "completeLessonAction" }
       ]
     },
     {
@@ -75,19 +75,19 @@
       "sources": [{ "path": "src/lib/schemas/index.ts", "line": 1, "end_line": 8, "label": "kiểm dữ liệu vào" }]
     },
     {
-      "id": "modules", "type": "backend", "label": "Hàm đọc, ghi dữ liệu", "sublabel": "src/server: home, map, progress", "pos": [480, 560], "size": [170, 64],
+      "id": "modules", "type": "backend", "label": "Hàm đọc, ghi dữ liệu", "sublabel": "src/server: home, map, lesson", "pos": [480, 560], "size": [170, 64],
       "sources": [
         { "path": "src/server/learners.ts", "line": 47, "label": "requireLearner" },
-        { "path": "src/server/home.ts", "line": 46, "label": "getHomeData" },
-        { "path": "src/server/map.ts", "line": 93, "label": "getIslandMap" }
+        { "path": "src/server/map.ts", "line": 93, "label": "getIslandMap" },
+        { "path": "src/server/lesson-complete.ts", "line": 23, "label": "completeLesson" }
       ]
     },
     {
-      "id": "rules", "type": "backend", "label": "Quy tắc (hàm thuần)", "sublabel": "mở khóa, chuỗi ngày, tạo bài", "pos": [700, 560], "size": [170, 64],
+      "id": "rules", "type": "backend", "label": "Quy tắc (hàm thuần)", "sublabel": "mở khóa, sao, thẻ ôn", "pos": [700, 560], "size": [170, 64],
       "sources": [
         { "path": "src/lib/rules/unlock.ts", "line": 40, "label": "computeLessonStates" },
-        { "path": "src/lib/rules/streak.ts", "line": 39, "label": "recordStudyDay" },
-        { "path": "src/lib/rules/lesson-builder.ts", "line": 88, "label": "buildLessons" }
+        { "path": "src/lib/rules/lesson-score.ts", "line": 15, "label": "starsFor" },
+        { "path": "src/lib/rules/review-box.ts", "line": 26, "label": "nextReview" }
       ]
     },
     {
@@ -144,7 +144,7 @@
       "dot": "amber",
       "title": "Chưa có trong code",
       "items": [
-        "Giai đoạn 2 trở đi: bài học, ôn tập, bộ sưu tập, giờ học",
+        "Ôn tập, Sổ từ (task 08); bộ sưu tập, giờ học (GĐ2 trở đi)",
         "Kho tệp tải lên và quản trị nội dung (task 12)"
       ]
     }
