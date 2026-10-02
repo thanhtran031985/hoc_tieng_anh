@@ -1,0 +1,63 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=760 subtitle="2. Tổng quan theo từng con (chọn con trên thanh trên cùng): số liệu tuần, phút học 7 / 30 ngày, hoạt động gần đây" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Tổng quan — preview</title>
+<style>
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-4); }
+  .cefr { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 4px; }
+  .cefr span { height: 6px; border-radius: 3px; background: var(--surface-sunk); }
+  .cefr span.on { background: var(--chart-1); }
+  .cefr-l { display: grid; grid-template-columns: repeat(4, 1fr); font: 600 11px/14px var(--font-thcs); color: var(--ink-soft); }
+  .act { display: flex; flex-direction: column; }
+  .act .r { display: grid; grid-template-columns: 52px 30px 1fr; gap: var(--space-3); align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .act .r:first-child { border-top: 0; }
+  .act .ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-soft); color: var(--ink-soft); }
+  .sum { display: flex; gap: var(--space-5); margin-top: var(--space-2); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var DAYS7 = ['T7 26/9', 'CN 27/9', 'T2 28/9', 'T3 29/9', 'T4 30/9', 'T5 1/10', 'T6 2/10'];
+  var KD = {
+    minh: { w: [28, 30, 15, 22, 30, 0, 25], limit: 30, streak: 9, best: 14, words: 148, learned: 230, lv: 2, pct: 64, cefr: 0, cefrT: 'A1 · đang vững', prev: 127,
+      act: [['20:15', 'star', 'Hoàn thành bài <b>Fruits · Bài 3</b>', '3 sao · 9/10 đúng'], ['20:02', 'cards', 'Ôn 12 thẻ từ (cat, dog, fish…)', '11/12 nhớ'], ['19:48', 'mic', 'Ghi âm “Introduce your family” (0:38)', 'Chờ bố mẹ nghe'], ['Hôm qua', 'flame', 'Giữ chuỗi 8 ngày', ''], ['T4 30/9', 'crown', 'Thắng Trùm Khỉ Lém · đảo Hạt giống', 'Mở vùng Trái cây']] },
+    linh: { w: [45, 40, 52, 38, 45, 30, 35], limit: 45, streak: 23, best: 31, words: 212, learned: 486, lv: 8, pct: 62, cefr: 1, cefrT: 'A2 · đang tiến tới B1', prev: 262,
+      act: [['21:05', 'exam', 'Đề thử giữa kỳ I · Tiếng Anh 8', '8,25 / 10'], ['20:40', 'pen', 'Nộp đoạn văn “Protect the environment” (101 từ)', 'Chờ bố mẹ chấm'], ['20:12', 'grammar', 'Thì hiện tại hoàn thành · Bài 4', '83% đúng'], ['T5 1/10', 'book', 'Đọc “Getting Around London”', '4/4 đúng'], ['T4 30/9', 'medal', 'Huy hiệu Bậc thầy since/for · Bạc', ''] ] } };
+  var S = { range: 7 };
+  function m30(k) { var d = KD[k], out = []; for (var i = 0; i < 30; i++) { var v = Math.round(d.limit * (0.45 + 0.5 * Math.abs(Math.sin(i * 1.7 + (k === 'minh' ? 0 : 2))))); if (i % 9 === 4) v = 0; out.push(i >= 23 ? d.w[i - 23] : v); } return out; }
+  function main(empty) {
+    var k = A.state.kid, d = KD[k], kid = A.kids.filter(function (x) { return x.id === k; })[0], lvl = B.levels[d.lv - 1];
+    var sum = empty ? 0 : d.w.reduce(function (a, b) { return a + b; }, 0), delta = Math.round((sum - d.prev) / d.prev * 100);
+    var kpis = '<div class="kpis">' + A.kpi({ label: 'PHÚT HỌC TUẦN NÀY', value: sum, unit: 'phút', icon: 'clock', delta: empty ? '' : (delta >= 0 ? '+' : '−') + Math.abs(delta) + '%', sub: empty ? 'Chưa học buổi nào' : 'so với tuần trước' }) +
+      A.kpi({ label: 'CHUỖI NGÀY', value: empty ? 0 : d.streak, unit: 'ngày', icon: 'flame', sub: 'Kỷ lục ' + d.best + ' ngày' }) +
+      A.kpi({ label: 'TỪ ĐÃ THUỘC', value: empty ? 0 : d.words, unit: '/ ' + (empty ? 0 : d.learned) + ' từ đã học', icon: 'notebook', sub: empty ? '' : '+18 từ trong tuần' }) +
+      '<div data-level="' + d.lv + '" style="display:contents">' + A.kpi({ label: 'CẤP HIỆN TẠI', value: 'Cấp ' + d.lv, unit: lvl.name, icon: 'route', extra: '<div style="display:flex;align-items:center;gap:8px">' + B.ProgressBar(empty ? 0 : d.pct, 100) + '<b class="adm-small">' + (empty ? 0 : d.pct) + '%</b></div>', sub: 'hoàn thành cấp' }) + '</div>' +
+      A.kpi({ label: 'TRÌNH ĐỘ ƯỚC LƯỢNG', value: ['A1', 'A2'][d.cefr], icon: 'target', extra: '<div class="cefr" aria-hidden="true">' + [0, 1, 2, 3].map(function (i) { return '<span class="' + (i <= d.cefr ? 'on' : '') + '"></span>'; }).join('') + '</div><div class="cefr-l" aria-hidden="true"><span>A1</span><span>A2</span><span>B1</span><span>B2</span></div>', sub: d.cefrT + ' (theo khung CEFR)' }) + '</div>';
+    var series = S.range === 7 ? d.w.map(function (v, i) { return { k: DAYS7[i].split(' ')[0], v: empty ? 0 : v, tip: DAYS7[i] + ': ' + (empty ? 0 : v) + ' phút' }; })
+      : m30(k).map(function (v, i) { var day = new Date(2026, 8, 3 + i); var lab = day.getDate() + '/' + (day.getMonth() + 1); return { k: lab, v: empty ? 0 : v, tip: lab + ': ' + v + ' phút' }; });
+    var chart = '<section class="a-card a-s8" aria-labelledby="ch"><div class="a-card__h"><div><h2 class="adm-h2" id="ch">Phút học ' + S.range + ' ngày</h2><span class="adm-small b-muted">' + kid.name + ' · giới hạn ' + d.limit + ' phút/ngày</span></div><div class="t-seg" role="group" aria-label="Khoảng thời gian"><button type="button" data-range="7" aria-pressed="' + (S.range === 7) + '">7 ngày</button><button type="button" data-range="30" aria-pressed="' + (S.range === 30) + '">30 ngày</button></div></div>' +
+      (empty ? A.empty({ title: kid.name + ' chưa học buổi nào tuần này', text: 'Biểu đồ sẽ hiện khi con hoàn thành bài đầu tiên.', action: A.btn({ label: 'Gửi lời nhắc cho con', variant: 'secondary', icon: 'bell' }) }) :
+      A.vbars(series, { h: 180, unit: 'phút', ref: { v: d.limit, label: 'Giới hạn ' + d.limit + ' phút' }, every: S.range === 30 ? 5 : 0, max: Math.ceil(d.limit * 1.4 / 10) * 10 }) +
+      '<div class="sum adm-small b-muted"><span>Trung bình <b style="color:var(--ink)">' + Math.round(series.reduce(function (a, b) { return a + b.v; }, 0) / series.length) + ' phút/ngày</b></span><span>Ngày không học: <b style="color:var(--ink)">' + series.filter(function (x) { return !x.v; }).length + '</b></span><span>Học nhiều nhất vào 19:30–20:30</span></div>') + '</section>';
+    var act = '<section class="a-card a-s4" aria-labelledby="ac"><div class="a-card__h"><h2 class="adm-h2" id="ac">Hoạt động gần đây</h2><button type="button" class="t-link">Xem tất cả</button></div>' +
+      (empty ? A.empty({ title: 'Chưa có hoạt động', text: 'Mọi bài học, bài thi và ghi âm của con sẽ hiện ở đây.' }) : '<div class="act">' + d.act.map(function (a) { return '<div class="r"><span class="adm-small b-muted">' + a[0] + '</span><span class="ic">' + B.icon(a[1], 16) + '</span><span class="adm-body">' + a[2] + (a[3] ? '<br><span class="adm-small b-muted">' + a[3] + '</span>' : '') + '</span></div>'; }).join('') + '</div>') + '</section>';
+    return kpis + '<div class="a-grid">' + chart + act + '</div>';
+  }
+  function page(m) { var kid = A.kids.filter(function (x) { return x.id === A.state.kid; })[0]; return A.shell({ area: 'parent', active: 'overview', title: 'Tổng quan · ' + kid.name, crumb: 'Lớp ' + kid.grade + ' · Cập nhật 21:10 hôm nay', kids: true, main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (tuần chưa học)' },
+    notes: { normal: 'Chọn con trên thanh trên cùng (Minh lớp 3 · cấp 2 Mầm non / Khánh Linh lớp 8 · cấp 8 London). Đổi 7/30 ngày; rê chuột hoặc Tab vào cột để xem số phút. Đường nét đứt = giới hạn mỗi ngày.', loading: 'Khung xương số liệu và biểu đồ.', empty: 'Con chưa học buổi nào trong tuần: số liệu 0, biểu đồ và danh sách hiện trạng thái trống.', error: 'Không tải được số liệu.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="kpis">' + [1, 2, 3, 4, 5].map(function () { return A.skel('46px'); }).join('') + '</div><div class="a-grid"><div class="a-s8">' + A.skel('220px') + '</div><div class="a-s4">' + A.skel('220px') + '</div></div>'); },
+      empty: function () { return page(main(true)); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'PRG-503' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelectorAll('[data-range]').forEach(function (b) { b.addEventListener('click', function () { S.range = +b.dataset.range; ctx.setState('normal'); ctx.scr.querySelector('[data-range="' + S.range + '"]').focus(); }); }); } }
+  });
+})();
+</script>
+</body>
+</html>

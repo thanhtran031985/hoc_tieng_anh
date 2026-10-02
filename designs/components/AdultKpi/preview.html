@@ -1,0 +1,28 @@
+<!-- @dsCard group="Người lớn · Thành phần" height=640 subtitle="Thẻ số liệu, nhãn trạng thái, thông báo nhỏ, và 4 trạng thái dữ liệu của khu người lớn (khung xương, trống có Bông nhỏ, lỗi có Thử lại)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Số liệu và trạng thái người lớn — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); } .pane { padding: 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .full { grid-column: 1 / -1; } .half { grid-column: span 2; }
+  .st { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+</style></head>
+<body>
+<div class="pane thcs adm scr" data-theme="thcs" id="p" style="position:relative"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A; B.suite('adult');
+  var p = document.getElementById('p');
+  p.innerHTML = A.kpi({ label: 'PHÚT HỌC TUẦN NÀY', value: 285, unit: 'phút', icon: 'clock', delta: '+9%', sub: 'so với tuần trước' }) + A.kpi({ label: 'CHUỖI NGÀY', value: 23, unit: 'ngày', icon: 'flame', sub: 'Kỷ lục 31 ngày' }) +
+    '<div data-level="8" style="display:contents">' + A.kpi({ label: 'CẤP HIỆN TẠI', value: 'Cấp 8', unit: 'London', icon: 'route', extra: '<div style="display:flex;gap:8px;align-items:center">' + B.ProgressBar(62, 100) + '<b class="adm-small">62%</b></div>', sub: 'hoàn thành cấp' }) + '</div>' +
+    A.kpi({ label: 'CÂU HỎI', value: A.nf(8633), icon: 'exam', delta: '+146', sub: 'trong 7 ngày qua' }) +
+    '<section class="a-card full"><h2 class="adm-h2" style="margin:0 0 10px">Nhãn trạng thái (luôn có icon + chữ)</h2><div class="st">' + A.status('live', 'Đã xuất bản') + A.status('draft', 'Nháp') + A.status('ok', 'Hợp lệ') + A.status('warn', 'Chưa có âm thanh') + A.status('info', 'Chờ bố mẹ chấm') + A.status('off', 'Đã khoá') + A.btn({ label: 'Hiện thông báo nhỏ', variant: 'secondary', size: 's', attrs: 'data-toast' }) + '</div></section>' +
+    '<div class="half">' + A.skel('150px') + '</div>' +
+    '<section class="a-card" style="grid-column:span 1">' + A.empty({ title: 'Chưa có hoạt động', text: 'Bài học của con sẽ hiện ở đây.' }) + '</section>' +
+    '<section class="a-card" style="grid-column:span 1">' + A.error({ code: 'PRG-503' }) + '</section>';
+  p.querySelector('[data-toast]').addEventListener('click', function () { A.toast(p, 'Đã lưu thay đổi.'); });
+  p.querySelector('[data-retry]').addEventListener('click', function () { A.toast(p, 'Đang tải lại…'); });
+})();
+</script>
+</body>
+</html>

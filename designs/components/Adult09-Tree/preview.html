@@ -1,0 +1,172 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="9. Cấu trúc lộ trình Chặng → Cấp → Chủ đề → Bài học: thêm, sửa, kéo thả sắp xếp, trạng thái Nháp / Đã xuất bản" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Cấu trúc lộ trình — preview</title>
+<style>
+  .tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+  .tree ul { margin-left: 22px; border-left: 1px dashed var(--line-strong); padding-left: 6px; }
+  .tn { display: flex; align-items: center; gap: 4px; min-height: 40px; padding: 2px 6px 2px 2px; border-radius: var(--adm-radius-md); }
+  .tn:hover { background: var(--surface-soft); }
+  .tn.is-sel { background: var(--brand-soft); box-shadow: inset 0 0 0 1px var(--brand); }
+  .tn .tg { width: 24px; height: 24px; border: 0; background: none; border-radius: 4px; color: var(--ink-soft); display: grid; place-items: center; cursor: pointer; padding: 0; flex: none; }
+  .tn .tg .b-ico { transition: transform var(--duration-fast); }
+  .tn .tg[aria-expanded="true"] .b-ico { transform: rotate(90deg); }
+  .tn .sp { width: 24px; flex: none; }
+  .tn .nm { flex: 1; min-width: 0; text-align: left; border: 0; background: none; padding: 4px 6px; font: 500 14px/20px var(--font-thcs); color: var(--ink); cursor: pointer; border-radius: 4px; display: flex; align-items: center; gap: 8px; }
+  .tn .nm .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--lv); flex: none; }
+  .tn .nm .c { color: var(--ink-soft); font-weight: 400; font-size: 13px; }
+  .tn[data-type="stage"] .nm { font-weight: 700; }
+  .tn[data-type="level"] .nm { font-weight: 600; }
+  .tn .add { opacity: 0; }
+  .tn:hover .add, .tn.is-sel .add, .tn .add:focus-visible { opacity: 1; }
+  .tn .miss { color: var(--field-error); font: 600 12px/16px var(--font-thcs); display: inline-flex; gap: 4px; align-items: center; }
+  .tbar2 { display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-3); }
+  .ed { position: sticky; top: 0; }
+  .ed .sw { display: flex; align-items: center; gap: var(--space-2); }
+  .ed .sw i { width: 28px; height: 28px; border-radius: 6px; background: var(--lv); }
+  .ed-h { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+  .readonly { background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: var(--space-2) var(--space-3); display: flex; justify-content: space-between; align-items: center; }
+  .tn.is-none .nm span:not(.c) { color: var(--ink-soft); }
+  .tn.is-none .nm .b-ico { color: var(--adm-status-none-ink); }
+  .lgd { display: flex; gap: var(--space-3); flex-wrap: wrap; margin: 0 0 var(--space-3); align-items: center; }
+  .fwk { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin-bottom: var(--space-3); }
+  .fwk > div { background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 8px 10px; }
+  .fwk b { display: block; font: 700 22px/28px var(--font-thcs); }
+  .fwsteps { margin: 0 0 var(--space-4); padding-left: 20px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 4px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, D = A.data;
+  var FRUIT = [['Gọi tên trái cây', 'Name the fruits', 8, 'live'], ['Màu của trái cây', 'Fruit colours', 7, 'live'], ['Tớ thích quả táo', 'I like apples', 9, 'live'], ['Ôn tập & Trùm Khỉ Lém', 'Review and boss', 10, 'draft']];
+  var SHORT = { 'Lễ hội': 3, 'Healthy living': 2, 'Planet Earth': 1 };
+  var uid = 0;
+  function lessons(lv, t) {
+    var tops = D.topics[lv], total = D.perLevel.lessons[lv - 1], fixed = 0, free = 0;
+    tops.forEach(function (x) { if (SHORT[x]) fixed += SHORT[x]; else free++; });
+    var idx = tops.filter(function (x) { return !SHORT[x]; }).indexOf(t), share = Math.floor((total - fixed) / free), n = SHORT[t] || share + (idx < (total - fixed) % free ? 1 : 0), out = [];
+    for (var i = 1; i <= n; i++) {
+      var f = t === 'Trái cây' ? (i <= 3 ? FRUIT[i - 1] : i === n ? FRUIT[3] : null) : null;
+      out.push(f ? { id: 'n' + (++uid), type: 'lesson', name: f[0], en: f[1], steps: f[2], min: 10, status: f[3] } : { id: 'n' + (++uid), type: 'lesson', name: 'Bài ' + i + ' · ' + t, en: t + ' ' + i, steps: 8, min: lv <= 5 ? 10 : 15, status: lv === 7 && t === 'Health' && i === 4 ? 'draft' : 'live' });
+    }
+    return out;
+  }
+  function level(l) { return { id: 'l' + l.n, type: 'level', n: l.n, name: l.name, en: l.en || l.name, open: l.n === 5, kids: D.topics[l.n].map(function (t, i) { return { id: 'n' + (++uid), type: 'topic', name: t, unit: l.n <= 5 ? 'Unit ' + (i + 3) : 'Unit ' + (i + 1), open: t === 'Trái cây', status: 'live', kids: lessons(l.n, t) }; }) }; }
+  var level0 = level; level = function (l) { var v = level0(l); (D.framework[l.n] || []).forEach(function (f) { v.kids.push({ id: f.id, type: 'topic', name: f.name, vi: f.vi, unit: f.unit, open: false, status: 'none', target: f.target, fw: f, kids: [] }); }); return v; };
+  var TREE = [{ id: 's1', type: 'stage', name: 'Chặng 1 · Tiểu học — 5 đảo', open: true, kids: B.levels.slice(0, 5).map(level) }, { id: 's2', type: 'stage', name: 'Chặng 2 · THCS — 5 thành phố', open: false, kids: B.levels.slice(5).map(level) }];
+  var S = { sel: null };
+  function find(id, list, parent) { list = list || TREE; for (var i = 0; i < list.length; i++) { var n = list[i]; if (n.id === id) return { n: n, parent: parent, list: list }; if (n.kids) { var r = find(id, n.kids, n); if (r) return r; } } return null; }
+  S.sel = 'fw-holi';
+  function count(n) { if (n.type === 'stage') return n.kids.length + ' cấp'; if (n.type === 'level') return n.kids.length + ' chủ đề · ' + n.kids.reduce(function (a, t) { return a + t.kids.length; }, 0) + ' bài'; if (n.status === 'none') return n.target + ' từ mục tiêu · chưa có bài'; if (n.type === 'topic') return n.kids.length + ' bài'; return n.steps + ' bước · ' + n.min + ' phút'; }
+  function node(n) {
+    var has = n.kids && n.kids.length, sel = S.sel === n.id;
+    var row = '<div class="tn' + (sel ? ' is-sel' : '') + (n.status === 'none' ? ' is-none' : '') + '" data-type="' + n.type + '"' + (n.type === 'level' ? ' data-level="' + n.n + '"' : '') + '>' +
+      (n.type !== 'stage' ? '<button type="button" class="a-grip" aria-label="Kéo để sắp xếp ' + n.name + ' (hoặc ↑/↓)">' + B.icon('grip', 16) + '</button>' : '') +
+      (has ? '<button type="button" class="tg" data-tg="' + n.id + '" aria-expanded="' + !!n.open + '" aria-label="' + (n.open ? 'Thu gọn ' : 'Mở ') + n.name + '">' + B.icon('next', 14) + '</button>' : '<span class="sp"></span>') +
+      '<button type="button" class="nm" data-sel="' + n.id + '"' + (sel ? ' aria-current="true"' : '') + '>' + (n.type === 'level' ? '<span class="dot"></span>Cấp ' + n.n + ' · ' : n.type === 'lesson' ? B.icon('cards', 14) : n.type === 'topic' ? B.icon('book', 14) : '') + '<span>' + n.name + '</span><span class="c">' + count(n) + '</span></button>' +
+      (n.type === 'topic' && n.status !== 'none' && n.kids.length < 4 ? '<span class="miss">' + B.icon('warn', 13) + 'thiếu ' + (4 - n.kids.length) + ' bài</span>' : '') +
+      (n.type === 'lesson' || n.type === 'topic' ? (n.status === 'none' ? A.status('none', 'Chưa có bài') : A.status(n.status === 'live' ? 'live' : 'draft', n.status === 'live' ? 'Đã xuất bản' : 'Nháp')) : '') +
+      (n.type === 'level' || n.type === 'topic' ? '<button type="button" class="a-iconbtn add" data-add="' + n.id + '" aria-label="Thêm ' + (n.type === 'level' ? 'chủ đề vào cấp ' + n.n : 'bài học vào ' + n.name) + '" title="Thêm ' + (n.type === 'level' ? 'chủ đề' : 'bài học') + '">' + B.icon('plus', 16) + '</button>' : '') + '</div>';
+    return '<li data-sort-item="' + n.id + '" data-name="' + n.name + '">' + row + (has && n.open ? '<ul data-list="' + n.id + '">' + n.kids.map(node).join('') + '</ul>' : '') + '</li>';
+  }
+  var FWT = {};
+  function fwTable(t) {
+    if (FWT[t.id]) return FWT[t.id];
+    return FWT[t.id] = A.table({ id: 'fwt-' + t.id, rows: t.fw.words, pageSize: 10, searchKeys: ['word', 'vi'], placeholder: 'Tìm từ mục tiêu…', sort: { key: 'n', dir: 'asc' },
+      filters: [{ key: 'bank', label: 'Trạng thái', options: [['has', 'Đã có trong ngân hàng'], ['no', 'Chưa có']], match: function (r, v) { return v === 'has' ? !!r.bank : !r.bank; } }],
+      columns: [
+        { key: 'n', label: '#', sort: true, align: 'right', w: '48px' },
+        { key: 'word', label: 'Từ mục tiêu', sort: true, render: function (r) { return '<b class="adm-en" lang="en">' + r.word + '</b>'; } },
+        { key: 'vi', label: 'Nghĩa gợi ý', sort: true },
+        { key: 'bank', label: 'Trong ngân hàng', sort: true, render: function (r) { return r.bank ? A.status('ok', 'Đã có · ' + r.bank) : A.status('none', 'Chưa có'); } }
+      ] });
+  }
+  function fwSummary(t, lv) {
+    var has = t.fw.words ? t.fw.words.filter(function (w) { return w.bank; }).length : 0;
+    return '<section class="a-card a-s5 ed" aria-labelledby="ed-t"><div class="ed-h">' + A.status('none', 'Chưa có bài') + '<h2 class="adm-h2" id="ed-t" style="margin:0;flex:1" lang="en">' + t.name + '</h2></div>' +
+      '<p class="adm-body b-muted" style="margin:0 0 var(--space-3)">' + t.vi + ' · Cấp ' + lv.n + ' · ' + lv.name + ' · ' + t.unit + ' SGK. Chủ đề có trong khung chương trình nhưng chưa có bài học nào.</p>' +
+      '<div class="fwk">' + [['Từ mục tiêu', t.target], ['Đã có sẵn', has], ['Cần thêm', t.target - has]].map(function (k) { return '<div><span class="adm-small b-muted">' + k[0] + '</span><b>' + k[1] + '</b></div>'; }).join('') + '</div>' +
+      '<ol class="fwsteps adm-body"><li>Xuất danh sách từ mục tiêu ra Excel.</li><li>Điền phiên âm, nghĩa, câu ví dụ (bố mẹ tự điền được).</li><li>Nhập lại bằng <b>Nhập & xuất Excel › Chủ đề mới</b> — bài học được tạo ở trạng thái Nháp.</li></ol>' +
+      '<div class="a-actions" style="justify-content:stretch;flex-wrap:wrap">' + A.btn({ label: 'Xem danh sách từ mục tiêu', icon: 'list', variant: 'secondary', attrs: 'data-fwopen', block: true }) + A.btn({ label: 'Xuất Excel để điền', icon: 'download', variant: 'secondary', attrs: 'data-fwexp' }) + A.btn({ label: 'Nhập Excel', icon: 'upload', attrs: 'data-fwimp' }) + '</div></section>';
+  }
+  function fwDrawer(scr, ctx, t, lv) {
+    var body = '<p class="adm-body b-muted" style="margin:0">' + t.vi + ' · Cấp ' + lv.n + ' · ' + lv.name + ' · ' + t.target + ' từ mục tiêu</p>' +
+      (t.fw.words ? fwTable(t).html() : A.empty({ title: 'Chưa có danh sách từ mục tiêu', text: 'Khung chương trình mới ghi số lượng (' + t.target + ' từ). Xuất tệp mẫu trống để điền, hoặc nhập danh sách có sẵn.' }));
+    var dr = A.drawer(scr, { wide: true, title: 'Từ mục tiêu · ' + t.name, body: body, foot: A.btn({ label: 'Xuất Excel để điền', icon: 'download', variant: 'secondary', attrs: 'data-fwexp2' }) + A.btn({ label: 'Nhập Excel', icon: 'upload', attrs: 'data-fwimp2' }) });
+    if (t.fw.words) fwTable(t).mount(dr.el);
+    dr.el.querySelector('[data-fwexp2]').addEventListener('click', function () { A.toast(ctx.scr, 'Đã tạo chu-de-' + t.id.slice(3) + '.xlsx: trang Chủ đề + ' + t.target + ' dòng từ để điền.'); });
+    dr.el.querySelector('[data-fwimp2]').addEventListener('click', function () { dr.close(); A.toast(ctx.scr, 'Mở Nhập & xuất Excel › Chủ đề mới cho “' + t.name + '”.'); });
+  }
+  function editor() {
+    var ff = find(S.sel); if (ff && ff.n.status === 'none') return fwSummary(ff.n, ff.parent);
+    var f = find(S.sel); if (!f) return '<section class="a-card a-s5">' + A.empty({ title: 'Chọn một mục để sửa', text: 'Bấm vào tên chặng, cấp, chủ đề hoặc bài học ở cây bên trái.' }) + '</section>';
+    var n = f.n, T = { stage: 'Chặng', level: 'Cấp', topic: 'Chủ đề', lesson: 'Bài học' }[n.type], body = '';
+    if (n.type === 'stage') body = A.field({ id: 'e-name', label: 'Tên chặng', value: n.name, required: true });
+    if (n.type === 'level') body = '<div class="a-form">' + A.field({ id: 'e-name', label: 'Tên tiếng Việt', value: n.name, required: true }) + A.field({ id: 'e-en', label: 'Tên tiếng Anh', value: n.en, en: true }) + '</div><div class="readonly adm-small" data-level="' + n.n + '"><span class="sw"><i></i><span>Màu cấp: token <code>level-' + n.n + '</code> (cố định)</span></span></div>';
+    if (n.type === 'topic') body = '<div class="a-form">' + A.field({ id: 'e-name', label: 'Tên chủ đề', value: n.name, required: true, cls: 'a-full' }) + A.field({ id: 'e-lv', label: 'Thuộc cấp', type: 'select', value: f.parent.n, options: B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n + ' · ' + l.name]; }) }) + A.field({ id: 'e-unit', label: 'Unit SGK', type: 'select', value: n.unit, options: ['—', 'Unit 1', 'Unit 2', 'Unit 3', 'Unit 4', 'Unit 5', 'Unit 6', 'Unit 7', 'Unit 8'] }) + '</div>' +
+      A.field({ id: 'e-st', label: 'Trạng thái', type: 'seg', value: n.status, options: [['draft', 'Nháp'], ['live', 'Đã xuất bản']], hint: 'Chủ đề nháp sẽ ẩn toàn bộ bài học bên trong với học sinh.' });
+    if (n.type === 'lesson') body = '<div class="a-form">' + A.field({ id: 'e-name', label: 'Tên bài (tiếng Việt)', value: n.name, required: true }) + A.field({ id: 'e-en', label: 'Tên tiếng Anh', value: n.en, en: true }) +
+      A.field({ id: 'e-min', label: 'Thời lượng', value: n.min, suffix: '<span class="adm-small b-muted">phút</span>', required: true }) + A.field({ id: 'e-topic', label: 'Chủ đề', type: 'select', value: f.parent.id, options: [[f.parent.id, f.parent.name]] }) + '</div>' +
+      '<div class="readonly adm-small"><span>' + n.steps + ' bước · 12 từ · 6 câu hỏi</span><button type="button" class="t-link adm-small">Mở trong Soạn bài học →</button></div>' +
+      A.field({ id: 'e-st', label: 'Trạng thái', type: 'seg', value: n.status, options: [['draft', 'Nháp'], ['live', 'Đã xuất bản']], hint: 'Bài nháp chỉ biên tập viên thấy.' });
+    return '<section class="a-card a-s5 ed" aria-labelledby="ed-t"><div class="ed-h"><span class="t-pill">' + T + '</span><h2 class="adm-h2" id="ed-t" style="margin:0;flex:1">' + n.name + '</h2>' + (n.type !== 'stage' ? '<button type="button" class="a-iconbtn" data-del aria-label="Xoá ' + n.name + '" title="Xoá">' + B.icon('trash', 16) + '</button>' : '') + '</div><div class="a-form" style="grid-template-columns:1fr">' + body +
+      '<div class="a-actions">' + A.btn({ label: 'Huỷ', variant: 'ghost', attrs: 'data-cancel' }) + A.btn({ label: 'Lưu', icon: 'check', attrs: 'data-save' }) + '</div></div><p class="adm-small b-muted" style="margin:var(--space-3) 0 0">Sửa lần cuối: Thầy Nam · 20:52 hôm nay</p></section>';
+  }
+  function main() {
+    return '<div class="a-grid"><section class="a-card a-s7" aria-labelledby="tr"><div class="tbar2"><h2 class="adm-h2" id="tr" style="margin:0;flex:1">Lộ trình học</h2>' + A.btn({ label: 'Mở hết', variant: 'ghost', size: 's', attrs: 'data-all="1"' }) + A.btn({ label: 'Thu gọn', variant: 'ghost', size: 's', attrs: 'data-all="0"' }) + '</div>' +
+      '<p class="adm-small b-muted" style="margin:0 0 var(--space-2)">Kéo tay nắm (6 chấm) để đổi thứ tự trong cùng nhóm. Bàn phím: Tab tới tay nắm rồi ↑ / ↓.</p><div class="lgd adm-small b-muted"><span>Trạng thái:</span>' + A.status('live', 'Đã xuất bản') + A.status('draft', 'Nháp') + A.status('none', 'Chưa có bài') + '</div><ul class="tree" data-list="root">' + TREE.map(node).join('') + '</ul></section>' + editor() + '</div>';
+  }
+  function page(m) { return A.shell({ area: 'admin', active: 'tree', title: 'Cấu trúc lộ trình', crumb: (function () { var t = 0, l = 0; TREE.forEach(function (s) { s.kids.forEach(function (v) { t += v.kids.length; v.kids.forEach(function (x) { l += x.kids.length; }); }); }); var nn = 0; Object.keys(D.framework).forEach(function (k) { nn += D.framework[k].length; }); return '2 chặng · 10 cấp · ' + t + ' chủ đề (' + nn + ' chưa có bài) · ' + l + ' bài'; })(), actions: A.btn({ label: 'Xuất bản thay đổi (3)', icon: 'upload', attrs: 'data-pub' }), main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa có cấu trúc)' },
+    notes: { normal: 'Mở/thu gọn bằng mũi tên; bấm tên để sửa ở khung phải. Kéo tay nắm để sắp xếp bài trong chủ đề hoặc chủ đề trong cấp (Tab tới tay nắm rồi ↑/↓). Đổi trạng thái Nháp / Đã xuất bản rồi Lưu; xoá tên rồi Lưu để thấy lỗi dưới ô. Chủ đề nét đứt “Chưa có bài” (ví dụ Cấp 5 · Holidays and travel, Feelings) có trong khung chương trình: bấm vào để mở bảng từ mục tiêu, Xuất Excel để điền hoặc Nhập Excel.', loading: 'Khung xương cây và khung sửa.', empty: 'Chưa có chặng nào.', error: 'Không tải được cấu trúc.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s7">' + A.skel('480px') + '</div><div class="a-s5">' + A.skel('320px') + '</div></div>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có lộ trình', text: 'Tạo chặng đầu tiên, sau đó thêm cấp, chủ đề và bài học.', action: A.btn({ label: 'Tạo chặng đầu tiên', icon: 'plus' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'TRE-500' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-tg]').forEach(function (b) { b.addEventListener('click', function () { var n = find(b.dataset.tg).n; n.open = !n.open; re('[data-tg="' + n.id + '"]'); }); });
+      scr.querySelectorAll('[data-sel]').forEach(function (b) { b.addEventListener('click', function () { S.sel = b.dataset.sel; var fx = find(S.sel); S.openFw = !!(fx && fx.n.status === 'none'); re('[data-sel="' + S.sel + '"]'); }); });
+      scr.querySelectorAll('[data-all]').forEach(function (b) { b.addEventListener('click', function () { var v = b.dataset.all === '1'; (function walk(l) { l.forEach(function (n) { if (n.kids && n.type !== 'topic') { n.open = v; walk(n.kids); } else if (n.type === 'topic') n.open = false; }); })(TREE); TREE.forEach(function (s) { s.open = true; }); re('[data-all="' + b.dataset.all + '"]'); }); });
+      scr.querySelectorAll('[data-list]').forEach(function (ul) { if (ul.dataset.list === 'root') return; A.sortable(ul, { onChange: function (ids) { var f = find(ul.dataset.list).n; f.kids = ids.map(function (id) { return f.kids.filter(function (k) { return k.id === id; })[0]; }); } }); });
+      scr.querySelectorAll('[data-add]').forEach(function (b) { b.addEventListener('click', function () {
+        var p = find(b.dataset.add).n, isT = p.type === 'level';
+        A.dialog(scr, { title: isT ? 'Thêm chủ đề vào Cấp ' + p.n : 'Thêm bài học vào “' + p.name + '”', body: A.field({ id: 'nw', label: isT ? 'Tên chủ đề' : 'Tên bài học', required: true, placeholder: isT ? 'Ví dụ: Sports' : 'Ví dụ: Bài 5 · Fruit salad' }) + '<p class="adm-small" style="margin:0">Mục mới được tạo ở trạng thái <b>Nháp</b>.</p>',
+          actions: [{ label: 'Huỷ' }, { label: 'Thêm', variant: 'primary', icon: 'plus', onClick: function (w) { var v = w.querySelector('#nw').value.trim(); var m = !v ? 'Nhập tên trước khi thêm.' : p.kids.some(function (k) { return k.name.toLowerCase() === v.toLowerCase(); }) ? 'Đã có mục cùng tên trong nhóm này.' : ''; A.setErr(w, 'nw', m); if (m) { w.querySelector('#nw').focus(); return false; }
+            var nn = isT ? { id: 'n' + (++uid), type: 'topic', name: v, unit: '—', open: true, status: 'draft', kids: [] } : { id: 'n' + (++uid), type: 'lesson', name: v, en: '', steps: 0, min: 10, status: 'draft' }; p.kids.push(nn); p.open = true; S.sel = nn.id; setTimeout(function () { re('[data-sel="' + nn.id + '"]'); A.toast(ctx.scr, 'Đã thêm “' + v + '” (nháp).'); }, 0); } }] });
+      }); });
+      var f = find(S.sel); if (!f) return;
+      if (f.n.status === 'none') {
+        scr.querySelector('[data-fwopen]').addEventListener('click', function () { fwDrawer(scr, ctx, f.n, f.parent); });
+        scr.querySelector('[data-fwexp]').addEventListener('click', function () { A.toast(ctx.scr, 'Đã tạo chu-de-' + f.n.id.slice(3) + '.xlsx: trang Chủ đề + ' + f.n.target + ' dòng từ để điền.'); });
+        scr.querySelector('[data-fwimp]').addEventListener('click', function () { A.toast(ctx.scr, 'Mở Nhập & xuất Excel › Chủ đề mới cho “' + f.n.name + '”.'); });
+        if (S.openFw) { S.openFw = false; fwDrawer(scr, ctx, f.n, f.parent); }
+        return;
+      }
+      var st = f.n.status;
+      var sg = scr.querySelector('#e-st'); sg && sg.addEventListener('segchange', function (e) { st = e.detail; A.setErr(scr, 'e-st', ''); });
+      var rules = { 'e-name': function (v) { return !v.trim() ? 'Tên không được để trống.' : v.trim().length > 50 ? 'Tên tối đa 50 ký tự.' : ''; } };
+      if (scr.querySelector('#e-min')) rules['e-min'] = function (v) { return !/^\d+$/.test(v.trim()) ? 'Nhập số phút (5–30).' : +v < 5 || +v > 30 ? 'Thời lượng một bài từ 5 đến 30 phút.' : ''; };
+      A.wireValidate(scr, rules);
+      scr.querySelector('[data-save]').addEventListener('click', function () {
+        if (A.validate(scr, rules)) return;
+        if (f.n.type === 'lesson' && st === 'live' && !f.n.steps) { A.setErr(scr, 'e-st', 'Bài chưa có bước nào nên chưa xuất bản được. Mở Soạn bài học để thêm bước.'); return; }
+        if (f.n.type === 'topic' && st === 'live' && !f.n.kids.length) { A.setErr(scr, 'e-st', 'Chủ đề chưa có bài học nào nên chưa xuất bản được.'); return; }
+        f.n.name = scr.querySelector('#e-name').value.trim(); if (scr.querySelector('#e-min')) f.n.min = +scr.querySelector('#e-min').value; if (f.n.status !== undefined) f.n.status = st;
+        re('[data-sel="' + f.n.id + '"]'); A.toast(ctx.scr, 'Đã lưu “' + f.n.name + '”.');
+      });
+      scr.querySelector('[data-cancel]').addEventListener('click', function () { re('[data-sel="' + f.n.id + '"]'); });
+      var del = scr.querySelector('[data-del]'); del && del.addEventListener('click', function () {
+        var cnt = f.n.kids ? ' và ' + count(f.n) + ' bên trong' : '';
+        A.dialog(scr, { title: 'Xoá “' + f.n.name + '”?', body: '<p style="margin:0">Mục này' + cnt + ' sẽ chuyển vào Thùng rác 30 ngày. Tiến độ của học sinh ở mục này được giữ lại.</p>', actions: [{ label: 'Huỷ' }, { label: 'Xoá', variant: 'danger', icon: 'trash', onClick: function () { f.list.splice(f.list.indexOf(f.n), 1); S.sel = f.parent ? f.parent.id : null; setTimeout(function () { re(S.sel && '[data-sel="' + S.sel + '"]'); A.toast(ctx.scr, 'Đã chuyển vào Thùng rác.'); }, 0); } }] });
+      });
+    }, all: function (scr) { var p = scr.querySelector('[data-pub]'); p && p.addEventListener('click', function () { A.toast(scr, 'Đã xuất bản 3 thay đổi. Học sinh thấy sau khi tải lại app.'); }); } }
+  });
+})();
+</script>
+</body>
+</html>

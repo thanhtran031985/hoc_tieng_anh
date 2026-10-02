@@ -1,0 +1,75 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="13b. Bài xếp lớp · câu hỏi: nghe và chọn hình, không báo đúng/sai, tiến độ là 12 ngôi sao nhỏ (1–4 chọn, Space nghe, Enter tiếp)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bài xếp lớp · câu hỏi — preview</title>
+<style>
+  .stars { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .stars .pip { width: var(--size-star-pip); height: var(--size-star-pip); display: grid; place-items: center; border-radius: 50%; }
+  .stars .pip .b-ico { width: var(--size-star-pip); height: var(--size-star-pip); }
+  .stars .pip.on .b-ico { animation: pipIn .45s cubic-bezier(.3,1.6,.5,1); }
+  .stars .pip.cur { box-shadow: 0 0 0 3px var(--brand); background: var(--surface); }
+  @keyframes pipIn { from { transform: scale(.3) rotate(-30deg); } }
+  .q { display: flex; align-items: center; gap: var(--space-6); }
+  .q .b-dragon { width: min(120px, 14cqh); height: auto; }
+  .opts { display: grid; grid-template-columns: repeat(4, min(272px, 33cqh)); gap: var(--space-6); }
+  .opts .b-choice { aspect-ratio: 1; width: 100%; }
+  .opts .b-pic { width: 72%; height: auto; }
+  .sk-opts { display: grid; grid-template-columns: repeat(4, min(272px, 33cqh)); gap: var(--space-6); }
+  .sk-opts .b-sk { aspect-ratio: 1; width: 100%; height: auto !important; border-radius: var(--radius-lg) !important; }
+  .done { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); text-align: center; }
+  .done .b-dragon { width: min(220px, 26cqh); height: auto; }
+  @media (prefers-reduced-motion: reduce) { .stars .pip.on .b-ico { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var QS = [['cat', ['dog', 'cat', 'fish', 'bird']], ['red', ['red', 'blue', 'green', 'yellow']], ['two', ['one', 'three', 'two', 'ball']], ['duck', ['rabbit', 'duck', 'bird', 'cat']], ['apple', ['orange', 'pear', 'banana', 'apple']], ['yellow', ['green', 'yellow', 'red', 'blue']],
+    ['banana', ['banana', 'grapes', 'apple', 'pear']], ['ball', ['kite', 'teddy', 'ball', 'duck']], ['grapes', ['strawberry', 'grapes', 'orange', 'apple']], ['kite', ['ball', 'bird', 'teddy', 'kite']], ['strawberry', ['apple', 'pear', 'strawberry', 'grapes']], ['teddy', ['teddy', 'rabbit', 'kite', 'ball']]];
+  var S = { q: 3, sel: -1, ans: [] };
+  function pips(n) { var h = ''; for (var i = 0; i < 12; i++) h += '<span class="pip' + (i < n ? ' on' : '') + (i === n ? ' cur' : '') + '">' + B.icon(i < n ? 'star' : 'starEmpty', 28) + '</span>'; return '<div class="stars" role="progressbar" aria-label="Tiến độ bài xếp lớp" aria-valuemin="0" aria-valuemax="12" aria-valuenow="' + n + '" aria-valuetext="Đã làm ' + n + ' trên 12 câu">' + h + '</div>'; }
+  function head(n) { return '<header class="lesson-head"><button type="button" class="b-iconbtn" aria-label="Dừng bài xếp lớp" data-exit>' + B.icon('close', 26) + '</button>' + pips(n) + '<span class="count">' + Math.min(n + 1, 12) + '/12</span></header>'; }
+  function foot(o) { o = o || {}; return '<footer class="lesson-foot"><div><div class="grp">' + B.btn({ label: 'Nghe lại', variant: 'secondary', size: 'l', icon: 'replay', key: 'Space', attrs: 'data-replay', disabled: o.off }) + B.btn({ label: 'Tớ chưa biết', variant: 'secondary', size: 'l', icon: 'bulb', attrs: 'data-dunno', disabled: o.off }) + '</div>' + B.btn({ label: o.last ? 'Xem kết quả' : 'Tiếp tục', size: 'l', key: 'Enter', icon: 'next', attrs: 'data-next', disabled: o.off || (!o.last && S.sel < 0) }) + '</div></footer>'; }
+  function body() {
+    if (S.q >= 12) return head(12) + '<main class="lesson-main"><div class="done">' + B.dragon('chucmung', 220) + '<h1 class="display-l">Xong 12 câu rồi!</h1><p class="body-l b-muted">Bông xem kết quả một chút nhé…</p></div></main>' + foot({ last: true });
+    var q = QS[S.q];
+    return head(S.q) + '<main class="lesson-main"><div class="instr"><h1 class="title">Nghe và chọn hình</h1></div>' +
+      '<div class="q">' + B.dragon('chao', 120) + B.speak(q[0], 'l', 'Nghe từ cần chọn') + '<span class="caption b-muted" style="width:120px">Bấm loa hoặc ' + B.key('Space') + '</span></div>' +
+      '<div class="opts" role="radiogroup" aria-label="Chọn hình">' + q[1].map(function (w, i) { return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-label="Hình ' + (i + 1) + '" aria-keyshortcuts="' + (i + 1) + '">' + B.key(String(i + 1), 'b-key--corner') + B.pic(w, 200).replace('aria-label="' + w + '"', 'aria-hidden="true"') + '</button>'; }).join('') + '</div></main>' + foot();
+  }
+  B.screen({
+    fit: true, level: 2,
+    labels: { empty: 'Trống', error: 'Lỗi' },
+    notes: { normal: 'Chọn hình rồi bấm Tiếp tục (Enter): không có dải đúng/sai, không sao bay — chỉ một ngôi sao nhỏ sáng lên. “Tớ chưa biết” cũng sáng sao và sang câu mới. Câu dễ trước, khó dần (con vật → màu → số → trái cây → đồ chơi). Nút × mở hộp thoại Dừng.', loading: 'Đang tải hình và âm thanh câu tiếp theo.', empty: 'Bộ câu hỏi rỗng.', error: 'Không phát được âm thanh: giữ tiến độ, cho thử lại.' },
+    states: {
+      normal: body,
+      loading: function () { return head(S.q) + '<main class="lesson-main">' + B.sk('300px', '36px', 'var(--radius-pill)') + B.sk('112px', '112px', '50%') + '<div class="sk-opts">' + B.sk('', '') + B.sk('', '') + B.sk('', '') + B.sk('', '') + '</div></main>' + foot({ off: true }); },
+      empty: function () { return head(0) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Chưa có câu hỏi xếp lớp', text: 'Mình bắt đầu theo lớp của Minh nhé!', action: B.btn({ label: 'Bắt đầu ở Cấp 3 · Lá xanh', size: 'l', icon: 'next' }) }) + '</main>' + foot({ off: true }); },
+      error: function () { return head(S.q) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Loa chưa phát được', text: 'Bông chưa tải được âm thanh câu này. Không phải lỗi của Minh đâu!' }) + '</main>' + foot({ off: true }); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var q = QS[Math.min(S.q, 11)];
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function pick(i) { if (S.q >= 12) return; S.sel = i; re('[data-i="' + i + '"]'); }
+      function next(dunno) {
+        if (S.q >= 12) { S.q = 0; S.sel = -1; S.ans = []; re(); return; }
+        if (!dunno && S.sel < 0) return;
+        S.ans.push(dunno ? null : q[1][S.sel]); S.q++; S.sel = -1; re(S.q >= 12 ? '[data-next]' : null);
+      }
+      scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+      scr.querySelector('[data-next]').addEventListener('click', function () { next(false); });
+      scr.querySelector('[data-dunno]').addEventListener('click', function () { next(true); });
+      scr.querySelector('[data-replay]').addEventListener('click', function () { B.say(q[0], scr.querySelector('.b-speak--l')); });
+      scr.querySelector('[data-exit]').addEventListener('click', function () { ctx.dialog({ expr: 'tiec', title: 'Dừng bài xếp lớp?', body: 'Còn ' + (12 - S.q) + ' câu nữa thôi! Nếu dừng, Bông cho Minh bắt đầu theo lớp 3.', actions: [{ label: 'Chơi tiếp', variant: 'primary', key: 'Enter' }, { label: 'Dừng lại', variant: 'secondary', key: 'Esc' }] }); });
+      ctx.onKey(function (e) {
+        if (/^[1-4]$/.test(e.key)) { e.preventDefault(); pick(+e.key - 1); }
+        else if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); if (S.q < 12) B.say(q[0], scr.querySelector('.b-speak--l')); }
+        else if (e.key === 'Enter' && !(document.activeElement && document.activeElement.matches('[data-replay],[data-dunno],[data-exit]'))) { e.preventDefault(); next(false); }
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

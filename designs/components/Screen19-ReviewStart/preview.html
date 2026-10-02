@@ -1,0 +1,66 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="15a. Ôn tập hôm nay · bắt đầu: số từ đến hạn, 5 hộp ghi nhớ theo màu mức thuộc, nút Bắt đầu ôn (Enter)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Ôn tập hôm nay — preview</title>
+<style>
+  .rv { flex: 1; min-height: 0; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-4) var(--space-12) var(--space-6); box-sizing: border-box; display: flex; flex-direction: column; gap: min(var(--space-6), 2.6cqh); justify-content: center; }
+  .top { display: flex; align-items: center; gap: var(--space-6); }
+  .top .b-dragon { width: min(150px, 17cqh); height: auto; flex: none; }
+  .top .due { margin-left: auto; display: flex; align-items: center; gap: var(--space-5); padding: var(--space-4) var(--space-6); }
+  .top .due .num { font: 800 64px/64px var(--font-display); color: var(--brand); }
+  .boxes { display: grid; grid-template-columns: repeat(5, minmax(var(--size-memory-box), 1fr)); gap: var(--space-4); }
+  .box { --m: var(--mastery-1); --ms: var(--mastery-1-soft); border-radius: var(--radius-lg); background: var(--ms); border: var(--border-thick) solid var(--m); box-shadow: 0 6px 0 var(--m); padding: 0 0 var(--space-4); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .box .lid { background: var(--m); height: 14px; }
+  .box .hd { padding: var(--space-3) var(--space-4) 0; display: flex; justify-content: space-between; align-items: baseline; }
+  .box .hd b { font: 800 30px/34px var(--font-display); }
+  .box .nm { padding: 0 var(--space-4); font: 800 16px/20px var(--font-body); }
+  .box .sch { padding: 0 var(--space-4); font: 700 13px/16px var(--font-body); color: var(--ink-soft); }
+  .box .pics { display: flex; padding: var(--space-3) var(--space-4) 0; min-height: 52px; }
+  .box .pics span { width: 48px; height: 48px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; margin-right: -12px; box-shadow: 0 0 0 3px var(--ms); }
+  .box .pics .b-pic { width: 36px; height: 36px; }
+  .box .tag { margin: var(--space-3) var(--space-4) 0; align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-pill); padding: 4px 12px; font: 800 14px/18px var(--font-body); background: var(--surface); color: var(--ink); }
+  .box .tag.rest { color: var(--ink-soft); }
+  .box.due-box { transform: translateY(-4px); }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+  @container (max-height: 800px) { .box .pics { min-height: 44px; } .box .pics span { width: 40px; height: 40px; } .top .due .num { font-size: 52px; line-height: 52px; } .box .hd b { font-size: 26px; } }
+  @container (max-width: 1400px) { .rv { padding-left: var(--space-10); padding-right: var(--space-10); } .boxes { gap: var(--space-3); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = B.kids[0];
+  var BOX = [
+    { n: 1, name: 'Mới gặp', sch: 'Ôn mỗi ngày', words: ['pear', 'strawberry', 'teddy', 'green'], due: 4 },
+    { n: 2, name: 'Đang nhớ', sch: 'Ôn sau 2 ngày', words: ['rabbit', 'orange', 'kite', 'yellow'], due: 4 },
+    { n: 3, name: 'Khá nhớ', sch: 'Ôn sau 4 ngày', words: ['duck', 'grapes', 'ball', 'blue', 'three'], due: 4 },
+    { n: 4, name: 'Nhớ tốt', sch: 'Ôn sau 1 tuần', words: ['fish', 'bird', 'banana', 'red', 'two'], due: 0, next: "thứ Ba" },
+    { n: 5, name: 'Thuộc lòng', sch: 'Ôn sau 2 tuần', words: ['cat', 'dog', 'apple', 'one'], due: 0, next: '12/10' }
+  ];
+  function tb(off) { return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid }); }
+  function boxes(empty) {
+    return '<div class="boxes" role="list" aria-label="5 hộp ghi nhớ">' + BOX.map(function (b) {
+      var due = empty ? 0 : b.due;
+      return '<div class="box' + (due ? ' due-box' : '') + '" role="listitem" style="--m:var(--mastery-' + b.n + ');--ms:var(--mastery-' + b.n + '-soft)" aria-label="Hộp ' + b.n + ', ' + b.name + ', ' + b.words.length + ' từ, ' + (due ? due + ' từ đến hạn hôm nay' : 'chưa đến hạn') + '"><span class="lid"></span>' +
+        '<div class="hd"><span class="label">Hộp ' + b.n + '</span><b>' + b.words.length + '</b></div><div class="nm">' + b.name + '</div><div class="sch">' + b.sch + '</div>' +
+        '<div class="pics" aria-hidden="true">' + b.words.slice(0, 4).map(function (w) { return '<span>' + B.pic(w, 36) + '</span>'; }).join('') + '</div>' +
+        (due ? '<span class="tag">' + B.icon('flame', 16) + due + ' từ đến hạn</span>' : '<span class="tag rest">' + B.icon('clock', 16) + (empty && b.n < 4 ? 'Đã ôn xong' : 'Ôn vào ' + (b.next || 'ngày mai')) + '</span>') + '</div>';
+    }).join('') + '</div>';
+  }
+  function top(n, expr, msg) { return '<div class="top">' + B.dragon(expr, 150) + '<div><h1 class="display-l">Ôn tập hôm nay</h1><p class="body-l b-muted" style="margin:4px 0 0">' + msg + '</p></div><div class="b-card due"><span class="num">' + n + '</span><div><b class="title" style="display:block">từ đến hạn ôn</b><span class="label b-muted">' + (n ? 'khoảng ' + Math.round(n / 2) + ' phút' : 'Hôm nay xong rồi!') + '</span></div></div></div>'; }
+  B.screen({
+    fit: true, level: 1,
+    labels: { empty: 'Trống (không có từ đến hạn)' },
+    notes: { normal: 'Từ đến hạn nằm ở hộp 1–3 (hộp hơi nhô lên, có nhãn “đến hạn”). Mỗi hộp có màu theo mức thuộc + số hộp + tên mức, không chỉ dựa vào màu. Trả lời đúng → từ lên hộp kế tiếp; chưa đúng → về hộp 1 để ôn sớm hơn (không trừ gì). Enter = Bắt đầu ôn.', loading: 'Khung xương 5 hộp.', empty: 'Hôm nay không có từ nào đến hạn.', error: 'Không tải được danh sách ôn.' },
+    states: {
+      normal: function () { return tb() + '<div class="rv">' + top(12, 'chao', 'Bông chọn 12 từ An sắp quên. Ôn một chút là nhớ lâu ngay!') + boxes() + '<div class="foot"><span class="body b-muted">Lên hộp càng cao, từ càng ít phải ôn.</span>' + B.btn({ label: 'Bắt đầu ôn', size: 'l', icon: 'next', key: 'Enter', attrs: 'data-start' }) + '</div></div>'; },
+      loading: function () { return tb() + '<div class="rv">' + top('…', 'suynghi', 'Bông đang xem hôm nay cần ôn từ nào…') + '<div class="boxes">' + [1, 2, 3, 4, 5].map(function () { return B.sk('100%', 'min(230px, 28cqh)', 'var(--radius-lg)'); }).join('') + '</div><div class="foot"><span></span>' + B.btn({ label: 'Bắt đầu ôn', size: 'l', key: 'Enter', disabled: true }) + '</div></div>'; },
+      empty: function () { return tb() + '<div class="rv">' + top(0, 'vui', 'An đã ôn hết từ đến hạn. Ngày mai Bông sẽ chọn từ mới để ôn nhé!') + boxes(true) + '<div class="foot"><span class="body b-muted">Muốn học thêm? Mở bài mới trên bản đồ.</span><div style="display:flex;gap:16px">' + B.btn({ label: 'Về trang chủ', variant: 'secondary', size: 'l', icon: 'house' }) + B.btn({ label: 'Học bài mới', size: 'l', icon: 'map', key: 'Enter' }) + '</div></div></div>'; },
+      error: function () { return tb() + '<div class="rv">' + B.stateBlock({ kind: 'error', title: 'Chưa tải được từ cần ôn', text: 'Mạng chập chờn một chút. Không phải lỗi của An đâu!' }) + '</div>'; }
+    },
+    mount: { normal: function (scr, ctx) { var s = scr.querySelector('[data-start]'); s.addEventListener('click', function () { ctx.burst(s, null, 8); }); ctx.onKey(function (e) { if (e.key === 'Enter' && (!document.activeElement || document.activeElement.tagName !== 'BUTTON')) { e.preventDefault(); s.click(); } }); } }
+  });
+})();
+</script>
+</body>
+</html>

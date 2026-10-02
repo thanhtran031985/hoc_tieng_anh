@@ -1,0 +1,91 @@
+<!-- @dsCard group="Màn THCS · 4–9 Bài học" height=720 subtitle="9. Viết đoạn văn: đề bài, gợi ý ý, ô viết có đếm từ (80–120), khu vực nhận xét — bấm “Nộp để nhận xét”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Viết đoạn văn — preview</title>
+<style>
+  .wr { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: var(--space-5); height: 100%; min-height: 0; }
+  .brief { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; overflow: hidden; }
+  .brief .prompt { font: 600 20px/29px var(--font-thcs); }
+  .ideas { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+  .phr { display: flex; flex-wrap: wrap; gap: 6px; }
+  .phr button { min-height: 36px; padding: 0 12px; border-radius: var(--radius-pill); border: 1px solid var(--line); background: var(--surface-soft); color: var(--ink); font: 500 20px/26px var(--font-thcs); cursor: pointer; }
+  .phr button:hover { border-color: var(--brand); }
+  .ed { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; }
+  .ed textarea { flex: 1; min-height: 140px; resize: none; padding: var(--space-4); border-radius: var(--thcs-radius-lg); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: 400 20px/30px var(--font-thcs); }
+  .meter { display: flex; align-items: center; gap: var(--space-3); }
+  .meter .bar { position: relative; flex: 1; height: 10px; border-radius: 5px; background: var(--surface-sunk); }
+  .meter .rng { position: absolute; top: -3px; bottom: -3px; border-left: 2px solid var(--ink-soft); border-right: 2px solid var(--ink-soft); }
+  .meter .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; }
+  .meter b { font: 700 18px/24px var(--font-thcs); min-width: 74px; }
+  .meter .st { display: inline-flex; align-items: center; gap: 4px; font: 600 14px/20px var(--font-thcs); white-space: nowrap; }
+  .fbk { border-radius: var(--thcs-radius-lg); background: var(--surface); box-shadow: var(--thcs-shadow-1); padding: var(--space-4); display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-5); }
+  .fbk .score { display: flex; flex-direction: column; gap: 6px; }
+  .fbk .score .big { font: 800 36px/40px var(--font-thcs); }
+  .rub { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+  .sug { display: flex; flex-direction: column; gap: 6px; }
+  .sug .r { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+  .sug .en { font-size: 20px; line-height: 28px; }
+  .sug del { color: var(--retry-shade); text-decoration-thickness: 2px; }
+  .sug ins { text-decoration: none; color: var(--success-shade); font-weight: 700; }
+  .sug .ic { color: var(--retry-shade); } .sug .ic.ok { color: var(--success-shade); }
+  .fbk.wait { display: flex; align-items: center; gap: var(--space-3); grid-template-columns: none; }
+  @container (max-height: 800px) { .fbk { padding: var(--space-3) var(--space-4); } .ed textarea { padding: var(--space-3); } .brief { gap: var(--space-2); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var DRAFT = 'In my opinion, everyone can help to protect the environment in our neighbourhood. First, we should reduce plastic bags when we go to the market. My family always brings cloth bags now. Second, students can plant more trees in the school yard and along the streets. Trees make the air cleaner and give us shade in summer. Third, some people throws rubbish on the ground, so we can organise a clean-up day every month. Finally, we should save electricity by turning off the lights when we leave a room. If we all do these small things, our neighbourhood will become greener.';
+  var S = { text: DRAFT, sent: false };
+  function wc(t) { var m = t.trim().match(/[A-Za-z’'-]+/g); return m ? m.length : 0; }
+  function meter(n) {
+    var inR = n >= 80 && n <= 120, pct = Math.min(100, n / 150 * 100);
+    var st = n === 0 ? '<span class="st b-muted">Cần 80–120 từ</span>' : n < 80 ? '<span class="st" style="color:var(--retry-shade)">' + B.icon('info', 16) + 'Thêm ' + (80 - n) + ' từ nữa</span>' : n > 120 ? '<span class="st" style="color:var(--retry-shade)">' + B.icon('info', 16) + 'Bớt ' + (n - 120) + ' từ</span>' : '<span class="st" style="color:var(--success-shade)">' + B.icon('check', 16) + 'Độ dài vừa đủ</span>';
+    return '<div class="meter" aria-live="polite"><b>' + n + ' từ</b><div class="bar" aria-hidden="true"><span class="rng" style="left:' + 80 / 1.5 + '%;width:' + 40 / 1.5 + '%"></span><span class="fill" style="width:' + pct + '%;background:' + (inR ? 'var(--success)' : 'var(--retry)') + '"></span></div>' + st + '</div>';
+  }
+  function feedbackBox() {
+    if (!S.sent) return '<section class="fbk wait">' + T.dragon('suynghi', 44) + '<p class="thcs-body b-muted">Nộp bài để nhận nhận xét về <b>nội dung, bố cục, từ vựng và ngữ pháp</b>. Bạn sửa và nộp lại bao nhiêu lần cũng được.</p></section>';
+    var rub = [['Nội dung', '2,5'], ['Bố cục', '2,5'], ['Từ vựng', '2'], ['Ngữ pháp', '1,5']];
+    return '<section class="fbk" aria-labelledby="nx"><div class="score"><span class="thcs-label b-muted" id="nx">Nhận xét</span><span class="big">8,5<span class="thcs-body b-muted">/10</span></span><div class="rub thcs-body-s">' + rub.map(function (r) { return '<span>' + r[0] + '</span><b>' + r[1] + '/2,5</b>'; }).join('') + '</div></div>' +
+      '<div class="sug"><b class="thcs-label">Gợi ý sửa (2)</b>' +
+      '<div class="r"><span class="ic">' + B.icon('pen', 18) + '</span><span class="thcs-body"><span class="en">some people <del>throws</del> <ins>throw</ins> rubbish</span> — chủ ngữ “people” số nhiều nên động từ không thêm -s.</span></div>' +
+      '<div class="r"><span class="ic">' + B.icon('pen', 18) + '</span><span class="thcs-body"><span class="en">we should <del>reduce plastic bags</del> <ins>use fewer plastic bags</ins></span> — hoặc <span class="en">reduce the use of plastic bags</span>.</span></div>' +
+      '<div class="r"><span class="ic ok">' + B.icon('check', 18) + '</span><span class="thcs-body">Bố cục rõ: câu chủ đề, 4 ý có từ nối <span class="en">First / Second / Third / Finally</span>, câu kết.</span></div></div></section>';
+  }
+  function head() { return T.lessonHead({ crumb: 'Viết · London › Bảo vệ môi trường', title: 'Viết đoạn văn 80–120 từ', n: 1, m: 1, xp: S.sent ? 30 : 0 }); }
+  function foot(off) { var n = wc(S.text); return T.lessonFoot(T.btn({ label: 'Lưu nháp', variant: 'secondary', icon: 'notebook', disabled: off }) + T.btn({ label: 'Xem bài mẫu', variant: 'ghost', disabled: off || !S.sent }), T.btn({ label: S.sent ? 'Nộp lại' : 'Nộp để nhận xét', size: 'l', key: 'Ctrl+Enter', disabled: off || n < 80 || n > 120, attrs: 'data-send' })); }
+  function brief() {
+    return '<section class="t-card brief" aria-labelledby="db"><span class="thcs-label b-muted" id="db">Đề bài · Chủ đề Bảo vệ môi trường</span><p class="prompt en">Write a paragraph (80–120 words) about what you can do to protect the environment in your neighbourhood.</p>' +
+      '<p class="thcs-body-s b-muted">Viết một đoạn văn 80–120 từ về những việc bạn có thể làm để bảo vệ môi trường nơi bạn sống.</p>' +
+      '<b class="thcs-label">Gợi ý ý</b><ul class="ideas thcs-body-s"><li>Câu chủ đề: ai cũng có thể góp sức.</li><li>2–4 việc cụ thể: túi vải, trồng cây, dọn rác, tiết kiệm điện.</li><li>Vì sao việc đó có ích.</li><li>Câu kết: khu phố sẽ ra sao.</li></ul>' +
+      '<b class="thcs-label">Cụm từ nên dùng · bấm để chèn</b><div class="phr">' + ['In my opinion,', 'First,', 'Finally,', 'reduce the use of', 'pick up litter', 'save electricity'].map(function (p) { return '<button type="button" data-ins="' + p + '">' + p + '</button>'; }).join('') + '</div></section>';
+  }
+  function body(empty) { return '<div class="wr">' + brief() + '<div class="ed"><label class="b-sr" for="ta">Đoạn văn của bạn</label><textarea id="ta" spellcheck="false" placeholder="Bắt đầu bằng câu chủ đề, ví dụ: In my opinion, …">' + B.esc(empty ? '' : S.text) + '</textarea>' + meter(wc(empty ? '' : S.text)) + feedbackBox() + '</div></div>'; }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    labels: { empty: 'Trống (chưa viết)' },
+    notes: { normal: 'Đếm từ trực tiếp: vạch đánh dấu khoảng 80–120; ngoài khoảng thì nút Nộp bị khoá và nói rõ cần thêm/bớt bao nhiêu từ. Bấm cụm từ để chèn. Nộp → điểm theo 4 tiêu chí + gợi ý sửa cụ thể.', loading: 'Đang tải đề và bản nháp.', empty: 'Chưa viết chữ nào.', error: 'Không tải được bài viết (bản nháp vẫn lưu trên máy).' },
+    states: {
+      normal: function () { return wrap(body()); },
+      loading: function () { return wrap('<div class="wr"><section class="t-card brief">' + B.sk('60%', '18px') + B.sk('100%', '90px') + B.sk('100%', '120px') + B.sk('100%', '80px') + '</section><div class="ed">' + B.sk('100%', '300px', 'var(--thcs-radius-lg)') + B.sk('100%', '24px') + B.sk('100%', '110px', 'var(--thcs-radius-lg)') + '</div></div>', true); },
+      empty: function () { var t = S.text, sent = S.sent; S.text = ''; S.sent = false; var h = wrap(body(true)); S.text = t; S.sent = sent; return h; },
+      error: function () { return wrap(T.state({ kind: 'error', title: 'Chưa tải được bài viết', text: 'Bản nháp của bạn vẫn được lưu trên máy. Thử lại nhé.' }), true); }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        var ta = scr.querySelector('#ta'); if (!ta) return;
+        var m = scr.querySelector('.meter'), send = scr.querySelector('[data-send]');
+        function upd() { var n = wc(ta.value); if (ctx.state === 'normal') S.text = ta.value; m.outerHTML = meter(n); m = scr.querySelector('.meter'); send.disabled = n < 80 || n > 120; }
+        ta.addEventListener('input', upd);
+        scr.querySelectorAll('[data-ins]').forEach(function (b) { b.addEventListener('click', function () { var p = ta.selectionStart || ta.value.length; ta.value = ta.value.slice(0, p) + (p && !/\s$/.test(ta.value.slice(0, p)) ? ' ' : '') + b.dataset.ins + ' ' + ta.value.slice(p); upd(); ta.focus(); }); });
+        send.addEventListener('click', function () { S.sent = true; ctx.setState(ctx.state); ctx.burst(ctx.scr.querySelector('.fbk'), ctx.scr.querySelector('.t-chip--xp'), 8, 'bolt'); });
+        ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (!send.disabled) send.click(); } if (e.key === 'Escape') { ta.blur(); } });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="14. Chọn từ đúng cho hình — 1 hình lớn, 3 thẻ chữ có phím 1–3, bấm chữ để nghe đọc, Enter kiểm tra, dải phản hồi như Nghe và chọn hình" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Chọn từ đúng cho hình — preview</title>
+<style>
+  .stage { display: flex; align-items: center; gap: var(--space-12); }
+  .pic { width: min(340px, 42cqh); aspect-ratio: 1; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-card); display: grid; place-items: center; position: relative; }
+  .pic .b-pic { width: 76%; height: auto; }
+  .pic .b-dragon { position: absolute; left: -54px; bottom: -14px; width: min(110px, 13cqh); height: auto; }
+  .words { display: flex; flex-direction: column; gap: min(var(--space-5), 2.4cqh); width: 420px; }
+  .words .b-choice { flex-direction: row; justify-content: flex-start; gap: var(--space-4); padding: 0 var(--space-6) 0 var(--space-12); height: min(104px, 12.6cqh); width: 100%; }
+  .words .b-choice .w { font: 800 40px/44px var(--font-display); color: var(--ink); }
+  .words .b-choice .snd { margin-left: auto; color: var(--brand); display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--brand-soft); }
+  .words .b-choice.is-playing .snd { animation: ping .6s ease; }
+  @keyframes ping { 50% { transform: scale(1.18); } }
+  .words .b-key--corner { top: 50%; transform: translateY(-50%); left: var(--space-4); }
+  .hint-tip { display: flex; align-items: center; gap: var(--space-2); background: var(--info-soft); border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4); }
+  .sk-w { display: flex; flex-direction: column; gap: var(--space-5); width: 420px; }
+  @media (prefers-reduced-motion: reduce) { .words .b-choice.is-playing .snd { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var QS = [{ a: 'banana', o: ['orange', 'banana', 'pear'] }, { a: 'dog', o: ['dog', 'duck', 'cat'] }, { a: 'kite', o: ['ball', 'teddy', 'kite'] }];
+  var S = { q: 0, step: 4, sel: -1, tries: 0, hint: false, done: false };
+  function head(n) { return '<header class="lesson-head"><button type="button" class="b-iconbtn" aria-label="Thoát bài học" data-exit>' + B.icon('close', 26) + '</button>' + B.ProgressBar(n, 10) + '<span class="count">' + n + '/10</span></header>'; }
+  function foot(o) { o = o || {}; return '<footer class="lesson-foot"><div><div class="grp">' + B.btn({ label: 'Gợi ý', variant: 'secondary', size: 'l', icon: 'bulb', attrs: 'data-hint', disabled: o.off || S.hint }) + '</div>' + B.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter', disabled: o.off || S.sel < 0 || S.done, attrs: 'data-check' }) + '</div></footer>'; }
+  function body() {
+    var q = QS[S.q % QS.length], drop = S.hint ? q.o.filter(function (w) { return w !== q.a; })[0] : null;
+    return head(S.step) + '<main class="lesson-main"><div class="instr"><h1 class="title">Chọn từ đúng cho hình</h1>' + (S.hint ? '<span class="hint-tip label">' + B.icon('bulb', 20) + 'Còn 2 từ thôi!</span>' : '<span class="caption b-muted">Bấm vào chữ để nghe đọc</span>') + '</div>' +
+      '<div class="stage"><div class="pic">' + B.pic(q.a, 260) + B.dragon(S.hint ? 'suynghi' : 'chao', 110) + '</div><div class="words" role="radiogroup" aria-label="Chọn từ">' + q.o.map(function (w, i) {
+        var dim = w === drop;
+        return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + (dim ? ' is-dim' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-keyshortcuts="' + (i + 1) + '"' + (dim ? ' disabled' : '') + ' lang="en">' + B.key(String(i + 1), 'b-key--corner') + '<span class="w">' + w + '</span><span class="snd" aria-hidden="true">' + B.icon('speaker', 22) + '</span></button>';
+      }).join('') + '</div></div></main>' + foot();
+  }
+  B.screen({
+    fit: true, level: 2,
+    notes: { normal: 'Bấm hoặc nhấn 1–3: chọn thẻ và Bông đọc từ đó. Enter kiểm tra. Đúng: thẻ xanh + sao bay + dải xanh. Chưa đúng: dải cam nhẹ nói nghĩa từ bé chọn, cho thử lại; sai 2 lần tự bật gợi ý (làm mờ 1 từ). Nút × mở hộp thoại “Dừng bài học?”.', loading: 'Đang tải hình và âm thanh.', empty: 'Bài chưa có câu hỏi dạng này.', error: 'Không tải được hình: giữ tiến độ, cho thử lại.' },
+    states: {
+      normal: body,
+      loading: function () { return head(S.step) + '<main class="lesson-main">' + B.sk('380px', '36px', 'var(--radius-pill)') + '<div class="stage">' + B.sk('min(340px, 42cqh)', 'min(340px, 42cqh)', 'var(--radius-xl)') + '<div class="sk-w">' + B.sk('100%', 'min(104px, 12.6cqh)', 'var(--radius-lg)') + B.sk('100%', 'min(104px, 12.6cqh)', 'var(--radius-lg)') + B.sk('100%', 'min(104px, 12.6cqh)', 'var(--radius-lg)') + '</div></div></main>' + foot({ off: true }); },
+      empty: function () { return head(0) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Bài này chưa có câu hỏi', text: 'Bông sẽ báo bé khi bài sẵn sàng. Mình quay về bản đồ nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + foot({ off: true }); },
+      error: function () { return head(S.step) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Hình chưa hiện ra', text: 'Bông chưa tải được hình. Không phải lỗi của bé đâu!' }) + '</main>' + foot({ off: true }); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var q = QS[S.q % QS.length];
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function pick(i) { var b = scr.querySelector('[data-i="' + i + '"]'); if (!b || b.disabled || S.done) return; S.sel = i; re('[data-i="' + i + '"]'); var nb = ctx.scr.querySelector('[data-i="' + i + '"]'); nb.classList.add('is-playing'); B.say(q.o[i]); }
+      function check() {
+        if (S.sel < 0 || S.done) return;
+        var card = scr.querySelector('[data-i="' + S.sel + '"]'), w = B.words[q.a];
+        scr.querySelector('[data-check]').disabled = true; card.classList.remove('is-selected');
+        if (q.o[S.sel] === q.a) {
+          S.done = true; card.classList.add('is-correct'); card.insertAdjacentHTML('beforeend', '<span class="b-badge">' + B.icon('check', 24) + '</span>');
+          ctx.burst(card, scr.querySelector('.b-progress span'), 10);
+          ctx.later(function () { scr.querySelector('.b-progress span').style.width = (S.step + 1) * 10 + '%'; scr.querySelector('.count').textContent = (S.step + 1) + '/10'; }, 700);
+          ctx.feedback({ type: 'ok', title: ['Chính xác! Giỏi quá!', 'Đúng rồi!', 'Tuyệt vời!'][S.q % 3], detail: B.speak(q.a, 's') + '<b class="en" style="font-size:26px">' + q.a + '</b><span class="b-muted">' + w.ipa + ' · ' + w.vi + '</span>',
+            onAction: function () { S.q++; S.step = S.step >= 9 ? 1 : S.step + 1; S.sel = -1; S.tries = 0; S.hint = false; S.done = false; re(); } });
+        } else {
+          S.tries++; card.classList.add('is-retry'); card.insertAdjacentHTML('beforeend', '<span class="b-badge">' + B.icon('replay', 22) + '</span>');
+          ctx.feedback({ type: 'retry', title: 'Chưa đúng rồi, thử lại nhé!', detail: '<span><b class="en">' + q.o[S.sel] + '</b> là <b>' + B.words[q.o[S.sel]].vi + '</b>. ' + (S.tries >= 2 ? 'Bông bật gợi ý cho bé rồi đó!' : 'Bé nhìn hình thật kỹ nha, Bông tin bé làm được!') + '</span>',
+            onAction: function () { S.sel = -1; if (S.tries >= 2) S.hint = true; re(); } });
+        }
+      }
+      scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+      scr.querySelector('[data-check]').addEventListener('click', check);
+      scr.querySelector('[data-hint]').addEventListener('click', function () { S.hint = true; if (S.sel > -1 && q.o[S.sel] === q.o.filter(function (w) { return w !== q.a; })[0]) S.sel = -1; re(); });
+      scr.querySelector('[data-exit]').addEventListener('click', function () { ctx.dialog({ expr: 'tiec', title: 'Dừng bài học?', body: 'Còn ' + (10 - S.step) + ' câu nữa là xong bài rồi. Nếu dừng, lần sau mình học tiếp từ câu này nhé.', actions: [{ label: 'Học tiếp', variant: 'primary', key: 'Enter' }, { label: 'Dừng lại', variant: 'secondary', key: 'Esc' }] }); });
+      ctx.onKey(function (e) {
+        if (/^[1-3]$/.test(e.key)) { e.preventDefault(); pick(+e.key - 1); }
+        else if (e.key === 'Enter' && !(document.activeElement && document.activeElement.matches('[data-hint],[data-exit]'))) { e.preventDefault(); check(); }
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

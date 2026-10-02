@@ -1,0 +1,183 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="11. Ngân hàng câu hỏi: lọc theo dạng, cấp, kỹ năng, chủ điểm, độ khó 1–5; biểu mẫu đổi theo dạng câu hỏi; giải thích đáp án; xem như học sinh" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Ngân hàng câu hỏi — preview</title>
+<style>
+  .qt { max-width: 380px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .diff { display: inline-flex; gap: 3px; vertical-align: middle; }
+  .diff i { width: 8px; height: 8px; border-radius: 50%; background: var(--surface-sunk); border: 1px solid var(--line-strong); }
+  .diff i.on { background: var(--ink-soft); border-color: var(--ink-soft); }
+  .types { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+  .types button { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); background: var(--surface); padding: var(--space-2); text-align: left; cursor: pointer; font: 600 13px/18px var(--font-thcs); color: var(--ink); display: flex; flex-direction: column; gap: 4px; }
+  .types button span { font-weight: 400; color: var(--ink-soft); font-size: 12px; line-height: 16px; }
+  .types button[aria-checked="true"] { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); background: var(--brand-soft); }
+  .opts4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+  .pic-opt { border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: var(--space-2); display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .pic-opt.ok { border-color: var(--success); box-shadow: inset 0 0 0 1px var(--success); }
+  .pic-opt select { width: 100% !important; }
+  .rad { display: inline-flex; gap: 6px; align-items: center; font: 500 12px/16px var(--font-thcs); color: var(--ink-soft); cursor: pointer; }
+  .rad input { accent-color: var(--success); width: 16px; height: 16px; }
+  .abcd { display: flex; flex-direction: column; gap: var(--space-2); }
+  .abcd .o { display: grid; grid-template-columns: 30px 1fr 110px; gap: var(--space-2); align-items: center; }
+  .abcd .o b { width: 28px; height: 28px; border-radius: 6px; background: var(--surface-sunk); display: grid; place-items: center; font: 700 13px/1 var(--font-thcs); }
+  .abcd .o.ok b { background: var(--success); color: var(--surface); }
+  .pairs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+  .grp-err { margin-top: 4px; }
+  .stu-opts { display: grid; grid-template-columns: repeat(4, 110px); gap: 14px; }
+  .stu-opts .b-choice { width: 110px; height: 110px; padding: 8px; }
+  .stu-opts .b-choice .b-pic { width: 80px; height: 80px; }
+  .stu-thcs { display: flex; flex-direction: column; gap: 10px; }
+  .stu-why { background: var(--info-soft); border-radius: 10px; padding: 10px 14px; color: var(--ink); }
+  .stu-ins { font: 800 22px/28px var(--font-display); margin: 0; }
+  .a-stu[data-theme="tieu-hoc"] { font-family: var(--font-body); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, D = A.data;
+  var TYPES = { listen: ['Nghe và chọn hình', 'Nghe từ, chọn 1 trong 4 hình'], match: ['Nối từ với hình', '4 cặp từ – hình'], abcd: ['Chọn A / B / C / D', 'Câu hỏi + 4 phương án'], fill: ['Điền vào chỗ trống', 'Câu có ___ và đáp án'] };
+  var SKILLS = ['Nghe', 'Nói', 'Đọc', 'Viết', 'Từ vựng', 'Ngữ pháp', 'Phát âm'];
+  var GRAM = ['—', 'Hiện tại hoàn thành', 'Câu điều kiện loại 1', 'Câu bị động', 'Like + V-ing', 'So sánh hơn', 'Giới từ', 'This is / That is', 'Số nhiều -s'];
+  var uid = 0;
+  function Q(type, text, lv, skill, gram, diff, st, d) { return Object.assign({ id: 'q' + (++uid), type: type, text: text, level: lv, skill: skill, gram: gram, diff: diff, status: st || 'live', expl: '' }, d); }
+  var QS = [
+    Q('listen', 'Nghe và chọn hình: apple', 2, 'Nghe', '—', 1, 'live', { word: 'apple', pics: ['apple', 'pear', 'orange', 'banana'], ok: 0, expl: '“apple” là quả táo.' }),
+    Q('listen', 'Nghe và chọn hình: grapes', 2, 'Nghe', '—', 2, 'live', { word: 'grapes', pics: ['pear', 'grapes', 'strawberry', 'apple'], ok: 1, expl: 'Âm cuối /s/ trong “grapes” — nho là cả chùm.' }),
+    Q('match', 'Nối: banana · orange · pear · strawberry', 2, 'Từ vựng', '—', 2, 'live', { pairs: ['banana', 'orange', 'pear', 'strawberry'] }),
+    Q('listen', 'Nghe và chọn hình: cat', 1, 'Nghe', '—', 1, 'live', { word: 'cat', pics: ['dog', 'cat', 'fish', 'bird'], ok: 1, expl: '“cat” là con mèo.' }),
+    Q('match', 'Nối: cat · dog · fish · bird', 1, 'Từ vựng', '—', 1, 'live', { pairs: ['cat', 'dog', 'fish', 'bird'], expl: 'Ôn tên 4 con vật.' }),
+    Q('abcd', 'I _____ in this town since I was six.', 8, 'Ngữ pháp', 'Hiện tại hoàn thành', 3, 'live', { opts: ['live', 'lived', 'have lived', 'am living'], ok: 2, expl: 'Có “since + mốc thời gian” → dùng thì hiện tại hoàn thành: have lived.' }),
+    Q('abcd', 'If it _____ tomorrow, we will stay at home.', 8, 'Ngữ pháp', 'Câu điều kiện loại 1', 3, 'live', { opts: ['rains', 'rained', 'will rain', 'is raining'], ok: 0, expl: 'Câu điều kiện loại 1: mệnh đề If dùng hiện tại đơn.' }),
+    Q('abcd', 'Traffic _____ is a big problem in Hà Nội at rush hour.', 8, 'Từ vựng', '—', 2, 'live', { opts: ['congestion', 'pollution', 'vehicle', 'pedestrian'], ok: 0 }),
+    Q('abcd', 'Choose the word whose underlined part is pronounced differently.', 8, 'Phát âm', '—', 4, 'live', { opts: ['city', 'country', 'cycle', 'centre'], ok: 1, expl: '“c” trong country đọc /k/; ba từ còn lại đọc /s/.' }),
+    Q('fill', 'This bridge _____ (build) in 1998.', 8, 'Ngữ pháp', 'Câu bị động', 4, 'live', { answer: 'was built', alt: '' }),
+    Q('abcd', 'She is good _____ playing the guitar.', 7, 'Ngữ pháp', 'Giới từ', 2, 'live', { opts: ['in', 'at', 'on', 'for'], ok: 1, expl: 'Cụm cố định: be good at + V-ing.' }),
+    Q('abcd', 'My house is _____ than yours.', 6, 'Ngữ pháp', 'So sánh hơn', 2, 'live', { opts: ['big', 'bigger', 'biggest', 'more big'], ok: 1, expl: 'Tính từ ngắn: big → bigger (gấp đôi phụ âm cuối).' }),
+    Q('fill', 'I like _____ (read) comic books.', 8, 'Ngữ pháp', 'Like + V-ing', 2, 'live', { answer: 'reading', alt: 'to read', expl: 'like + V-ing (hoặc to V) chỉ sở thích.' }),
+    Q('abcd', 'What does “commute” mean?', 8, 'Từ vựng', '—', 2, 'draft', { opts: ['đi lại hằng ngày', 'máy tính', 'giao thông', 'cộng đồng'], ok: 0 }),
+    Q('abcd', 'Listen: What time does the bus to the museum leave?', 8, 'Nghe', '—', 3, 'live', { opts: ['7:50', '8:15', '8:50', '9:15'], ok: 1, audio: true, expl: 'Trong bài nghe: “The next bus leaves at a quarter past eight.”' }),
+    Q('abcd', 'This is _____ apple.', 2, 'Ngữ pháp', 'This is / That is', 1, 'live', { opts: ['a', 'an', 'the', '—'], ok: 1 })
+  ];
+  function diff(n) { return '<span class="diff" role="img" aria-label="Độ khó ' + n + ' trên 5">' + [1, 2, 3, 4, 5].map(function (i) { return '<i class="' + (i <= n ? 'on' : '') + '"></i>'; }).join('') + '</span>'; }
+  var table = A.table({ id: 'qb', rows: QS, total: 8633, pageSize: 10, select: true, searchKeys: ['text', 'gram'], placeholder: 'Tìm nội dung câu hỏi…', sort: { key: 'level', dir: 'asc' },
+    filters: [
+      { key: 'type', label: 'Dạng', options: Object.keys(TYPES).map(function (k) { return [k, TYPES[k][0]]; }) },
+      { key: 'level', label: 'Cấp', options: B.levels.map(function (l) { return [String(l.n), 'Cấp ' + l.n + ' · ' + l.name]; }) },
+      { key: 'skill', label: 'Kỹ năng', options: SKILLS },
+      { key: 'gram', label: 'Chủ điểm', options: GRAM.slice(1) },
+      { key: 'diff', label: 'Độ khó', options: [1, 2, 3, 4, 5].map(function (n) { return [String(n), 'Độ khó ' + n]; }) },
+      { key: 'ex', label: 'Giải thích', options: [['yes', 'Có giải thích'], ['no', 'Chưa có giải thích']], match: function (r, v) { return v === 'yes' ? !!r.expl : !r.expl; } }
+    ],
+    rowAttrs: function (r) { return 'data-row="' + r.id + '"'; }, onRow: function (id) { open(id); },
+    columns: [
+      { key: 'text', label: 'Câu hỏi', sort: true, render: function (r) { return '<span class="qt" lang="' + (r.level > 5 ? 'en' : 'vi') + '" title="' + B.esc(r.text) + '">' + B.esc(r.text) + '</span>'; } },
+      { key: 'type', label: 'Dạng', sort: true, render: function (r) { return TYPES[r.type][0]; } },
+      { key: 'level', label: 'Cấp', sort: true, align: 'center', render: function (r) { return '<span data-level="' + r.level + '"><span class="t-pill t-pill--lv">Cấp ' + r.level + '</span></span>'; } },
+      { key: 'skill', label: 'Kỹ năng', sort: true },
+      { key: 'gram', label: 'Chủ điểm ngữ pháp', sort: true },
+      { key: 'diff', label: 'Độ khó', sort: true, render: function (r) { return diff(r.diff); } },
+      { key: 'expl', label: 'Giải thích', render: function (r) { return r.expl ? A.status('ok', 'Có') : A.status('warn', 'Thiếu'); } },
+      { key: 'status', label: 'Trạng thái', sort: true, render: function (r) { return r.status === 'live' ? A.status('live', 'Đã xuất bản') : A.status('draft', 'Nháp'); } }
+    ] });
+  var SCR, CTX, PIC = Object.keys(B.words);
+  function picSel(id, v) { return '<label class="b-sr" for="' + id + '">Hình</label><select class="t-input a-input" id="' + id + '">' + PIC.map(function (w) { return '<option value="' + w + '"' + (w === v ? ' selected' : '') + '>' + w + '</option>'; }).join('') + '</select>'; }
+  function body(q) {
+    if (q.type === 'listen') return A.field({ id: 'q-word', label: 'Từ được đọc', value: q.word || '', required: true, en: true, suffix: A.btn({ label: 'Tạo giọng đọc', icon: 'wand', variant: 'secondary', size: 's' }), hint: 'Học sinh chỉ nghe, không thấy chữ.' }) +
+      '<div class="a-field" id="q-pics-f"><span class="adm-h3" id="q-pics-l">4 hình lựa chọn · đánh dấu hình đúng</span><div class="opts4" role="group" aria-labelledby="q-pics-l">' + [0, 1, 2, 3].map(function (i) { var w = (q.pics || [])[i] || PIC[i]; return '<div class="pic-opt' + (q.ok === i ? ' ok' : '') + '" data-po="' + i + '">' + B.pic(w, 64) + picSel('q-pic' + i, w) + '<label class="rad"><input type="radio" name="q-ok" value="' + i + '"' + (q.ok === i ? ' checked' : '') + '> Hình đúng</label></div>'; }).join('') + '</div><p class="a-err adm-small" id="q-pics-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>';
+    if (q.type === 'match') return '<div class="a-field" id="q-pairs-f"><span class="adm-h3" id="q-pairs-l">4 cặp từ – hình</span><div class="pairs" role="group" aria-labelledby="q-pairs-l">' + [0, 1, 2, 3].map(function (i) { var w = (q.pairs || [])[i] || PIC[i + 4]; return '<div class="pic-opt">' + B.pic(w, 56) + picSel('q-pr' + i, w) + '</div>'; }).join('') + '</div><p class="a-hint adm-small">Chữ hiển thị lấy theo từ của hình. Thứ tự sẽ được xáo khi học sinh làm.</p><p class="a-err adm-small" id="q-pairs-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>';
+    if (q.type === 'abcd') return A.field({ id: 'q-text', label: 'Nội dung câu hỏi', type: 'textarea', rows: 2, value: q.text || '', required: true, en: true, hint: 'Dùng _____ cho chỗ trống.' }) + (q.audio ? '<div class="a-note adm-small b-muted">' + B.icon('music', 14) + ' Kèm bài nghe: bus_timetable.mp3 (0:24)</div>' : '') +
+      '<div class="a-field" id="q-opts-f"><span class="adm-h3" id="q-opts-l">Phương án · chọn đáp án đúng</span><div class="abcd" role="group" aria-labelledby="q-opts-l">' + ['A', 'B', 'C', 'D'].map(function (L, i) { return '<div class="o' + (q.ok === i ? ' ok' : '') + '" data-o="' + i + '"><b>' + L + '</b><label class="b-sr" for="q-o' + i + '">Phương án ' + L + '</label><input class="t-input a-input a-en" id="q-o' + i + '" value="' + B.esc((q.opts || [])[i] || '') + '"><label class="rad"><input type="radio" name="q-ok" value="' + i + '"' + (q.ok === i ? ' checked' : '') + '> Đáp án đúng</label></div>'; }).join('') + '</div><p class="a-err adm-small" id="q-opts-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>';
+    return A.field({ id: 'q-text', label: 'Câu có chỗ trống', type: 'textarea', rows: 2, value: q.text || '', required: true, en: true, hint: 'Đánh dấu chỗ trống bằng _____ (5 gạch dưới).' }) + '<div class="a-form">' + A.field({ id: 'q-ans', label: 'Đáp án', value: q.answer || '', required: true, en: true }) + A.field({ id: 'q-alt', label: 'Đáp án chấp nhận thêm', value: q.alt || '', en: true, hint: 'Ngăn cách bằng dấu phẩy' }) + '</div>';
+  }
+  function form(q) {
+    return '<div class="a-field"><span class="adm-h3" id="q-type-l">Dạng câu hỏi</span><div class="types" role="radiogroup" aria-labelledby="q-type-l">' + Object.keys(TYPES).map(function (k) { return '<button type="button" role="radio" data-type="' + k + '" aria-checked="' + (q.type === k) + '">' + TYPES[k][0] + '<span>' + TYPES[k][1] + '</span></button>'; }).join('') + '</div></div>' +
+      '<div class="a-form" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + A.field({ id: 'q-lv', label: 'Cấp', type: 'select', value: q.level, options: B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n]; }) }) + A.field({ id: 'q-skill', label: 'Kỹ năng', type: 'select', value: q.skill, options: SKILLS }) + A.field({ id: 'q-gram', label: 'Chủ điểm', type: 'select', value: q.gram, options: GRAM }) + A.field({ id: 'q-unit', label: 'Unit SGK', type: 'select', value: q.unit || '—', options: ['—', 'Unit 1', 'Unit 2', 'Unit 3', 'Unit 4', 'Unit 5', 'Unit 6', 'Unit 7'] }) + '</div>' +
+      A.field({ id: 'q-diff', label: 'Độ khó', type: 'seg', value: q.diff, options: [[1, '1 · Rất dễ'], [2, '2'], [3, '3 · Vừa'], [4, '4'], [5, '5 · Khó']] }) +
+      '<div id="q-body" class="a-form" style="grid-template-columns:1fr">' + body(q) + '</div>' +
+      A.field({ id: 'q-expl', label: 'Giải thích đáp án', type: 'textarea', rows: 3, value: q.expl || '', hint: 'Hiện khi học sinh trả lời chưa đúng. Bắt buộc với cấp 6–10 (THCS).' }) +
+      A.field({ id: 'q-st', label: 'Trạng thái', type: 'seg', value: q.status, options: [['draft', 'Nháp'], ['live', 'Đã xuất bản']] });
+  }
+  function collect(w, q) {
+    var g = function (s) { var e = w.querySelector(s); return e ? e.value : ''; }, ok = w.querySelector('input[name="q-ok"]:checked');
+    var o = { type: q.type, level: +g('#q-lv'), skill: g('#q-skill'), gram: g('#q-gram'), unit: g('#q-unit'), expl: g('#q-expl').trim(), ok: ok ? +ok.value : null };
+    if (q.type === 'listen') { o.word = g('#q-word').trim(); o.pics = [0, 1, 2, 3].map(function (i) { return g('#q-pic' + i); }); o.text = 'Nghe và chọn hình: ' + o.word; }
+    if (q.type === 'match') { o.pairs = [0, 1, 2, 3].map(function (i) { return g('#q-pr' + i); }); o.text = 'Nối: ' + o.pairs.join(' · '); }
+    if (q.type === 'abcd') { o.text = g('#q-text').trim(); o.opts = [0, 1, 2, 3].map(function (i) { return g('#q-o' + i).trim(); }); o.audio = q.audio; }
+    if (q.type === 'fill') { o.text = g('#q-text').trim(); o.answer = g('#q-ans').trim(); o.alt = g('#q-alt').trim(); }
+    return o;
+  }
+  function grpErr(w, id, m) { var e = w.querySelector('#' + id + '-e'); if (!e) return; e.hidden = !m; e.querySelector('span').textContent = m || ''; w.querySelector('#' + id + '-f').classList.toggle('is-error', !!m); }
+  function check(w, q) {
+    var o = collect(w, q), bad = [];
+    function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }).length === a.length; }
+    if (q.type === 'listen') { A.setErr(w, 'q-word', o.word ? '' : 'Nhập từ được đọc.'); if (!o.word) bad.push('#q-word'); var m = !uniq(o.pics) ? '4 hình phải khác nhau.' : o.ok == null ? 'Đánh dấu một hình đúng.' : o.pics[o.ok] !== o.word.toLowerCase() ? 'Hình đúng (“' + o.pics[o.ok] + '”) chưa khớp với từ được đọc (“' + o.word + '”).' : ''; grpErr(w, 'q-pics', m); if (m) bad.push('#q-pic0'); }
+    if (q.type === 'match') { var m2 = uniq(o.pairs) ? '' : '4 cặp phải là 4 hình khác nhau.'; grpErr(w, 'q-pairs', m2); if (m2) bad.push('#q-pr0'); }
+    if (q.type === 'abcd') { A.setErr(w, 'q-text', o.text ? '' : 'Nhập nội dung câu hỏi.'); if (!o.text) bad.push('#q-text'); var e = o.opts.indexOf(''), m3 = e > -1 ? 'Phương án ' + 'ABCD'[e] + ' đang trống.' : !uniq(o.opts.map(function (x) { return x.toLowerCase(); })) ? 'Có hai phương án trùng nhau.' : o.ok == null ? 'Chọn một đáp án đúng.' : ''; grpErr(w, 'q-opts', m3); if (m3) bad.push(e > -1 ? '#q-o' + e : '#q-o0'); }
+    if (q.type === 'fill') { var mt = !o.text ? 'Nhập câu có chỗ trống.' : o.text.indexOf('___') < 0 ? 'Câu chưa có chỗ trống _____.' : ''; A.setErr(w, 'q-text', mt); if (mt) bad.push('#q-text'); A.setErr(w, 'q-ans', o.answer ? '' : 'Nhập đáp án.'); if (!o.answer) bad.push('#q-ans'); }
+    var me = o.level >= 6 && !o.expl ? 'Câu hỏi THCS (cấp ' + o.level + ') cần có giải thích để học sinh hiểu vì sao sai.' : o.expl.length > 300 ? 'Giải thích tối đa 300 ký tự.' : ''; A.setErr(w, 'q-expl', me); if (me) bad.push('#q-expl');
+    return { o: o, first: bad[0] };
+  }
+  function preview(o) {
+    var lv = o.level, inner;
+    if (lv <= 5) {
+      var opts = o.type === 'listen' ? o.pics : o.type === 'match' ? o.pairs : null;
+      inner = '<div class="a-stu" data-theme="tieu-hoc"><p class="stu-ins">' + (o.type === 'listen' ? 'Nghe và chọn hình đúng' : o.type === 'match' ? 'Nối từ với hình (xem trước 1 cặp)' : 'Chọn đáp án đúng') + '</p>' + (o.type === 'listen' ? B.speak(o.word || 'apple', 'm') : '') + (o.type === 'abcd' || o.type === 'fill' ? '<p class="stu-ins" lang="en">' + B.esc(o.text) + '</p>' : '') +
+        (opts ? '<div class="stu-opts" role="radiogroup" aria-label="Lựa chọn">' + opts.map(function (w, i) { return '<button type="button" class="b-choice" role="radio" aria-checked="false" data-si="' + i + '" aria-label="Hình ' + (i + 1) + '">' + B.pic(w, 80) + '</button>'; }).join('') + '</div>' : '<div class="stu-thcs" style="width:100%" lang="en">' + (o.opts || [o.answer]).map(function (t, i) { return '<button type="button" class="b-choice" style="flex-direction:row;padding:10px 16px;font:700 20px/26px inherit" data-si="' + i + '">' + B.esc(t) + '</button>'; }).join('') + '</div>') + '<p class="stu-why" data-why hidden></p></div>';
+    } else {
+      inner = '<div class="a-stu thcs" data-theme="thcs">' + (o.audio ? '<div>' + B.speak('What time does the bus to the museum leave?', 'm') + '</div>' : '') + '<p class="thcs-en" style="margin:0" lang="en">' + B.esc(o.text) + '</p>' +
+        (o.type === 'abcd' ? '<div class="stu-thcs" role="radiogroup" aria-label="Đáp án">' + o.opts.map(function (t, i) { return B.T.opt('ABCD'[i], i, B.esc(t)).replace('data-i=', 'data-si=' + i + ' data-x='); }).join('') + '</div>' : '<input class="t-input" style="font-size:20px" aria-label="Câu trả lời" placeholder="Gõ câu trả lời…" data-fillin>' + '<div>' + B.T.btn({ label: 'Kiểm tra', attrs: 'data-chk' }) + '</div>') + '<p class="stu-why thcs-body-s" data-why hidden></p></div>';
+    }
+    var d = A.dialog(SCR, { title: 'Xem như học sinh · Cấp ' + lv + ' (' + (lv <= 5 ? 'giao diện Tiểu học' : 'giao diện THCS') + ')', wide: 640, body: inner + '<p class="adm-small" style="margin:0">Bấm thử một lựa chọn. Bản xem trước không lưu kết quả.</p>', actions: [{ label: 'Đóng', variant: 'primary' }] });
+    var w = d.el, why = w.querySelector('[data-why]');
+    function result(right) { why.hidden = false; why.innerHTML = right ? '<b>Chính xác!</b>' : '<b>Chưa đúng rồi.</b> ' + (o.expl ? B.esc(o.expl) : 'Đáp án đúng: ' + B.esc(o.type === 'fill' ? o.answer : (o.opts || o.pics)[o.ok])); }
+    w.querySelectorAll('[data-si]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.si, right = o.type === 'match' ? true : i === o.ok; w.querySelectorAll('[data-si]').forEach(function (x) { x.classList.remove('is-correct', 'is-retry'); x.setAttribute('aria-checked', x === b); }); b.classList.add(right ? 'is-correct' : 'is-retry'); result(right); }); });
+    var chk = w.querySelector('[data-chk]'); chk && chk.addEventListener('click', function () { var v = w.querySelector('[data-fillin]').value.trim().toLowerCase(), ok = [o.answer].concat(o.alt ? o.alt.split(',') : []).some(function (a) { return a.trim().toLowerCase() === v; }); result(ok); });
+  }
+  function open(id) {
+    var q = id ? QS.filter(function (x) { return x.id === id; })[0] : { type: 'abcd', level: 8, skill: 'Ngữ pháp', gram: '—', diff: 3, status: 'draft', opts: ['', '', '', ''], ok: null, expl: '' };
+    var cur = Object.assign({}, q), st = q.status, df = q.diff;
+    var dr = A.drawer(SCR, { wide: true, title: id ? 'Sửa câu hỏi' : 'Thêm câu hỏi', body: form(cur), foot: '<span style="flex:1"></span>' + A.btn({ label: 'Xem như học sinh', icon: 'eye', variant: 'secondary', attrs: 'data-prev' }) + A.btn({ label: id ? 'Lưu thay đổi' : 'Thêm câu hỏi', icon: 'check', attrs: 'data-qsave' }) });
+    var w = dr.el;
+    function wireSeg(g, fn) { g.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { g.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); fn(b.dataset.v); }); }); }
+    wireSeg(w.querySelector('#q-diff'), function (v) { df = +v; });
+    wireSeg(w.querySelector('#q-st'), function (v) { st = v; });
+    function wireBody() {
+      w.querySelectorAll('[id^="q-pic"],[id^="q-pr"]').forEach(function (s) { s.addEventListener('change', function () { var box = s.closest('.pic-opt'); box.querySelector('.b-pic').outerHTML = B.pic(s.value, box.querySelector('.b-pic').getAttribute('width')); }); });
+      w.querySelectorAll('input[name="q-ok"]').forEach(function (r) { r.addEventListener('change', function () { w.querySelectorAll('[data-po],[data-o]').forEach(function (x) { x.classList.toggle('ok', x.contains(r)); }); }); });
+    }
+    wireBody();
+    w.querySelectorAll('[data-type]').forEach(function (b) { b.addEventListener('click', function () {
+      cur = Object.assign(cur, collect(w, cur)); cur.type = b.dataset.type; cur.ok = null;
+      if (cur.type === 'listen' && !cur.pics) cur.pics = ['apple', 'pear', 'orange', 'banana'];
+      w.querySelectorAll('[data-type]').forEach(function (x) { x.setAttribute('aria-checked', x === b); });
+      w.querySelector('#q-body').innerHTML = body(cur); wireBody();
+      if (cur.type === 'listen' || cur.type === 'match') { var lv = w.querySelector('#q-lv'); if (+lv.value > 5) lv.value = '2'; }
+    }); });
+    w.querySelector('[data-prev]').addEventListener('click', function () { var r = check(w, cur); if (r.first) { var f = w.querySelector(r.first); f && f.focus(); return; } preview(Object.assign({}, cur, r.o)); });
+    w.querySelector('[data-qsave]').addEventListener('click', function () {
+      var r = check(w, cur); if (r.first) { var f = w.querySelector(r.first); f && f.focus(); return; }
+      Object.assign(q, r.o, { diff: df, status: st }); if (!id) { q.id = 'q' + (++uid); QS.unshift(q); }
+      dr.close(); CTX.setState('normal'); A.toast(CTX.scr, id ? 'Đã lưu câu hỏi.' : 'Đã thêm câu hỏi (' + (st === 'live' ? 'đã xuất bản' : 'nháp') + ').');
+    });
+  }
+  function page(m) { return A.shell({ area: 'admin', active: 'questions', title: 'Ngân hàng câu hỏi', crumb: '8.633 câu · 128 chưa có giải thích', actions: A.btn({ label: 'Nhập Excel', icon: 'upload', variant: 'secondary' }) + A.btn({ label: 'Thêm câu hỏi', icon: 'plus', attrs: 'data-new' }), main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa có câu hỏi)' },
+    notes: { normal: 'Lọc theo dạng, cấp, kỹ năng, chủ điểm, độ khó, có/thiếu giải thích. Bấm một dòng để sửa: đổi “Dạng câu hỏi” thì phần giữa biểu mẫu đổi theo (Nghe và chọn hình · Nối từ với hình · A/B/C/D · Điền chỗ trống). “Xem như học sinh” mở bản xem trước bằng giao diện Tiểu học hoặc THCS theo cấp.', loading: 'Khung xương bảng câu hỏi.', empty: 'Ngân hàng chưa có câu hỏi.', error: 'Không tải được câu hỏi.' },
+    states: {
+      normal: function () { return page(table.html()); },
+      loading: function () { return page('<section class="a-card">' + B.sk('100%', '36px') + '<div style="height:12px"></div>' + [1, 2, 3, 4, 5, 6, 7].map(function () { return B.sk('100%', '40px') + '<div style="height:8px"></div>'; }).join('') + '</section>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có câu hỏi nào', text: 'Tạo câu hỏi đầu tiên hoặc nhập từ file Excel mẫu.', action: A.btn({ label: 'Thêm câu hỏi', icon: 'plus', attrs: 'data-new' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'QBK-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx;
+      if (ctx.state === 'normal') table.mount(scr);
+      scr.querySelectorAll('[data-new]').forEach(function (b) { b.addEventListener('click', function () { open(null); }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

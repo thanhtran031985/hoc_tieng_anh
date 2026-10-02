@@ -1,0 +1,126 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="15. Chủ điểm ngữ pháp: trình soạn bài giảng có định dạng chữ, bảng, hộp công thức; ví dụ kèm âm thanh; gắn cấp và Unit SGK" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Chủ điểm ngữ pháp — preview</title>
+<style>
+  .gl { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .gl button { width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: var(--adm-radius-md); cursor: pointer; display: flex; flex-direction: column; gap: 4px; font: inherit; color: var(--ink); }
+  .gl button:hover { background: var(--surface-soft); }
+  .gl button[aria-current="true"] { background: var(--brand-soft); box-shadow: inset 3px 0 0 var(--brand); }
+  .gl .m { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .tb { display: flex; gap: 2px; padding: 4px; border: 1px solid var(--line-strong); border-bottom: 0; border-radius: var(--adm-radius-md) var(--adm-radius-md) 0 0; background: var(--surface-soft); flex-wrap: wrap; }
+  .tb button { min-width: 32px; height: 32px; border: 0; border-radius: 4px; background: none; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 0 6px; font: 600 13px/1 var(--font-thcs); }
+  .tb button:hover { background: var(--surface-sunk); }
+  .tb button[aria-pressed="true"] { background: var(--brand-soft); color: var(--brand-shade); }
+  .tb .sep { width: 1px; background: var(--line-strong); margin: 4px 4px; }
+  .ed { border: 1px solid var(--line-strong); border-radius: 0 0 var(--adm-radius-md) var(--adm-radius-md); padding: var(--space-4); min-height: 260px; max-height: 360px; overflow: auto; font: 400 15px/24px var(--font-thcs); color: var(--ink); background: var(--surface); }
+  .ed:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .ed h3 { font: 700 17px/24px var(--font-thcs); margin: var(--space-3) 0 var(--space-2); }
+  .ed h3:first-child { margin-top: 0; }
+  .ed p { margin: 0 0 var(--space-2); }
+  .ed table { border-collapse: collapse; margin: var(--space-2) 0 var(--space-3); width: 100%; }
+  .ed th, .ed td { border: 1px solid var(--line-strong); padding: 6px 10px; text-align: left; vertical-align: top; }
+  .ed th { background: var(--surface-soft); font-weight: 600; }
+  .fx { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; margin: var(--space-2) 0 var(--space-3); border-radius: var(--adm-radius-md); background: var(--brand-soft); border-left: 4px solid var(--brand); font: 600 15px/22px var(--font-thcs); }
+  .fx::before { content: "Công thức"; font: 700 11px/16px var(--font-thcs); letter-spacing: .04em; text-transform: uppercase; color: var(--brand-shade); width: 100%; }
+  .fx span { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 4px; padding: 1px 8px; }
+  .exs { list-style: none; margin: 0; padding: 0; }
+  .exs li { display: grid; grid-template-columns: 32px 1fr auto; gap: var(--space-3); align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+  .exs li:first-child { border-top: 0; }
+  .exs .en { font: 500 15px/22px var(--font-thcs); }
+  .units { display: flex; flex-wrap: wrap; gap: 6px; }
+  .units button { border: 1px solid var(--line-strong); background: var(--surface); border-radius: var(--radius-pill); padding: 3px 10px; font: 500 13px/18px var(--font-thcs); color: var(--ink); cursor: pointer; }
+  .units button[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-shade); font-weight: 600; }
+  .addex { display: grid; grid-template-columns: 1fr 1fr auto; gap: var(--space-2); align-items: start; margin-top: var(--space-2); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var G = [
+    { id: 'g1', vi: 'Thì hiện tại hoàn thành', en: 'Present perfect', lv: 8, units: [3, 4], st: 'live', ex: [['I have lived in Hà Nội since 2015.', 'Mình sống ở Hà Nội từ năm 2015.', true], ['She has never been to Sa Pa.', 'Bạn ấy chưa bao giờ đến Sa Pa.', true], ['Have you finished your homework yet?', 'Bạn đã làm xong bài tập chưa?', false]] },
+    { id: 'g2', vi: 'Thì quá khứ tiếp diễn', en: 'Past continuous', lv: 8, units: [4], st: 'live', ex: [['I was reading when the phone rang.', 'Mình đang đọc sách thì điện thoại reo.', true]] },
+    { id: 'g3', vi: 'Câu điều kiện loại 1', en: 'First conditional', lv: 8, units: [5], st: 'live', ex: [['If it rains, we will stay at home.', 'Nếu trời mưa, chúng mình sẽ ở nhà.', true]] },
+    { id: 'g4', vi: 'Câu bị động', en: 'Passive voice', lv: 8, units: [6], st: 'draft', ex: [] },
+    { id: 'g5', vi: 'So sánh hơn của tính từ', en: 'Comparative adjectives', lv: 6, units: [5], st: 'live', ex: [['My house is bigger than yours.', 'Nhà mình to hơn nhà bạn.', true]] },
+    { id: 'g6', vi: 'Giới từ chỉ thời gian', en: 'Prepositions of time', lv: 7, units: [2], st: 'live', ex: [['We have English on Monday.', 'Chúng mình học tiếng Anh vào thứ Hai.', true]] },
+    { id: 'g7', vi: 'This is / That is', en: 'This is / That is', lv: 2, units: [2], st: 'live', ex: [['This is my mother.', 'Đây là mẹ của tớ.', true]] },
+    { id: 'g8', vi: 'Mạo từ a / an', en: 'Articles a / an', lv: 2, units: [3], st: 'live', ex: [['This is an apple.', 'Đây là một quả táo.', true]] }
+  ];
+  var DOC = '<h3>Dùng khi nào?</h3><p>Diễn tả việc <b>bắt đầu trong quá khứ và còn kéo dài đến hiện tại</b>, hoặc <i>trải nghiệm</i> tính đến bây giờ (không nói rõ thời điểm).</p>' +
+    '<div class="fx" contenteditable="true"><span>S</span>+<span>have / has</span>+<span>V3 / V-ed</span></div>' +
+    '<table><thead><tr><th>Dạng câu</th><th>Công thức</th><th>Ví dụ</th></tr></thead><tbody><tr><td>Khẳng định</td><td>S + have/has + V3</td><td lang="en">I have finished.</td></tr><tr><td>Phủ định</td><td>S + have/has + not + V3</td><td lang="en">She hasn’t eaten yet.</td></tr><tr><td>Nghi vấn</td><td>Have/Has + S + V3?</td><td lang="en">Have you ever been to Huế?</td></tr></tbody></table>' +
+    '<h3>Dấu hiệu nhận biết</h3><ul><li><b>since</b> + mốc thời gian: since 2015, since Monday</li><li><b>for</b> + khoảng thời gian: for three years</li><li>already, yet, ever, never, just, so far</li></ul>';
+  var S = { sel: 'g1', q: '', lv: 'all', doc: DOC };
+  function cur() { return G.filter(function (g) { return g.id === S.sel; })[0]; }
+  function list() {
+    var L = G.filter(function (g) { return (!S.q || (g.vi + ' ' + g.en).toLowerCase().indexOf(S.q.toLowerCase()) > -1) && (S.lv === 'all' || String(g.lv) === S.lv); });
+    return '<section class="a-card a-s4" aria-labelledby="gl"><div class="a-card__h" style="margin-bottom:var(--space-2)"><h2 class="adm-h2" id="gl" style="margin:0">Chủ điểm (64)</h2>' + A.btn({ label: 'Thêm', icon: 'plus', size: 's', attrs: 'data-new' }) + '</div>' +
+      '<div class="a-search" style="max-width:none">' + B.icon('search', 18) + '<label class="b-sr" for="g-q">Tìm chủ điểm</label><input class="t-input a-input" id="g-q" placeholder="Tìm: since, bị động…" value="' + B.esc(S.q) + '"></div>' +
+      '<label class="b-sr" for="g-lv">Lọc theo cấp</label><select class="t-input a-input" id="g-lv" style="margin-top:var(--space-2)">' + [['all', 'Tất cả cấp']].concat(B.levels.map(function (l) { return [String(l.n), 'Cấp ' + l.n + ' · ' + l.name]; })).map(function (o) { return '<option value="' + o[0] + '"' + (S.lv === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
+      (L.length ? '<ul class="gl">' + L.map(function (g) { return '<li><button type="button" data-g="' + g.id + '"' + (g.id === S.sel ? ' aria-current="true"' : '') + '><b class="adm-h3">' + g.vi + '</b><span class="m"><span data-level="' + g.lv + '"><span class="t-pill t-pill--lv">Cấp ' + g.lv + '</span></span><span class="adm-small b-muted">' + g.units.map(function (u) { return 'Unit ' + u; }).join(', ') + '</span>' + (g.st === 'live' ? A.status('live', 'Đã xuất bản') : A.status('draft', 'Nháp')) + '</span></button></li>'; }).join('') + '</ul>'
+        : A.empty({ title: 'Không tìm thấy chủ điểm', text: 'Thử từ khoá khác hoặc chọn “Tất cả cấp”.' })) + '</section>';
+  }
+  function editor() {
+    var g = cur();
+    var tools = [['heading', 'Tiêu đề', 'formatBlock'], ['bold', 'Đậm (Ctrl+B)', 'bold'], ['italic', 'Nghiêng (Ctrl+I)', 'italic'], ['underline', 'Gạch chân (Ctrl+U)', 'underline'], '|', ['list', 'Danh sách', 'insertUnorderedList'], ['table', 'Chèn bảng', 'table'], ['formula', 'Chèn hộp công thức', 'formula']];
+    return '<section class="a-card a-s8" aria-labelledby="ed-t"><div class="a-card__h"><h2 class="adm-h2" id="ed-t" style="margin:0">' + g.vi + '</h2><div class="a-actions">' + A.btn({ label: 'Xem như học sinh', icon: 'eye', variant: 'secondary', size: 's', attrs: 'data-prev' }) + A.btn({ label: 'Lưu', icon: 'check', size: 's', attrs: 'data-save' }) + '</div></div>' +
+      '<div class="a-form" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + A.field({ id: 'g-vi', label: 'Tên tiếng Việt', value: g.vi, required: true }) + A.field({ id: 'g-en', label: 'Tên tiếng Anh', value: g.en, en: true }) + A.field({ id: 'g-lvsel', label: 'Cấp', type: 'select', value: g.lv, options: B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n + ' · ' + l.name]; }) }) + A.field({ id: 'g-st', label: 'Trạng thái', type: 'seg', value: g.st, options: [['draft', 'Nháp'], ['live', 'Xuất bản']] }) + '</div>' +
+      '<div class="a-field" id="g-units-f" style="margin-top:var(--space-3)"><span class="adm-h3" id="g-units-l">Unit SGK lớp ' + (g.lv > 5 ? g.lv : 3) + ' <span class="a-req" aria-hidden="true">*</span></span><div class="units" role="group" aria-labelledby="g-units-l" aria-describedby="g-units-e">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(function (u) { return '<button type="button" data-u="' + u + '" aria-pressed="' + (g.units.indexOf(u) > -1) + '">Unit ' + u + '</button>'; }).join('') + '</div><p class="a-err adm-small" id="g-units-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>' +
+      '<div class="a-field" style="margin-top:var(--space-4)"><span class="adm-h3" id="g-doc-l">Bài giảng</span><div><div class="tb" role="toolbar" aria-label="Định dạng bài giảng" aria-controls="g-doc">' + tools.map(function (t) { return t === '|' ? '<span class="sep" aria-hidden="true"></span>' : '<button type="button" data-cmd="' + t[2] + '" aria-label="' + t[1] + '" title="' + t[1] + '"' + (/bold|italic|underline/.test(t[2]) ? ' aria-pressed="false"' : '') + '>' + B.icon(t[0], 18) + (t[0] === 'formula' ? 'Công thức' : t[0] === 'table' ? 'Bảng' : '') + '</button>'; }).join('') + '</div>' +
+      '<div class="ed" id="g-doc" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="g-doc-l" aria-describedby="g-doc-e">' + (g.id === 'g1' ? S.doc : '<p>Giới thiệu ngắn về “' + g.vi + '”…</p>') + '</div></div><p class="a-err adm-small" id="g-doc-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>' +
+      '<div class="a-field" style="margin-top:var(--space-4)"><span class="adm-h3">Ví dụ (' + g.ex.length + ')</span>' + (g.ex.length ? '<ul class="exs">' + g.ex.map(function (e, i) { return '<li>' + (e[2] ? B.speak(e[0], 's') : '<span class="a-thumb a-thumb--miss" style="width:30px;height:30px" title="Chưa có âm thanh">' + B.icon('music', 14) + '</span>') + '<span><span class="en" lang="en">' + e[0] + '</span><br><span class="adm-small b-muted">' + e[1] + '</span></span><span class="a-actions">' + (e[2] ? '' : A.btn({ label: 'Tạo giọng đọc', icon: 'wand', variant: 'secondary', size: 's', attrs: 'data-tts="' + i + '"' })) + '<button type="button" class="a-iconbtn" data-rmx="' + i + '" aria-label="Xoá ví dụ ' + (i + 1) + '">' + B.icon('trash', 16) + '</button></span></li>'; }).join('') + '</ul>' : '<p class="adm-small b-muted" style="margin:0">Chưa có ví dụ nào.</p>') +
+      '<div class="addex">' + A.field({ id: 'x-en', label: 'Câu ví dụ tiếng Anh', en: true, placeholder: 'I have known her for five years.' }) + A.field({ id: 'x-vi', label: 'Nghĩa tiếng Việt', placeholder: 'Mình quen bạn ấy được 5 năm rồi.' }) + '<div style="padding-top:28px">' + A.btn({ label: 'Thêm ví dụ', icon: 'plus', variant: 'secondary', attrs: 'data-addx' }) + '</div></div></div></section>';
+  }
+  function page(m) { return A.shell({ area: 'admin', active: 'grammar', title: 'Chủ điểm ngữ pháp', crumb: '64 chủ điểm · gắn 112 Unit SGK lớp 1–9', main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa có chủ điểm)' },
+    notes: { normal: 'Chọn chủ điểm ở cột trái (tìm “since”, lọc theo cấp). Soạn bài giảng: chọn chữ rồi bấm Đậm / Nghiêng / Gạch chân, chèn Bảng hoặc Hộp công thức. Ví dụ có loa nghe; ví dụ chưa có âm thanh có nút “Tạo giọng đọc”. Bỏ hết Unit hoặc xoá tên rồi Lưu để thấy lỗi.', loading: 'Khung xương danh sách và trình soạn.', empty: 'Chưa có chủ điểm nào.', error: 'Không tải được chủ điểm.' },
+    states: {
+      normal: function () { return page('<div class="a-grid">' + list() + editor() + '</div>'); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s4">' + A.skel('460px') + '</div><div class="a-s8">' + A.skel('460px') + '</div></div>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có chủ điểm ngữ pháp', text: 'Tạo chủ điểm đầu tiên, viết bài giảng ngắn và thêm ví dụ có âm thanh.', action: A.btn({ label: 'Thêm chủ điểm', icon: 'plus' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'GRM-500' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var g = cur(), ed = scr.querySelector('#g-doc'), st = g.st;
+      function keep() { if (g.id === 'g1') S.doc = ed.innerHTML; }
+      function re(sel) { keep(); ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-g]').forEach(function (b) { b.addEventListener('click', function () { keep(); S.sel = b.dataset.g; re('[data-g="' + S.sel + '"]'); }); });
+      var q = scr.querySelector('#g-q'); q.addEventListener('input', function () { S.q = q.value; var p = q.selectionStart; re('#g-q'); ctx.scr.querySelector('#g-q').setSelectionRange(p, p); });
+      scr.querySelector('#g-lv').addEventListener('change', function (e) { S.lv = e.target.value; re('#g-lv'); });
+      scr.querySelector('#g-st').addEventListener('segchange', function (e) { st = e.detail; });
+      scr.querySelectorAll('[data-u]').forEach(function (b) { b.addEventListener('click', function () { var u = +b.dataset.u, k = g.units.indexOf(u); if (k > -1) g.units.splice(k, 1); else g.units.push(u); g.units.sort(function (a, c) { return a - c; }); b.setAttribute('aria-pressed', k < 0); }); });
+      function sync() { ['bold', 'italic', 'underline'].forEach(function (c) { var b = scr.querySelector('[data-cmd="' + c + '"]'); b && b.setAttribute('aria-pressed', document.queryCommandState(c)); }); }
+      document.addEventListener('selectionchange', sync);
+      scr.querySelectorAll('[data-cmd]').forEach(function (b) { b.addEventListener('mousedown', function (e) { e.preventDefault(); }); b.addEventListener('click', function () {
+        var c = b.dataset.cmd; if (!ed.contains(document.getSelection().anchorNode)) { ed.focus(); var r = document.createRange(); r.selectNodeContents(ed); r.collapse(false); var sl = document.getSelection(); sl.removeAllRanges(); sl.addRange(r); }
+        if (c === 'formatBlock') document.execCommand('formatBlock', false, 'h3');
+        else if (c === 'table') document.execCommand('insertHTML', false, '<table><thead><tr><th>Cột 1</th><th>Cột 2</th></tr></thead><tbody><tr><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td></tr></tbody></table><p><br></p>');
+        else if (c === 'formula') document.execCommand('insertHTML', false, '<div class="fx" contenteditable="true"><span>S</span>+<span>…</span></div><p><br></p>');
+        else document.execCommand(c, false, null);
+        sync();
+      }); });
+      scr.querySelectorAll('[data-tts]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.tts; b.disabled = true; b.lastChild.textContent = 'Đang tạo…'; ctx.later(function () { g.ex[i][2] = true; re('#x-en'); A.toast(ctx.scr, 'Đã tạo giọng đọc cho ví dụ ' + (i + 1) + '.'); }, 900); }); });
+      scr.querySelectorAll('[data-rmx]').forEach(function (b) { b.addEventListener('click', function () { g.ex.splice(+b.dataset.rmx, 1); re('#x-en'); }); });
+      var xr = { 'x-en': function (v) { v = v.trim(); return !v ? 'Nhập câu ví dụ tiếng Anh.' : !/[.?!]$/.test(v) ? 'Câu ví dụ cần kết thúc bằng dấu . ? hoặc !' : /[àáảãạăâđèéêìíòóôơùúưỳý]/i.test(v) ? 'Câu tiếng Anh đang có chữ tiếng Việt — kiểm tra lại ô này.' : ''; }, 'x-vi': function (v) { return v.trim() ? '' : 'Nhập nghĩa tiếng Việt.'; } };
+      A.wireValidate(scr, xr);
+      scr.querySelector('[data-addx]').addEventListener('click', function () { if (A.validate(scr, xr)) return; g.ex.push([scr.querySelector('#x-en').value.trim(), scr.querySelector('#x-vi').value.trim(), false]); re('#x-en'); A.toast(ctx.scr, 'Đã thêm ví dụ. Bấm “Tạo giọng đọc” để có âm thanh.'); });
+      var rules = { 'g-vi': function (v) { return v.trim() ? '' : 'Nhập tên chủ điểm.'; } };
+      A.wireValidate(scr, rules);
+      scr.querySelector('[data-save]').addEventListener('click', function () {
+        var bad = A.validate(scr, rules), ue = scr.querySelector('#g-units-e'), de = scr.querySelector('#g-doc-e');
+        ue.hidden = !!g.units.length; ue.querySelector('span').textContent = 'Gắn ít nhất một Unit SGK.'; scr.querySelector('#g-units-f').classList.toggle('is-error', !g.units.length);
+        var empty = ed.textContent.trim().length < 20; de.hidden = !empty; de.querySelector('span').textContent = 'Bài giảng quá ngắn (cần ít nhất 20 ký tự).';
+        if (bad) return; if (!g.units.length) { scr.querySelector('[data-u]').focus(); return; } if (empty) { ed.focus(); return; }
+        g.vi = scr.querySelector('#g-vi').value.trim(); g.en = scr.querySelector('#g-en').value.trim(); g.lv = +scr.querySelector('#g-lvsel').value; g.st = st; re('[data-save]'); A.toast(ctx.scr, 'Đã lưu “' + g.vi + '”.');
+      });
+      scr.querySelector('[data-prev]').addEventListener('click', function () { keep(); A.dialog(scr, { title: 'Xem như học sinh · ' + g.vi, wide: 640, body: '<div class="a-stu thcs" data-theme="thcs" style="max-height:420px;overflow:auto"><h2 class="thcs-h2" style="margin:0">' + g.vi + ' <span class="thcs-body-s b-muted" lang="en">(' + g.en + ')</span></h2><div class="ed" style="border:0;padding:0;max-height:none;background:none">' + ed.innerHTML.replace(/contenteditable="true"/g, '') + '</div>' + g.ex.map(function (e) { return '<p style="margin:0;display:flex;gap:10px;align-items:center">' + B.speak(e[0], 's') + '<span><span class="thcs-en" lang="en">' + e[0] + '</span><br><span class="thcs-body-s b-muted">' + e[1] + '</span></span></p>'; }).join('') + '</div>', actions: [{ label: 'Đóng', variant: 'primary' }] }); });
+      ctx.later(function () {}, 0);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

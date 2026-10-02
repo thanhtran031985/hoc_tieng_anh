@@ -1,0 +1,41 @@
+<!-- @dsCard group="Màn THCS · 13–17 SGK, thi, thành tích" height=720 subtitle="17. Hết giờ học: lời nhắn ngắn, số phút đã học hôm nay, hẹn ngày mai" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Hết giờ học — preview</title>
+<style>
+  .tu { height: 100%; display: grid; place-items: center; padding: var(--space-8); box-sizing: border-box; position: relative; }
+  .tu .top { position: absolute; top: var(--space-5); right: var(--space-6); }
+  .tu .card { width: 560px; max-width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-4); padding: var(--space-8); }
+  .tu .mins { display: flex; align-items: baseline; gap: 6px; }
+  .tu .mins b { font: 800 56px/60px var(--font-thcs); }
+  .tu .sum { display: flex; gap: var(--space-2); flex-wrap: wrap; justify-content: center; }
+  .tu .acts { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; margin-top: var(--space-2); }
+  .tu .nt { display: inline-flex; align-items: center; gap: 6px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  function card(o) {
+    return '<div class="tu"><div class="top">' + T.modeBtn() + '</div><section class="t-card card" aria-labelledby="tt">' + T.dragon('ngu', 104) + '<h1 class="thcs-title" id="tt">' + o.title + '</h1>' +
+      (o.mins != null ? '<div class="mins"><b>' + o.mins + '</b><span class="thcs-h3 b-muted">phút học hôm nay</span></div>' : '') + (o.sum || '') +
+      '<p class="thcs-body b-muted">' + o.text + '</p><span class="thcs-label nt" style="color:var(--brand-shade)">' + B.icon('calendar', 18) + 'Hẹn gặp lại ngày mai, Thứ Bảy 03/10, lúc 19:00</span>' +
+      '<div class="acts">' + T.btn({ label: 'Đổi hồ sơ', variant: 'secondary', icon: 'users' }) + T.btn({ label: 'Xin thêm 15 phút', variant: 'ghost', icon: 'lock', attrs: 'data-more' }) + '</div></section></div>';
+  }
+  var sum = '<div class="sum"><span class="t-pill t-pill--xp">' + B.icon('bolt', 13) + '+260 XP</span><span class="t-pill">' + B.icon('book', 13) + '2 bài mới</span><span class="t-pill">' + B.icon('cards', 13) + '18 thẻ đã ôn</span><span class="t-pill">' + B.icon('flame', 13) + 'Chuỗi 23 ngày</span></div>';
+  T.screen({
+    labels: { empty: 'Trống (chưa học)' },
+    notes: { normal: 'Hiện khi hết thời lượng bố mẹ đặt. Ngắn gọn, không có nút học tiếp; thêm giờ cần bố mẹ duyệt.', loading: 'Tóm tắt hôm nay đang tải.', empty: 'Hết khung giờ nhưng hôm nay chưa học.', error: 'Không tải được tóm tắt; lời nhắn vẫn hiện.' },
+    states: {
+      normal: function () { return card({ title: 'Hết giờ học hôm nay', mins: 45, sum: sum, text: 'Bạn đã học đủ 45/45 phút. Nghỉ ngơi một chút, mắt và não cũng cần “sạc pin”.' }); },
+      loading: function () { return card({ title: 'Hết giờ học hôm nay', sum: '<div class="sum">' + B.sk('260px', '60px') + '</div><div class="sum">' + B.sk('90px', '26px') + B.sk('90px', '26px') + B.sk('110px', '26px') + '</div>', text: 'Đang tổng kết buổi học…' }); },
+      empty: function () { return card({ title: 'Đã đến giờ nghỉ', mins: 0, text: 'Hôm nay bạn chưa kịp học. Không sao — chuỗi ngày vẫn giữ nếu mai bạn học tiếp.' }); },
+      error: function () { return card({ title: 'Hết giờ học hôm nay', sum: '<div class="t-card t-card--soft" role="alert" style="display:flex;gap:10px;align-items:center">' + B.icon('wifi', 22) + '<span class="thcs-body-s" style="flex:1;text-align:left">Chưa tải được tóm tắt hôm nay.</span>' + T.btn({ label: 'Thử lại', variant: 'secondary', icon: 'replay', cls: 't-btn--s', attrs: 'data-retry' }) + '</div>', text: 'Nghỉ ngơi thôi, mai học tiếp nhé.' }); }
+    },
+    mount: { all: function (scr, ctx) { var m = scr.querySelector('[data-more]'); m && m.addEventListener('click', function () { T.dialog(scr, { title: 'Xin thêm 15 phút', body: 'Bố mẹ nhập mật khẩu để cho phép học thêm.<div style="margin-top:14px"><input class="t-input" type="password" placeholder="Mật khẩu bố mẹ" aria-label="Mật khẩu bố mẹ"></div>', actions: [{ label: 'Đồng ý', variant: 'primary', key: 'Enter' }, { label: 'Huỷ', variant: 'secondary' }] }); }); } }
+  });
+})();
+</script>
+</body>
+</html>

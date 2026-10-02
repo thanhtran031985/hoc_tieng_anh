@@ -1,0 +1,72 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=700 subtitle="1. Cổng vào khu bố mẹ: mật khẩu tài khoản hoặc mã PIN 4–6 số, báo lỗi ngay dưới ô" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Cổng vào — preview</title>
+<style>
+  .gate { height: 100%; display: grid; place-items: center; background: var(--bg); position: relative; }
+  .gate .back { position: absolute; top: var(--space-5); left: var(--space-6); }
+  .gate .card { width: 420px; padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-5); }
+  .gate .lock { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-shade); display: grid; place-items: center; }
+  .pin { position: relative; height: 56px; }
+  .pin input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; font-size: 16px; cursor: text; }
+  .pin .cells { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; height: 100%; pointer-events: none; }
+  .pin .cells span { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); display: grid; place-items: center; background: var(--surface); }
+  .pin .cells span.f::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); }
+  .pin .cells span.opt { border-style: dashed; }
+  .pin .cells span.cur { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+  .pin input:focus-visible + .cells span.cur { box-shadow: var(--thcs-focus-ring); }
+  .a-field.is-error .pin .cells span { border-color: var(--field-error); background: var(--field-error-bg); }
+  .spin { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: sp .8s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  .sep { display: flex; align-items: center; justify-content: space-between; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var S = { tab: 'pin', pin: '', pw: '', tries: 4, err: '' };
+  function cells() { var h = ''; for (var i = 0; i < 6; i++) h += '<span class="' + (i < S.pin.length ? 'f' : '') + (i >= 4 ? ' opt' : '') + (i === Math.min(S.pin.length, 5) ? ' cur' : '') + '"></span>'; return h; }
+  function card(o) {
+    o = o || {};
+    var body = S.tab === 'pin'
+      ? '<div class="a-field' + (S.err ? ' is-error' : '') + '"><label class="adm-h3" for="pin">Mã PIN</label><div class="pin"><input id="pin" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-describedby="pin-h pin-e" ' + (S.err ? 'aria-invalid="true"' : '') + ' value="' + S.pin + '"' + (o.busy ? ' disabled' : '') + '><div class="cells" aria-hidden="true">' + cells() + '</div></div><p class="a-hint adm-small" id="pin-h">4–6 chữ số. Ô viền đứt là tuỳ chọn.</p><p class="a-err adm-small" id="pin-e" role="alert"' + (S.err ? '' : ' hidden') + '>' + B.icon('warn', 14) + '<span>' + S.err + '</span></p></div>'
+      : A.field({ id: 'pw', label: 'Mật khẩu tài khoản', type: 'password', value: S.pw, error: S.err, placeholder: 'Mật khẩu đăng nhập của bố mẹ', suffix: '<button type="button" class="a-iconbtn" data-eye aria-label="Hiện mật khẩu">' + B.icon('eye', 16) + '</button>', required: true });
+    return '<div class="gate"><div class="back">' + A.btn({ label: 'Về màn chọn hồ sơ', variant: 'secondary', icon: 'back', attrs: 'data-profiles' }) + '</div>' +
+      '<form class="a-card card" onsubmit="return false" aria-labelledby="gt"><span class="lock">' + B.icon('lock', 24) + '</span><div><h1 class="adm-h1" id="gt">Khu dành cho bố mẹ</h1><p class="adm-body b-muted">Xem tiến độ của Minh và Khánh Linh, đặt giờ học và cài đặt tài khoản.</p></div>' +
+      (o.alert || '') + '<div class="t-seg a-seg" role="tablist" aria-label="Cách mở khoá" style="align-self:flex-start"><button type="button" role="tab" data-tab="pin" aria-selected="' + (S.tab === 'pin') + '"' + (o.busy ? ' disabled' : '') + '>Mã PIN</button><button type="button" role="tab" data-tab="pw" aria-selected="' + (S.tab === 'pw') + '"' + (o.busy ? ' disabled' : '') + '>Mật khẩu</button></div>' + body +
+      (o.busy ? '<button type="button" class="t-btn a-btn a-btn--l t-btn--block" disabled><span class="spin"></span><span>Đang kiểm tra…</span></button>' : o.btn || A.btn({ label: 'Mở khoá', size: 'l', block: true, key: 'Enter', attrs: 'data-go' })) +
+      '<div class="sep"><button type="button" class="t-link">Quên mật khẩu?</button><span class="adm-small b-muted">Sai 5 lần sẽ khoá 5 phút</span></div></form></div>';
+  }
+  A.screen({
+    labels: { empty: 'Trống (chưa có PIN)' },
+    notes: { normal: 'Thử gõ 1234 (đúng là 2580) hoặc chỉ 2 số rồi Enter để xem lỗi dưới ô. Có 2 cách mở khoá: PIN hoặc mật khẩu.', loading: 'Đang kiểm tra: khoá ô, vòng quay nhỏ trong nút.', empty: 'Tài khoản chưa đặt PIN: chỉ dùng mật khẩu, gợi ý tạo PIN.', error: 'Mất kết nối khi kiểm tra.' },
+    states: {
+      normal: function () { return card(); },
+      loading: function () { var p = S.pin; S.pin = '2580'; var h = card({ busy: true }); S.pin = p; return h; },
+      empty: function () { var t = S.tab; S.tab = 'pw'; var h = card({ alert: '<div class="a-card" style="box-shadow:none;background:var(--brand-soft);display:flex;gap:10px;padding:12px">' + B.icon('info', 18) + '<span class="adm-body">Bạn chưa đặt mã PIN. Sau khi mở khoá bằng mật khẩu, vào <b>Cài đặt › Bảo mật</b> để tạo PIN 4–6 số.</span></div>' }); S.tab = t; return h; },
+      error: function () { return card({ alert: '<div class="a-card" role="alert" style="box-shadow:none;background:var(--field-error-bg);display:flex;gap:10px;padding:12px;color:var(--field-error)">' + B.icon('wifi', 18) + '<span class="adm-body" style="color:var(--ink)">Chưa kết nối được máy chủ để kiểm tra. Thông tin bạn nhập vẫn giữ nguyên.</span></div>', btn: A.btn({ label: 'Thử lại', size: 'l', block: true, icon: 'replay', attrs: 'data-retry' }) }); }
+    },
+    mount: { all: function (scr, ctx) {
+      scr.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { S.tab = b.dataset.tab; S.err = ''; ctx.setState(ctx.state); var f = ctx.scr.querySelector('#pin, #pw'); f && f.focus(); }); });
+      var pin = scr.querySelector('#pin');
+      if (pin) pin.addEventListener('input', function () { S.pin = pin.value.replace(/\D/g, '').slice(0, 6); pin.value = S.pin; scr.querySelector('.cells').innerHTML = cells(); if (S.err) { S.err = ''; A.setErr(scr, 'pin', ''); scr.querySelector('.a-field').classList.remove('is-error'); } });
+      var pw = scr.querySelector('#pw'), eye = scr.querySelector('[data-eye]');
+      if (pw) pw.addEventListener('input', function () { S.pw = pw.value; if (S.err) { S.err = ''; A.setErr(scr, 'pw', ''); } });
+      eye && eye.addEventListener('click', function () { pw.type = pw.type === 'password' ? 'text' : 'password'; eye.setAttribute('aria-label', pw.type === 'password' ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'); });
+      var go = scr.querySelector('[data-go]');
+      function submit() {
+        if (S.tab === 'pin') { if (S.pin.length < 4) S.err = 'Mã PIN cần ít nhất 4 số (bạn mới nhập ' + S.pin.length + ').'; else if (S.pin !== '2580') { S.tries--; S.err = 'Mã PIN chưa đúng. Còn ' + S.tries + ' lần thử trước khi khoá 5 phút.'; S.pin = ''; } else S.err = ''; }
+        else { if (!S.pw) S.err = 'Nhập mật khẩu tài khoản gia đình.'; else if (S.pw.length < 8) S.err = 'Mật khẩu có ít nhất 8 ký tự.'; else S.err = ''; }
+        if (S.err) { ctx.setState(ctx.state); var f = ctx.scr.querySelector('#pin, #pw'); f && f.focus(); return; }
+        ctx.setState('loading'); ctx.later(function () { ctx.setState('normal'); A.toast(ctx.scr, 'Đã mở khoá khu bố mẹ'); }, 1000);
+      }
+      go && go.addEventListener('click', submit);
+      ctx.onKey(function (e) { if (e.key === 'Enter' && go && !/BUTTON|A/.test(document.activeElement.tagName)) { e.preventDefault(); submit(); } });
+      if (ctx.state === 'normal') ctx.later(function () { var f = scr.querySelector('#pin, #pw'); f && f.focus({ preventScroll: true }); }, 50);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

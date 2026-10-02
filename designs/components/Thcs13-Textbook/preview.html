@@ -1,0 +1,87 @@
+<!-- @dsCard group="Màn THCS · 13–17 SGK, thi, thành tích" height=720 subtitle="13. Học theo SGK: chọn lớp, lưới Unit có % hoàn thành; bấm một Unit để mở trang Unit với 4 tab Từ vựng · Ngữ pháp · Luyện tập · Kiểm tra" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Học theo SGK — preview</title>
+<style>
+  .bar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5); }
+  .bar select { width: auto; }
+  .units { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+  .un { display: flex; flex-direction: column; gap: 6px; text-align: left; border: 0; cursor: pointer; color: var(--ink); font-family: var(--font-thcs); transition: box-shadow var(--duration-fast), transform var(--duration-fast); }
+  .un:hover { box-shadow: var(--thcs-shadow-2); transform: translateY(-2px); }
+  .un .top { display: flex; justify-content: space-between; align-items: center; }
+  .un .nm { font: 600 18px/24px var(--font-thcs); min-height: 48px; }
+  .un .pg { display: flex; align-items: center; gap: 8px; }
+  .un .b-progress > span { background: var(--brand); }
+  .uh { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-4); }
+  .uh .pg { display: flex; align-items: center; gap: 8px; width: 260px; margin-left: auto; }
+  .panel { padding-top: var(--space-4); }
+  .vl { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--space-6); }
+  .vl .r { display: grid; grid-template-columns: auto auto 1fr; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .vl .r b { font: 600 20px/26px var(--font-thcs); }
+  .vl .r .vi { text-align: right; }
+  .gl { display: flex; flex-direction: column; gap: var(--space-3); }
+  .gl .r { display: grid; grid-template-columns: 40px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-radius: var(--thcs-radius-md); background: var(--surface-soft); }
+  .gl .r .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--xp-soft); color: var(--xp); display: grid; place-items: center; }
+  .gl .r .en { font: 500 20px/28px var(--font-thcs); }
+  .pl { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .pl .r { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--thcs-radius-md); border: 1px solid var(--line); }
+  .pl .r .st { margin-left: auto; }
+  .test { display: grid; grid-template-columns: 1fr 300px; gap: var(--space-5); }
+  .hist .r { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var UNITS = { 6: ['My new school', 'My house', 'My friends', 'My neighbourhood', 'Natural wonders of Viet Nam', 'Our Tet holiday', 'Television', 'Sports and games', 'Cities of the world', 'Our houses in the future', 'Our greener world', 'Robots'],
+    7: ['Hobbies', 'Healthy living', 'Community service', 'Music and arts', 'Food and drink', 'A visit to a school', 'Traffic', 'Films', 'Festivals around the world', 'Energy sources', 'Travelling in the future', 'English-speaking countries'],
+    8: ['Leisure time', 'Life in the countryside', 'Teenagers', 'Ethnic groups of Viet Nam', 'Our customs and traditions', 'Lifestyles', 'Environmental protection', 'Shopping', 'Natural disasters', 'Communication in the future', 'Science and technology', 'Life on other planets'],
+    9: ['Local community', 'City life', 'Healthy living for teens', 'Remembering the past', 'Our experiences', 'Vietnamese lifestyle: then and now', 'Natural wonders of the world', 'Tourism', 'World Englishes', 'Planet Earth', 'Electronic devices', 'Career choices'] };
+  var PCT = { 6: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100], 7: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100], 8: [100, 100, 100, 75, 40, 0, 0, 0, 0, 0, 0, 0], 9: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
+  var S = { g: 8, unit: null, tab: 0 };
+  var VOC = [['ethnic group', '/ˈeθ.nɪk ɡruːp/', 'dân tộc'], ['minority', '/maɪˈnɒr.ə.ti/', 'thiểu số'], ['costume', '/ˈkɒs.tjuːm/', 'trang phục'], ['stilt house', '/ˈstɪlt haʊs/', 'nhà sàn'], ['terraced field', '/ˈter.əst fiːld/', 'ruộng bậc thang'], ['gong', '/ɡɒŋ/', 'cồng chiêng'], ['communal house', '/ˈkɒm.jə.nəl haʊs/', 'nhà rông, đình làng'], ['folk dance', '/ˈfəʊk dɑːns/', 'múa dân gian']];
+  var TABS = [['Từ vựng', 'notebook'], ['Ngữ pháp', 'grammar'], ['Luyện tập', 'pen'], ['Kiểm tra', 'exam']];
+  function grid(empty) {
+    var list = UNITS[S.g];
+    return '<div class="bar"><div class="t-seg" role="group" aria-label="Chọn lớp">' + [6, 7, 8, 9].map(function (g) { return '<button type="button" aria-pressed="' + (S.g === g) + '" data-g="' + g + '">Lớp ' + g + '</button>'; }).join('') + '</div>' +
+      '<label class="b-sr" for="bk">Bộ sách</label><select class="t-input" id="bk"><option>Global Success</option><option>i-Learn Smart World</option><option>Friends Plus</option></select><span class="thcs-body-s b-muted" style="margin-left:auto">Lớp ' + S.g + ' · 12 Unit · ' + (empty ? 0 : PCT[S.g].filter(function (p) { return p === 100; }).length) + ' Unit đã xong</span></div>' +
+      '<div class="units">' + list.map(function (n, i) { var p = empty ? 0 : PCT[S.g][i]; return '<button type="button" class="t-card un" data-u="' + i + '"><span class="top"><span class="thcs-label b-muted">Unit ' + (i + 1) + '</span>' + (p === 100 ? '<span class="t-pill t-pill--ok">' + B.icon('check', 13) + 'Xong</span>' : p > 0 ? '<span class="t-pill t-pill--brand">Đang học</span>' : '') + '</span><span class="nm en">' + n + '</span><span class="pg">' + B.ProgressBar(p, 100) + '<span class="thcs-label">' + p + '%</span></span></button>'; }).join('') + '</div>';
+  }
+  function tabPanel() {
+    if (S.tab === 0) return '<div class="vl">' + VOC.map(function (v) { return '<div class="r">' + B.speak(v[0], 's') + '<b>' + v[0] + '</b><span class="vi thcs-body-s b-muted">' + v[1] + ' · ' + v[2] + '</span></div>'; }).join('') + '</div><div style="margin-top:16px;display:flex;gap:12px">' + T.btn({ label: 'Học bằng thẻ từ', icon: 'cards' }) + T.btn({ label: 'Thêm cả 8 từ vào Sổ từ', variant: 'secondary', icon: 'plus' }) + '</div>';
+    if (S.tab === 1) return '<div class="gl"><div class="r"><span class="ic">' + B.icon('grammar', 22) + '</span><div><b class="thcs-label">Câu hỏi Yes/No và câu hỏi có từ để hỏi</b><div class="en">Do they live in stilt houses? — Where do the Thai people live?</div></div>' + T.btn({ label: 'Học', variant: 'secondary', cls: 't-btn--s' }) + '</div>' +
+      '<div class="r"><span class="ic">' + B.icon('grammar', 22) + '</span><div><b class="thcs-label">Danh từ đếm được và không đếm được</b><div class="en">How many gongs … ? / How much rice … ?</div></div>' + T.btn({ label: 'Học', variant: 'secondary', cls: 't-btn--s' }) + '</div></div>';
+    if (S.tab === 2) return '<div class="pl">' + [['Getting started', 100], ['A closer look 1', 100], ['A closer look 2', 100], ['Communication', 60], ['Skills 1', 0], ['Skills 2', 0], ['Looking back', 0], ['Project', 0]].map(function (x) { return '<div class="r"><b class="thcs-label en">' + x[0] + '</b><span class="st">' + (x[1] === 100 ? '<span class="t-pill t-pill--ok">' + B.icon('check', 13) + 'Xong</span>' : x[1] ? '<span class="t-pill t-pill--brand">' + x[1] + '%</span>' : '<span class="t-pill">Chưa làm</span>') + '</span></div>'; }).join('') + '</div>';
+    return '<div class="test"><div class="t-card--soft t-card"><span class="thcs-label b-muted">Bài kiểm tra Unit 4</span><h3 class="thcs-h2" style="margin:4px 0 8px">20 câu · 20 phút</h3><p class="thcs-body b-muted">Ngữ âm, từ vựng – ngữ pháp, đọc hiểu, viết. Có đồng hồ đếm ngược; được xem giải thích sau khi nộp.</p><div style="margin-top:14px">' + T.btn({ label: 'Làm bài kiểm tra', size: 'l', icon: 'exam' }) + '</div></div>' +
+      '<div class="hist"><b class="thcs-label">Lần làm trước</b><div class="r"><span class="thcs-body-s">28/09 · lần 1</span><b class="thcs-label">7,5</b></div><div class="r"><span class="thcs-body-s b-muted">Chưa có lần 2</span><span></span></div></div></div>';
+  }
+  function unitPage() {
+    var i = S.unit, n = UNITS[S.g][i], p = PCT[S.g][i];
+    return '<div class="uh"><button type="button" class="t-iconbtn" data-back aria-label="Về danh sách Unit">' + B.icon('back', 20) + '</button><div><span class="thcs-label b-muted">Tiếng Anh ' + S.g + ' · Unit ' + (i + 1) + '</span><h2 class="thcs-title en">' + n + '</h2></div><div class="pg">' + B.ProgressBar(p, 100) + '<b class="thcs-label">' + p + '%</b></div></div>' +
+      '<section class="t-card"><div class="t-tabs" role="tablist" aria-label="Nội dung Unit">' + TABS.map(function (t, k) { return '<button type="button" role="tab" class="t-tab" id="tb' + k + '" aria-controls="tp' + k + '" aria-selected="' + (S.tab === k) + '" tabindex="' + (S.tab === k ? 0 : -1) + '" data-tab="' + k + '">' + B.icon(t[1], 18) + t[0] + '</button>'; }).join('') + '</div>' +
+      '<div class="panel" role="tabpanel" id="tp' + S.tab + '" aria-labelledby="tb' + S.tab + '">' + tabPanel() + '</div></section>';
+  }
+  function page(m, o) { return T.shell(Object.assign({ active: 'sgk', title: 'Học theo SGK', crumb: S.unit == null ? 'Bám sát chương trình ở trường' : 'Học theo SGK › Lớp ' + S.g, main: m }, o || {})); }
+  T.screen({
+    labels: { empty: 'Trống (chưa học Unit nào)' },
+    notes: { normal: 'Bấm một thẻ Unit để mở trang Unit; dùng ← → giữa các tab (role tablist). Nút ← trên trang Unit để quay lại lưới. Danh sách Unit theo bộ Global Success.', loading: 'Khung xương lưới Unit.', empty: 'Lớp chưa học Unit nào: tất cả 0%.', error: 'Không tải được danh sách Unit.' },
+    states: {
+      normal: function () { return page(S.unit == null ? grid() : unitPage()); },
+      loading: function () { return page('<div class="bar">' + B.sk('300px', '42px') + B.sk('180px', '44px') + '</div><div class="units">' + Array.apply(null, { length: 8 }).map(function () { return '<div class="t-card">' + B.sk('40%', '14px') + '<div style="height:10px"></div>' + B.sk('90%', '22px') + '<div style="height:14px"></div>' + B.sk('100%', '8px') + '</div>'; }).join('') + '</div>', { xp: '···' }); },
+      empty: function () { var u = S.unit; S.unit = null; var h = page(grid(true)); S.unit = u; return h; },
+      error: function () { return page('<section class="t-card">' + T.state({ kind: 'error', title: 'Chưa tải được chương trình SGK', text: 'Thử lại sau vài giây nhé.' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      scr.querySelectorAll('[data-g]').forEach(function (b) { b.addEventListener('click', function () { S.g = +b.dataset.g; ctx.setState('normal'); }); });
+      scr.querySelectorAll('[data-u]').forEach(function (b) { b.addEventListener('click', function () { S.unit = +b.dataset.u; S.tab = 0; ctx.setState('normal'); ctx.scr.querySelector('[data-back]').focus(); }); });
+      var bk = scr.querySelector('[data-back]'); bk && bk.addEventListener('click', function () { var u = S.unit; S.unit = null; ctx.setState('normal'); ctx.scr.querySelector('[data-u="' + u + '"]').focus(); });
+      var tabs = scr.querySelectorAll('[data-tab]');
+      tabs.forEach(function (b) { b.addEventListener('click', function () { S.tab = +b.dataset.tab; ctx.setState('normal'); ctx.scr.querySelector('[data-tab="' + S.tab + '"]').focus(); });
+        b.addEventListener('keydown', function (e) { var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (d) { e.preventDefault(); S.tab = (S.tab + d + 4) % 4; ctx.setState('normal'); ctx.scr.querySelector('[data-tab="' + S.tab + '"]').focus(); } }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

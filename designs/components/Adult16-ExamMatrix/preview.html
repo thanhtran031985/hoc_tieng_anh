@@ -1,0 +1,119 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="16. Tạo đề thi theo ma trận: số câu mỗi dạng × mức độ, thời gian, thang điểm, trộn câu và đáp án; tổng điểm và số câu trong kho được kiểm tra trực tiếp" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Tạo đề thi — preview</title>
+<style>
+  .mx { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--space-4); align-items: start; }
+  .mt { width: 100%; border-collapse: collapse; font: 400 14px/20px var(--font-thcs); }
+  .mt th { font: 600 12px/16px var(--font-thcs); color: var(--ink-soft); background: var(--surface-soft); padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--line); }
+  .mt th:first-child { text-align: left; }
+  .mt th span { display: block; font-weight: 400; }
+  .mt td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: center; vertical-align: top; }
+  .mt td:first-child { text-align: left; vertical-align: middle; }
+  .mt tfoot td { font-weight: 700; background: var(--surface-soft); vertical-align: middle; }
+  .mt .num { width: 64px !important; min-height: 32px !important; height: 32px; text-align: center; padding: 0 6px !important; }
+  .mt .av { display: block; font: 400 11px/14px var(--font-thcs); color: var(--ink-soft); margin-top: 2px; }
+  .mt td.bad .num { border-color: var(--field-error); background: var(--field-error-bg); box-shadow: inset 0 0 0 1px var(--field-error); }
+  .mt td.bad .av { color: var(--field-error); font-weight: 600; }
+  .mt .rt { font-weight: 600; vertical-align: middle; }
+  .tot-ok { color: var(--success-shade); } .tot-bad { color: var(--field-error); }
+  .sumk { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .sumk > div { background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 10px 12px; }
+  .sumk b { display: block; font: 700 22px/28px var(--font-thcs); }
+  .units { display: flex; flex-wrap: wrap; gap: 6px; }
+  .units button { border: 1px solid var(--line-strong); background: var(--surface); border-radius: var(--radius-pill); padding: 3px 10px; font: 500 13px/18px var(--font-thcs); color: var(--ink); cursor: pointer; }
+  .units button[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-shade); font-weight: 600; }
+  .info5 { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; }
+  .alert { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: var(--adm-radius-md); background: var(--field-error-bg); color: var(--ink); margin-top: var(--space-3); }
+  .alert .b-ico { color: var(--field-error); flex: none; margin-top: 2px; }
+  .alert.ok { background: var(--success-soft); } .alert.ok .b-ico { color: var(--success-shade); }
+  .pv { list-style: none; margin: 0; padding: 0; text-align: left; display: flex; flex-direction: column; gap: 10px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var LV = [['Nhận biết', 'độ khó 1–2'], ['Thông hiểu', 'độ khó 3'], ['Vận dụng', 'độ khó 4'], ['Vận dụng cao', 'độ khó 5']];
+  var ROWS = [
+    { k: 'Phát âm', n: [2, 2, 0, 0], av: [86, 54, 21, 6], pt: 0.25 },
+    { k: 'Từ vựng', n: [4, 3, 1, 0], av: [240, 180, 72, 18], pt: 0.25 },
+    { k: 'Ngữ pháp', n: [4, 4, 3, 1], av: [310, 260, 118, 34], pt: 0.25 },
+    { k: 'Nghe', n: [2, 2, 1, 0], av: [64, 48, 20, 5], pt: 0.25 },
+    { k: 'Đọc hiểu', n: [2, 2, 2, 1], av: [72, 66, 40, 12], pt: 0.25 },
+    { k: 'Viết lại câu', n: [0, 1, 2, 1], av: [30, 26, 14, 3], pt: 0.25 }
+  ];
+  var S = { scale: 10, units: [1, 2, 3], shuffleQ: true, shuffleA: true };
+  function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
+  function calc() {
+    var cols = [0, 1, 2, 3].map(function (j) { return sum(ROWS.map(function (r) { return r.n[j]; })); }), q = sum(cols);
+    var pts = Math.round(sum(ROWS.map(function (r) { return sum(r.n) * r.pt; })) * 100) / 100;
+    var over = []; ROWS.forEach(function (r, i) { r.n.forEach(function (v, j) { if (v > r.av[j]) over.push([i, j]); }); });
+    return { cols: cols, q: q, pts: pts, over: over };
+  }
+  function f(v) { return A.nf(v); }
+  function matrix() {
+    var c = calc();
+    return '<table class="mt" aria-describedby="mx-help"><thead><tr><th scope="col">Dạng câu</th>' + LV.map(function (l) { return '<th scope="col">' + l[0] + '<span>' + l[1] + '</span></th>'; }).join('') + '<th scope="col">Số câu</th><th scope="col">Điểm/câu</th><th scope="col">Điểm</th></tr></thead><tbody>' +
+      ROWS.map(function (r, i) { return '<tr><th scope="row" style="background:none;text-align:left;font:600 14px/20px var(--font-thcs);color:var(--ink)">' + r.k + '</th>' + r.n.map(function (v, j) { var bad = v > r.av[j]; return '<td class="' + (bad ? 'bad' : '') + '"><label class="b-sr" for="m-' + i + '-' + j + '">' + r.k + ', ' + LV[j][0] + '</label><input class="t-input a-input num" id="m-' + i + '-' + j + '" inputmode="numeric" data-i="' + i + '" data-j="' + j + '" value="' + v + '" aria-describedby="m-' + i + '-' + j + '-a"' + (bad ? ' aria-invalid="true"' : '') + '><span class="av" id="m-' + i + '-' + j + '-a">' + (bad ? 'Kho chỉ có ' + r.av[j] : 'kho: ' + r.av[j]) + '</span></td>'; }).join('') +
+        '<td class="rt" data-rq="' + i + '">' + sum(r.n) + '</td><td><label class="b-sr" for="p-' + i + '">Điểm mỗi câu ' + r.k + '</label><input class="t-input a-input num" id="p-' + i + '" data-p="' + i + '" value="' + f(r.pt) + '"></td><td class="rt" data-rp="' + i + '">' + f(Math.round(sum(r.n) * r.pt * 100) / 100) + '</td></tr>'; }).join('') +
+      '</tbody><tfoot><tr><td>Tổng</td>' + c.cols.map(function (v, j) { return '<td data-ct="' + j + '">' + v + '</td>'; }).join('') + '<td data-tq>' + c.q + '</td><td></td><td data-tp class="' + (c.pts === S.scale ? 'tot-ok' : 'tot-bad') + '">' + f(c.pts) + ' / ' + S.scale + '</td></tr></tfoot></table>';
+  }
+  function side() {
+    var c = calc(), ok = c.pts === S.scale && !c.over.length && c.q > 0;
+    return '<div class="sumk"><div><span class="adm-small b-muted">Tổng số câu</span><b>' + c.q + '</b></div><div><span class="adm-small b-muted">Tổng điểm</span><b class="' + (c.pts === S.scale ? 'tot-ok' : 'tot-bad') + '">' + f(c.pts) + ' / ' + S.scale + '</b></div></div>' +
+      '<h3 class="adm-h3" style="margin:var(--space-4) 0 var(--space-2)">Tỉ lệ theo mức độ</h3>' + A.hbars(LV.map(function (l, j) { return { k: l[0], v: c.q ? Math.round(c.cols[j] / c.q * 100) : 0 }; }), { max: 100, unit: '%' }) +
+      '<p class="adm-small b-muted" style="margin:var(--space-2) 0 0">Khuyến nghị đề giữa kỳ: 40 / 30 / 20 / 10%.</p>' +
+      (ok ? '<div class="alert ok adm-small">' + B.icon('okcircle', 16) + '<span>Ma trận hợp lệ. Có thể tạo đề.</span></div>' : '<div class="alert adm-small" role="alert">' + B.icon('warn', 16) + '<span>' + [c.pts !== S.scale ? 'Tổng điểm đang là ' + f(c.pts) + ', cần đúng ' + S.scale + '.' : '', c.over.length ? c.over.length + ' ô vượt số câu có trong kho.' : '', !c.q ? 'Đề chưa có câu nào.' : ''].filter(Boolean).join(' ') + '</span></div>');
+  }
+  function main() {
+    var info = '<section class="a-card" style="margin-bottom:var(--space-4)"><div class="a-form info5">' + A.field({ id: 'e-name', label: 'Tên đề', value: 'Đề thử giữa kỳ I · Tiếng Anh 8 · số 3', required: true }) +
+      A.field({ id: 'e-lv', label: 'Cấp', type: 'select', value: 8, options: B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n + ' · ' + l.name]; }) }) + A.field({ id: 'e-time', label: 'Thời gian', value: 45, required: true, suffix: '<span class="adm-small b-muted">phút</span>' }) +
+      A.field({ id: 'e-scale', label: 'Thang điểm', type: 'seg', value: S.scale, options: [[10, '10'], [100, '100']] }) + A.field({ id: 'e-codes', label: 'Số mã đề', type: 'select', value: 2, options: [[1, '1 mã'], [2, '2 mã'], [3, '3 mã'], [4, '4 mã']] }) + '</div>' +
+      '<div class="a-field" id="e-units-f" style="margin-top:var(--space-3)"><span class="adm-h3" id="e-units-l">Phạm vi: Unit SGK lớp 8 <span class="a-req" aria-hidden="true">*</span></span><div class="units" role="group" aria-labelledby="e-units-l" aria-describedby="e-units-e">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(function (u) { return '<button type="button" data-u="' + u + '" aria-pressed="' + (S.units.indexOf(u) > -1) + '">Unit ' + u + '</button>'; }).join('') + '</div><p class="a-err adm-small" id="e-units-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div></section>';
+    var mx = '<section class="a-card" aria-labelledby="mx-t"><div class="a-card__h"><div><h2 class="adm-h2" id="mx-t" style="margin:0">Ma trận đề</h2><span class="adm-small b-muted" id="mx-help">Nhập số câu cho từng dạng × mức độ. Số nhỏ bên dưới là số câu đang có trong kho (Cấp 8, Unit đã chọn).</span></div>' + A.btn({ label: 'Dùng mẫu giữa kỳ', variant: 'ghost', size: 's', attrs: 'data-tpl' }) + '</div><div class="a-tblw">' + matrix() + '</div>' +
+      '<div style="margin-top:var(--space-3)">' + A.toggle('sq', 'Trộn thứ tự câu hỏi', S.shuffleQ, 'Mỗi mã đề có thứ tự câu khác nhau; câu đọc hiểu cùng đoạn văn vẫn đi liền nhau') + A.toggle('sa', 'Trộn đáp án A / B / C / D', S.shuffleA, 'Không trộn các câu có phương án “Cả A và B”') + A.toggle('sx', 'Hiện giải thích sau khi nộp bài', true, 'Học sinh xem đáp án và giải thích ngay sau khi nộp') + '</div></section>';
+    var sd = '<section class="a-card" aria-labelledby="sd-t" style="position:sticky;top:0"><h2 class="adm-h2" id="sd-t" style="margin:0 0 var(--space-3)">Tóm tắt</h2><div data-side aria-live="polite">' + side() + '</div><div class="a-actions" style="margin-top:var(--space-4);justify-content:stretch">' + A.btn({ label: 'Xem trước', icon: 'eye', variant: 'secondary', attrs: 'data-prev', block: true }) + A.btn({ label: 'Tạo đề', icon: 'shuffle', attrs: 'data-gen', block: true }) + '</div></section>';
+    return info + '<div class="mx">' + mx + sd + '</div>';
+  }
+  function page(m) { return A.shell({ area: 'admin', active: 'matrix', title: 'Tạo đề thi theo ma trận', crumb: 'Kho Cấp 8 · 1.104 câu hỏi đã xuất bản', main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (kho chưa đủ câu)' },
+    notes: { normal: 'Gõ số câu vào từng ô: tổng số câu, điểm và tỉ lệ mức độ cập nhật ngay. Thử nhập 5 vào ô Viết lại câu × Vận dụng cao (kho chỉ có 3) hoặc đổi điểm/câu thành 0,5 để thấy lỗi; “Tạo đề” chỉ chạy khi tổng điểm đúng thang và không ô nào vượt kho.', loading: 'Khung xương thông tin đề và ma trận.', empty: 'Kho câu hỏi của cấp chưa đủ để tạo đề.', error: 'Không tải được số câu trong kho.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page(A.skel('90px') + '<div style="height:16px"></div><div class="mx">' + A.skel('360px') + A.skel('300px') + '</div>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Kho Cấp 10 chưa đủ câu hỏi để tạo đề', text: 'Cần ít nhất 40 câu đã xuất bản trong phạm vi Unit đã chọn (hiện có 12). Thêm câu hỏi hoặc mở rộng phạm vi Unit.', action: '<div class="a-actions" style="justify-content:center">' + A.btn({ label: 'Mở ngân hàng câu hỏi', icon: 'exam' }) + A.btn({ label: 'Nhập câu hỏi từ Excel', icon: 'upload', variant: 'secondary' }) + '</div>' }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'MTX-503' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      function upd() {
+        var c = calc();
+        ROWS.forEach(function (r, i) { scr.querySelector('[data-rq="' + i + '"]').textContent = sum(r.n); scr.querySelector('[data-rp="' + i + '"]').textContent = f(Math.round(sum(r.n) * r.pt * 100) / 100); r.n.forEach(function (v, j) { var inp = scr.querySelector('#m-' + i + '-' + j), td = inp.closest('td'), bad = v > r.av[j]; td.classList.toggle('bad', bad); if (bad) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid'); td.querySelector('.av').textContent = bad ? 'Kho chỉ có ' + r.av[j] : 'kho: ' + r.av[j]; }); });
+        c.cols.forEach(function (v, j) { scr.querySelector('[data-ct="' + j + '"]').textContent = v; }); scr.querySelector('[data-tq]').textContent = c.q;
+        var tp = scr.querySelector('[data-tp]'); tp.textContent = f(c.pts) + ' / ' + S.scale; tp.className = c.pts === S.scale ? 'tot-ok' : 'tot-bad';
+        scr.querySelector('[data-side]').innerHTML = side(); A.wireTips(scr);
+      }
+      scr.querySelectorAll('[data-i]').forEach(function (inp) { inp.addEventListener('input', function () { var v = parseInt(inp.value, 10); ROWS[+inp.dataset.i].n[+inp.dataset.j] = isNaN(v) || v < 0 ? 0 : v; upd(); }); });
+      scr.querySelectorAll('[data-p]').forEach(function (inp) { inp.addEventListener('input', function () { var v = parseFloat(inp.value.replace(',', '.')); ROWS[+inp.dataset.p].pt = isNaN(v) || v < 0 ? 0 : v; upd(); }); });
+      scr.querySelector('#e-scale').addEventListener('segchange', function (e) { var ns = +e.detail; ROWS.forEach(function (r) { r.pt = Math.round(r.pt * ns / S.scale * 100) / 100; }); S.scale = ns; ctx.setState('normal'); ctx.scr.querySelector('#e-scale [data-v="' + ns + '"]').focus(); });
+      scr.querySelector('[data-tpl]').addEventListener('click', function () { var T = [[2, 2, 0, 0], [4, 3, 1, 0], [4, 4, 3, 1], [2, 2, 1, 0], [2, 2, 2, 1], [0, 1, 2, 1]]; ROWS.forEach(function (r, i) { r.n = T[i].slice(); r.pt = S.scale / 40; }); ctx.setState('normal'); ctx.scr.querySelector('[data-tpl]').focus(); });
+      scr.querySelectorAll('[data-u]').forEach(function (b) { b.addEventListener('click', function () { var u = +b.dataset.u, k = S.units.indexOf(u); if (k > -1) S.units.splice(k, 1); else S.units.push(u); b.setAttribute('aria-pressed', k < 0); if (S.units.length) { scr.querySelector('#e-units-e').hidden = true; scr.querySelector('#e-units-f').classList.remove('is-error'); } }); });
+      var rules = { 'e-name': function (v) { return v.trim() ? '' : 'Nhập tên đề.'; }, 'e-time': function (v) { return !/^\d+$/.test(v.trim()) ? 'Nhập số phút.' : +v < 10 || +v > 120 ? 'Thời gian từ 10 đến 120 phút.' : ''; } };
+      A.wireValidate(scr, rules);
+      function ok() {
+        var bad = A.validate(scr, rules), c = calc(), ue = scr.querySelector('#e-units-e');
+        ue.hidden = !!S.units.length; ue.querySelector('span').textContent = 'Chọn ít nhất một Unit.'; scr.querySelector('#e-units-f').classList.toggle('is-error', !S.units.length);
+        if (bad) return false; if (!S.units.length) { scr.querySelector('[data-u]').focus(); return false; }
+        if (c.over.length) { scr.querySelector('#m-' + c.over[0][0] + '-' + c.over[0][1]).focus(); return false; }
+        if (c.pts !== S.scale || !c.q) { scr.querySelector('#p-0').focus(); return false; }
+        return true;
+      }
+      scr.querySelector('[data-gen]').addEventListener('click', function () { if (!ok()) return; var n = +scr.querySelector('#e-codes').value, c = calc(); A.dialog(scr, { title: 'Tạo ' + n + ' mã đề?', body: '<p style="margin:0">Mỗi mã đề ' + c.q + ' câu, ' + scr.querySelector('#e-time').value + ' phút, thang ' + S.scale + ' điểm. Câu hỏi được chọn ngẫu nhiên trong kho theo ma trận' + (S.shuffleQ ? ', trộn thứ tự câu' : '') + '.</p>', actions: [{ label: 'Huỷ' }, { label: 'Tạo đề', variant: 'primary', icon: 'shuffle', onClick: function () { setTimeout(function () { A.toast(ctx.scr, 'Đã tạo ' + n + ' mã đề: ' + [801, 802, 803, 804].slice(0, n).join(', ') + ' (nháp).'); }, 0); } }] }); });
+      scr.querySelector('[data-prev]').addEventListener('click', function () { if (!ok()) return; A.dialog(scr, { title: 'Xem trước · mã đề 801 (5 câu đầu)', wide: 620, body: '<div class="a-stu thcs" data-theme="thcs"><ol class="pv">' + ['Choose the word whose underlined part is pronounced differently: A. c<u>i</u>ty  B. c<u>o</u>untry  C. c<u>y</u>cle  D. c<u>e</u>ntre', 'Traffic _____ is a big problem in Hà Nội at rush hour.', 'I _____ in this town since I was six.', 'If it _____ tomorrow, we will stay at home.', 'She is good _____ playing the guitar.'].map(function (q) { return '<li class="thcs-body" lang="en">' + q + '</li>'; }).join('') + '</ol></div>', actions: [{ label: 'Đóng', variant: 'primary' }] }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

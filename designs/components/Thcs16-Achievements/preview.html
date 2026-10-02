@@ -1,0 +1,53 @@
+<!-- @dsCard group="Màn THCS · 13–17 SGK, thi, thành tích" height=720 subtitle="16. Thành tích: huy hiệu, danh hiệu theo cấp, biểu đồ XP theo tuần, kỷ lục cá nhân" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Thành tích — preview</title>
+<style>
+  .ac { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-5); }
+  .s12 { grid-column: 1 / -1; } .s8 { grid-column: span 8; } .s4 { grid-column: span 4; }
+  .recs { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+  .rec { display: flex; gap: var(--space-3); align-items: center; }
+  .rec .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-soft); flex: none; }
+  .rec b { font: 700 26px/30px var(--font-thcs); display: block; }
+  .badges { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-4) var(--space-3); }
+  .titles { display: flex; flex-direction: column; gap: 4px; }
+  .ti { display: grid; grid-template-columns: 34px 1fr auto; gap: var(--space-3); align-items: center; padding: 8px; border-radius: var(--thcs-radius-md); }
+  .ti.cur { background: var(--lv-soft); }
+  .ti .n { width: 34px; height: 34px; border-radius: 9px; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; font: 700 14px/1 var(--font-thcs); }
+  .ti.locked .n { background: var(--surface-sunk); color: var(--ink-soft); }
+  .ti.cur b { color: var(--lv-ink); }
+  .ti.locked b { color: var(--ink-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var WK = [{ k: '17/8', v: 620 }, { k: '24/8', v: 840 }, { k: '31/8', v: 710 }, { k: '7/9', v: 980 }, { k: '14/9', v: 1240, label: true }, { k: '21/9', v: 1060 }, { k: '28/9', v: 1150 }, { k: 'Tuần này', v: 860, now: true }];
+  var BD = [{ name: 'Chuỗi 21 ngày', tier: 'gold', icon: 'flame', date: '28/09' }, { name: 'Bậc thầy since/for', tier: 'silver', icon: 'grammar', date: 'hôm nay' }, { name: '500 từ', tier: 'bronze', icon: 'notebook', date: '12/09' }, { name: 'Tai thính', tier: 'silver', icon: 'speaker', date: '03/09' }, { name: 'Cây bút chăm', tier: 'bronze', icon: 'pen', date: '20/08' },
+    { name: 'Nhà thám hiểm Sydney', tier: 'gold', icon: 'globe', date: '15/08' }, { name: 'Điểm 10 bài thi', earned: false, progress: 'Cao nhất: 9,5' }, { name: 'Chuỗi 50 ngày', earned: false, progress: '23/50 ngày' }, { name: '1.000 từ', earned: false, progress: '486/1.000' }, { name: 'Đọc 30 bài', earned: false, progress: '18/30 bài' }, { name: 'Không bỏ ngày nào trong tháng', earned: false, progress: '27/30 ngày' }, { name: 'Phát âm chuẩn', earned: false, progress: '74% bài đạt' }];
+  var TT = [[6, 'Nhà thám hiểm Singapore', 'Đạt 12/06'], [7, 'Thuyền trưởng Sydney', 'Đạt 15/08'], [8, 'Thám tử London', 'Đang chinh phục · 62%'], [9, 'Phóng viên New York', 'Chưa mở'], [10, 'Đại sứ Toronto', 'Chưa mở']];
+  var S = { tab: 'all' };
+  function recs() { return '<section class="t-card s12"><div class="recs">' + [['flame', '31', 'ngày · chuỗi dài nhất'], ['bolt', '420', 'XP nhiều nhất trong 1 ngày'], ['exam', '9,5', 'điểm thi cao nhất'], ['notebook', '212', 'từ đã thuộc lòng']].map(function (r, i) { return '<div class="rec"><span class="ic" style="color:' + (i === 1 ? 'var(--xp)' : 'var(--ink-soft)') + '">' + B.icon(r[0], 24) + '</span><div><b>' + r[1] + '</b><span class="thcs-body-s b-muted">' + r[2] + '</span></div></div>'; }).join('') + '</div></section>'; }
+  function badges() {
+    var list = BD.filter(function (b) { return S.tab === 'all' || (S.tab === 'got' ? b.earned !== false : b.earned === false); });
+    return '<section class="t-card s8" aria-labelledby="bh"><div class="t-card__h"><h2 class="thcs-h3" id="bh">Huy hiệu <span class="thcs-body-s b-muted">6/24 đã đạt</span></h2><div class="t-seg" role="group" aria-label="Lọc huy hiệu">' + [['all', 'Tất cả'], ['got', 'Đã đạt'], ['todo', 'Chưa đạt']].map(function (x) { return '<button type="button" aria-pressed="' + (S.tab === x[0]) + '" data-tab="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="badges">' + list.map(function (b) { return T.badge(Object.assign({ size: 64 }, b)); }).join('') + '</div></section>';
+  }
+  function titles() { return '<section class="t-card s4" aria-labelledby="th"><h2 class="thcs-h3" id="th" style="margin-bottom:8px">Danh hiệu theo cấp</h2><div class="titles">' + TT.map(function (t) { var st = t[2].indexOf('Đạt') === 0 ? 'done' : t[2].indexOf('Đang') === 0 ? 'cur' : 'locked'; return '<div class="ti ' + st + '" data-level="' + t[0] + '"><span class="n">' + (st === 'locked' ? B.icon('lock', 15) : t[0]) + '</span><div><b class="thcs-label">' + t[1] + '</b><div class="thcs-caption b-muted">' + t[2] + '</div></div>' + (st === 'done' ? '<span style="color:var(--success-shade)">' + B.icon('check', 18) + '</span>' : '<span></span>') + '</div>'; }).join('') + '</div></section>'; }
+  function chart() { return '<section class="t-card s12" aria-labelledby="ch"><div class="t-card__h"><h2 class="thcs-h3" id="ch">XP theo tuần</h2><span class="thcs-body-s b-muted">8 tuần gần nhất · trung bình 935 XP/tuần</span></div>' + T.bars(WK, { h: 120 }) + '</section>'; }
+  function page(m, o) { return T.shell(Object.assign({ active: 'awards', title: 'Thành tích', crumb: 'Tổng 12.480 XP · Cấp 8 London', main: m }, o || {})); }
+  T.screen({
+    labels: { empty: 'Trống (mới bắt đầu)' },
+    notes: { normal: 'Huy hiệu ghi rõ bậc bằng chữ (Vàng/Bạc/Đồng); huy hiệu chưa đạt có ổ khoá và tiến độ. Không có bảng xếp hạng so với bạn khác. Rê chuột/Tab vào cột để xem XP.', loading: 'Khung xương thành tích.', empty: 'Học sinh mới: chưa có huy hiệu, chưa có XP.', error: 'Không tải được thành tích.' },
+    states: {
+      normal: function () { return page('<div class="ac">' + recs() + badges() + titles() + chart() + '</div>'); },
+      loading: function () { return page('<div class="ac"><section class="t-card s12">' + B.sk('100%', '50px') + '</section><section class="t-card s8">' + B.sk('100%', '240px') + '</section><section class="t-card s4">' + B.sk('100%', '240px') + '</section><section class="t-card s12">' + B.sk('100%', '160px') + '</section></div>', { xp: '···' }); },
+      empty: function () { return page('<div class="ac"><section class="t-card s8">' + T.state({ kind: 'empty', expr: 'chao', title: 'Chưa có huy hiệu nào', text: 'Học 3 ngày liên tiếp để nhận huy hiệu đầu tiên “Khởi động”.', action: T.btn({ label: 'Học bài đầu tiên', icon: 'next' }) }) + '</section>' + titles().replace(/Đạt \d+\/\d+/g, 'Chưa mở').replace('Đang chinh phục · 62%', 'Chưa mở') + '</div>', { xp: '0', streak: 0 }); },
+      error: function () { return page('<section class="t-card">' + T.state({ kind: 'error', title: 'Chưa tải được thành tích', text: 'Huy hiệu và XP của bạn vẫn còn nguyên. Thử lại nhé.' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { S.tab = b.dataset.tab; ctx.setState('normal'); ctx.scr.querySelector('[data-tab="' + S.tab + '"]').focus(); }); }); } }
+  });
+})();
+</script>
+</body>
+</html>

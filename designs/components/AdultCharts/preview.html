@@ -1,0 +1,32 @@
+<!-- @dsCard group="Người lớn · Thành phần" height=680 subtitle="Biểu đồ: cột một chuỗi (chart-1) có đường tham chiếu nét đứt, cột theo màu cấp, thanh ngang có vạch kỳ trước, đường điểm; rê chuột hoặc Tab để xem số" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Biểu đồ người lớn — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); } .pane { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .sw { display: flex; gap: 10px; flex-wrap: wrap; grid-column: 1 / -1; }
+  .sw div { display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: 8px; padding: 6px 10px 6px 6px; box-shadow: var(--adm-shadow-card); }
+  .sw i { width: 28px; height: 28px; border-radius: 6px; }
+  .sw code { font: 600 12px/16px var(--font-thcs); }
+</style></head>
+<body>
+<div class="pane thcs adm scr" data-theme="thcs" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A; B.suite('adult');
+  var d7 = [['T7', 28], ['CN', 30], ['T2', 15], ['T3', 22], ['T4', 30], ['T5', 0], ['T6', 25]].map(function (x) { return { k: x[0], v: x[1] }; });
+  var lv = A.data.perLevel.words.map(function (v, i) { return { k: 'Cấp ' + (i + 1), v: v, level: i + 1, tip: 'Cấp ' + (i + 1) + ' · ' + B.levels[i].name + ': ' + A.nf(v) + ' từ' }; });
+  var sk = [['Nghe', 78, 74], ['Nói', 61, 57], ['Đọc', 72, 73], ['Viết', 55, 49], ['Từ vựng', 84, 79], ['Ngữ pháp', 66, 62], ['Phát âm', 58, 55]].map(function (x) { return { k: x[0], v: x[1], prev: x[2] }; });
+  var ln = [['5/9', 8], ['12/9', 7.5], ['19/9', 9], ['26/9', 7.5], ['2/10', 8.25]].map(function (x) { return { k: x[0], v: x[1], tip: x[0] + ': ' + A.nf(x[1]) + ' điểm' }; });
+  var sw = [['chart-1', 'chuỗi chính'], ['chart-1-soft', 'nền vùng'], ['chart-2', 'chuỗi 2'], ['chart-3', 'chuỗi 3'], ['chart-ref', 'tham chiếu'], ['chart-grid', 'lưới']];
+  var p = document.getElementById('p');
+  p.innerHTML = '<div class="sw">' + sw.map(function (s) { return '<div><i style="background:var(--' + s[0] + ')"></i><span><code>' + s[0] + '</code><br><span class="adm-small b-muted">' + s[1] + '</span></span></div>'; }).join('') + '<div><i style="background:linear-gradient(90deg,var(--level-1),var(--level-4),var(--level-7),var(--level-10))"></i><span><code>level-1 … level-10</code><br><span class="adm-small b-muted">khi chia theo cấp</span></span></div></div>' +
+    '<section class="a-card"><h2 class="adm-h2" style="margin:0 0 8px">Phút học 7 ngày · một chuỗi</h2>' + A.vbars(d7, { h: 150, unit: 'phút', ref: { v: 30, label: 'Giới hạn 30 phút' }, max: 40 }) + '</section>' +
+    '<section class="a-card"><h2 class="adm-h2" style="margin:0 0 8px">Từ vựng theo cấp · màu cấp</h2>' + A.vbars(lv, { h: 150, unit: 'từ' }) + '</section>' +
+    '<section class="a-card"><h2 class="adm-h2" style="margin:0 0 8px">Kỹ năng · thanh ngang + vạch kỳ trước</h2>' + A.hbars(sk, { max: 100, legend: ['Tháng 9', 'Tháng 8 (vạch dọc)'] }) + '</section>' +
+    '<section class="a-card"><h2 class="adm-h2" style="margin:0 0 8px">Điểm thi · đường</h2>' + A.line(ln, { min: 5, max: 10, h: 180, ref: { v: 8, label: 'Mục tiêu 8,0' } }) + '</section>';
+  A.wireTips(p);
+})();
+</script>
+</body>
+</html>

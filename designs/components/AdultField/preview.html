@@ -1,0 +1,38 @@
+<!-- @dsCard group="Người lớn · Thành phần" height=580 subtitle="Biểu mẫu và nút khu người lớn: ô nhập, chọn, ô nhiều dòng, nút phân đoạn, công tắc; lỗi ngay dưới ô (cam nâu, có icon, không đỏ); nút 3 cỡ và nút xoá" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Biểu mẫu người lớn — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); } .pane { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .lab { font: 600 12px/16px var(--font-thcs); color: var(--ink-soft); width: 100%; }
+</style></head>
+<body>
+<div class="pane thcs adm scr" data-theme="thcs" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A; B.suite('adult');
+  var form = '<section class="a-card"><h2 class="adm-h2" style="margin:0 0 12px">Ô nhập và lỗi</h2><div class="a-form">' +
+    A.field({ id: 'f1', label: 'Từ tiếng Anh', value: 'apple', required: true, en: true }) +
+    A.field({ id: 'f2', label: 'Phiên âm IPA', value: 'ˈæp.əl', required: true, en: true, error: 'Phiên âm đặt trong hai dấu gạch chéo, ví dụ /ˈæp.əl/.' }) +
+    A.field({ id: 'f3', label: 'Cấp', type: 'select', value: 2, options: B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n + ' · ' + l.name]; }) }) +
+    A.field({ id: 'f4', label: 'Thời lượng', value: '10', suffix: '<span class="adm-small b-muted">phút</span>', hint: 'Từ 5 đến 30 phút' }) +
+    A.field({ id: 'f5', label: 'Câu ví dụ', type: 'textarea', rows: 2, value: 'I eat an apple.', en: true, cls: 'a-full' }) +
+    A.field({ id: 'f6', label: 'Mã PIN mới', type: 'password', value: '1111', required: true, error: 'PIN quá dễ đoán (lặp số). Chọn PIN khác.' }) +
+    A.field({ id: 'f7', label: 'Trạng thái', type: 'seg', value: 'draft', options: [['draft', 'Nháp'], ['live', 'Đã xuất bản']] }) + '</div>' +
+    '<p class="adm-small b-muted" style="margin:12px 0 0">Xoá chữ trong “Từ tiếng Anh” rồi rời ô (Tab) để thấy lỗi hiện ngay dưới ô.</p></section>';
+  var right = '<section class="a-card"><h2 class="adm-h2" style="margin:0 0 12px">Nút</h2>' +
+    '<div class="row"><span class="lab">Cỡ: lớn 44px · thường 36px · nhỏ 30px</span>' + A.btn({ label: 'Đăng nhập', size: 'l' }) + A.btn({ label: 'Lưu thay đổi', icon: 'check' }) + A.btn({ label: 'Thêm', icon: 'plus', size: 's' }) + '</div>' +
+    '<div class="row"><span class="lab">Kiểu</span>' + A.btn({ label: 'Chính' }) + A.btn({ label: 'Phụ', variant: 'secondary' }) + A.btn({ label: 'Nhẹ', variant: 'ghost' }) + A.btn({ label: 'Vô hiệu', disabled: true }) + '</div>' +
+    '<div class="row"><span class="lab">Không hoàn tác (luôn kèm hộp thoại xác nhận) — <code>adm-danger</code></span>' + A.btn({ label: 'Xoá hồ sơ', icon: 'trash', cls: 'a-btn--danger' }) + A.btn({ label: 'Đặt lại tiến độ', variant: 'secondary', cls: 'a-btn--danger-o' }) + A.btn({ label: 'Mở hộp thoại xoá', variant: 'secondary', attrs: 'data-dlg-demo' }) + '</div>' +
+    '<div class="row"><span class="lab">Focus (Tab)</span>' + A.btn({ label: 'Lưu', attrs: 'style="outline:3px solid var(--focus);outline-offset:2px"' }) + '<button type="button" class="a-iconbtn" aria-label="Sửa" style="outline:3px solid var(--focus);outline-offset:2px">' + B.icon('pen', 16) + '</button></div>' +
+    '<h3 class="adm-h3" style="margin:16px 0 0">Công tắc</h3>' + A.toggle('t1', 'Nhắc con khi còn 5 phút', true, 'Bông hiện lời nhắc nhẹ') + A.toggle('t2', 'Nhạc nền', false, 'Tự tắt trong bài nghe') + '</section>';
+  var p = document.getElementById('p'); p.innerHTML = form + right;
+  var rules = { f1: function (v) { return v.trim() ? '' : 'Nhập từ tiếng Anh.'; } }; A.wireValidate(p, rules);
+  p.querySelectorAll('.a-switch').forEach(function (s) { s.addEventListener('click', function () { s.setAttribute('aria-checked', s.getAttribute('aria-checked') !== 'true'); }); });
+  p.querySelectorAll('.a-seg').forEach(function (g) { g.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { g.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); }); }); });
+  p.querySelector('[data-dlg-demo]').addEventListener('click', function () { A.dialog(p, { title: 'Xoá hồ sơ Minh?', body: '<p style="margin:0">Hồ sơ sẽ bị xoá vĩnh viễn sau 30 ngày.</p>' + A.field({ id: 'cf', label: 'Gõ “Minh” để xác nhận', required: true }), actions: [{ label: 'Huỷ' }, { label: 'Xoá hồ sơ', variant: 'danger', icon: 'trash', onClick: function (w) { var ok = w.querySelector('#cf').value.trim() === 'Minh'; A.setErr(w, 'cf', ok ? '' : 'Tên chưa khớp. Gõ đúng “Minh”.'); if (!ok) { w.querySelector('#cf').focus(); return false; } } }] }); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=760 subtitle="4. Kết quả thi: điểm theo thời gian, danh sách bài thi, xem lại từng câu con đã làm (lọc chỉ câu chưa đúng)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Kết quả thi — preview</title>
+<style>
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .stats > div { background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: var(--space-3); }
+  .stats b { display: block; font: 700 22px/28px var(--font-thcs); color: var(--ink); }
+  .exl { list-style: none; margin: 0; padding: 0; }
+  .exl button { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); text-align: left; border: 0; background: none; padding: 10px var(--space-3); border-radius: var(--adm-radius-md); cursor: pointer; font: inherit; color: var(--ink); }
+  .exl button:hover { background: var(--surface-soft); }
+  .exl button[aria-pressed="true"] { background: var(--brand-soft); box-shadow: inset 3px 0 0 var(--brand); }
+  .exl .sc { grid-row: span 2; align-self: center; font: 700 18px/24px var(--font-thcs); }
+  .rv-h { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line); }
+  .rv { list-style: none; margin: 0; padding: 0; }
+  .rv > li { display: grid; grid-template-columns: 32px 1fr; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--line); }
+  .rv .no { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 700 13px/1 var(--font-thcs); background: var(--success-soft); color: var(--success-shade); }
+  .rv .no.x { background: var(--retry-soft); color: var(--retry-shade); }
+  .rv .q { font: 500 15px/22px var(--font-thcs); margin: 2px 0 6px; }
+  .ans { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+  .ans span { display: inline-flex; gap: 6px; align-items: center; }
+  .ans .ok { color: var(--success-shade); font-weight: 600; } .ans .no2 { color: var(--retry-shade); font-weight: 600; }
+  .why { margin-top: 6px; background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 8px 12px; color: var(--ink-soft); }
+  .why b { color: var(--ink); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var KD = {
+    linh: { goal: 8, exams: [
+      { id: 'u1', k: '5/9', name: 'Kiểm tra Unit 1 · Leisure time', s: 8.0, n: 20, t: '15 phút', q: [] },
+      { id: 'u2', k: '12/9', name: 'Kiểm tra Unit 2 · Life in the countryside', s: 7.5, n: 20, t: '15 phút', q: [] },
+      { id: 'u3', k: '19/9', name: 'Kiểm tra Unit 3 · Teenagers', s: 9.0, n: 20, t: '15 phút', q: [] },
+      { id: 'm1', k: '26/9', name: 'Đề thử giữa kỳ I · số 1', s: 7.5, n: 40, t: '45 phút', q: [] },
+      { id: 'm2', k: '2/10', name: 'Đề thử giữa kỳ I · số 2', s: 8.25, n: 40, t: '45 phút', q: [
+        { type: 'Phát âm', q: 'Choose the word whose underlined part is pronounced differently: A. <u>c</u>ity  B. <u>c</u>ountry  C. <u>c</u>ycle  D. <u>c</u>entre', you: 'B. country', ok: true },
+        { type: 'Ngữ pháp', q: 'I _____ in this town since I was six.', you: 'B. lived', key: 'C. have lived', ok: false, why: 'Có <b>since + mốc thời gian</b> → dùng thì hiện tại hoàn thành: <b>have lived</b>.' },
+        { type: 'Từ vựng', q: 'Traffic _____ is a big problem in Hà Nội at rush hour.', you: 'A. congestion', ok: true },
+        { type: 'Ngữ pháp', q: 'If it _____ tomorrow, we will stay at home.', you: 'D. will rain', key: 'A. rains', ok: false, why: 'Câu điều kiện loại 1: mệnh đề <b>If</b> dùng hiện tại đơn, không dùng <b>will</b>.' },
+        { type: 'Đọc hiểu', q: 'According to the passage, why do teenagers in the city use social media?', you: 'C. To keep in touch with friends', ok: true },
+        { type: 'Viết lại câu', q: 'People built this bridge in 1998. → This bridge _____.', you: 'was built by people in 1998', key: 'was built in 1998', ok: false, why: 'Câu bị động thường bỏ <b>by people</b> khi chủ thể không quan trọng. Câu của con vẫn đúng ngữ pháp, được ½ điểm.' },
+        { type: 'Nghe', q: 'Listen: What time does the bus to the museum leave?', you: 'B. 8:15', ok: true }
+      ] }
+    ] },
+    minh: { goal: 8, exams: [
+      { id: 'a1', k: '7/9', name: 'Kiểm tra Unit 1 · Hello', s: 9.0, n: 10, t: '10 phút', q: [] },
+      { id: 'a2', k: '14/9', name: 'Kiểm tra Unit 2 · My family', s: 8.5, n: 10, t: '10 phút', q: [] },
+      { id: 'a3', k: '21/9', name: 'Kiểm tra Unit 3 · Colours', s: 7.0, n: 10, t: '10 phút', q: [] },
+      { id: 'a4', k: '28/9', name: 'Kiểm tra Unit 4 · Fruits', s: 8.0, n: 10, t: '10 phút', q: [
+        { type: 'Nghe và chọn hình', q: 'Listen and choose: “apple”', you: 'Hình quả táo', ok: true, w: 'apple' },
+        { type: 'Nghe và chọn hình', q: 'Listen and choose: “grapes”', you: 'Hình quả lê', key: 'Hình chùm nho', ok: false, w: 'grapes', why: 'Con nhầm <b>grapes</b> (nho) với <b>pear</b> (lê). Từ này đã vào danh sách ôn.' },
+        { type: 'Nối từ với hình', q: 'banana · orange · pear', you: 'Nối đúng 3/3', ok: true },
+        { type: 'Chọn từ đúng', q: 'I like _____ . (quả dâu tây)', you: 'strawbery', key: 'strawberry', ok: false, w: 'strawberry', why: 'Thiếu một chữ <b>r</b>: straw-<b>berr</b>-y.' },
+        { type: 'Nói', q: 'Say: “This is an orange.”', you: 'Bông nghe rõ 4/4 từ', ok: true, w: 'This is an orange.' }
+      ] }
+    ] }
+  };
+  function sc(v) { return A.nf(v % 1 ? v : v.toFixed(1)); }
+  var SEL = { minh: 'a4', linh: 'm2' }, ONLY = { v: false };
+  function cur() { var d = KD[A.state.kid]; return d.exams.filter(function (e) { return e.id === SEL[A.state.kid]; })[0]; }
+  function review(e) {
+    if (!e.q.length) return '<div class="rv-h"><div><h2 class="adm-h2">' + e.name + '</h2><span class="adm-small b-muted">' + e.k + '/2026 · ' + e.n + ' câu · ' + e.t + '</span></div><div style="text-align:right"><b class="adm-kpi">' + sc(e.s) + '</b><span class="adm-body b-muted"> / 10</span></div></div>' + A.empty({ title: 'Bài này đã quá 30 ngày', text: 'Chỉ giữ chi tiết từng câu của các bài trong 30 ngày gần nhất. Điểm tổng vẫn được lưu.' });
+    var wrong = e.q.filter(function (q) { return !q.ok; }).length, list = ONLY.v ? e.q.filter(function (q) { return !q.ok; }) : e.q;
+    return '<div class="rv-h"><div><h2 class="adm-h2">' + e.name + '</h2><span class="adm-small b-muted">' + e.k + '/2026 · ' + e.n + ' câu · ' + e.t + ' · hiển thị ' + e.q.length + ' câu tiêu biểu</span></div><div style="text-align:right"><b class="adm-kpi">' + sc(e.s) + '</b><span class="adm-body b-muted"> / 10</span></div></div>' +
+      '<div class="a-card__h" style="margin:var(--space-3) 0 0"><span class="adm-small b-muted">' + wrong + ' câu chưa đúng trong phần hiển thị</span>' + A.toggle('only', 'Chỉ câu chưa đúng', ONLY.v).replace('class="a-toggle"', 'class="a-toggle" style="border:0;padding:0;gap:12px"') + '</div>' +
+      '<ol class="rv">' + list.map(function (q) { var i = e.q.indexOf(q) + 1; return '<li><span class="no' + (q.ok ? '' : ' x') + '" aria-label="Câu ' + i + (q.ok ? ', đúng' : ', chưa đúng') + '">' + i + '</span><div><span class="adm-label b-muted">' + q.type.toUpperCase() + '</span><p class="q" lang="en">' + (q.w ? B.speak(q.w, 's') + ' ' : '') + q.q + '</p>' +
+        '<div class="ans adm-small"><span>Con chọn: <b class="' + (q.ok ? 'ok' : 'no2') + '">' + q.you + '</b>' + (q.ok ? B.icon('check', 14) : '') + '</span>' + (q.ok ? '' : '<span>Đáp án: <b class="ok">' + q.key + '</b></span>') + '</div>' + (q.why ? '<p class="why adm-small"><b>Giải thích:</b> ' + q.why + '</p>' : '') + '</div></li>'; }).join('') + '</ol>';
+  }
+  function main(empty) {
+    var k = A.state.kid, d = KD[k], ex = d.exams, sel = cur();
+    if (empty) return '<section class="a-card">' + A.empty({ title: 'Con chưa làm bài thi nào', text: 'Khi con làm bài kiểm tra Unit hoặc đề thử, điểm và từng câu trả lời sẽ hiện ở đây.', action: A.btn({ label: 'Thêm lịch kiểm tra ở trường', icon: 'calendar', variant: 'secondary' }) }) + '</section>';
+    var avg = ex.reduce(function (a, e) { return a + e.s; }, 0) / ex.length, best = Math.max.apply(null, ex.map(function (e) { return e.s; }));
+    var chart = '<section class="a-card a-s8"><div class="a-card__h"><div><h2 class="adm-h2">Điểm theo thời gian</h2><span class="adm-small b-muted">Thang 10 (trục từ 5) · bấm vào điểm để xem lại bài</span></div></div>' +
+      A.line(ex.map(function (e) { return { k: e.k, v: e.s, id: e.id, on: e.id === sel.id, tip: e.name + ': ' + sc(e.s) + ' điểm' }; }), { min: 5, max: 10, h: 200, fmt: sc, ref: { v: d.goal, label: 'Mục tiêu ' + A.nf(d.goal.toFixed(1)) } }) + '</section>';
+    var side = '<section class="a-card a-s4"><h2 class="adm-h2" style="margin:0 0 var(--space-3)">Tóm tắt</h2><div class="stats"><div><span class="adm-small b-muted">Điểm trung bình</span><b>' + A.nf(avg.toFixed(2)) + '</b></div><div><span class="adm-small b-muted">Cao nhất</span><b>' + sc(best) + '</b></div><div><span class="adm-small b-muted">Số bài đã làm</span><b>' + ex.length + '</b></div><div><span class="adm-small b-muted">Đạt mục tiêu</span><b>' + ex.filter(function (e) { return e.s >= d.goal; }).length + ' / ' + ex.length + '</b></div></div>' +
+      '<p class="adm-small b-muted" style="margin:var(--space-3) 0 0">Mục tiêu ' + A.nf(d.goal.toFixed(1)) + ' do bố mẹ đặt trong Cài đặt.</p></section>';
+    var list = '<section class="a-card a-s4" aria-labelledby="el"><h2 class="adm-h2" id="el" style="margin:0 0 var(--space-2)">Bài thi (' + ex.length + ')</h2><ul class="exl">' + ex.slice().reverse().map(function (e) { return '<li><button type="button" data-ex="' + e.id + '" aria-pressed="' + (e.id === sel.id) + '"><span class="adm-h3">' + e.name + '</span><span class="sc">' + sc(e.s) + '</span><span class="adm-small b-muted">' + e.k + ' · ' + e.n + ' câu · ' + e.t + '</span></button></li>'; }).join('') + '</ul></section>';
+    var rv = '<section class="a-card a-s8" aria-label="Xem lại bài làm" id="rv">' + review(sel) + '</section>';
+    return '<div class="a-grid">' + chart + side + list + rv + '</div>';
+  }
+  function page(m) { var kid = A.kids.filter(function (x) { return x.id === A.state.kid; })[0]; return A.shell({ area: 'parent', active: 'exams', title: 'Kết quả thi · ' + kid.name, crumb: 'Lớp ' + kid.grade + ' · Học kỳ I, 2026–2027', kids: true, actions: A.btn({ label: 'Tải báo cáo PDF', icon: 'download', variant: 'ghost' }), main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa thi)' },
+    notes: { normal: 'Bấm một điểm trên biểu đồ hoặc một bài trong danh sách để xem lại. Bật “Chỉ câu chưa đúng” để lọc. Câu chưa đúng dùng màu cam dịu kèm đáp án và giải thích.', loading: 'Khung xương biểu đồ, danh sách và phần xem lại.', empty: 'Con chưa làm bài thi nào.', error: 'Không tải được kết quả thi.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s8">' + A.skel('220px') + '</div><div class="a-s4">' + A.skel('220px') + '</div><div class="a-s4">' + A.skel('280px') + '</div><div class="a-s8">' + A.skel('280px') + '</div></div>'); },
+      empty: function () { return page(main(true)); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'EXM-500' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      function pick(id, sel) { SEL[A.state.kid] = id; ctx.setState('normal'); var f = ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-ex]').forEach(function (b) { b.addEventListener('click', function () { pick(b.dataset.ex, '[data-ex="' + b.dataset.ex + '"]'); }); });
+      scr.querySelectorAll('.a-dot[data-id]').forEach(function (b) { b.addEventListener('click', function () { pick(b.dataset.id, '.a-dot[data-id="' + b.dataset.id + '"]'); }); });
+      var o = scr.querySelector('#only'); o && o.addEventListener('click', function () { ONLY.v = !ONLY.v; ctx.setState('normal'); ctx.scr.querySelector('#only').focus(); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

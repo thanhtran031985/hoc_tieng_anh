@@ -1,0 +1,33 @@
+<!-- @dsCard group="THCS · Thành phần" height=600 subtitle="Bảng màu THCS ở chế độ sáng và tối: mặt nền, chữ, nhấn, phản hồi, XP và 5 màu thành phố" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bảng màu THCS — preview</title>
+<style>
+  body { margin: 0; } .pane { padding: 14px 16px; }
+  .g { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 10px; }
+  .sw { border-radius: var(--thcs-radius-md); box-shadow: var(--thcs-shadow-1); overflow: hidden; background: var(--surface); }
+  .sw i { display: block; height: 40px; }
+  .sw div { padding: 6px 8px; display: flex; flex-direction: column; }
+  .cities { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .city { border-radius: var(--thcs-radius-md); background: var(--lv-soft); padding: 8px 10px; display: flex; align-items: center; gap: 8px; }
+  .city .n { width: 30px; height: 30px; border-radius: 8px; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; font: 700 14px/1 var(--font-thcs); }
+  .city b { color: var(--lv-ink); }
+</style></head>
+<body>
+<div class="pane thcs" data-theme="thcs" id="a"></div>
+<div class="pane thcs" data-theme="thcs-toi" id="b"></div>
+<script>
+(function () {
+  var B = window.Bong; B.suite('thcs');
+  var S = [['bg', 'Nền'], ['surface', 'Mặt thẻ'], ['surface-soft', 'Khối phụ'], ['surface-sunk', 'Rãnh'], ['line', 'Vạch chia'], ['line-strong', 'Viền điều khiển'],
+    ['ink', 'Chữ chính'], ['ink-soft', 'Chữ phụ'], ['brand', 'Nhấn'], ['brand-soft', 'Nền chọn'], ['focus', 'Focus'], ['xp', 'XP'],
+    ['success', 'Đúng (nền)'], ['success-soft', 'Đúng (dải)'], ['success-shade', 'Đúng (chữ)'], ['retry', 'Chưa đúng (nền)'], ['retry-soft', 'Chưa đúng (dải)'], ['retry-shade', 'Chưa đúng (chữ)']];
+  function pane(t) {
+    return '<span class="thcs-label b-muted">' + t + '</span><div class="g" style="margin-top:8px">' + S.map(function (x) { return '<div class="sw"><i style="background:var(--' + x[0] + ')"></i><div><b class="thcs-caption">' + x[0] + '</b><span class="thcs-caption b-muted">' + x[1] + '</span></div></div>'; }).join('') + '</div>' +
+      '<div class="cities">' + B.levels.slice(5).map(function (l) { return '<div class="city" data-level="' + l.n + '"><span class="n">' + l.n + '</span><b class="thcs-label">' + l.name + '</b></div>'; }).join('') + '</div>';
+  }
+  document.getElementById('a').innerHTML = pane('CHẾ ĐỘ SÁNG · theme thcs'); document.getElementById('b').innerHTML = pane('CHẾ ĐỘ TỐI · theme thcs-toi');
+})();
+</script>
+</body>
+</html>

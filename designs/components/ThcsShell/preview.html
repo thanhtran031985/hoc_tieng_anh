@@ -1,0 +1,21 @@
+<!-- @dsCard group="THCS · Thành phần" height=560 subtitle="Khung THCS: menu trái thu gọn được (bấm nút trên menu), thanh trên có XP, chuỗi ngày và nút sáng/tối" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Khung THCS — preview</title>
+<style> body { margin: 0; } .box { height: 520px; position: relative; overflow: hidden; container-type: size; } .box .scr { position: absolute; inset: 0; } </style></head>
+<body>
+<div class="box"><div class="scr thcs" id="s"></div></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T; B.suite('thcs');
+  var s = document.getElementById('s');
+  function draw() {
+    s.innerHTML = T.shell({ active: 'home', title: 'Trang chủ', crumb: 'Thứ Sáu, 02/10', main: '<div class="t-card"><p class="thcs-body b-muted">Nội dung trang đặt trong vùng tối đa <b>thcs-content-max</b> (1200px), căn giữa bên phải menu.</p></div>' });
+    s.querySelector('[data-sb-toggle]').addEventListener('click', function () { T.sidebar.mini = !T.sidebar.mini; draw(); s.querySelector('[data-sb-toggle]').focus(); });
+    s.querySelector('[data-mode-toggle]').addEventListener('click', function () { B.setMode(B.getMode() === 'thcs' ? 'thcs-toi' : 'thcs'); draw(); });
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

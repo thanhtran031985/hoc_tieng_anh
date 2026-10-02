@@ -1,0 +1,65 @@
+<!-- @dsCard group="Màn THCS · 10–12 Kết quả & ôn tập" height=720 subtitle="10. Kết thúc bài: % câu đúng, XP nhận được, huy hiệu mới, từ và điểm ngữ pháp vừa học, câu sai để xem lại" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Kết thúc bài — preview</title>
+<style>
+  .end { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: var(--space-5); height: 100%; min-height: 0; }
+  .hero { display: flex; flex-direction: column; gap: var(--space-4); }
+  .hero .top { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-2); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .stat { background: var(--surface-soft); border-radius: var(--thcs-radius-md); padding: var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+  .stat .v { font: 700 26px/32px var(--font-thcs); }
+  .stat.xp { background: var(--xp-soft); } .stat.xp .v { color: var(--xp); }
+  .nb { display: flex; align-items: center; gap: var(--space-3); border: 1px dashed var(--xp); }
+  .nb .t-badge { flex: none; }
+  .det { display: flex; flex-direction: column; gap: var(--space-4); min-height: 0; }
+  .vocab { display: grid; grid-template-columns: 1fr 1fr; gap: 2px var(--space-5); }
+  .vocab .r { display: flex; align-items: center; gap: var(--space-2); padding: 4px 0; min-width: 0; }
+  .vocab .r .en { font: 500 20px/26px var(--font-thcs); }
+  .vocab .r .vi { margin-left: auto; white-space: nowrap; }
+  .gp { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .wrong { display: flex; flex-direction: column; gap: var(--space-2); }
+  .wrong .r { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-radius: var(--thcs-radius-md); background: var(--surface-soft); }
+  .wrong .r .en { font: 500 20px/28px var(--font-thcs); }
+  .wrong del { color: var(--retry-shade); text-decoration-thickness: 2px; } .wrong ins { text-decoration: none; color: var(--success-shade); font-weight: 700; }
+  .end .t-card { padding: var(--space-4) var(--space-5); }
+  @container (max-height: 800px) { .det { gap: var(--space-3); } .hero { gap: var(--space-3); } .end .t-card { padding: var(--space-3) var(--space-4); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var V = [['passenger', '/ˈpæs.ɪn.dʒə/', 'hành khách'], ['landmark', '/ˈlænd.mɑːk/', 'địa danh'], ['cathedral', '/kəˈθiː.drəl/', 'nhà thờ lớn'], ['rent', '/rent/', 'thuê'], ['cycle lane', '/ˈsaɪ.kəl leɪn/', 'làn xe đạp'], ['contactless', '/ˈkɒn.tækt.ləs/', 'thẻ chạm']];
+  function head() { return '<header class="t-lhead"><button type="button" class="t-iconbtn" data-exit aria-label="Đóng (Esc)">' + B.icon('close', 22) + '</button><div class="t-lhead__t"><span class="thcs-caption b-muted">London › Giao thông · Bài 4</span><b class="thcs-h3">Kết quả bài học</b></div><div style="flex:1"></div>' + T.chip('xp', '2.460', 'XP') + T.chip('streak', 23, 'ngày học liên tiếp') + T.modeBtn() + '</header>'; }
+  function foot(off) { return T.lessonFoot(T.btn({ label: 'Về lộ trình', variant: 'secondary', icon: 'route', disabled: off }), T.btn({ label: 'Bài tiếp theo: Đọc hiểu', size: 'l', key: 'Enter', disabled: off, attrs: 'data-next' })); }
+  function hero(o) {
+    return '<section class="t-card hero"><div class="top">' + T.dragon(o.expr || 'chucmung', 96) + '<h1 class="thcs-title">' + o.title + '</h1><p class="thcs-body b-muted">' + o.sub + '</p></div>' +
+      '<div class="stats"><div class="stat"><span class="thcs-caption b-muted">Câu đúng</span><span class="v">' + o.pct + '</span><span class="thcs-caption b-muted">' + o.ratio + '</span></div><div class="stat xp"><span class="thcs-caption b-muted">XP nhận được</span><span class="v">+' + o.xp + '</span><span class="thcs-caption b-muted">gồm +20 thưởng đúng liền 5 câu</span></div></div>' +
+      (o.badge ? '<div class="t-card nb" style="box-shadow:none">' + T.badge({ name: '', tier: 'silver', icon: 'grammar', size: 56 }).replace('<b class="thcs-label"></b>', '').replace(/<span class="thcs-caption b-muted">Bậc Bạc<\/span>/, '') + '<div><span class="thcs-caption" style="color:var(--xp);font-weight:700">HUY HIỆU MỚI</span><div class="thcs-label">Bậc thầy since/for</div><div class="thcs-caption b-muted">Bậc Bạc · đúng 20 câu since/for</div></div></div>' : '') + '</section>';
+  }
+  function details(o) {
+    return '<div class="det"><section class="t-card"><div class="t-card__h" style="margin-bottom:6px"><h2 class="thcs-h3">Từ vựng vừa học (' + V.length + ')</h2><button class="t-link" type="button">Đã thêm vào Sổ từ</button></div><div class="vocab">' + V.map(function (v) { return '<div class="r">' + B.speak(v[0], 's') + '<span class="en">' + v[0] + '</span><span class="vi thcs-caption b-muted">' + v[2] + '</span></div>'; }).join('') + '</div></section>' +
+      '<section class="t-card"><h2 class="thcs-h3" style="margin-bottom:8px">Điểm ngữ pháp</h2><div class="gp"><span class="t-pill t-pill--ok">' + B.icon('check', 14) + 'have/has + V3</span><span class="t-pill t-pill--ok">' + B.icon('check', 14) + 'since + mốc · for + khoảng</span><span class="t-pill t-pill--retry">' + B.icon('replay', 14) + 'already / yet — cần ôn</span></div></section>' +
+      (o.wrong ? '<section class="t-card"><div class="t-card__h" style="margin-bottom:8px"><h2 class="thcs-h3">Câu cần xem lại (2)</h2><span class="thcs-caption b-muted">Đã thêm vào Ôn tập</span></div><div class="wrong">' +
+        '<div class="r"><div><span class="en">We haven’t visited the museum <del>already</del> <ins>yet</ins>.</span><div class="thcs-caption b-muted">“yet” đứng cuối câu phủ định; “already” dùng trong câu khẳng định.</div></div>' + T.btn({ label: 'Làm lại', variant: 'secondary', cls: 't-btn--s' }) + '</div>' +
+        '<div class="r"><div><span class="en">They have lived here <del>since</del> <ins>for</ins> ten years.</span><div class="thcs-caption b-muted">“ten years” là khoảng thời gian → for.</div></div>' + T.btn({ label: 'Làm lại', variant: 'secondary', cls: 't-btn--s' }) + '</div></div></section>'
+        : '<section class="t-card"><h2 class="thcs-h3">Câu cần xem lại</h2><p class="thcs-body b-muted" style="margin-top:6px">' + B.icon('check', 16) + ' Không có câu sai nào. Tuyệt vời!</p></section>') + '</div>';
+  }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    labels: { empty: 'Trống (không câu sai)' },
+    notes: { normal: 'XP luôn dương: làm sai chỉ không cộng điểm câu đó. Câu sai tự vào Ôn tập. Enter = Bài tiếp theo.', loading: 'Đang lưu kết quả: khung xương 2 cột.', empty: 'Trường hợp đúng hết: không có danh sách câu sai.', error: 'Chưa lưu được kết quả lên máy chủ — XP được giữ trên máy, cho Thử lại.' },
+    states: {
+      normal: function () { return wrap('<div class="end">' + hero({ title: 'Xong bài 4!', sub: 'Thì hiện tại hoàn thành · 12 câu', pct: '83%', ratio: '10/12 câu', xp: 120, badge: true }) + details({ wrong: true }) + '</div>'); },
+      loading: function () { return wrap('<div class="end"><section class="t-card hero">' + B.sk('96px', '106px', '50%', 'margin:0 auto') + B.sk('70%', '28px', '', 'margin:0 auto') + '<div class="stats">' + B.sk('100%', '84px') + B.sk('100%', '84px') + '</div>' + B.sk('100%', '80px') + '</section><div class="det">' + B.sk('100%', '170px', 'var(--thcs-radius-lg)') + B.sk('100%', '90px', 'var(--thcs-radius-lg)') + B.sk('100%', '180px', 'var(--thcs-radius-lg)') + '</div></div>', true); },
+      empty: function () { return wrap('<div class="end">' + hero({ title: 'Hoàn hảo!', sub: 'Đúng hết 12/12 câu', pct: '100%', ratio: '12/12 câu', xp: 150, badge: true }) + details({ wrong: false }) + '</div>'); },
+      error: function () { return wrap('<div class="end">' + hero({ expr: 'dongvien', title: 'Xong bài 4!', sub: 'Thì hiện tại hoàn thành · 12 câu', pct: '83%', ratio: '10/12 câu', xp: 120 }) + '<div class="det"><section class="t-card">' + T.state({ kind: 'error', title: 'Chưa lưu được kết quả', text: 'XP và tiến độ vẫn giữ trên máy, sẽ tự đồng bộ khi có mạng.' }) + '</section></div></div>', true); }
+    },
+    mount: { normal: function (scr, ctx) { ctx.later(function () { ctx.burst(scr.querySelector('.stat.xp'), scr.querySelector('.t-chip--xp'), 10, 'bolt'); }, 400); var n = scr.querySelector('[data-next]'); ctx.onKey(function (e) { if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); n.focus(); } }); } }
+  });
+})();
+</script>
+</body>
+</html>

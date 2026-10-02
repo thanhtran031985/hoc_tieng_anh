@@ -1,0 +1,24 @@
+<!-- @dsCard group="Người lớn · Thành phần" height=620 subtitle="Khung khu người lớn: menu tối bên trái (Bố mẹ / Quản trị), thanh trên có chọn con và nút “Về màn chọn hồ sơ”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Khung người lớn — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .frame { height: 560px; margin: 12px; border-radius: 10px; overflow: hidden; box-shadow: var(--adm-shadow-card); position: relative; background: var(--bg); }
+  .demo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+</style></head>
+<body>
+<div class="frame thcs adm scr" data-theme="thcs" id="f"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A; B.suite('adult');
+  var main = '<div class="demo">' + A.kpi({ label: 'PHÚT HỌC TUẦN NÀY', value: 150, unit: 'phút', icon: 'clock', delta: '+18%', sub: 'so với tuần trước' }) + A.kpi({ label: 'CHUỖI NGÀY', value: 9, unit: 'ngày', icon: 'flame', sub: 'Kỷ lục 14 ngày' }) + A.kpi({ label: 'TỪ ĐÃ THUỘC', value: 148, unit: '/ 230 từ', icon: 'notebook', sub: '+18 từ trong tuần' }) + '</div>' +
+    '<section class="a-card" style="margin-top:16px"><h2 class="adm-h2" style="margin:0 0 6px">Vùng nội dung</h2><p class="adm-body b-muted" style="margin:0">Rộng tối đa <code>adm-content-max</code> (1280px), căn giữa trên màn 1920. Menu <code>adm-sidebar</code> 240px, thanh trên <code>adm-topbar</code> 56px. Bấm “Về màn chọn hồ sơ” để thấy hộp thoại xác nhận.</p></section>';
+  var f = document.getElementById('f');
+  f.innerHTML = A.shell({ area: 'parent', active: 'overview', title: 'Tổng quan · Minh', crumb: 'Lớp 3 · Cập nhật 21:10 hôm nay', kids: true, main: main });
+  f.querySelectorAll('a[href="#"]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+  f.querySelector('[data-profiles]').addEventListener('click', function () { A.dialog(f, { title: 'Về màn chọn hồ sơ?', body: 'Khu người lớn sẽ được khoá lại. Lần sau vào cần nhập lại mật khẩu hoặc mã PIN.', actions: [{ label: 'Về màn chọn hồ sơ', variant: 'primary' }, { label: 'Ở lại' }] }); });
+})();
+</script>
+</body>
+</html>

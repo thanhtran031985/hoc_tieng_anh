@@ -1,0 +1,69 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="13c. Bài xếp lớp · kết quả: cấp đề xuất “Cấp 2 · Mầm non”, nhận xét ngắn, Bắt đầu học hoặc Chọn cấp khác" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bài xếp lớp · kết quả — preview</title>
+<style>
+  .pr { flex: 1; min-height: 0; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-6) var(--space-12); box-sizing: border-box; display: grid; grid-template-columns: 1fr 600px; gap: var(--space-10); align-items: center; position: relative; }
+  .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); }
+  .hero .b-dragon { width: min(260px, 30cqh); height: auto; }
+  .res { padding: var(--space-6) var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); }
+  .lvbox { border-radius: var(--radius-lg); background: var(--lv); color: var(--on-lv); box-shadow: inset 0 -8px 0 var(--lv-shade); padding: var(--space-5) var(--space-6) var(--space-6); display: flex; align-items: center; gap: var(--space-5); }
+  .lvbox .n { width: 76px; height: 76px; border-radius: 50%; background: var(--surface); color: var(--lv-ink); display: grid; place-items: center; font: 800 40px/1 var(--font-display); flex: none; box-shadow: 0 5px 0 var(--lv-shade); }
+  .lvbox small { font: 800 15px/18px var(--font-body); opacity: .9; display: block; }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px 0 10px; border-radius: var(--radius-pill); font: 800 16px/20px var(--font-body); }
+  .chip.ok { background: var(--success-soft); color: var(--success-shade); }
+  .chip.new { background: var(--surface-soft); color: var(--ink-soft); }
+  .acts { display: flex; gap: var(--space-4); justify-content: flex-end; }
+  .acts .b-btn { flex: 1 1 0; min-width: 0; padding-left: var(--space-4); padding-right: var(--space-4); }
+  .pick { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-2); }
+  .pick button { border: var(--border-thick) solid var(--lv-soft); background: var(--lv-soft); color: var(--lv-ink); border-radius: var(--radius-md); padding: var(--space-2) 4px var(--space-3); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; font: 800 15px/18px var(--font-body); position: relative; }
+  .pick button b { font: 800 26px/30px var(--font-display); }
+  .pick button[aria-checked="true"] { border-color: var(--lv); background: var(--surface); box-shadow: 0 5px 0 var(--lv-shade); }
+  .pick .rec { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--star); color: var(--ink); font: 800 11px/14px var(--font-body); padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap; }
+  @container (max-height: 800px) { .res { padding: var(--space-5) var(--space-6); gap: var(--space-3); } .lvbox { padding: var(--space-4) var(--space-5) var(--space-5); } .lvbox .n { width: 64px; height: 64px; font-size: 34px; } }
+  @container (max-width: 1400px) { .pr { grid-template-columns: 1fr 560px; gap: var(--space-8); padding-left: var(--space-10); padding-right: var(--space-10); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = { name: 'Minh', grade: 3, level: 2, hair: 'short' };
+  var S = { choose: false, lv: 2 };
+  function tb() { return B.topbar({ title: 'Bài xếp lớp', stats: false, right: '<span class="label b-muted">' + kid.name + ' · Lớp ' + kid.grade + '</span>' }); }
+  function hero(expr, t, s) { return '<section class="hero">' + B.dragon(expr, 260) + '<h1 class="display-l">' + t + '</h1><p class="body-l b-muted">' + s + '</p></section>'; }
+  function lvbox(n, label) { var l = B.levels[n - 1]; return '<div class="lvbox" data-level="' + n + '"><span class="n">' + n + '</span><div><small>' + label + '</small><span class="display-l" style="color:inherit">Cấp ' + n + ' · ' + l.name + '</span></div></div>'; }
+  function picker() { return '<div><p class="label" style="margin:0 0 14px">Chọn đảo bắt đầu</p><div class="pick" role="radiogroup" aria-label="Chọn cấp">' + B.levels.slice(0, 5).map(function (l) { return '<button type="button" role="radio" data-level="' + l.n + '" data-lv="' + l.n + '" aria-checked="' + (S.lv === l.n) + '">' + (l.n === 2 ? '<span class="rec">Bông đề xuất</span>' : '') + '<b>' + l.n + '</b>' + l.name + '</button>'; }).join('') + '</div></div>'; }
+  function res() {
+    if (S.choose) return '<section class="b-card res">' + lvbox(S.lv, S.lv === 2 ? 'Cấp Bông đề xuất' : 'Cấp bé chọn') + picker() + '<p class="body b-muted" style="margin:0">' + (S.lv > 2 ? 'Cấp này có thể hơi khó. Nếu bé thấy mệt, Bông sẽ gợi ý lùi lại nhé.' : S.lv < 2 ? 'Ôn lại từ đầu cũng tốt! Bé sẽ qua đảo này rất nhanh.' : 'Đảo Mầm non vừa sức Minh nhất.') + '</p><div class="acts">' + B.btn({ label: 'Quay lại', variant: 'secondary', size: 'l', attrs: 'data-back' }) + B.btn({ label: 'Bắt đầu ở Cấp ' + S.lv, size: 'l', key: 'Enter', icon: 'next', attrs: 'data-go' }) + '</div></section>';
+    return '<section class="b-card res">' + lvbox(2, 'Cấp Bông đề xuất') +
+      '<p class="body-l" style="margin:0">Minh nhận ra <b>con vật, màu sắc và số đếm</b> rất nhanh. <b>Trái cây</b> và <b>đồ chơi</b> còn hơi mới — mình bắt đầu ở đảo Mầm non để học thật chắc nhé!</p>' +
+      '<div class="chips">' + [['ok', 'Con vật'], ['ok', 'Màu sắc'], ['ok', 'Số đếm'], ['new', 'Trái cây'], ['new', 'Đồ chơi']].map(function (c) { return '<span class="chip ' + c[0] + '">' + B.icon(c[0] === 'ok' ? 'check' : 'book', 20) + c[1] + (c[0] === 'new' ? ' · sẽ học' : '') + '</span>'; }).join('') + '</div>' +
+      '<div class="acts">' + B.btn({ label: 'Chọn cấp khác', variant: 'secondary', size: 'l', attrs: 'data-other' }) + B.btn({ label: 'Bắt đầu học', size: 'l', key: 'Enter', icon: 'next', attrs: 'data-go' }) + '</div></section>';
+  }
+  B.screen({
+    fit: true, level: 2,
+    notes: { normal: 'Enter = Bắt đầu học. “Chọn cấp khác” mở 5 đảo Tiểu học, cấp đề xuất có nhãn “Bông đề xuất”; dùng ← → hoặc bấm để chọn. Không hiện điểm số hay số câu đúng.', loading: 'Bông đang tính cấp phù hợp.', empty: 'Bé dừng giữa chừng nên chưa đủ câu để đề xuất.', error: 'Chưa lưu được kết quả: vẫn giữ cấp đề xuất trên máy, cho thử lại.' },
+    states: {
+      normal: function () { return tb() + '<div class="pr">' + hero('chucmung', 'Minh làm xong rồi!', '12 câu · 4 phút 20 giây') + res() + '</div>'; },
+      loading: function () { return tb() + '<div class="pr">' + hero('suynghi', 'Xong 12 câu rồi!', 'Bông đang xem Minh hợp với đảo nào…') + '<section class="b-card res">' + B.sk('100%', '120px', 'var(--radius-lg)') + B.sk('100%', '22px', 'var(--radius-pill)') + B.sk('80%', '22px', 'var(--radius-pill)') + '<div style="display:flex;gap:8px">' + B.sk('110px', '38px', 'var(--radius-pill)') + B.sk('110px', '38px', 'var(--radius-pill)') + B.sk('110px', '38px', 'var(--radius-pill)') + '</div><div class="acts">' + B.sk('200px', '64px') + B.sk('200px', '64px') + '</div></section></div>'; },
+      empty: function () { return tb() + '<div class="pr">' + hero('suynghi', 'Mới được 3 câu thôi', 'Bông chưa đủ thông tin để chọn đảo cho Minh.') + '<section class="b-card res">' + B.stateBlock({ kind: 'empty', size: 120, title: 'Chưa có cấp đề xuất', text: 'Làm nốt 9 câu nữa, hoặc bắt đầu theo lớp 3 nhé.', action: B.btn({ label: 'Làm tiếp bài xếp lớp', size: 'l', icon: 'next' }) + B.btn({ label: 'Bắt đầu theo lớp', variant: 'secondary', size: 'l' }) }) + '</section></div>'; },
+      error: function () { return tb() + '<div class="pr">' + hero('dongvien', 'Minh làm xong rồi!', '12 câu · 4 phút 20 giây') + '<section class="b-card res">' + lvbox(2, 'Cấp Bông đề xuất') + B.stateBlock({ kind: 'error', size: 100, title: 'Chưa lưu được kết quả', text: 'Mạng chập chờn. Kết quả vẫn được giữ trên máy, không phải làm lại đâu!' }) + '</section></div>'; }
+    },
+    mount: { normal: function (scr, ctx) {
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      var o = scr.querySelector('[data-other]'); o && o.addEventListener('click', function () { S.choose = true; re('[data-lv="' + S.lv + '"]'); });
+      var bk = scr.querySelector('[data-back]'); bk && bk.addEventListener('click', function () { S.choose = false; S.lv = 2; re('[data-other]'); });
+      scr.querySelectorAll('[data-lv]').forEach(function (b) {
+        b.addEventListener('click', function () { S.lv = +b.dataset.lv; re('[data-lv="' + S.lv + '"]'); });
+        b.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); S.lv = Math.max(1, Math.min(5, S.lv + (e.key === 'ArrowRight' ? 1 : -1))); re('[data-lv="' + S.lv + '"]'); } });
+      });
+      var go = scr.querySelector('[data-go]'); go.addEventListener('click', function () { ctx.burst(go, null, 10); });
+      if (!S.choose) ctx.later(function () { ctx.burst(scr.querySelector('.lvbox'), null, 10); }, 500);
+      ctx.onKey(function (e) { if (e.key === 'Enter' && (!document.activeElement || document.activeElement.tagName !== 'BUTTON')) { e.preventDefault(); go.click(); } });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

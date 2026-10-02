@@ -1,0 +1,82 @@
+<!-- @dsCard group="Màn THCS · 13–17 SGK, thi, thành tích" height=720 subtitle="15. Kết quả thi: điểm thang 10, phân tích theo dạng bài, đúng/sai từng câu kèm giải thích, nút “Ôn lại câu sai”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Kết quả thi — preview</title>
+<style>
+  .rs { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: var(--space-5); align-items: start; }
+  .lc { display: flex; flex-direction: column; gap: var(--space-5); }
+  .score { display: flex; flex-direction: column; gap: var(--space-3); }
+  .score .n { display: flex; align-items: baseline; gap: 6px; }
+  .score .n b { font: 800 64px/68px var(--font-thcs); }
+  .score .meta { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .score .acts { display: flex; flex-direction: column; gap: var(--space-2); }
+  .br { display: flex; flex-direction: column; gap: var(--space-3); }
+  .br .r { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; }
+  .br .r .trk { grid-column: 1 / -1; height: 10px; border-radius: 4px; background: var(--surface-sunk); overflow: hidden; }
+  .br .r .trk i { display: block; height: 100%; background: var(--brand); border-radius: 0 4px 4px 0; }
+  .br .r.weak b { color: var(--retry-shade); }
+  .ql .h { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+  .list { display: flex; flex-direction: column; }
+  .it { border-top: 1px solid var(--line); }
+  .it summary { list-style: none; display: grid; grid-template-columns: 40px 30px 1fr auto 24px; gap: var(--space-3); align-items: center; padding: 10px 4px; cursor: pointer; }
+  .it summary::-webkit-details-marker { display: none; }
+  .it summary:hover { background: var(--surface-soft); }
+  .it .no { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font: 600 13px/1 var(--font-thcs); background: var(--surface-soft); }
+  .it .ic.ok { color: var(--success-shade); } .it .ic.x { color: var(--retry-shade); }
+  .it .stem { font: 500 17px/24px var(--font-thcs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .it .chev { color: var(--ink-soft); transition: transform var(--duration-fast); }
+  .it[open] .chev { transform: rotate(180deg); }
+  .it .body { padding: 0 4px 14px 74px; display: flex; flex-direction: column; gap: 6px; }
+  .it .body .en { font: 500 20px/28px var(--font-thcs); }
+  .it .ansr { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .it .why { background: var(--surface-soft); border-radius: var(--thcs-radius-md); padding: 10px 12px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var TY = [['Ngữ âm', 3, 4], ['Từ vựng – Ngữ pháp', 13, 16], ['Đọc hiểu', 11, 12], ['Viết', 6, 8]];
+  var WR = { 3: { t: 'Ngữ âm', q: 'Chọn từ có “ch” phát âm khác: A. chair · B. cheap · C. chemist · D. child', y: 'A. chair', c: 'C. chemist', why: '“ch” trong <b>chemist</b> đọc /k/; ba từ còn lại đọc /tʃ/.' },
+    9: { t: 'Từ vựng – Ngữ pháp', q: 'My brother is very good ___ fixing bikes.', y: 'in', c: 'at', why: 'Cụm cố định <b>be good at + V-ing</b>.' },
+    12: { t: 'Từ vựng – Ngữ pháp', q: 'If we ___ more trees, the air in our city will be cleaner.', y: 'will plant', c: 'plant', why: 'Câu điều kiện loại 1: mệnh đề <b>If</b> dùng hiện tại đơn, không dùng “will”.' },
+    17: { t: 'Từ vựng – Ngữ pháp', q: 'We ___ in this city since 2019.', y: 'lived', c: 'have lived', why: '“since 2019” + việc còn tiếp diễn → hiện tại hoàn thành <b>have lived</b>.' },
+    26: { t: 'Đọc hiểu', q: 'What is the passage mainly about?', y: 'B. The history of the Tube', c: 'D. Ways to travel around London', why: 'Cả 4 đoạn đều nói các cách đi lại (tàu, buýt, xe đạp, đi bộ); lịch sử tàu điện chỉ là một chi tiết ở đoạn 1.' },
+    35: { t: 'Viết', q: 'It’s a pity I can’t speak French. → I wish …', y: 'I wish I can speak French.', c: 'I wish I could speak French.', why: 'Câu ước ở hiện tại: <b>wish + quá khứ đơn</b> → could.' },
+    38: { t: 'Viết', q: 'She was tired. She finished her homework. (although)', y: 'Although she was tired, but she finished her homework.', c: 'Although she was tired, she finished her homework.', why: 'Không dùng <b>although</b> và <b>but</b> trong cùng một câu.' } };
+  var S = { f: 'wrong' };
+  function typeOf(n) { return n <= 4 ? 'Ngữ âm' : n <= 20 ? 'Từ vựng – Ngữ pháp' : n <= 32 ? 'Đọc hiểu' : 'Viết'; }
+  function item(n, open) {
+    var w = WR[n];
+    if (!w) return '<details class="it"><summary><span class="no">' + n + '</span><span class="ic ok">' + B.icon('check', 20) + '</span><span class="thcs-body-s b-muted">' + typeOf(n) + ' · Đúng</span><span></span><span class="chev">' + B.icon('chevdown', 18) + '</span></summary><div class="body"><p class="thcs-body-s b-muted">Bạn trả lời đúng câu này.</p></div></details>';
+    return '<details class="it"' + (open ? ' open' : '') + '><summary><span class="no">' + n + '</span><span class="ic x" aria-label="Chưa đúng">' + B.icon('close', 20) + '</span><span class="stem en">' + w.q + '</span><span class="t-pill">' + w.t + '</span><span class="chev">' + B.icon('chevdown', 18) + '</span></summary>' +
+      '<div class="body"><p class="en">' + w.q + '</p><div class="ansr"><span class="t-pill t-pill--retry">' + B.icon('close', 13) + 'Bạn chọn: ' + w.y + '</span><span class="t-pill t-pill--ok">' + B.icon('check', 13) + 'Đáp án: ' + w.c + '</span></div><p class="why thcs-body">' + w.why + '</p></div></details>';
+  }
+  function list() {
+    var ns = []; for (var n = 1; n <= 40; n++) ns.push(n);
+    if (S.f === 'wrong') ns = ns.filter(function (n) { return WR[n]; }); if (S.f === 'flag') ns = [9, 17];
+    return ns.map(function (n, i) { return item(n, S.f === 'wrong' && i === 0); }).join('');
+  }
+  function main() {
+    return '<div class="rs"><div class="lc"><section class="t-card score" aria-labelledby="sc"><span class="thcs-label b-muted" id="sc">Kiểm tra giữa kỳ I · Tiếng Anh 8 · nộp lúc 20:41</span><div class="n"><b>8,25</b><span class="thcs-h2 b-muted">/10</span></div>' +
+      '<div class="meta"><span class="t-pill t-pill--ok">' + B.icon('check', 13) + '33/40 câu đúng</span><span class="t-pill">' + B.icon('clock', 13) + '41:20 / 45:00</span><span class="t-pill t-pill--xp">' + B.icon('bolt', 13) + '+80 XP</span></div>' +
+      '<p class="thcs-body b-muted">Hơn lần trước <b>0,75 điểm</b>. Phần <b>Ngữ âm</b> và <b>Viết</b> cần ôn thêm.</p><div class="acts">' + T.btn({ label: 'Ôn lại câu sai (7)', size: 'l', icon: 'replay', key: 'Enter', block: true, attrs: 'data-go' }) + T.btn({ label: 'Làm lại đề', variant: 'secondary', block: true }) + '</div></section>' +
+      '<section class="t-card br" aria-labelledby="bt"><h2 class="thcs-h3" id="bt">Phân tích theo dạng bài</h2>' + TY.map(function (t) { var p = Math.round(t[1] / t[2] * 100); return '<div class="r' + (p < 80 ? ' weak' : '') + '"><span class="thcs-body-s">' + t[0] + '</span><b class="thcs-label">' + t[1] + '/' + t[2] + ' · ' + p + '%' + (p < 80 ? ' · cần ôn' : '') + '</b><div class="trk" role="img" aria-label="' + t[0] + ' ' + p + '%"><i style="width:' + p + '%"></i></div></div>'; }).join('') + '</section></div>' +
+      '<section class="t-card ql" aria-labelledby="ql"><div class="h"><h2 class="thcs-h3" id="ql">Từng câu</h2><div class="t-seg" role="group" aria-label="Lọc câu">' + [['all', 'Tất cả 40'], ['wrong', 'Câu sai 7'], ['flag', 'Đã đánh dấu 2']].map(function (x) { return '<button type="button" aria-pressed="' + (S.f === x[0]) + '" data-f="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="list">' + list() + '</div></section></div>';
+  }
+  function page(m, o) { return T.shell(Object.assign({ active: 'exam', title: 'Kết quả bài thi', crumb: 'Luyện thi › Kiểm tra giữa kỳ I', main: m }, o || {})); }
+  T.screen({
+    labels: { empty: 'Trống (đúng hết)' },
+    notes: { normal: 'Bấm từng dòng để mở giải thích (dùng thẻ details, mở được bằng Enter/Space). Lọc: Tất cả / Câu sai / Đã đánh dấu. Thanh phân tích một màu; phần dưới 80% có chữ “cần ôn”.', loading: 'Đang chấm bài.', empty: 'Đúng 40/40: không có câu sai để ôn.', error: 'Không tải được kết quả (bài làm đã nộp an toàn).' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="rs"><div class="lc"><section class="t-card score">' + T.dragon('suynghi', 64) + '<b class="thcs-h2">Bông đang chấm bài…</b>' + B.sk('100%', '28px') + B.sk('100%', '52px') + '</section><section class="t-card">' + B.sk('100%', '150px') + '</section></div><section class="t-card">' + Array.apply(null, { length: 8 }).map(function () { return '<div style="padding:12px 0;border-top:1px solid var(--line)">' + B.sk('100%', '22px') + '</div>'; }).join('') + '</section></div>'); },
+      empty: function () { return page('<div class="rs"><div class="lc"><section class="t-card score"><span class="thcs-label b-muted">Kiểm tra giữa kỳ I · Tiếng Anh 8</span><div class="n"><b>10</b><span class="thcs-h2 b-muted">/10</span></div><span class="t-pill t-pill--ok">' + B.icon('check', 13) + '40/40 câu đúng</span>' + T.tip('Tuyệt đối! Bạn vừa mở huy hiệu <b>Điểm 10 bài thi</b>.', 'chucmung') + '</section></div><section class="t-card">' + T.state({ kind: 'empty', expr: 'vui', title: 'Không có câu sai nào', text: 'Không có gì để ôn lại. Thử một đề khó hơn nhé!', action: T.btn({ label: 'Chọn đề khác', variant: 'secondary' }) }) + '</section></div>'); },
+      error: function () { return page('<section class="t-card">' + T.state({ kind: 'error', title: 'Chưa tải được kết quả', text: 'Bài làm của bạn đã nộp an toàn. Thử lại để xem điểm nhé.' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelectorAll('[data-f]').forEach(function (b) { b.addEventListener('click', function () { S.f = b.dataset.f; ctx.setState('normal'); ctx.scr.querySelector('[data-f="' + S.f + '"]').focus(); }); }); var g = scr.querySelector('[data-go]'); ctx.onKey(function (e) { if (e.key === 'Enter' && !/BUTTON|SUMMARY|A/.test(document.activeElement.tagName)) g.focus(); }); } }
+  });
+})();
+</script>
+</body>
+</html>

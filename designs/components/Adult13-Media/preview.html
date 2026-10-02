@@ -1,0 +1,105 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="13. Hình ảnh & âm thanh: lưới hình, danh sách âm thanh, tải lên, tìm, nghe thử, tạo giọng đọc hàng loạt cho từ còn thiếu" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Hình ảnh và âm thanh — preview</title>
+<style>
+  .drop { border: 2px dashed var(--line-strong); border-radius: var(--adm-radius-lg); background: var(--surface-soft); padding: var(--space-4); display: flex; align-items: center; gap: var(--space-4); }
+  .drop.is-over { border-color: var(--brand); background: var(--brand-soft); }
+  .drop .ic { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--brand-shade); flex: none; }
+  .mbar { display: flex; gap: var(--space-2); align-items: center; margin: var(--space-4) 0 var(--space-3); flex-wrap: wrap; }
+  .mbar .a-search { flex: 0 1 280px; }
+  .igrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
+  .icard { border: 1px solid var(--line); border-radius: var(--adm-radius-lg); background: var(--surface); overflow: hidden; display: flex; flex-direction: column; }
+  .icard .im { aspect-ratio: 4 / 3; display: grid; place-items: center; background: var(--surface-soft); }
+  .icard .im .b-pic { width: 76px; height: 76px; }
+  .icard .meta { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .icard .meta b { font: 600 13px/18px var(--font-thcs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .icard.miss { border-style: dashed; border-color: var(--field-error); }
+  .icard.miss .im { background: var(--field-error-bg); color: var(--field-error); flex-direction: column; gap: 4px; font: 600 12px/16px var(--font-thcs); }
+  .icard.up .im { flex-direction: column; gap: 8px; padding: 0 16px; }
+  .prog { width: 100%; height: 6px; border-radius: 3px; background: var(--surface-sunk); overflow: hidden; }
+  .prog i { display: block; height: 100%; background: var(--chart-1); width: 0; transition: width .2s; }
+  .bulk { display: grid; grid-template-columns: 1fr auto; gap: var(--space-4); align-items: center; }
+  .bulk .opts { display: flex; gap: var(--space-2); align-items: flex-end; flex-wrap: wrap; }
+  .bulk .run { display: flex; flex-direction: column; gap: 6px; }
+  .bulk .run .prog { height: 10px; }
+  .bulk .run .prog i { transition: width .25s linear; }
+  .gfoot { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-3); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, D = A.data;
+  var S = { tab: 'img', q: '', f: 'all', bulk: 'idle', done: 0, ups: [] };
+  var USE = { cat: 6, dog: 5, apple: 9, banana: 6, grapes: 5, orange: 7, pear: 4, strawberry: 5 };
+  var IMGS = D.vocab.map(function (v) { return { word: v.word, has: v.img && !!B.words[v.word], ext: v.img && !B.words[v.word], level: v.level, used: USE[v.word] || 2 + (v.word.length % 4), size: (18 + v.word.length * 3) + ' KB' }; });
+  var MISSING = ['father', 'congestion', 'commute', 'gravity', 'traffic', 'pavement', 'crossroads', 'helmet'];
+  var AUD = D.vocab.map(function (v, i) { return { id: 'a' + i, word: v.word, file: v.audio ? v.word + (i % 3 ? '_uk_f' : '_us_f') + '.mp3' : '—', voice: v.audio ? (i % 3 ? 'UK · nữ' : 'US · nữ') : '—', dur: v.audio ? '0:0' + (1 + v.word.length % 2) : '—', date: v.audio ? (i % 5 + 20) + '/9/2026' : '—', has: v.audio ? 'yes' : 'no', level: v.level }; });
+  var atable = A.table({ id: 'aud', rows: AUD, total: 2874, pageSize: 8, searchKeys: ['word', 'file'], placeholder: 'Tìm từ hoặc tên tệp…', sort: { key: 'word', dir: 'asc' },
+    filters: [{ key: 'has', label: 'Tình trạng', options: [['yes', 'Đã có âm thanh'], ['no', 'Chưa có âm thanh']] }, { key: 'voice', label: 'Giọng', options: ['UK · nữ', 'US · nữ'] }, { key: 'level', label: 'Cấp', options: B.levels.map(function (l) { return [String(l.n), 'Cấp ' + l.n]; }) }],
+    columns: [
+      { key: 'word', label: 'Từ', sort: true, render: function (r) { return '<span class="a-word">' + (r.has === 'yes' ? B.speak(r.word, 's') : '<span class="a-thumb a-thumb--miss" style="width:30px;height:30px">' + B.icon('music', 14) + '</span>') + '<b lang="en">' + r.word + '</b></span>'; } },
+      { key: 'file', label: 'Tệp', sort: true }, { key: 'voice', label: 'Giọng', sort: true }, { key: 'dur', label: 'Thời lượng', align: 'right' }, { key: 'date', label: 'Ngày tạo', sort: true },
+      { key: 'has', label: 'Trạng thái', sort: true, render: function (r) { return r.has === 'yes' ? A.status('ok', 'Đã có') : A.status('warn', 'Chưa có'); } }
+    ],
+    actions: function (r) { return r.has === 'yes' ? '<button type="button" class="a-iconbtn" aria-label="Tải xuống ' + r.file + '" title="Tải xuống">' + B.icon('download', 16) + '</button>' : A.btn({ label: 'Tạo', icon: 'wand', variant: 'secondary', size: 's', attrs: 'data-one="' + r.id + '"' }); } });
+  function imgs() {
+    var list = IMGS.filter(function (x) { return (!S.q || x.word.indexOf(S.q.toLowerCase()) > -1) && (S.f === 'all' || (S.f === 'miss' ? !x.has && !x.ext : x.has || x.ext)); });
+    var ups = S.ups.map(function (u) { return '<div class="icard up"><div class="im">' + (u.p < 100 ? '<span class="adm-small">Đang tải ' + u.p + '%</span><span class="prog" role="progressbar" aria-valuenow="' + u.p + '" aria-valuemin="0" aria-valuemax="100" aria-label="Tải ' + u.name + '"><i style="width:' + u.p + '%"></i></span>' : B.pic(u.word, 76)) + '</div><div class="meta"><b>' + u.name + '</b><span class="adm-small b-muted">' + (u.p < 100 ? 'Đang tải…' : 'Vừa tải · chưa gắn từ') + '</span></div></div>'; }).join('');
+    var cards = list.map(function (x) {
+      if (!x.has && !x.ext) return '<div class="icard miss"><div class="im">' + B.icon('image', 24) + '<span>Chưa có hình</span></div><div class="meta"><b lang="en">' + x.word + '</b><button type="button" class="t-link adm-small" style="text-align:left">Tải hình cho từ này</button></div></div>';
+      return '<div class="icard"><div class="im">' + (x.has ? B.pic(x.word, 76) : B.icon('image', 32)) + '</div><div class="meta"><b>' + x.word + '.svg</b><span class="adm-small b-muted">' + x.size + ' · dùng trong ' + x.used + ' bài</span></div></div>';
+    }).join('');
+    return '<div class="drop" data-drop><span class="ic">' + B.icon('upload', 22) + '</span><div style="flex:1"><b class="adm-h3">Kéo thả hình vào đây</b><br><span class="adm-small b-muted">PNG, SVG, WebP · tối đa 2 MB/tệp · tên tệp trùng tên từ sẽ tự gắn (ví dụ apple.svg)</span></div>' + A.btn({ label: 'Chọn tệp', icon: 'upload', attrs: 'data-pick' }) + '</div>' +
+      '<div class="mbar"><div class="a-search">' + B.icon('search', 18) + '<label class="b-sr" for="im-q">Tìm hình</label><input class="t-input a-input" id="im-q" placeholder="Tìm theo từ…" value="' + B.esc(S.q) + '"></div><label class="b-sr" for="im-f">Lọc</label><select class="t-input a-input a-filter" id="im-f">' + [['all', 'Tất cả'], ['has', 'Đã có hình'], ['miss', 'Từ chưa có hình (37)']].map(function (o) { return '<option value="' + o[0] + '"' + (S.f === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div>' +
+      ((ups + cards) ? '<div class="igrid" aria-live="polite">' + ups + cards + '</div>' : A.empty({ title: 'Không tìm thấy hình', text: 'Thử từ khoá khác.', action: A.btn({ label: 'Xoá bộ lọc', variant: 'secondary', attrs: 'data-clr' }) })) +
+      '<div class="gfoot"><span class="adm-small b-muted">Hiển thị ' + (list.length + S.ups.length) + ' / 2.889 hình (bản xem trước)</span><div class="a-pgs"><button type="button" class="a-pg" disabled aria-label="Trang trước">' + B.icon('back', 16) + '</button><button type="button" class="a-pg is-on" aria-current="page">1</button><button type="button" class="a-pg">2</button><button type="button" class="a-pg">3</button><button type="button" class="a-pg" aria-label="Trang sau">' + B.icon('next', 16) + '</button></div></div>';
+  }
+  function bulk() {
+    var n = MISSING.length + 44, run = S.bulk === 'run', done = S.bulk === 'done';
+    return '<section class="a-card" style="margin-bottom:var(--space-4)" aria-labelledby="bk"><div class="bulk"><div><h2 class="adm-h2" id="bk" style="margin:0">' + B.icon('wand', 18) + ' Tạo giọng đọc hàng loạt</h2><span class="adm-small b-muted">' + (done ? 'Hoàn tất: đã tạo ' + n + ' tệp, 0 lỗi. Các từ đã tự gắn âm thanh.' : n + ' từ chưa có âm thanh · ước tính 2 phút') + '</span>' +
+      (run ? '<div class="run" style="margin-top:var(--space-2)"><span class="prog" role="progressbar" aria-label="Tiến độ tạo giọng đọc" aria-valuemin="0" aria-valuemax="' + n + '" aria-valuenow="' + S.done + '"><i style="width:' + (S.done / n * 100) + '%"></i></span><span class="adm-small" aria-live="polite" data-bk>Đang tạo ' + S.done + ' / ' + n + ' · “' + MISSING[S.done % MISSING.length] + '”</span></div>' : '') + '</div>' +
+      '<div class="opts">' + (run ? A.btn({ label: 'Dừng', variant: 'secondary', attrs: 'data-stop' }) : done ? A.btn({ label: 'Xem các tệp vừa tạo', variant: 'secondary', attrs: 'data-seen' }) :
+        A.field({ id: 'bk-v', label: 'Giọng', type: 'select', value: 'uk-f', options: [['uk-f', 'UK · nữ'], ['uk-m', 'UK · nam'], ['us-f', 'US · nữ'], ['us-m', 'US · nam']] }) + A.field({ id: 'bk-s', label: 'Tốc độ', type: 'select', value: 'n', options: [['n', 'Bình thường'], ['s', 'Chậm (0,8×)']] }) + A.btn({ label: 'Tạo cho ' + n + ' từ', icon: 'wand', attrs: 'data-run' })) + '</div></div></section>';
+  }
+  function main() {
+    return '<div class="t-tabs" role="tablist" aria-label="Loại tệp" style="margin-bottom:var(--space-4)"><button type="button" class="t-tab" role="tab" data-tab="img" aria-selected="' + (S.tab === 'img') + '">' + B.icon('image', 18) + 'Hình ảnh <span class="t-pill">2.889</span></button><button type="button" class="t-tab" role="tab" data-tab="aud" aria-selected="' + (S.tab === 'aud') + '">' + B.icon('music', 18) + 'Âm thanh <span class="t-pill">2.874</span></button></div>' +
+      '<div role="tabpanel">' + (S.tab === 'img' ? '<section class="a-card">' + imgs() + '</section>' : bulk() + atable.html()) + '</div>';
+  }
+  function page(m) { return A.shell({ area: 'admin', active: 'media', title: 'Hình ảnh & âm thanh', crumb: '37 từ chưa có hình · 52 từ chưa có âm thanh', main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (thư viện mới)' },
+    notes: { normal: 'Tab Hình ảnh: tìm, lọc “Từ chưa có hình”, bấm “Chọn tệp” để thấy tiến độ tải lên. Tab Âm thanh: bấm loa để nghe; “Tạo cho 52 từ” chạy thanh tiến độ (có nút Dừng); bảng có tìm, lọc, sắp xếp, phân trang.', loading: 'Khung xương lưới hình.', empty: 'Thư viện chưa có tệp nào.', error: 'Không tải được thư viện.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<section class="a-card"><div class="igrid">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(function () { return B.sk('100%', '150px', 'var(--adm-radius-lg)'); }).join('') + '</div></section>'); },
+      empty: function () { return page('<section class="a-card"><div class="drop"><span class="ic">' + B.icon('upload', 22) + '</span><div style="flex:1"><b class="adm-h3">Kéo thả hình hoặc âm thanh vào đây</b><br><span class="adm-small b-muted">Tên tệp trùng tên từ sẽ tự gắn</span></div>' + A.btn({ label: 'Chọn tệp', icon: 'upload' }) + '</div>' + A.empty({ title: 'Thư viện đang trống', text: 'Tải hình và âm thanh lên, hoặc thêm từ vựng trước rồi dùng “Tạo giọng đọc hàng loạt”.' }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'MED-503', text: 'Không kết nối được kho tệp. Tệp đang tải lên sẽ tự tiếp tục khi có mạng.' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { S.tab = b.dataset.tab; re('[data-tab="' + S.tab + '"]'); }); });
+      var q = scr.querySelector('#im-q'); q && q.addEventListener('input', function () { S.q = q.value; var pos = q.selectionStart; re('#im-q'); var n = ctx.scr.querySelector('#im-q'); n.setSelectionRange(pos, pos); });
+      var f = scr.querySelector('#im-f'); f && f.addEventListener('change', function () { S.f = f.value; re('#im-f'); });
+      var cl = scr.querySelector('[data-clr]'); cl && cl.addEventListener('click', function () { S.q = ''; S.f = 'all'; re('#im-q'); });
+      var dz = scr.querySelector('[data-drop]'); if (dz) { ['dragenter', 'dragover'].forEach(function (e) { dz.addEventListener(e, function (ev) { ev.preventDefault(); dz.classList.add('is-over'); }); }); ['dragleave', 'drop'].forEach(function (e) { dz.addEventListener(e, function (ev) { ev.preventDefault(); dz.classList.remove('is-over'); }); }); }
+      var pk = scr.querySelector('[data-pick]'); pk && pk.addEventListener('click', function () { var u = { name: 'grapes_v2.svg', word: 'grapes', p: 0 }; S.ups.unshift(u); re('[data-pick]'); var t = ctx.every(function () { u.p = Math.min(100, u.p + 20); if (S.tab === 'img') { ctx.setState('normal'); } if (u.p >= 100) { clearInterval(t); A.toast(ctx.scr, 'Đã tải lên grapes_v2.svg.'); } }, 300); });
+      if (S.tab === 'aud') {
+        atable.mount(scr, function () { bindOne(); });
+        function bindOne() { scr.querySelectorAll('[data-one]').forEach(function (b) { b.onclick = function () { var r = AUD.filter(function (x) { return x.id === b.dataset.one; })[0]; r.has = 'yes'; r.file = r.word + '_uk_f.mp3'; r.voice = 'UK · nữ'; r.dur = '0:01'; r.date = '2/10/2026'; re('#aud-q'); A.toast(ctx.scr, 'Đã tạo giọng đọc cho “' + r.word + '”.'); }; }); }
+        bindOne();
+        var run = scr.querySelector('[data-run]'); run && run.addEventListener('click', function () {
+          S.bulk = 'run'; S.done = 0; re('[data-stop]'); var n = MISSING.length + 44;
+          var t = ctx.every(function () { if (S.bulk !== 'run') { clearInterval(t); return; } S.done = Math.min(n, S.done + 4); var bar = ctx.scr.querySelector('.bulk .prog i'), lab = ctx.scr.querySelector('[data-bk]'), pg = ctx.scr.querySelector('.bulk .prog'); if (bar) { bar.style.width = (S.done / n * 100) + '%'; pg.setAttribute('aria-valuenow', S.done); lab.textContent = 'Đang tạo ' + S.done + ' / ' + n + ' · “' + MISSING[S.done % MISSING.length] + '”'; }
+            if (S.done >= n) { clearInterval(t); S.bulk = 'done'; AUD.forEach(function (r) { if (r.has === 'no') { r.has = 'yes'; r.file = r.word + '_uk_f.mp3'; r.voice = 'UK · nữ'; r.dur = '0:01'; r.date = '2/10/2026'; } }); re('[data-seen]'); A.toast(ctx.scr, 'Đã tạo ' + n + ' tệp âm thanh.'); } }, 250);
+        });
+        var stp = scr.querySelector('[data-stop]'); stp && stp.addEventListener('click', function () { S.bulk = 'idle'; re('[data-run]'); A.toast(ctx.scr, 'Đã dừng. ' + S.done + ' tệp đã tạo được giữ lại.'); });
+        var seen = scr.querySelector('[data-seen]'); seen && seen.addEventListener('click', function () { S.bulk = 'idle'; re('[data-run]'); });
+      }
+    } }
+  });
+})();
+</script>
+</body>
+</html>

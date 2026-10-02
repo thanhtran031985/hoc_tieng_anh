@@ -1,0 +1,101 @@
+<!-- @dsCard group="Màn THCS · 4–9 Bài học" height=720 subtitle="6. Phát âm và trọng âm: 4 từ có phần gạch chân hoặc chia âm tiết, bấm loa để nghe từng từ (Tiếp tục để sang dạng trọng âm)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Phát âm và trọng âm — preview</title>
+<style>
+  .pr { max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: var(--space-5); }
+  .pr .hd { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+  .words { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+  .wc { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-6) var(--space-3) var(--space-5); min-height: min(230px, 30cqh); border-radius: var(--thcs-radius-lg); border: 1.5px solid var(--line-strong); background: var(--surface); cursor: pointer; color: var(--ink); font-family: var(--font-thcs); transition: border-color var(--duration-fast), background-color var(--duration-fast); }
+  .wc:hover { border-color: var(--brand); }
+  .wc .k { position: absolute; top: 10px; left: 10px; }
+  .wc .k .t-opt__k { width: 32px; height: 32px; font-size: 15px; }
+  .wc .w { font: 600 30px/38px var(--font-thcs); letter-spacing: .01em; display: flex; align-items: flex-end; }
+  .wc .w u { text-decoration-thickness: 3px; text-underline-offset: 6px; text-decoration-color: var(--brand); }
+  .wc .syl { display: inline-flex; flex-direction: column; align-items: center; }
+  .wc .syl i { width: 8px; height: 8px; border-radius: 50%; background: transparent; margin-bottom: 4px; }
+  .wc .syl.st i { background: var(--ink); }
+  .wc .syl.st b { color: var(--brand-shade); }
+  .wc .dotsep { color: var(--ink-soft); padding: 0 1px; }
+  .wc .ipa { font: 500 20px/28px var(--font-thcs); color: var(--ink-soft); min-height: 28px; }
+  .wc .ipa mark { background: var(--highlight); color: var(--ink); padding: 0 3px; border-radius: 4px; }
+  .wc.is-selected { border-color: var(--brand); border-width: 2px; background: var(--brand-soft); }
+  .wc.is-correct { border-color: var(--success-shade); border-width: 2px; background: var(--success-soft); }
+  .wc.is-retry { border-color: var(--retry-shade); border-width: 2px; background: var(--retry-soft); }
+  .wc .res { position: absolute; top: 12px; right: 12px; }
+  .wc.is-correct .res { color: var(--success-shade); } .wc.is-retry .res { color: var(--retry-shade); }
+  .rule { display: flex; gap: var(--space-3); align-items: flex-start; }
+  .rule .ic { color: var(--brand); flex: none; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var QS = [
+    { type: 'ed', ins: 'Chọn từ có phần gạch chân được phát âm khác với các từ còn lại.', a: 2,
+      w: [{ t: 'stopped', p: ['stopp', 'ed'], ipa: '/stɒp<mark>t</mark>/' }, { t: 'watched', p: ['watch', 'ed'], ipa: '/wɒtʃ<mark>t</mark>/' }, { t: 'decided', p: ['decid', 'ed'], ipa: '/dɪˈsaɪd<mark>ɪd</mark>/' }, { t: 'looked', p: ['look', 'ed'], ipa: '/lʊk<mark>t</mark>/' }],
+      rule: '<b>-ed</b> đọc /ɪd/ sau âm /t/, /d/ (decided, wanted); đọc /t/ sau âm vô thanh /p, k, s, ʃ, tʃ, f/; còn lại đọc /d/.',
+      why: { ok: '“decided” kết thúc bằng âm /d/ nên -ed đọc /ɪd/; ba từ kia đọc /t/.', no: 'Từ này có -ed đọc /t/ giống hai từ khác. Bấm loa nghe lại từng từ, chú ý âm cuối nhé.' } },
+    { type: 'stress', ins: 'Chọn từ có trọng âm chính rơi vào vị trí khác với các từ còn lại.', a: 3,
+      w: [{ t: 'environment', s: ['en', 'vi', 'ron', 'ment'], st: 1, ipa: '/ɪnˈvaɪrənmənt/' }, { t: 'communicate', s: ['com', 'mu', 'ni', 'cate'], st: 1, ipa: '/kəˈmjuːnɪkeɪt/' }, { t: 'technology', s: ['tech', 'no', 'lo', 'gy'], st: 1, ipa: '/tekˈnɒlədʒi/' }, { t: 'economic', s: ['e', 'co', 'no', 'mic'], st: 2, ipa: '/ˌiːkəˈnɒmɪk/' }],
+      rule: 'Từ tận cùng <b>-ic</b> nhấn vào âm tiết <b>ngay trước -ic</b> (e·co·<b>NO</b>·mic). Từ tận cùng <b>-logy, -ate</b> nhấn vào âm tiết <b>thứ ba tính từ cuối</b> (tech·<b>NO</b>·lo·gy, com·<b>MU</b>·ni·cate).',
+      why: { ok: '“economic” nhấn âm tiết thứ 3 (no); ba từ kia nhấn âm tiết thứ 2.', no: 'Từ này nhấn âm tiết thứ 2, giống hai từ khác. Nghe lại để tìm từ nhấn ở vị trí khác nhé.' } }];
+  var S = { i: 0, n: 5, sel: -1, res: null, hint: false, xp: 50 };
+  function head() { return T.lessonHead({ crumb: 'Luyện tập · Phát âm & trọng âm', title: QS[S.i].type === 'ed' ? 'Phát âm đuôi -ed' : 'Trọng âm từ nhiều âm tiết', n: S.n, m: 10, xp: S.xp }); }
+  function foot(off) { return T.lessonFoot(T.btn({ label: 'Gợi ý', variant: 'secondary', icon: 'bulb', key: 'H', disabled: off || S.hint, attrs: 'data-hint' }) + T.btn({ label: 'Nghe cả 4 từ', variant: 'secondary', icon: 'speaker', key: 'Space', disabled: off, attrs: 'data-all' }), T.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter', disabled: off || S.sel < 0 || !!S.res, attrs: 'data-check' })); }
+  function wordHtml(w, q, reveal) {
+    if (q.type === 'ed') return '<span class="w">' + w.p[0] + '<u>' + w.p[1] + '</u></span>';
+    return '<span class="w" aria-label="' + w.t + '">' + w.s.map(function (x, j) { return (j ? '<span class="dotsep">·</span>' : '') + '<span class="syl' + (reveal && j === w.st ? ' st' : '') + '"><i></i>' + (reveal && j === w.st ? '<b>' + x + '</b>' : x) + '</span>'; }).join('') + '</span>';
+  }
+  function body() {
+    var q = QS[S.i], reveal = S.res === 'ok';
+    return '<div class="pr"><div class="hd"><div><span class="t-pill t-pill--brand">Câu ' + S.n + '</span><h1 class="thcs-h2" style="margin-top:8px" id="ins">' + q.ins + '</h1></div>' + (S.hint && !S.res ? T.tip('Bấm loa nghe từng từ. ' + (q.type === 'ed' ? 'Chú ý từ kết thúc bằng âm /d/.' : 'Đếm âm tiết được đọc mạnh nhất.'), 'suynghi') : '') + '</div>' +
+      '<div class="words" role="radiogroup" aria-labelledby="ins">' + q.w.map(function (w, k) {
+        var st = S.res && k === S.sel ? (S.res === 'ok' ? 'is-correct' : 'is-retry') : k === S.sel ? 'is-selected' : '';
+        return '<div class="wc ' + st + '" role="radio" tabindex="0" aria-checked="' + (k === S.sel) + '" data-i="' + k + '" aria-keyshortcuts="' + (k + 1) + ' ' + 'ABCD'[k] + '"><span class="k"><span class="t-opt__k">' + 'ABCD'[k] + '<kbd>' + (k + 1) + '</kbd></span></span>' +
+          (st === 'is-correct' ? '<span class="res">' + B.icon('check', 24) + '</span>' : st === 'is-retry' ? '<span class="res">' + B.icon('replay', 22) + '</span>' : '') +
+          B.speak(w.t, 'm', 'Nghe từ ' + w.t) + wordHtml(w, q, reveal) + '<span class="ipa">' + (reveal || S.res ? w.ipa : '') + '</span></div>';
+      }).join('') + '</div>' +
+      (S.res ? '<div class="t-card rule"><span class="ic">' + B.icon('info', 24) + '</span><div><b class="thcs-label">' + (S.res === 'ok' ? 'Quy tắc' : 'Vì sao chưa đúng') + '</b><p class="thcs-body">' + (S.res === 'ok' ? q.why.ok + ' ' + q.rule : q.why.no) + '</p></div></div>' : '') + '</div>';
+  }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw" style="justify-content:center">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    notes: { normal: 'Bấm loa trên mỗi thẻ để nghe từng từ; Space nghe lần lượt cả 4. Chọn bằng chuột, 1–4 hoặc A–D, Enter kiểm tra. Đúng thì hiện phiên âm và đánh dấu âm tiết nhấn.', loading: 'Khung xương 4 thẻ từ.', empty: 'Không có từ để luyện.', error: 'Không tải được âm thanh.' },
+    states: {
+      normal: function () { return wrap(body()); },
+      loading: function () { return wrap('<div class="pr">' + B.sk('60%', '30px') + '<div class="words">' + [1, 2, 3, 4].map(function () { return B.sk('100%', '200px', 'var(--thcs-radius-lg)'); }).join('') + '</div></div>', true); },
+      empty: function () { return wrap(T.state({ kind: 'empty', title: 'Chưa có từ để luyện phát âm', text: 'Học thêm từ vựng của chủ đề này rồi quay lại nhé.', action: T.btn({ label: 'Học từ vựng', variant: 'secondary' }) }), true); },
+      error: function () { return wrap(T.state({ kind: 'error', title: 'Chưa tải được âm thanh', text: 'Bài phát âm cần âm thanh. Kiểm tra mạng rồi thử lại nhé.' }), true); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        var q = QS[S.i];
+        function pick(k) { if (S.res === 'ok') return; S.sel = k; S.res = null; ctx.setState('normal'); ctx.scr.querySelector('.wc[data-i="' + k + '"]').focus({ preventScroll: true }); }
+        function check() {
+          if (S.sel < 0 || S.res) return;
+          if (S.sel === q.a) { S.res = 'ok'; S.xp += 10; ctx.setState('normal'); ctx.burst(ctx.scr.querySelector('.wc.is-correct'), ctx.scr.querySelector('.t-chip--xp'), 8, 'bolt');
+            T.feedback(ctx.scr, { type: 'ok', title: 'Chính xác! +10 XP', detail: q.why.ok, onAction: function () { S.i = (S.i + 1) % QS.length; S.n = S.n >= 10 ? 1 : S.n + 1; S.sel = -1; S.res = null; S.hint = false; ctx.setState('normal'); } }); }
+          else { S.res = 'no'; ctx.setState('normal'); T.feedback(ctx.scr, { type: 'retry', title: 'Chưa đúng — nghe lại nhé', detail: q.why.no, action: 'Làm lại', onAction: function () { S.sel = -1; S.res = null; S.hint = true; ctx.setState('normal'); } }); }
+        }
+        function playAll() { var i = 0; (function nx() { if (i >= 4) return; var w = q.w[i], b = scr.querySelectorAll('.wc .b-speak')[i]; B.say(w.t, b); i++; ctx.later(nx, 1300); })(); }
+        scr.querySelectorAll('.wc').forEach(function (c) { c.addEventListener('click', function (e) { if (e.target.closest('.b-speak')) return; pick(+c.dataset.i); }); c.addEventListener('keydown', function (e) { if (e.key === ' ' && e.target === c) { e.preventDefault(); e.stopPropagation(); pick(+c.dataset.i); } }); });
+        scr.querySelector('[data-check]').addEventListener('click', check);
+        scr.querySelector('[data-all]').addEventListener('click', playAll);
+        scr.querySelector('[data-hint]').addEventListener('click', function () { S.hint = true; ctx.setState('normal'); });
+        ctx.onKey(function (e) {
+          var k = e.key.toLowerCase();
+          if (/^[1-4]$/.test(k)) { e.preventDefault(); pick(+k - 1); }
+          else if (/^[abcd]$/.test(k)) { e.preventDefault(); pick('abcd'.indexOf(k)); }
+          else if (k === 'h' && !S.hint) { e.preventDefault(); S.hint = true; ctx.setState('normal'); }
+          else if (e.key === ' ' && !(document.activeElement && /BUTTON/.test(document.activeElement.tagName))) { e.preventDefault(); playAll(); }
+          else if (e.key === 'Enter' && !(document.activeElement && document.activeElement.matches('button'))) { e.preventDefault(); check(); }
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

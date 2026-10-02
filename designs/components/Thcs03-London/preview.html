@@ -1,0 +1,94 @@
+<!-- @dsCard group="Màn THCS · 1–3 Tổng quan" height=720 subtitle="3. Bản đồ cấp 8 London: chủ đề là địa danh, % hoàn thành, bài kiểm tra chủ đề, góc “Bạn có biết?” — bấm địa danh" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · London — preview</title>
+<style>
+  .ld { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-5); align-items: start; }
+  .lmap { padding: 0; overflow: hidden; }
+  .lm { position: relative; aspect-ratio: 1000 / 620; background: var(--map-land); }
+  .lm > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pin { position: absolute; transform: translate(-50%, -50%); border: 0; background: none; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .pin .g { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--lv); color: var(--on-lv); box-shadow: 0 0 0 3px var(--surface), var(--thcs-shadow-2); position: relative; }
+  .pin.locked .g { background: var(--surface-sunk); color: var(--ink-soft); }
+  .pin.part .g { background: var(--surface); color: var(--lv-ink); box-shadow: 0 0 0 3px var(--lv), var(--thcs-shadow-2); }
+  .pin.cur .g { animation: pz 1.8s ease-in-out infinite; }
+  @keyframes pz { 50% { box-shadow: 0 0 0 3px var(--lv), 0 0 0 10px var(--lv-soft); } }
+  .pin .lb { background: var(--surface); border-radius: 8px; padding: 3px 8px; box-shadow: var(--thcs-shadow-1); text-align: center; white-space: nowrap; }
+  .pin .lb b { display: block; font: 600 13px/17px var(--font-thcs); color: var(--ink); }
+  .pin .lb span { font: 500 12px/16px var(--font-thcs); color: var(--ink-soft); }
+  .pin.is-sel .lb { background: var(--ink); } .pin.is-sel .lb b, .pin.is-sel .lb span { color: var(--surface); }
+  .pin .ok { position: absolute; top: -7px; right: -7px; width: 20px; height: 20px; border-radius: 50%; background: var(--success); color: #fff; display: grid; place-items: center; }
+  .side { display: flex; flex-direction: column; gap: var(--space-4); }
+  .topic { display: flex; flex-direction: column; gap: var(--space-3); }
+  .topic .hd { display: flex; gap: var(--space-3); align-items: center; }
+  .topic .hd .g { width: 48px; height: 48px; border-radius: 14px; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; flex: none; }
+  .ls { display: flex; flex-direction: column; }
+  .ls .r { display: grid; grid-template-columns: 24px 1fr auto; gap: var(--space-3); align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+  .ls .r .ic { color: var(--ink-soft); } .ls .r.ok .ic { color: var(--success-shade); } .ls .r.now .ic { color: var(--brand); }
+  .test { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--thcs-radius-md); background: var(--surface-soft); }
+  .test .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--xp-soft); color: var(--xp); display: grid; place-items: center; flex: none; }
+  .fact { display: flex; gap: var(--space-3); align-items: flex-start; background: var(--info-soft); }
+  .fact .t-dragon { flex: none; }
+  .fact p { margin-top: 4px; }
+  .legend { position: absolute; left: 14px; top: 14px; display: flex; gap: 6px; }
+  .legend span { background: var(--surface); border-radius: var(--radius-pill); padding: 3px 10px; font: 600 12px/18px var(--font-thcs); box-shadow: var(--thcs-shadow-1); display: flex; align-items: center; gap: 5px; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var TP = [
+    { id: 0, x: 190, y: 300, place: 'Hyde Park', en: 'Leisure time', vi: 'Thời gian rảnh', pct: 100, test: '9/10', icon: 'sun' },
+    { id: 1, x: 420, y: 92, place: 'Camden Market', en: 'Teenagers', vi: 'Tuổi teen', pct: 100, test: '8/10', icon: 'users' },
+    { id: 2, x: 600, y: 118, place: 'King’s Cross', en: 'Getting around', vi: 'Giao thông', pct: 60, cur: true, icon: 'route' },
+    { id: 3, x: 560, y: 262, place: 'Covent Garden', en: 'Shopping', vi: 'Mua sắm', pct: 100, test: '10/10', icon: 'gem' },
+    { id: 4, x: 430, y: 420, place: 'Westminster Abbey', en: 'Customs and traditions', vi: 'Phong tục, truyền thống', pct: 100, test: '9/10', icon: 'landmark' },
+    { id: 5, x: 735, y: 362, place: 'River Thames', en: 'Environmental protection', vi: 'Bảo vệ môi trường', pct: 36, icon: 'globe' },
+    { id: 6, x: 230, y: 470, place: 'Science Museum', en: 'Science and technology', vi: 'Khoa học, công nghệ', pct: 0, locked: true, icon: 'bulb' },
+    { id: 7, x: 880, y: 500, place: 'Greenwich', en: 'Life on other planets', vi: 'Sự sống ở hành tinh khác', pct: 0, locked: true, icon: 'target' }];
+  var LESS = [['notebook', 'Từ vựng: transport, journey, passenger…', 'ok', '+40 XP'], ['grammar', 'Ngữ pháp: Thì hiện tại hoàn thành', 'now', 'Đang học'], ['speaker', 'Phát âm: trọng âm từ 3 âm tiết', 'ok', '+30 XP'], ['book', 'Đọc: Getting around London', '', '~8 phút'], ['pen', 'Viết: đoạn văn 80–120 từ', '', '~15 phút'], ['replay', 'Ôn tập chủ đề', '', '~5 phút']];
+  var sel = 2;
+  function mapSvg(skel) {
+    return '<svg viewBox="0 0 1000 620" aria-hidden="true">' +
+      '<g fill="var(--map-park)"><rect x="96" y="226" width="200" height="140" rx="40"/><ellipse cx="330" cy="40" rx="120" ry="70"/><rect x="760" y="520" width="200" height="120" rx="40"/></g>' +
+      '<g stroke="var(--map-road)" stroke-width="12" stroke-linecap="round" fill="none"><path d="M0 190 H1000"/><path d="M500 0 V620"/><path d="M80 600 L380 260 L700 60"/><path d="M300 620 L620 240 L1000 260"/></g>' +
+      '<path d="M0 470 C160 520 300 540 400 500 C500 460 540 380 640 360 C760 336 800 420 840 470 C880 520 940 470 1000 430" fill="none" stroke="var(--map-sea)" stroke-width="44" stroke-linecap="round"/>' +
+      '<text x="900" y="420" font-family="Be Vietnam Pro, sans-serif" font-size="14" font-weight="600" fill="var(--ink-soft)" font-style="italic">River Thames</text></svg>' +
+      (skel ? TP.map(function (p) { return '<span class="b-sk" style="position:absolute;left:' + p.x / 10 + '%;top:' + p.y / 6.2 + '%;width:46px;height:46px;border-radius:14px;transform:translate(-50%,-50%)"></span>'; }).join('') : '');
+  }
+  function pins(fresh) {
+    return TP.map(function (p) {
+      var pct = fresh ? 0 : p.pct, st = fresh ? (p.id === 0 ? 'part cur' : 'locked') : p.locked ? 'locked' : pct === 100 ? 'done' : 'part' + (p.cur ? ' cur' : '');
+      return '<button type="button" class="pin ' + st + (sel === p.id ? ' is-sel' : '') + '" data-p="' + p.id + '" style="left:' + p.x / 10 + '%;top:' + p.y / 6.2 + '%" aria-label="' + p.place + ', ' + p.vi + ', ' + (st === 'locked' ? 'còn khoá' : pct + '% hoàn thành') + '">' +
+        '<span class="g">' + B.icon(st === 'locked' ? 'lock' : (p.icon === 'landmark' ? 'house' : p.icon), 22) + (st === 'done' ? '<span class="ok">' + B.icon('check', 13) + '</span>' : '') + '</span><span class="lb"><b>' + p.place + '</b><span>' + (st === 'locked' ? 'Còn khoá' : pct + '%' + (p.test && !fresh ? ' · KT ' + p.test : '')) + '</span></span></button>';
+    }).join('');
+  }
+  function side(fresh) {
+    var p = TP[sel], pct = fresh ? 0 : p.pct, locked = fresh ? sel !== 0 : p.locked;
+    var less = LESS.map(function (l, i) { var cls = fresh ? (i === 0 ? 'now' : '') : (sel === 2 ? l[2] : pct === 100 ? 'ok' : (i === 0 && pct > 0 ? 'ok' : '')); return '<div class="r ' + cls + '"><span class="ic">' + B.icon(cls === 'ok' ? 'check' : l[0], 20) + '</span><span class="thcs-body-s">' + l[1] + '</span><span class="thcs-caption b-muted">' + (cls === 'ok' ? 'Xong' : cls === 'now' ? 'Đang học' : l[3]) + '</span></div>'; }).join('');
+    return '<aside class="side"><section class="t-card topic" data-level="8"><div class="hd"><span class="g">' + B.icon(p.icon === 'landmark' ? 'house' : p.icon, 24) + '</span><div><span class="thcs-caption b-muted">' + p.place + '</span><h2 class="thcs-h2">' + p.vi + '</h2><span class="thcs-body-s b-muted en">' + p.en + '</span></div></div>' +
+      (locked ? '<p class="thcs-body b-muted">' + B.icon('lock', 16) + ' Hoàn thành chủ đề trước để mở địa danh này.</p>' :
+      '<div style="display:flex;align-items:center;gap:10px">' + B.ProgressBar(pct, 100) + '<b class="thcs-label">' + pct + '%</b></div><div class="ls">' + less + '</div>' +
+      '<div class="test"><span class="ic">' + B.icon('exam', 22) + '</span><div style="flex:1"><b class="thcs-label">Bài kiểm tra chủ đề</b><div class="thcs-caption b-muted">' + (p.test && !fresh ? 'Điểm cao nhất ' + p.test + ' · làm lại để lấy XP' : '15 câu · mở khi xong 6 bài') + '</div></div>' + T.btn({ label: p.test && !fresh ? 'Làm lại' : 'Làm', variant: 'secondary', cls: 't-btn--s', disabled: !(p.test && !fresh) && pct < 100 }) + '</div>' +
+      T.btn({ label: pct === 100 ? 'Ôn lại chủ đề' : 'Học tiếp', size: 'l', block: true, key: pct < 100 ? 'Enter' : '', variant: pct === 100 ? 'secondary' : 'primary' })) + '</section>' +
+      '<section class="t-card fact" aria-labelledby="fy">' + T.dragon('suynghi', 44) + '<div><h3 class="thcs-h3" id="fy">Bạn có biết?</h3><p class="thcs-body-s">“Big Ben” thật ra là tên quả chuông lớn trong tháp đồng hồ, không phải tên tháp. Từ năm 2012, tháp được gọi là <b class="en">Elizabeth Tower</b>.</p><button type="button" class="t-link" style="margin-top:6px">Điều thú vị khác →</button></div></section></aside>';
+  }
+  function page(main, o) { return T.shell(Object.assign({ active: 'route', title: 'Cấp 8 · London', crumb: 'Lộ trình › London · 62% · 4/8 chủ đề xong', main: main }, o || {})); }
+  var legend = '<div class="legend" aria-hidden="true"><span><i style="background:var(--success)"></i>Xong</span><span><i style="background:var(--surface);box-shadow:0 0 0 2px var(--level-8)"></i>Đang học</span><span><i style="background:var(--surface-sunk)"></i>Khoá</span></div>';
+  T.screen({
+    labels: { empty: 'Trống (mới vào London)' },
+    notes: { normal: 'Mỗi địa danh là một chủ đề: % hoàn thành và điểm bài kiểm tra chủ đề (KT). Bấm địa danh để xem các bài trong chủ đề.', loading: 'Bản đồ phố hiện ngay, địa danh là khung xương.', empty: 'Vừa mở London: chỉ Hyde Park mở, chưa có %.', error: 'Không tải được tiến độ các chủ đề.' },
+    states: {
+      normal: function () { return page('<div class="ld"><section class="t-card lmap" aria-label="Bản đồ London"><div class="lm" data-level="8">' + mapSvg() + pins() + legend + '</div></section>' + side() + '</div>'); },
+      loading: function () { return page('<div class="ld"><section class="t-card lmap"><div class="lm">' + mapSvg(true) + '</div></section><aside class="side"><section class="t-card">' + B.sk('70%', '24px') + '<div style="height:12px"></div>' + B.sk('100%', '260px') + '</section><section class="t-card">' + B.sk('100%', '80px') + '</section></aside></div>', { xp: '···', streak: '·' }); },
+      empty: function () { var s0 = sel; sel = 0; var h = page('<div class="ld"><section class="t-card lmap"><div class="lm" data-level="8">' + mapSvg() + pins(true) + legend + '</div></section>' + side(true) + '</div>'); sel = s0; return h; },
+      error: function () { return page('<div class="ld"><section class="t-card lmap"><div class="lm">' + mapSvg() + '<div style="position:absolute;inset:0;display:grid;place-items:center"><div class="t-card" style="max-width:420px">' + T.state({ kind: 'error', title: 'Chưa tải được các chủ đề', text: 'Bản đồ vẫn ở đây, chỉ thiếu tiến độ. Thử lại nhé.' }) + '</div></div></div></section>' + side().replace(/<section class="t-card topic"[\s\S]*?<\/section>/, '') + '</div>'); }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelectorAll('[data-p]').forEach(function (b) { b.addEventListener('click', function () { sel = +b.dataset.p; ctx.setState('normal'); ctx.scr.querySelector('[data-p="' + sel + '"]').focus(); }); }); } }
+  });
+})();
+</script>
+</body>
+</html>

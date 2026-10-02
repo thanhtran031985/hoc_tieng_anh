@@ -1,0 +1,23 @@
+<!-- @dsCard group="Linh vật" height=340 subtitle="Rồng Bông — 2 biểu cảm bổ sung: hơi tiếc (hộp thoại Dừng bài học) và đang xây dựng (màn Sắp có)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Rồng Bông bổ sung — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .row { display: flex; gap: var(--space-6); padding: var(--space-5); flex-wrap: wrap; }
+  .m { box-sizing: border-box; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); width: 240px; text-align: center; }
+  .m code { font: 700 13px/16px var(--font-body); color: var(--ink-soft); }
+  .v { display: flex; gap: var(--space-4); align-items: flex-end; }
+</style></head>
+<body>
+<div class="row" id="r"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var L = [['tiec', 'Hơi tiếc', 'Bé bấm thoát giữa bài: lông mày chùng, tay chụm — tiếc nhưng không khóc, không trách.'], ['xaydung', 'Đang xây dựng', 'Màn Sắp có: đội mũ bảo hộ, cầm búa, vẫn cười.']];
+  document.getElementById('r').innerHTML = L.map(function (x) { return '<div class="m">' + B.dragon(x[0], 150) + '<b class="title" style="font-size:22px;line-height:26px">' + x[1] + '</b><code>dragon(\'' + x[0] + '\')</code><span class="caption b-muted">' + x[2] + '</span></div>'; }).join('') +
+    '<div class="m"><div class="v"><span class="dragon-dao">' + B.dragon('tiec', 70) + '</span><span class="dragon-nang">' + B.dragon('xaydung', 70) + '</span><span class="dragon-tim">' + B.dragon('tiec', 70) + '</span></div><b class="label">Đổi màu như 6 biểu cảm gốc</b><span class="caption b-muted">Mũ <code>dragon-hat</code>, <code>dragon-hat-shade</code>; búa <code>dragon-tool</code>, <code>dragon-tool-head</code>.</span></div>';
+})();
+</script>
+</body>
+</html>

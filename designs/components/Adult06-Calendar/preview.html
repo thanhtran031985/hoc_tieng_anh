@@ -1,0 +1,116 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=760 subtitle="6. Lịch kiểm tra ở trường: lịch tháng, thêm ngày kiểm tra và các Unit cần ôn; Bông tự xếp lịch ôn 7 ngày trước" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Lịch kiểm tra — preview</title>
+<style>
+  .cal-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
+  .cal-h .nav { display: flex; gap: 4px; align-items: center; }
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .cal .dow { font: 600 12px/16px var(--font-thcs); color: var(--ink-soft); padding: 8px; background: var(--surface-soft); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .cal .d { min-height: 82px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 4px 6px; display: flex; flex-direction: column; gap: 3px; background: var(--surface); text-align: left; border-top: 0; border-left: 0; font: inherit; cursor: pointer; color: var(--ink); }
+  .cal .d:hover { background: var(--surface-soft); }
+  .cal .d.out { color: var(--ink-disabled); background: var(--surface-soft); cursor: default; }
+  .cal .d .n { font: 600 13px/22px var(--font-thcs); width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
+  .cal .d:disabled { color: var(--ink-soft); }
+  .cal .d:disabled:hover { background: var(--surface); }
+  .cal .d.today .n { background: var(--brand); color: var(--on-brand); }
+  .cal .d.pick { box-shadow: inset 0 0 0 2px var(--brand); }
+  .ev { display: block; border-radius: 4px; padding: 2px 6px; font: 600 12px/16px var(--font-thcs); background: var(--chart-1-soft); color: var(--ink); border-left: 3px solid var(--chart-1); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rev { display: inline-flex; align-items: center; gap: 4px; font: 500 11px/14px var(--font-thcs); color: var(--ink-soft); }
+  .rev i { width: 6px; height: 6px; border-radius: 50%; background: var(--chart-2); }
+  .lg { display: flex; gap: var(--space-4); margin-top: var(--space-2); color: var(--ink-soft); }
+  .lg span { display: inline-flex; align-items: center; gap: 6px; }
+  .lg .e { width: 14px; height: 10px; border-radius: 2px; background: var(--chart-1-soft); border-left: 3px solid var(--chart-1); }
+  .lg .r { width: 6px; height: 6px; border-radius: 50%; background: var(--chart-2); }
+  .units { display: flex; flex-wrap: wrap; gap: 6px; }
+  .units button { border: 1px solid var(--line-strong); background: var(--surface); border-radius: var(--radius-pill); padding: 4px 10px; font: 500 13px/18px var(--font-thcs); color: var(--ink); cursor: pointer; }
+  .units button[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-shade); font-weight: 600; }
+  .is-error .units button[aria-pressed="false"] { border-color: var(--field-error); }
+  .up { list-style: none; margin: 0; padding: 0; }
+  .up li { display: grid; grid-template-columns: 48px 1fr auto; gap: var(--space-3); align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .up li:first-child { border-top: 0; }
+  .up .dt { text-align: center; border-radius: var(--adm-radius-md); background: var(--surface-soft); padding: 4px 0; }
+  .up .dt b { display: block; font: 700 18px/22px var(--font-thcs); }
+  .up .dt span { font: 600 11px/14px var(--font-thcs); color: var(--ink-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var UNITS = {
+    linh: ['Unit 1 · Leisure time', 'Unit 2 · Life in the countryside', 'Unit 3 · Teenagers', 'Unit 4 · Ethnic groups', 'Unit 5 · Customs and traditions', 'Unit 6 · Lifestyles'],
+    minh: ['Unit 1 · Hello', 'Unit 2 · My family', 'Unit 3 · Colours', 'Unit 4 · Fruits', 'Unit 5 · Toys', 'Unit 6 · Numbers']
+  };
+  var EV = {
+    linh: [{ d: 15, name: 'Kiểm tra giữa kỳ I', kind: 'Giữa kỳ', units: [0, 1, 2], done: 4 }, { d: 23, name: 'Kiểm tra 15 phút Unit 4', kind: '15 phút', units: [3], done: 0 }],
+    minh: [{ d: 20, name: 'Kiểm tra Unit 4–5', kind: 'Cuối Unit', units: [3, 4], done: 2 }, { d: 30, name: 'Kiểm tra Nói', kind: 'Nói', units: [0, 1, 2, 3, 4], done: 0 }]
+  };
+  var TODAY = 2, S = { pick: null, units: [] };
+  function cal(empty) {
+    var ev = empty ? [] : EV[A.state.kid], first = 3; // 1/10/2026 là thứ Năm (cột thứ 4, tính từ T2)
+    var rev = {}; ev.forEach(function (e) { for (var i = 1; i <= 7; i++) if (e.d - i >= TODAY) rev[e.d - i] = 1; });
+    var cells = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
+    for (var i = 0; i < 35; i++) {
+      var day = i - first + 1;
+      if (day < 1 || day > 31) { var o = day < 1 ? 30 + day : day - 31; cells += '<div class="d out" aria-hidden="true"><span class="n">' + o + '</span></div>'; continue; }
+      var es = ev.filter(function (e) { return e.d === day; });
+      var lab = day + ' tháng 10' + (day === TODAY ? ', hôm nay' : '') + (es.length ? ', ' + es.map(function (e) { return e.name; }).join(', ') : '') + (rev[day] && !es.length ? ', ngày ôn tập' : '');
+      cells += '<button type="button" class="d' + (day === TODAY ? ' today' : '') + (S.pick === day ? ' pick' : '') + '" data-day="' + day + '" aria-label="' + lab + '"' + (day < TODAY ? ' disabled style="cursor:default"' : '') + '><span class="n">' + day + '</span>' + es.map(function (e) { return '<span class="ev">' + e.name + '</span>'; }).join('') + (rev[day] && !es.length ? '<span class="rev"><i></i>Ôn tập</span>' : '') + '</button>';
+    }
+    return '<section class="a-card a-s8" aria-labelledby="cl"><div class="cal-h"><h2 class="adm-h2" id="cl">Tháng 10/2026</h2><div class="nav"><button type="button" class="a-iconbtn" aria-label="Tháng trước">' + B.icon('back', 16) + '</button>' + A.btn({ label: 'Hôm nay', variant: 'secondary', size: 's' }) + '<button type="button" class="a-iconbtn" aria-label="Tháng sau">' + B.icon('next', 16) + '</button></div></div>' +
+      '<div class="cal" role="group" aria-label="Lịch tháng 10/2026">' + cells + '</div><div class="lg adm-small"><span><i class="e"></i>Ngày kiểm tra</span><span><i class="r"></i>Bông xếp bài ôn (7 ngày trước)</span><span>Bấm một ngày để điền vào biểu mẫu</span></div></section>';
+  }
+  function form() {
+    var u = UNITS[A.state.kid];
+    return '<section class="a-card a-s4" aria-labelledby="fm"><h2 class="adm-h2" id="fm" style="margin:0 0 var(--space-3)">Thêm lịch kiểm tra</h2><div class="a-form" style="grid-template-columns:1fr">' +
+      A.field({ id: 'ex-name', label: 'Tên bài kiểm tra', required: true, placeholder: 'Ví dụ: Kiểm tra 15 phút Unit 3' }) +
+      '<div class="a-form" style="gap:var(--space-3)">' + A.field({ id: 'ex-date', label: 'Ngày', required: true, placeholder: 'dd/mm/yyyy', value: S.pick ? ('0' + S.pick).slice(-2) + '/10/2026' : '' }) + A.field({ id: 'ex-kind', label: 'Loại', type: 'select', options: ['15 phút', 'Giữa kỳ', 'Cuối kỳ', 'Cuối Unit', 'Nói'], value: '15 phút' }) + '</div>' +
+      '<div class="a-field" id="ex-units-f"><span class="adm-h3" id="ex-units-l">Unit cần ôn <span class="a-req" aria-hidden="true">*</span></span><div class="units" role="group" aria-labelledby="ex-units-l" aria-describedby="ex-units-e">' + u.map(function (x, i) { return '<button type="button" data-u="' + i + '" aria-pressed="' + (S.units.indexOf(i) > -1) + '">' + x + '</button>'; }).join('') + '</div><p class="a-err adm-small" id="ex-units-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>' +
+      A.toggle('ex-plan', 'Tự xếp lịch ôn', true, 'Bông thêm 10 phút ôn mỗi ngày trong 7 ngày trước') +
+      '<div class="a-actions">' + A.btn({ label: 'Xoá', variant: 'ghost', attrs: 'data-reset' }) + A.btn({ label: 'Lưu lịch', icon: 'check', attrs: 'data-save' }) + '</div></div></section>';
+  }
+  function upcoming(empty) {
+    var ev = empty ? [] : EV[A.state.kid].slice().sort(function (a, b) { return a.d - b.d; }), u = UNITS[A.state.kid];
+    return '<section class="a-card a-s12" aria-labelledby="upc"><div class="a-card__h"><h2 class="adm-h2" id="upc">Sắp tới</h2></div>' +
+      (ev.length ? '<ul class="up">' + ev.map(function (e) { var left = e.d - TODAY; return '<li><span class="dt"><b>' + e.d + '</b><span>TH 10</span></span><span><b class="adm-h3">' + e.name + '</b> <span class="t-pill">' + e.kind + '</span><br><span class="adm-small b-muted">' + e.units.map(function (i) { return u[i].split(' · ')[0]; }).join(', ') + ' · đã ôn ' + e.done + '/7 buổi</span></span><span class="adm-small"><b class="adm-body">còn ' + left + ' ngày</b></span></li>'; }).join('') + '</ul>'
+        : A.empty({ title: 'Chưa có lịch kiểm tra nào', text: 'Thêm ngày kiểm tra ở trường để Bông nhắc con ôn đúng Unit trước ngày thi.' })) + '</section>';
+  }
+  function main(empty) { return '<div class="a-grid">' + cal(empty) + form() + upcoming(empty) + '</div>'; }
+  function page(m) { var kid = A.kids.filter(function (x) { return x.id === A.state.kid; })[0]; return A.shell({ area: 'parent', active: 'calendar', title: 'Lịch kiểm tra · ' + kid.name, crumb: 'Lớp ' + kid.grade + ' · Hôm nay thứ Sáu, 2/10/2026', kids: true, main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa có lịch)' },
+    notes: { normal: 'Bấm một ngày trên lịch để điền ngày. Bấm “Lưu lịch” khi còn trống sẽ báo lỗi dưới từng ô; ngày phải từ hôm nay trở đi và đúng dạng dd/mm/yyyy; phải chọn ít nhất một Unit.', loading: 'Khung xương lịch, biểu mẫu và danh sách.', empty: 'Chưa có lịch kiểm tra; biểu mẫu vẫn dùng được.', error: 'Không tải được lịch.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s8">' + A.skel('460px') + '</div><div class="a-s4">' + A.skel('460px') + '</div></div>'); },
+      empty: function () { return page(main(true)); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'CAL-503' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      if (ctx.state !== 'normal' && ctx.state !== 'empty') return;
+      var empty = ctx.state === 'empty';
+      scr.querySelectorAll('[data-day]').forEach(function (b) { b.addEventListener('click', function () { if (b.disabled) return; S.pick = +b.dataset.day; scr.querySelectorAll('.d.pick').forEach(function (x) { x.classList.remove('pick'); }); b.classList.add('pick'); var f = scr.querySelector('#ex-date'); f.value = ('0' + S.pick).slice(-2) + '/10/2026'; A.setErr(scr, 'ex-date', ''); }); });
+      function unitErr(m) { var e = scr.querySelector('#ex-units-e'); e.hidden = !m; e.querySelector('span').textContent = m || ''; scr.querySelector('#ex-units-f').classList.toggle('is-error', !!m); }
+      scr.querySelectorAll('[data-u]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.u, k = S.units.indexOf(i); if (k > -1) S.units.splice(k, 1); else S.units.push(i); b.setAttribute('aria-pressed', k < 0); if (S.units.length) unitErr(''); }); });
+      var rules = {
+        'ex-name': function (v) { return !v.trim() ? 'Nhập tên bài kiểm tra.' : v.trim().length > 60 ? 'Tên tối đa 60 ký tự.' : ''; },
+        'ex-date': function (v) { if (!v.trim()) return 'Chọn ngày trên lịch hoặc nhập dd/mm/yyyy.'; var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(v.trim()); if (!m) return 'Ngày chưa đúng dạng dd/mm/yyyy, ví dụ 15/10/2026.'; var dt = new Date(+m[3], m[2] - 1, +m[1]); if (dt.getDate() !== +m[1]) return 'Ngày này không có trên lịch.'; if (dt < new Date(2026, 9, 2)) return 'Ngày kiểm tra phải từ hôm nay (2/10/2026) trở đi.'; return ''; }
+      };
+      A.wireValidate(scr, rules);
+      scr.querySelector('[data-reset]').addEventListener('click', function () { S.pick = null; S.units = []; ctx.setState(ctx.state); });
+      scr.querySelector('[data-save]').addEventListener('click', function () {
+        var bad = A.validate(scr, rules, true);
+        unitErr(S.units.length ? '' : 'Chọn ít nhất một Unit để Bông biết cần ôn gì.');
+        if (bad) { scr.querySelector('[aria-invalid="true"]').focus(); return; }
+        if (!S.units.length) { scr.querySelector('[data-u]').focus(); return; }
+        var m = /^(\d{1,2})\/(\d{1,2})/.exec(scr.querySelector('#ex-date').value), d = +m[1];
+        if (+m[2] === 10 && !empty) EV[A.state.kid].push({ d: d, name: scr.querySelector('#ex-name').value.trim(), kind: scr.querySelector('#ex-kind').value, units: S.units.slice(), done: 0 });
+        S.pick = null; S.units = []; ctx.setState('normal'); A.toast(ctx.scr, 'Đã lưu lịch kiểm tra ngày ' + d + '/' + m[2] + '. Bông sẽ xếp bài ôn cho con.');
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

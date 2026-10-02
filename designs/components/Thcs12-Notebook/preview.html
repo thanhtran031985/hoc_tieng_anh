@@ -1,0 +1,65 @@
+<!-- @dsCard group="Màn THCS · 10–12 Kết quả & ôn tập" height=720 subtitle="12. Sổ từ: bảng có tìm kiếm, phiên âm, nghĩa, nút nghe, mức thuộc 1–5; lọc theo cấp, chủ đề, mức thuộc" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Sổ từ — preview</title>
+<style>
+  .tb { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; margin-bottom: var(--space-4); }
+  .search { position: relative; flex: 1; min-width: 260px; }
+  .search .b-ico { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); }
+  .search input { padding-left: 42px; }
+  .tb select { width: auto; min-width: 150px; }
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { text-align: left; font: 600 13px/18px var(--font-thcs); color: var(--ink-soft); padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; position: sticky; top: 0; background: var(--surface); }
+  .tbl td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .tbl tr:hover td { background: var(--surface-soft); }
+  .tbl .w { display: flex; align-items: center; gap: 10px; }
+  .tbl .w b { font: 600 20px/26px var(--font-thcs); }
+  .lvl { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .pips { display: inline-flex; gap: 3px; } .pips i { width: 8px; height: 8px; border-radius: 50%; background: var(--surface-sunk); } .pips i.on { background: var(--m); }
+  .foot { display: flex; justify-content: space-between; align-items: center; padding-top: var(--space-3); }
+  .scrollw { max-height: 100%; overflow: auto; }
+  .kpis { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var W = [['passenger', '/ˈpæs.ɪn.dʒə/', 'n', 'hành khách', 8, 'Giao thông', 4], ['pedestrian', '/pəˈdes.tri.ən/', 'n', 'người đi bộ', 8, 'Giao thông', 2], ['commute', '/kəˈmjuːt/', 'v', 'đi lại hằng ngày (đi học, đi làm)', 8, 'Giao thông', 1], ['congestion', '/kənˈdʒes.tʃən/', 'n', 'sự tắc nghẽn', 8, 'Giao thông', 2],
+    ['landmark', '/ˈlænd.mɑːk/', 'n', 'địa danh, công trình nổi tiếng', 8, 'Giao thông', 3], ['pollution', '/pəˈluː.ʃən/', 'n', 'sự ô nhiễm', 8, 'Môi trường', 5], ['recycle', '/ˌriːˈsaɪ.kəl/', 'v', 'tái chế', 8, 'Môi trường', 5], ['endangered', '/ɪnˈdeɪn.dʒəd/', 'adj', 'có nguy cơ tuyệt chủng', 8, 'Môi trường', 3],
+    ['peer pressure', '/ˈpɪə ˌpreʃ.ə/', 'n', 'áp lực từ bạn bè', 8, 'Tuổi teen', 2], ['bargain', '/ˈbɑː.ɡɪn/', 'n', 'món hời', 8, 'Mua sắm', 4], ['leisure', '/ˈleʒ.ə/', 'n', 'thời gian rảnh', 8, 'Thời gian rảnh', 5], ['custom', '/ˈkʌs.təm/', 'n', 'phong tục', 8, 'Phong tục', 3],
+    ['volunteer', '/ˌvɒl.ənˈtɪə/', 'v', 'làm tình nguyện', 7, 'Cộng đồng', 4], ['festival', '/ˈfes.tɪ.vəl/', 'n', 'lễ hội', 7, 'Lễ hội', 5], ['neighbourhood', '/ˈneɪ.bə.hʊd/', 'n', 'khu phố', 6, 'Khu phố', 5], ['robot', '/ˈrəʊ.bɒt/', 'n', 'người máy', 6, 'Người máy', 5]];
+  var ML = ['', 'Mới gặp', 'Đang nhớ', 'Khá nhớ', 'Nhớ tốt', 'Thuộc lòng'];
+  var F = { q: '', lv: 'all', tp: 'all', m: 'all' };
+  function rows() { return W.filter(function (w) { return (!F.q || (w[0] + ' ' + w[3]).toLowerCase().indexOf(F.q.toLowerCase()) >= 0) && (F.lv === 'all' || String(w[4]) === F.lv) && (F.tp === 'all' || w[5] === F.tp) && (F.m === 'all' || String(w[6]) === F.m); }); }
+  function sel(id, label, val, opts) { return '<label class="b-sr" for="' + id + '">' + label + '</label><select class="t-input" id="' + id + '">' + opts.map(function (o) { return '<option value="' + o[0] + '"' + (val === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; }
+  function toolbar(off) {
+    var topics = [['all', 'Mọi chủ đề']].concat(W.map(function (w) { return w[5]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).map(function (t) { return [t, t]; }));
+    return '<div class="tb"><div class="search">' + B.icon('search', 20) + '<label class="b-sr" for="q">Tìm từ</label><input id="q" class="t-input" placeholder="Tìm từ hoặc nghĩa… (vd. passenger, ô nhiễm)" value="' + B.esc(F.q) + '"' + (off ? ' disabled' : '') + '></div>' +
+      sel('flv', 'Lọc theo cấp', F.lv, [['all', 'Mọi cấp'], ['6', 'Cấp 6 · Singapore'], ['7', 'Cấp 7 · Sydney'], ['8', 'Cấp 8 · London']]) + sel('ftp', 'Lọc theo chủ đề', F.tp, topics) + sel('fm', 'Lọc theo mức thuộc', F.m, [['all', 'Mọi mức thuộc']].concat([1, 2, 3, 4, 5].map(function (m) { return [String(m), m + ' · ' + ML[m]]; }))) + '</div>';
+  }
+  function table(list) {
+    return '<div class="scrollw"><table class="tbl"><thead><tr><th scope="col">Từ</th><th scope="col">Phiên âm</th><th scope="col">Loại</th><th scope="col">Nghĩa</th><th scope="col">Cấp · Chủ đề</th><th scope="col">Mức thuộc</th><th scope="col"><span class="b-sr">Ôn</span></th></tr></thead><tbody>' +
+      list.map(function (w) { var p = ''; for (var i = 1; i <= 5; i++) p += '<i class="' + (i <= w[6] ? 'on' : '') + '"></i>'; return '<tr><td><div class="w">' + B.speak(w[0], 's') + '<b>' + w[0] + '</b></div></td><td class="thcs-body-s b-muted" style="white-space:nowrap">' + w[1] + '</td><td><span class="t-pill">' + w[2] + '</span></td><td class="thcs-body-s">' + w[3] + '</td><td data-level="' + w[4] + '"><span class="b-lvchip">Cấp ' + w[4] + '</span> <span class="thcs-caption b-muted">' + w[5] + '</span></td><td><span class="lvl" style="--m:var(--mastery-' + w[6] + ')"><span class="pips" aria-hidden="true">' + p + '</span><span class="thcs-body-s">' + w[6] + ' · ' + ML[w[6]] + '</span></span></td><td>' + T.btn({ label: 'Ôn', variant: 'ghost', cls: 't-btn--s', attrs: 'aria-label="Ôn từ ' + w[0] + '"' }) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function page(m, o) { return T.shell(Object.assign({ active: 'words', title: 'Sổ từ', crumb: '486 từ đã học · 212 từ thuộc lòng', main: m, topRight: T.btn({ label: 'Ôn 21 từ đến hạn', variant: 'secondary', icon: 'cards', cls: 't-btn--s' }) }, o || {})); }
+  T.screen({
+    labels: { empty: 'Trống (lọc không ra)' },
+    notes: { normal: 'Gõ để tìm theo từ hoặc nghĩa; 3 bộ lọc hoạt động cùng lúc. Mức thuộc có chấm + chữ, không chỉ dựa vào màu.', loading: 'Khung xương hàng bảng.', empty: 'Không có từ khớp tìm kiếm/bộ lọc — gợi ý xoá bộ lọc.', error: 'Không tải được Sổ từ.' },
+    states: {
+      normal: function () { var l = rows(); return page('<section class="t-card">' + toolbar() + (l.length ? table(l) : T.state({ kind: 'empty', title: 'Không có từ nào khớp', text: 'Thử từ khác hoặc xoá bộ lọc nhé.', action: T.btn({ label: 'Xoá bộ lọc', variant: 'secondary', attrs: 'data-clear' }) })) + '<div class="foot"><span class="thcs-body-s b-muted">Hiển thị ' + l.length + ' / 486 từ</span><div class="kpis"><span class="t-pill t-pill--ok">212 thuộc lòng</span><span class="t-pill">88 mới gặp</span></div></div></section>'); },
+      loading: function () { return page('<section class="t-card">' + toolbar(true) + [1, 2, 3, 4, 5, 6, 7, 8].map(function () { return '<div style="display:grid;grid-template-columns:2fr 1.4fr .6fr 2.4fr 1.6fr 1.6fr;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)">' + B.sk('80%', '22px') + B.sk('70%', '18px') + B.sk('60%', '18px') + B.sk('90%', '18px') + B.sk('70%', '18px') + B.sk('80%', '18px') + '</div>'; }).join('') + '</section>', { xp: '···' }); },
+      empty: function () { return page('<section class="t-card">' + toolbar().replace('value=""', 'value="skyscraper"') + T.state({ kind: 'empty', title: 'Không có từ “skyscraper”', text: 'Từ này chưa có trong Sổ từ của bạn. Học chủ đề New York để gặp từ này nhé.', action: T.btn({ label: 'Xoá tìm kiếm', variant: 'secondary' }) }) + '</section>'); },
+      error: function () { return page('<section class="t-card">' + toolbar(true) + T.state({ kind: 'error', title: 'Chưa tải được Sổ từ', text: 'Từ của bạn không mất đâu. Thử lại nhé.' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var q = scr.querySelector('#q');
+      q.addEventListener('input', function () { F.q = q.value; var pos = q.selectionStart; ctx.setState('normal'); var q2 = ctx.scr.querySelector('#q'); q2.focus(); q2.setSelectionRange(pos, pos); });
+      [['flv', 'lv'], ['ftp', 'tp'], ['fm', 'm']].forEach(function (x) { scr.querySelector('#' + x[0]).addEventListener('change', function (e) { F[x[1]] = e.target.value; ctx.setState('normal'); ctx.scr.querySelector('#' + x[0]).focus(); }); });
+      var c = scr.querySelector('[data-clear]'); c && c.addEventListener('click', function () { F = { q: '', lv: 'all', tp: 'all', m: 'all' }; ctx.setState('normal'); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

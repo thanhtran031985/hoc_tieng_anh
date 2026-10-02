@@ -1,0 +1,70 @@
+<!-- @dsCard group="Màn THCS · 10–12 Kết quả & ôn tập" height=720 subtitle="11. Ôn tập hôm nay: thẻ đến hạn chia theo 5 hộp ghi nhớ, cả từ vựng và ngữ pháp, nút Bắt đầu ôn" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Ôn tập hôm nay — preview</title>
+<style>
+  .rv { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-5); align-items: start; }
+  .boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-3); align-items: end; }
+  .bx { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-2); }
+  .bx .pile { position: relative; height: 160px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .bx .tot { border-radius: 10px 10px 4px 4px; background: var(--surface-sunk); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+  .bx .due { background: var(--xp); border-radius: 8px 8px 0 0; min-height: 4px; }
+  .bx .n { font: 700 24px/28px var(--font-thcs); }
+  .bx .lbl { display: flex; flex-direction: column; }
+  .bx.zero .n { color: var(--ink-soft); }
+  .types { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-5); }
+  .ty { border-radius: var(--thcs-radius-md); background: var(--surface-soft); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+  .ty .h { display: flex; align-items: center; justify-content: space-between; }
+  .ty .h b { display: inline-flex; gap: 6px; align-items: center; }
+  .ty .n { font: 700 28px/32px var(--font-thcs); }
+  .ty .ex { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ty .ex span { background: var(--surface); border-radius: var(--radius-pill); padding: 2px 10px; font: 500 15px/22px var(--font-thcs); }
+  .start { display: flex; flex-direction: column; gap: var(--space-4); }
+  .start .big { font: 700 48px/52px var(--font-thcs); }
+  .fld { display: flex; flex-direction: column; gap: 6px; }
+  .next7 { display: flex; gap: 6px; align-items: flex-end; height: 64px; }
+  .next7 span { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .next7 i { width: 100%; max-width: 22px; background: var(--surface-sunk); border-radius: 4px 4px 0 0; }
+  .next7 span:first-child i { background: var(--xp); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var BX = [['Hộp 1', 'mỗi ngày', 12, 40], ['Hộp 2', '2 ngày/lần', 8, 35], ['Hộp 3', '4 ngày/lần', 5, 60], ['Hộp 4', '1 tuần/lần', 3, 120], ['Hộp 5', '2 tuần/lần', 1, 210]];
+  var S = { mode: 'both', len: 'all' };
+  function boxes(zero) {
+    var max = 210;
+    return '<div class="boxes" role="list">' + BX.map(function (b) { var due = zero ? 0 : b[2]; return '<div class="bx' + (due ? '' : ' zero') + '" role="listitem" aria-label="' + b[0] + ', ôn ' + b[1] + ': ' + due + ' thẻ đến hạn trên ' + b[3] + ' thẻ"><div class="pile"><div class="tot" style="height:' + (56 + b[3] / max * 104) + 'px"><div class="due" style="height:' + (due / b[3] * 100) + '%"></div></div></div><span class="n">' + due + '</span><span class="lbl"><b class="thcs-label">' + b[0] + '</b><span class="thcs-caption b-muted">' + b[1] + ' · ' + b[3] + ' thẻ</span></span></div>'; }).join('') + '</div>';
+  }
+  function main(zero) {
+    return '<div class="rv"><section class="t-card"><div class="t-card__h"><div><h2 class="thcs-h2">Hộp ghi nhớ</h2><p class="thcs-body-s b-muted">Trả lời đúng: thẻ lên hộp sau và lâu hơn mới ôn lại. Chưa đúng: thẻ về Hộp 1 — không mất XP.</p></div><span class="t-pill t-pill--xp">' + B.icon('cards', 14) + (zero ? '0' : '29') + ' đến hạn</span></div>' + boxes(zero) +
+      '<div class="types"><div class="ty"><div class="h"><b class="thcs-label">' + B.icon('notebook', 16) + ' Từ vựng</b><span class="n">' + (zero ? 0 : 21) + '</span></div><div class="ex">' + (zero ? '<span class="b-muted">Không có</span>' : '<span>commute</span><span>pedestrian</span><span>congestion</span><span>landmark</span><span>+17</span>') + '</div></div>' +
+      '<div class="ty"><div class="h"><b class="thcs-label">' + B.icon('grammar', 16) + ' Ngữ pháp</b><span class="n">' + (zero ? 0 : 8) + '</span></div><div class="ex">' + (zero ? '<span class="b-muted">Không có</span>' : '<span>since / for</span><span>already / yet</span><span>câu bị động</span><span>+5</span>') + '</div></div></div></section>' +
+      '<aside class="t-card start">' + (zero ? T.state({ kind: 'empty', expr: 'vui', title: 'Hôm nay đã ôn xong!', text: 'Ngày mai có 14 thẻ đến hạn. Học thêm bài mới để có thẻ ôn nhé.', action: T.btn({ label: 'Học bài mới', variant: 'secondary' }) }) :
+      '<div><span class="thcs-label b-muted">Buổi ôn hôm nay</span><div class="big">29 <span class="thcs-body b-muted">thẻ · ~12 phút</span></div></div>' +
+      '<div class="fld"><span class="thcs-label">Ôn gì</span><div class="t-seg" role="group">' + [['both', 'Cả hai'], ['vocab', 'Từ vựng'], ['grammar', 'Ngữ pháp']].map(function (x) { return '<button type="button" aria-pressed="' + (S.mode === x[0]) + '" data-mode="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div>' +
+      '<div class="fld"><span class="thcs-label">Số thẻ</span><div class="t-seg" role="group">' + [['10', '10 thẻ'], ['20', '20 thẻ'], ['all', 'Tất cả']].map(function (x) { return '<button type="button" aria-pressed="' + (S.len === x[0]) + '" data-len="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></div>' +
+      T.btn({ label: 'Bắt đầu ôn', size: 'l', block: true, key: 'Enter', icon: 'next', attrs: 'data-go' }) +
+      '<div><span class="thcs-label b-muted">7 ngày tới</span><div class="next7" aria-label="Số thẻ đến hạn 7 ngày tới">' + [29, 14, 9, 17, 6, 11, 4].map(function (v, i) { return '<span title="' + v + ' thẻ"><i style="height:' + v * 1.6 + 'px"></i><span class="thcs-caption b-muted">' + ['Nay', 'T7', 'CN', 'T2', 'T3', 'T4', 'T5'][i] + '</span></span>'; }).join('') + '</div></div>' + T.tip('Ôn đều mỗi ngày giúp từ “đóng đinh” vào trí nhớ dài hạn.', 'chao')) + '</aside></div>';
+  }
+  function page(m, o) { return T.shell(Object.assign({ active: 'review', title: 'Ôn tập hôm nay', crumb: 'Lặp lại ngắt quãng · 5 hộp ghi nhớ', main: m }, o || {})); }
+  T.screen({
+    notes: { normal: 'Mỗi cột là một hộp ghi nhớ: phần màu XP là số thẻ đến hạn trên tổng số thẻ trong hộp. Enter = Bắt đầu ôn.', loading: 'Khung xương 5 hộp.', empty: 'Không có thẻ đến hạn hôm nay.', error: 'Không tải được thẻ ôn.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="rv"><section class="t-card">' + B.sk('40%', '24px') + '<div style="height:14px"></div><div class="boxes">' + [1, 2, 3, 4, 5].map(function () { return B.sk('100%', '200px'); }).join('') + '</div><div class="types">' + B.sk('100%', '110px') + B.sk('100%', '110px') + '</div></section><aside class="t-card start">' + B.sk('70%', '50px') + B.sk('100%', '42px') + B.sk('100%', '42px') + B.sk('100%', '52px') + '</aside></div>', { xp: '···' }); },
+      empty: function () { return page(main(true), { due: false }); },
+      error: function () { return page('<section class="t-card">' + T.state({ kind: 'error', title: 'Chưa tải được thẻ ôn', text: 'Kết quả ôn trước đó vẫn được lưu. Thử lại nhé.' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      scr.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { S.mode = b.dataset.mode; ctx.setState('normal'); }); });
+      scr.querySelectorAll('[data-len]').forEach(function (b) { b.addEventListener('click', function () { S.len = b.dataset.len; ctx.setState('normal'); }); });
+      var g = scr.querySelector('[data-go]'); g.addEventListener('click', function () { ctx.burst(g, null, 6, 'bolt'); }); ctx.onKey(function (e) { if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'A') { g.focus(); g.click(); } });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

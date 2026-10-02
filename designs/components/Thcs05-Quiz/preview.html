@@ -1,0 +1,86 @@
+<!-- @dsCard group="Màn THCS · 4–9 Bài học" height=720 subtitle="5. Trắc nghiệm A/B/C/D: phím 1–4 hoặc A–D chọn, Enter kiểm tra, H gợi ý; sau khi trả lời hiện giải thích (thử chọn sai)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Trắc nghiệm — preview</title>
+<style>
+  .qz { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); max-width: 900px; margin: 0 auto; width: 100%; }
+  .qcard { display: flex; flex-direction: column; gap: var(--space-4); position: relative; }
+  .qcard .tag { display: flex; gap: 8px; align-items: center; }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .exp { display: grid; grid-template-columns: 28px 1fr; gap: var(--space-3); border-radius: var(--thcs-radius-md); padding: var(--space-3) var(--space-4); }
+  .exp.ok { background: var(--success-soft); } .exp.no { background: var(--retry-soft); }
+  .exp.ok .ic { color: var(--success-shade); } .exp.no .ic { color: var(--retry-shade); }
+  .exp .en { font-size: 20px; }
+  .hint { position: absolute; right: var(--space-5); top: var(--space-5); }
+  .hint .t-tipbox { max-width: 340px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var QS = [
+    { q: 'My family ___ in this house for ten years.', o: ['live', 'lived', 'has lived', 'is living'], a: 2, tip: '“for ten years” → việc kéo dài từ quá khứ đến nay.',
+      why: ['“live” là hiện tại đơn: chỉ thói quen, không nói được “đã … được mười năm”.', '“lived” là quá khứ đơn: việc đã kết thúc. Nhưng gia đình vẫn đang sống ở đây.', '“for ten years” + việc vẫn còn tiếp diễn → hiện tại hoàn thành. Chủ ngữ “My family” số ít → <b>has lived</b>.', '“is living” là hiện tại tiếp diễn: chỉ việc đang diễn ra lúc nói, không đi với “for ten years”.'] },
+    { q: '___ you ever ___ to Singapore?', o: ['Did / go', 'Have / been', 'Do / go', 'Has / been'], a: 1, tip: '“ever” hỏi về trải nghiệm từ trước đến nay.',
+      why: ['Quá khứ đơn cần một thời điểm cụ thể; “ever” hỏi trải nghiệm → hiện tại hoàn thành.', 'Hỏi trải nghiệm với “ever” → <b>Have you ever been to …?</b> (“been to” = đã từng đến).', '“Do you go” hỏi thói quen, không hợp với “ever”.', 'Chủ ngữ “you” đi với “have”, không đi với “has”.'] },
+    { q: 'She ___ her homework yet.', o: ['hasn’t finished', 'didn’t finish', 'doesn’t finish', 'isn’t finishing'], a: 0, tip: '“yet” đứng cuối câu phủ định của thì nào?',
+      why: ['“not … yet” (chưa … ) dùng với hiện tại hoàn thành → <b>hasn’t finished</b>.', 'Quá khứ đơn không đi với “yet”.', 'Hiện tại đơn chỉ thói quen, không hợp với “yet”.', 'Hiện tại tiếp diễn không đi với “yet” ở câu này.'] }];
+  var S = { i: 0, n: 4, sel: -1, res: null, hint: false, tries: 0, xp: 40 };
+  function head() { return T.lessonHead({ crumb: 'Luyện tập · Thì hiện tại hoàn thành', title: 'Chọn đáp án đúng', n: S.n, m: 10, xp: S.xp }); }
+  function foot(off) { return T.lessonFoot(T.btn({ label: 'Gợi ý', variant: 'secondary', icon: 'bulb', key: 'H', disabled: off || S.hint || S.res === 'ok', attrs: 'data-hint' }) + T.btn({ label: 'Bỏ qua', variant: 'ghost', disabled: off }), T.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter', disabled: off || S.sel < 0 || !!S.res, attrs: 'data-check' })); }
+  function body() {
+    var q = QS[S.i % QS.length], dimI = S.hint ? [0, 1, 2, 3].filter(function (k) { return k !== q.a; })[0] : -1;
+    var opts = q.o.map(function (o, k) {
+      var st = '';
+      if (S.res && k === S.sel) st = S.res === 'ok' ? 'is-correct' : 'is-retry'; else if (k === S.sel) st = 'is-selected'; else if (k === dimI) st = 'is-dim';
+      var h = T.opt('ABCD'[k], k, o, st);
+      if (st === 'is-correct') h = h.replace('<span class="t-opt__ic" aria-hidden="true"></span>', '<span class="t-opt__ic" aria-hidden="true">' + B.icon('check', 24) + '</span>');
+      if (st === 'is-retry') h = h.replace('<span class="t-opt__ic" aria-hidden="true"></span>', '<span class="t-opt__ic" aria-hidden="true">' + B.icon('replay', 22) + '</span>');
+      if (st === 'is-dim' || S.res === 'ok') h = h.replace('<button type="button"', '<button type="button" disabled');
+      return h;
+    }).join('');
+    var exp = S.res ? '<div class="exp ' + (S.res === 'ok' ? 'ok' : 'no') + '" role="status"><span class="ic">' + B.icon(S.res === 'ok' ? 'check' : 'info', 24) + '</span><div><b class="thcs-label">' + (S.res === 'ok' ? 'Giải thích' : 'Vì sao chưa đúng') + '</b><p class="thcs-body">' + q.why[S.sel] + '</p></div></div>' : '';
+    return '<div class="qz"><section class="t-card qcard" aria-labelledby="qq"><div class="tag"><span class="t-pill t-pill--brand">Câu ' + S.n + '</span><span class="thcs-body-s b-muted">Chọn đáp án đúng để hoàn thành câu.</span></div>' +
+      '<h1 class="thcs-en-l" id="qq">' + q.q.replace('___', '<span style="display:inline-block;min-width:90px;border-bottom:2px solid var(--ink-soft)">&nbsp;</span>') + '</h1>' +
+      (S.hint && !S.res ? '<div class="hint">' + T.tip('Gợi ý: ' + q.tip, 'suynghi') + '</div>' : '') +
+      '<div class="opts" role="radiogroup" aria-labelledby="qq">' + opts + '</div>' + exp + '</section></div>';
+  }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw" style="justify-content:center">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    notes: { normal: '1–4 hoặc A–D chọn · Enter kiểm tra / tiếp tục · H gợi ý (loại 1 đáp án) · Esc thoát. Sai: giải thích ngay vì sao, rồi Làm lại — không trừ XP.', loading: 'Đang tải câu hỏi.', empty: 'Bộ câu hỏi rỗng.', error: 'Không tải được câu hỏi.' },
+    states: {
+      normal: function () { return wrap(body()); },
+      loading: function () { return wrap('<div class="qz"><section class="t-card qcard">' + B.sk('180px', '24px') + B.sk('80%', '34px') + '<div class="opts">' + B.sk('100%', '60px') + B.sk('100%', '60px') + B.sk('100%', '60px') + B.sk('100%', '60px') + '</div></section></div>', true); },
+      empty: function () { return wrap(T.state({ kind: 'empty', title: 'Chưa có câu hỏi luyện tập', text: 'Phần này đang được bổ sung. Bạn quay lại bài giảng nhé.', action: T.btn({ label: 'Về bài giảng', variant: 'secondary' }) }), true); },
+      error: function () { return wrap(T.state({ kind: 'error', title: 'Chưa tải được câu hỏi', text: 'Kết quả các câu trước vẫn được lưu. Thử lại nhé.' }), true); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        var q = QS[S.i % QS.length];
+        function pick(k) { if (S.res === 'ok') return; var b = scr.querySelector('.t-opt[data-i="' + k + '"]'); if (!b || b.disabled) return; S.sel = k; S.res = null; ctx.setState('normal'); ctx.scr.querySelector('.t-opt[data-i="' + k + '"]').focus({ preventScroll: true }); }
+        function check() {
+          if (S.sel < 0 || S.res) return;
+          if (S.sel === q.a) { S.res = 'ok'; S.xp += 10; ctx.setState('normal'); ctx.burst(ctx.scr.querySelector('.t-opt.is-correct'), ctx.scr.querySelector('.t-chip--xp'), 8, 'bolt');
+            T.feedback(ctx.scr, { type: 'ok', title: 'Chính xác! +10 XP', detail: 'Đáp án <b>' + 'ABCD'[q.a] + '. ' + q.o[q.a] + '</b>. Đọc giải thích bên trên rồi sang câu tiếp nhé.', onAction: function () { S.i++; S.n = S.n >= 10 ? 1 : S.n + 1; S.sel = -1; S.res = null; S.hint = false; S.tries = 0; ctx.setState('normal'); } });
+          } else { S.res = 'no'; S.tries++; ctx.setState('normal');
+            T.feedback(ctx.scr, { type: 'retry', title: 'Chưa đúng — thử lại nhé', detail: 'Đọc lý do ở khung phía trên, rồi chọn lại nhé. Không bị trừ XP.', action: 'Làm lại', onAction: function () { S.sel = -1; S.res = null; if (S.tries >= 2) S.hint = true; ctx.setState('normal'); } }); }
+        }
+        scr.querySelectorAll('.t-opt').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+        scr.querySelector('[data-check]').addEventListener('click', check);
+        scr.querySelector('[data-hint]').addEventListener('click', function () { S.hint = true; ctx.setState('normal'); });
+        ctx.onKey(function (e) {
+          var k = e.key.toLowerCase();
+          if (/^[1-4]$/.test(k)) { e.preventDefault(); pick(+k - 1); }
+          else if (/^[abcd]$/.test(k)) { e.preventDefault(); pick('abcd'.indexOf(k)); }
+          else if (k === 'h' && !S.hint && S.res !== 'ok') { e.preventDefault(); S.hint = true; ctx.setState('normal'); }
+          else if (e.key === 'Enter' && document.activeElement.matches && !document.activeElement.matches('[data-hint],[data-exit],.t-iconbtn')) { e.preventDefault(); check(); }
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

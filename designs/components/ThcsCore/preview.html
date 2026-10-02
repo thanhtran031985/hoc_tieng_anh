@@ -1,0 +1,39 @@
+<!-- @dsCard group="THCS · Thành phần" height=900 subtitle="Lõi chung dùng trong THCS: dải phản hồi (có giải thích vì sao sai), nhãn phím, khung xương, trống, lỗi có Thử lại" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Lõi chung trong THCS — preview</title>
+<style>
+  body { margin: 0; }
+  .pane { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .pane > .box:first-child { grid-column: 1 / -1; height: 190px; }
+  .box { position: relative; height: 270px; border-radius: var(--thcs-radius-lg); overflow: hidden; background: var(--bg); box-shadow: var(--thcs-shadow-1); display: flex; flex-direction: column; container-type: size; }
+  .box .scr { position: relative; flex: 1; background: var(--bg); }
+  .box .b-fb { position: absolute; }
+  .box .b-fb__in { padding: 14px 16px; flex-wrap: wrap; gap: 10px; min-height: 0; }
+  .box .b-fb__mascot { display: none; }
+  .box .b-fb__act .t-btn { min-height: 44px; }
+  .sk { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .keys { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px; align-content: flex-start; }
+  .t-state .t-dragon { width: 72px; height: auto; } .t-state { padding: 12px; }
+  .t-state .thcs-h2 { font-size: 18px; line-height: 24px; } .t-state .thcs-body { font-size: 14px; line-height: 20px; }
+</style></head>
+<body>
+<div class="thcs" data-theme="thcs" id="a"></div>
+<div class="thcs" data-theme="thcs-toi" id="b"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T; B.suite('thcs');
+  function pane(host, t) {
+    host.innerHTML = '<div class="pane"><div class="box"><div class="scr thcs" data-f></div></div>' +
+      '<div class="box"><div class="sk">' + B.sk('60%', '18px') + B.sk('100%', '52px') + B.sk('100%', '52px') + B.sk('100%', '52px') + '<span class="thcs-caption b-muted">Khung xương · ' + t + '</span></div></div>' +
+      '<div class="box">' + T.state({ kind: 'empty', title: 'Chưa có thẻ đến hạn', text: 'Hôm nay bạn đã ôn xong.', action: T.btn({ label: 'Học từ mới', variant: 'secondary' }) }) + '</div>' +
+      '<div class="box">' + T.state({ kind: 'error', title: 'Chưa tải được', text: 'Mạng chập chờn, không phải lỗi của bạn.' }) + '</div></div>';
+    var f = host.querySelector('[data-f]');
+    T.feedback(f, { type: 'retry', title: 'Chưa đúng — thử lại nhé', detail: '“for ten years” chỉ khoảng thời gian kéo dài đến nay → dùng hiện tại hoàn thành <b>has lived</b>.', action: 'Làm lại' });
+    f.insertAdjacentHTML('afterbegin', '<div class="keys">' + ['1', '2', '3', '4', 'A', 'B', 'C', 'D', 'Enter', 'Space', 'H', 'Esc'].map(function (k) { return B.key(k); }).join('') + '</div>');
+  }
+  pane(document.getElementById('a'), 'sáng'); pane(document.getElementById('b'), 'tối');
+})();
+</script>
+</body>
+</html>

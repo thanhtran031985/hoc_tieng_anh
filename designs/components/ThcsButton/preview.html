@@ -1,0 +1,27 @@
+<!-- @dsCard group="THCS · Thành phần" height=560 subtitle="Nút THCS: 6 kiểu × thường, rê chuột, nhấn, vô hiệu, focus — cao 44px (52px trong bài học)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nút THCS — preview</title>
+<style>
+  body { margin: 0; } .pane { padding: 12px 16px; }
+  table { border-collapse: separate; border-spacing: 14px 10px; }
+  th { text-align: left; }
+  .sizes { display: flex; gap: 14px; align-items: center; padding: 4px 14px 8px; flex-wrap: wrap; }
+</style></head>
+<body>
+<div class="pane thcs" data-theme="thcs" data-level="8"><table id="a"></table><div class="sizes" id="s"></div></div>
+<div class="pane thcs" data-theme="thcs-toi" data-level="8"><table id="b"></table></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T; B.suite('thcs');
+  var V = [['primary', 'Chính', 'Học tiếp'], ['secondary', 'Phụ', 'Gợi ý'], ['ghost', 'Nhẹ', 'Bỏ qua'], ['level', 'Theo cấp', 'Vào London'], ['success', 'Đúng', 'Tiếp tục'], ['retry', 'Thử lại', 'Làm lại']];
+  var S = [['', 'Thường'], ['is-hover', 'Rê chuột'], ['is-active', 'Nhấn'], ['dis', 'Vô hiệu'], ['focus', 'Focus (Tab)']];
+  var h = '<tr><th></th>' + S.map(function (s) { return '<th class="thcs-label b-muted">' + s[1] + '</th>'; }).join('') + '</tr>' + V.map(function (v) {
+    return '<tr><th class="thcs-label b-muted">' + v[1] + '</th>' + S.map(function (s) { return '<td>' + T.btn({ label: v[2], variant: v[0], cls: s[0] === 'dis' || s[0] === 'focus' ? '' : s[0], disabled: s[0] === 'dis', attrs: s[0] === 'focus' ? 'style="outline:3px solid var(--focus);outline-offset:2px"' : '' }) + '</td>'; }).join('') + '</tr>';
+  }).join('');
+  document.getElementById('a').innerHTML = h; document.getElementById('b').innerHTML = h;
+  document.getElementById('s').innerHTML = '<span class="thcs-label b-muted">Cỡ:</span>' + T.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter' }) + '<span class="thcs-caption b-muted">52px · trong bài</span>' + T.btn({ label: 'Học tiếp', icon: 'next' }) + '<span class="thcs-caption b-muted">44px · mặc định</span>' + T.btn({ label: 'Gợi ý', variant: 'secondary', icon: 'bulb', key: 'H' }) + '<span class="thcs-caption b-muted">có icon + phím</span>';
+})();
+</script>
+</body>
+</html>

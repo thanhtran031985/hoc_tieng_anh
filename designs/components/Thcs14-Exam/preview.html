@@ -1,0 +1,93 @@
+<!-- @dsCard group="Màn THCS · 13–17 SGK, thi, thành tích" height=720 subtitle="14. Làm bài thi: đồng hồ đếm ngược (chỉ có ở bài thi), bảng số câu đã làm / chưa làm / đánh dấu xem lại, nút nộp bài" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Làm bài thi — preview</title>
+<style>
+  .ex { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--space-5); height: 100%; min-height: 0; }
+  .qp { display: flex; flex-direction: column; gap: var(--space-4); min-height: 0; }
+  .qp .top { display: flex; align-items: center; gap: var(--space-3); }
+  .qp .opts { display: flex; flex-direction: column; gap: var(--space-3); }
+  .qp .nav { display: flex; gap: var(--space-3); margin-top: auto; }
+  .flagb[aria-pressed="true"] { background: var(--flag); color: var(--on-flag); border-color: var(--flag); }
+  .board { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; }
+  .sec { display: flex; flex-direction: column; gap: 6px; }
+  .cells { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+  .cell { height: 30px; border-radius: var(--thcs-radius-sm); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: 600 13px/1 var(--font-thcs); cursor: pointer; position: relative; padding: 0; }
+  .cell.done { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-shade); }
+  .cell.flag { background: var(--flag); border-color: var(--flag); color: var(--on-flag); }
+  .cell.flag::after { content: ""; position: absolute; top: 2px; right: 2px; width: 0; height: 0; border-top: 6px solid var(--on-flag); border-left: 6px solid transparent; }
+  .cell.cur { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+  .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--line-strong); background: var(--surface); }
+  .timer { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: var(--thcs-radius-md); background: var(--surface-soft); border: 1px solid var(--line); font: 700 22px/1 var(--font-thcs); font-variant-numeric: tabular-nums; }
+  .timer.warn { background: var(--retry-soft); border-color: var(--retry-shade); color: var(--retry-shade); }
+  .timer small { font: 600 12px/14px var(--font-thcs); }
+  .t-lhead__p { justify-content: flex-end; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var SECS = [['I. Ngữ âm', 1, 4], ['II. Từ vựng – Ngữ pháp', 5, 20], ['III. Đọc hiểu', 21, 32], ['IV. Viết', 33, 40]];
+  var POOL = [
+    { q: 'If we ___ more trees, the air in our city will be cleaner.', o: ['plant', 'planted', 'will plant', 'are planting'], type: 'Từ vựng – Ngữ pháp' },
+    { q: 'My brother is very good ___ fixing bikes.', o: ['in', 'at', 'on', 'with'], type: 'Từ vựng – Ngữ pháp' },
+    { q: 'Many ethnic minority people in the mountains live in ___ houses.', o: ['stilt', 'apartment', 'terraced', 'floating'], type: 'Từ vựng – Ngữ pháp' },
+    { q: 'We ___ in this city since 2019.', o: ['live', 'lived', 'have lived', 'are living'], type: 'Từ vựng – Ngữ pháp' }];
+  var S = { cur: 12, ans: {}, flag: { 9: 1, 17: 1 }, left: 32 * 60 + 15, warn: false };
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25].forEach(function (n) { S.ans[n] = n % 4; });
+  function fmt(s) { var m = Math.floor(s / 60), x = s % 60; return (m < 10 ? '0' : '') + m + ':' + (x < 10 ? '0' : '') + x; }
+  function timer() { var w = S.left < 300; return '<div class="timer' + (w ? ' warn' : '') + '" role="timer" aria-live="off" aria-label="Thời gian còn lại ' + fmt(S.left) + '">' + B.icon('clock', 22) + '<span data-tm>' + fmt(S.left) + '</span>' + (w ? '<small>còn dưới 5 phút</small>' : '') + '</div>'; }
+  function head() { return T.lessonHead({ crumb: 'Luyện thi · Đề thi thử', title: 'Kiểm tra giữa kỳ I · Tiếng Anh 8', timer: '<div class="t-lhead__p">' + timer() + '</div>', xp: 0 }).replace(/<span class="t-chip t-chip--xp"[\s\S]*?<\/span><\/span>/, ''); }
+  function counts() { var a = Object.keys(S.ans).length, f = Object.keys(S.flag).length; return { a: a, u: 40 - a, f: f }; }
+  function foot(off) { var c = counts(); return T.lessonFoot('<span class="thcs-body-s b-muted">Đã làm <b>' + c.a + '</b> · Chưa làm <b>' + c.u + '</b> · Đánh dấu <b>' + c.f + '</b></span>', T.btn({ label: 'Nộp bài', size: 'l', icon: 'check', disabled: off, attrs: 'data-submit' })); }
+  function sectionOf(n) { return SECS.filter(function (s) { return n >= s[1] && n <= s[2]; })[0]; }
+  function qPanel() {
+    var q = POOL[S.cur % POOL.length], a = S.ans[S.cur];
+    return '<section class="t-card qp" aria-labelledby="qh"><div class="top"><span class="t-pill t-pill--brand">Câu ' + S.cur + '/40</span><span class="thcs-body-s b-muted">' + sectionOf(S.cur)[0] + ' · Chọn đáp án đúng</span></div>' +
+      '<h1 class="thcs-en-l" id="qh">' + q.q.replace('___', '<span style="display:inline-block;min-width:80px;border-bottom:2px solid var(--ink-soft)">&nbsp;</span>') + '</h1>' +
+      '<div class="opts" role="radiogroup" aria-labelledby="qh">' + q.o.map(function (o, k) { return T.opt('ABCD'[k], k, o, a === k ? 'is-selected' : ''); }).join('') + '</div>' +
+      '<p class="thcs-caption b-muted">Bài thi không hiện đáp án ngay — giải thích có ở trang kết quả sau khi nộp.</p>' +
+      '<div class="nav">' + T.btn({ label: 'Câu trước', variant: 'secondary', icon: 'back', attrs: 'data-prev', disabled: S.cur === 1 }) + T.btn({ label: S.flag[S.cur] ? 'Bỏ đánh dấu' : 'Đánh dấu xem lại', variant: 'secondary', icon: 'flag', cls: 'flagb', attrs: 'data-flag aria-pressed="' + !!S.flag[S.cur] + '"' }) + '<span style="flex:1"></span>' + T.btn({ label: 'Câu sau', icon: 'next', attrs: 'data-nextq', disabled: S.cur === 40 }) + '</div></section>';
+  }
+  function board() {
+    var c = counts();
+    return '<aside class="t-card board" aria-label="Bảng số câu"><div style="display:flex;justify-content:space-between;align-items:center"><b class="thcs-h3">Bảng câu hỏi</b><span class="thcs-caption b-muted">' + c.a + '/40</span></div>' +
+      SECS.map(function (s) { var h = ''; for (var n = s[1]; n <= s[2]; n++) { var cls = S.flag[n] ? 'flag' : S.ans[n] != null ? 'done' : ''; h += '<button type="button" class="cell ' + cls + (n === S.cur ? ' cur' : '') + '" data-n="' + n + '" aria-label="Câu ' + n + (S.flag[n] ? ', đánh dấu xem lại' : S.ans[n] != null ? ', đã làm' : ', chưa làm') + '"' + (n === S.cur ? ' aria-current="true"' : '') + '>' + n + '</button>'; } return '<div class="sec"><span class="thcs-caption b-muted">' + s[0] + '</span><div class="cells">' + h + '</div></div>'; }).join('') +
+      '<div class="legend thcs-caption"><span><i style="background:var(--brand-soft);border-color:var(--brand)"></i>Đã làm (' + c.a + ')</span><span><i></i>Chưa làm (' + c.u + ')</span><span><i style="background:var(--flag);border-color:var(--flag)"></i>Xem lại (' + c.f + ')</span><span><i style="box-shadow:0 0 0 2px var(--ink)"></i>Đang xem</span></div></aside>';
+  }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    labels: { empty: 'Trống (đề chưa mở)' },
+    notes: { normal: 'Đồng hồ chạy thật (bấm “Còn 4 phút” để xem trạng thái sắp hết giờ — cam nhẹ, không đỏ). 1–4/A–D chọn, ← → đổi câu, bấm số trên bảng để nhảy câu. Nộp bài khi còn câu chưa làm sẽ hỏi lại.', loading: 'Đang tải đề — đồng hồ chưa chạy.', empty: 'Đề chưa đến giờ mở.', error: 'Mất kết nối khi đang thi: bài làm được giữ trên máy, đồng hồ tạm dừng.' },
+    order: ['normal', 'loading', 'empty', 'error'],
+    states: {
+      normal: function () { return wrap('<div class="ex">' + qPanel() + board() + '</div>'); },
+      loading: function () { return wrap('<div class="ex"><section class="t-card qp">' + B.sk('180px', '26px') + B.sk('80%', '34px') + B.sk('100%', '60px') + B.sk('100%', '60px') + B.sk('100%', '60px') + B.sk('100%', '60px') + '</section><aside class="t-card board">' + B.sk('100%', '320px') + '</aside></div>', true); },
+      empty: function () { return wrap(T.state({ kind: 'empty', title: 'Đề thi chưa mở', text: 'Đề “Kiểm tra giữa kỳ I” mở lúc 19:00 hôm nay. Bạn luyện đề thử trước nhé.', action: T.btn({ label: 'Làm đề thử', variant: 'secondary' }) }), true); },
+      error: function () { return wrap('<div class="ex"><section class="t-card qp">' + T.state({ kind: 'error', title: 'Mất kết nối', text: '23 câu bạn đã làm vẫn được giữ trên máy. Đồng hồ tạm dừng cho đến khi kết nối lại.', action: T.btn({ label: 'Kết nối lại', icon: 'replay', attrs: 'data-retry' }) }) + '</section>' + board() + '</div>', true); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var tm = scr.querySelector('[data-tm]');
+      ctx.every(function () { S.left = Math.max(0, S.left - 1); if (S.left < 300 && !S.warn) { S.warn = true; ctx.setState('normal'); return; } tm.textContent = fmt(S.left); }, 1000);
+      function go(n) { if (n < 1 || n > 40) return; S.cur = n; ctx.setState('normal'); }
+      function pick(k) { S.ans[S.cur] = k; ctx.setState('normal'); ctx.scr.querySelector('.t-opt[data-i="' + k + '"]').focus({ preventScroll: true }); }
+      scr.querySelectorAll('.qp .t-opt').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+      scr.querySelectorAll('[data-n]').forEach(function (b) { b.addEventListener('click', function () { go(+b.dataset.n); ctx.scr.querySelector('[data-n="' + S.cur + '"]').focus(); }); });
+      scr.querySelector('[data-prev]').addEventListener('click', function () { go(S.cur - 1); });
+      scr.querySelector('[data-nextq]').addEventListener('click', function () { go(S.cur + 1); });
+      scr.querySelector('[data-flag]').addEventListener('click', function () { if (S.flag[S.cur]) delete S.flag[S.cur]; else S.flag[S.cur] = 1; ctx.setState('normal'); ctx.scr.querySelector('[data-flag]').focus(); });
+      scr.querySelector('[data-submit]').addEventListener('click', function () { var c = counts(); T.dialog(scr, { expr: 'suynghi', title: 'Nộp bài bây giờ?', body: 'Bạn còn <b>' + c.u + ' câu chưa làm</b> và <b>' + c.f + ' câu đánh dấu xem lại</b>. Thời gian còn ' + fmt(S.left) + '.', actions: [{ label: 'Làm tiếp', variant: 'primary', key: 'Enter' }, { label: 'Nộp bài', variant: 'secondary' }] }); });
+      ctx.onKey(function (e) { var k = e.key.toLowerCase(); if (/^[1-4]$/.test(k)) { e.preventDefault(); pick(+k - 1); } else if (/^[abcd]$/.test(k)) { e.preventDefault(); pick('abcd'.indexOf(k)); } else if (e.key === 'ArrowRight' && document.activeElement.className.indexOf('cell') < 0) { go(S.cur + 1); } else if (e.key === 'ArrowLeft' && document.activeElement.className.indexOf('cell') < 0) { go(S.cur - 1); } });
+    } }
+  });
+  var bar = document.querySelector('.dsf-bar');
+  bar.insertAdjacentHTML('beforeend', '<div class="dsf-seg"><button type="button" data-t4>Còn 4 phút</button></div>');
+  bar.querySelector('[data-t4]').addEventListener('click', function () { S.left = 4 * 60 + 5; S.warn = false; document.querySelector('[data-state="normal"]').click(); });
+})();
+</script>
+</body>
+</html>
