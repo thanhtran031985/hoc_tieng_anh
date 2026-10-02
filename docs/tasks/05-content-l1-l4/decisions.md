@@ -30,3 +30,5 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 02/10/2026 | Cấp 4 vẽ thêm một số động từ rõ nghĩa (buy, cut, drive, ride, see, hear, say, send…) để chủ đề "Chuyện đã qua" có câu nghe-chọn-hình và trận trùm; các động từ khó vẽ (do, get, have, come, leave, make, take, know…), tính từ, trạng từ không có hình | Không có hình thì chủ đề chỉ gồm thẻ từ, không có trận trùm |
 | 02/10/2026 | Cấp 4: 200/300 từ có hình. Không có hình: danh sách đầy đủ bằng `node scripts/check-pictures.mjs 4 --list` | Như cấp 3 |
 | 02/10/2026 | Thêm `cap-nhat-*/**` vào bỏ qua của ESLint | Thư mục tải về `cap-nhat-thiet-ke/` có mã không thuộc dự án, làm `npm run lint` lỗi |
+| 02/10/2026 | Cấp 2: 170/200 từ có hình. Không vẽ: neck, shoulder, back, cheek, chin, elbow (khó vẽ rõ riêng một bộ phận); page, letter, word, number, lesson, homework (không vẽ chữ trong hình); food; big, small, tall, short, new, old, good, bad, fast, slow; here, there, where, what, who, how many, which | Hình chỉ cho từ cụ thể, không có chữ trong hình |
+| 02/10/2026 | Động từ ở cấp 2 vẽ bằng dáng người (đầu, thân, tay chân) hoặc đồ vật đặc trưng (kéo, đũa…) | Cùng phong cách, dễ nhận ra |

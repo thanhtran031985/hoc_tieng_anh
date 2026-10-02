@@ -12,7 +12,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 5 | Hình minh họa cấp 3 | ✅ | 02/10/2026 |
 | 6 | Bài học cấp 3 và seed | ✅ | 02/10/2026 |
 | 7 | Từ vựng, hình, bài học cấp 4 | ✅ | 02/10/2026 |
-| 8 | Từ vựng, hình, bài học cấp 2 | ⬜ | |
+| 8 | Từ vựng, hình, bài học cấp 2 | ✅ | 02/10/2026 |
 | 9 | Từ vựng, hình, bài học cấp 1 | ⬜ | |
 
 ## Nhật ký
@@ -60,6 +60,11 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Ngoài phạm vi nhưng cần để lint sạch: thêm `cap-nhat-*/**` vào bỏ qua của `eslint.config.mjs` (thư mục `cap-nhat-thiet-ke/` bạn tải về chứa tệp `.js`/`.d.ts` làm lint lỗi).
 - Việc thủ công: xem lướt hình và đọc vài chủ đề.
 
+### Bước 8 — Từ vựng, hình, bài học cấp 2 (02/10/2026)
+- Đã làm: 200 từ cấp 2 trong `prisma/seed/content/level-02/` (8 chủ đề; câu ví dụ dùng have/can/there is, chỉ từ cấp 1–2); 170 hình SVG mới (`scripts/pictures/level-02*.mjs`: đồ dùng học tập, đồ ăn, quần áo, ngôi nhà, vị trí, bộ phận cơ thể, hành động bằng dáng người, thú rừng); seed cấp 2.
+- Kiểm tra: `check-content.mjs` đạt (750 từ cấp 2–4); `check-pictures.mjs` đạt (cấp 2: 170/200 từ có hình; không từ nào cụ thể bị bỏ trừ neck, shoulder, back, cheek, chin, elbow vì khó vẽ rõ); `npx prisma db seed` ra 24 chủ đề `published`, 750 từ, 125 bài; tsc, lint sạch.
+- Việc thủ công: xem lướt hình.
+
 ## Bước tiếp theo
 
-Bước 8 — Từ vựng, hình, bài học cấp 2 (≈200 từ).
+Bước 9 — Từ vựng, hình, bài học cấp 1 (≈150 từ), rồi kiểm tra cuối task (database trống, tsc, lint, build) và đóng task. Theo yêu cầu của bạn: xong task 05 thì DỪNG, không làm task 06.

@@ -11,6 +11,7 @@ Bé vào trang chủ thấy nhiệm vụ hôm nay, mở tổng quan 10 cấp và
 
 ## Thiết kế
 `designs/components/Screen04-Home`, `Screen05-Levels`, `Screen06-IslandMap`, `StatChip`, `LevelColors`.
+Nút chưa làm (Bộ sưu tập, Phòng của tớ…) mở `Screen22-ComingSoon`. Biểu cảm thêm của rồng Bông (`tiec`, `xaydung`) ở `MascotMore`.
 
 ## Quyết định kiến trúc
 - Quy tắc mở khóa (PRD Phần F) viết thành hàm thuần `src/lib/rules/unlock.ts`.

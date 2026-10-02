@@ -1,0 +1,22 @@
+[
+  { "word": "zebra", "ipa": "/ˈzebrə/", "part_of_speech": "noun", "meaning_vi": "ngựa vằn", "example_en": "A zebra is black and white.", "example_vi": "Ngựa vằn có màu đen và trắng." },
+  { "word": "hippo", "ipa": "/ˈhɪpəʊ/", "part_of_speech": "noun", "meaning_vi": "hà mã", "example_en": "The hippo is big.", "example_vi": "Con hà mã to." },
+  { "word": "kangaroo", "ipa": "/ˌkæŋɡəˈruː/", "part_of_speech": "noun", "meaning_vi": "chuột túi", "example_en": "A kangaroo can jump.", "example_vi": "Chuột túi biết nhảy." },
+  { "word": "panda", "ipa": "/ˈpændə/", "part_of_speech": "noun", "meaning_vi": "gấu trúc", "example_en": "A panda is black and white.", "example_vi": "Gấu trúc có màu đen và trắng." },
+  { "word": "wolf", "ipa": "/wʊlf/", "part_of_speech": "noun", "meaning_vi": "con sói", "example_en": "The wolf is big and grey.", "example_vi": "Con sói to và có màu xám." },
+  { "word": "fox", "ipa": "/fɒks/", "part_of_speech": "noun", "meaning_vi": "con cáo", "example_en": "A fox is red and small.", "example_vi": "Con cáo có màu đỏ và nhỏ." },
+  { "word": "deer", "ipa": "/dɪə/", "part_of_speech": "noun", "meaning_vi": "con nai", "example_en": "A deer can run fast.", "example_vi": "Con nai chạy nhanh." },
+  { "word": "camel", "ipa": "/ˈkæml/", "part_of_speech": "noun", "meaning_vi": "con lạc đà", "example_en": "The camel is brown.", "example_vi": "Con lạc đà màu nâu." },
+  { "word": "gorilla", "ipa": "/ɡəˈrɪlə/", "part_of_speech": "noun", "meaning_vi": "khỉ đột", "example_en": "A gorilla is big.", "example_vi": "Con khỉ đột to." },
+  { "word": "dolphin", "ipa": "/ˈdɒlfɪn/", "part_of_speech": "noun", "meaning_vi": "cá heo", "example_en": "A dolphin can swim.", "example_vi": "Cá heo biết bơi." },
+  { "word": "whale", "ipa": "/weɪl/", "part_of_speech": "noun", "meaning_vi": "cá voi", "example_en": "A whale is very big.", "example_vi": "Cá voi rất lớn." },
+  { "word": "shark", "ipa": "/ʃɑːk/", "part_of_speech": "noun", "meaning_vi": "cá mập", "example_en": "A shark can swim fast.", "example_vi": "Cá mập bơi nhanh." },
+  { "word": "octopus", "ipa": "/ˈɒktəpəs/", "part_of_speech": "noun", "meaning_vi": "con bạch tuộc", "example_en": "An octopus has eight arms.", "example_vi": "Bạch tuộc có tám cái tay." },
+  { "word": "penguin", "ipa": "/ˈpeŋɡwɪn/", "part_of_speech": "noun", "meaning_vi": "chim cánh cụt", "example_en": "A penguin cannot fly.", "example_vi": "Chim cánh cụt không biết bay." },
+  { "word": "owl", "ipa": "/aʊl/", "part_of_speech": "noun", "meaning_vi": "con cú", "example_en": "An owl has big eyes.", "example_vi": "Con cú có đôi mắt to." },
+  { "word": "eagle", "ipa": "/ˈiːɡl/", "part_of_speech": "noun", "meaning_vi": "chim đại bàng", "example_en": "An eagle can fly.", "example_vi": "Đại bàng biết bay." },
+  { "word": "squirrel", "ipa": "/ˈskwɪrəl/", "part_of_speech": "noun", "meaning_vi": "con sóc", "example_en": "A squirrel can climb.", "example_vi": "Con sóc biết leo trèo." },
+  { "word": "bat", "ipa": "/bæt/", "part_of_speech": "noun", "meaning_vi": "con dơi", "example_en": "A bat can fly.", "example_vi": "Con dơi biết bay." },
+  { "word": "crab", "ipa": "/kræb/", "part_of_speech": "noun", "meaning_vi": "con cua", "example_en": "A crab is red.", "example_vi": "Con cua màu đỏ." },
+  { "word": "seal", "ipa": "/siːl/", "part_of_speech": "noun", "meaning_vi": "hải cẩu", "example_en": "A seal can swim.", "example_vi": "Hải cẩu biết bơi." }
+]
