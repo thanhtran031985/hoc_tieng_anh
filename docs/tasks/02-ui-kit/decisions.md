@@ -46,3 +46,13 @@
 - Hiệu ứng vòng sóng chạy theo trạng thái thật (`data-playing` từ lúc bấm tới `onend`/`onerror`/hết tệp), không còn chạy cố định 2 vòng. Trình duyệt không báo lúc đọc xong thì tắt sau `max(1300 ms, 150 ms × số ký tự)`. Giảm chuyển động: vòng đứng yên (độ mờ 0,6) để vẫn biết nút đang phát.
 - Giọng Mỹ/Anh và tốc độ là props `accent`, `rate`; màn dùng truyền theo cài đặt hồ sơ (task 11 làm cài đặt). Phím Space = nghe lại là việc của màn bài học (`useHotkeys` rồi bấm nút qua `ref`).
 - Token thêm: `--size-speaker-m` 56px. Rời màn thì nút ngừng đọc.
+
+### 02/10/2026 — Card, ChoiceCard, ProgressBar, StatChip, LevelChip, Avatar, Topbar (Bước 3)
+- Thêm hai thành phần phụ mà `Topbar` cần: `LevelChip` ("Cấp N · tên cấp", tên cấp truyền từ database) và `Avatar` (ảnh hồ sơ bé; nét vẽ chép từ `HAIR`/`avatar` của `bundle.js` vào `Avatar/avatar-art.ts`, đã kiểm tra tái tạo khớp từng ký tự với bản gốc cho 4 kiểu tóc × cấp 1, 5, 10; màu da/tóc là màu vẽ; nền và áo theo `--level-N`).
+- `Topbar` nhận `learner` ({ name, level, levelName, hair }), `onBack`, `title`, `stars/coins/streak` (chip nào không có số thì không hiện), `right`. Bỏ số mẫu 128/340/5 của bản gốc. Container query của bản xem trước (`max-width: 1400px`) đổi thành media query.
+- `Card` (`variant` default|soft, `interactive`); `ChoiceCard` là `<button>` với `state` default|selected|correct|retry|dim, `keyHint` (nhãn phím góc trên trái + `aria-keyshortcuts`), dấu ✓ hoặc ↻ tự thêm kèm chữ ẩn "Đúng"/"Chưa đúng, thử lại" cho trình đọc màn hình; `dim` tự `disabled`; `selected` có `aria-pressed`. Kích thước thẻ do màn dùng đặt (bản xem trước đặt 140×150).
+- `ProgressBar` giới hạn `value` trong 0..max, có `role="progressbar"` + `aria-label` (mặc định "Tiến độ"). Vệt sáng, đầu bo tính theo chiều cao thanh (`calc`), không chép px.
+- `StatChip`: `bump` bật hoạt ảnh nảy; số dùng kiểu chữ `stat`; tên đầy đủ ở `title` và chữ ẩn.
+- Giảm chuyển động tắt hoạt ảnh nảy/lắc của thẻ đáp án và chip (bản gốc chỉ rút ngắn chuyển tiếp).
+- Token thêm: `--lift-choice` 4px, `--lip-choice-hover` 10px, `--badge-size` 40px, `--badge-offset` 14px, `--shake` 8px, `--size-chip` 48px, `--avatar-ring` 3px, `--size-progress` 20px, `--size-progress-s` 12px, `--progress-shine` và `--skeleton-shine` (trắng trong suốt).
+- Lớp tiện ích `sr-only` của Tailwind dùng cho chữ ẩn. Trang `/dev/ui`: Topbar demo tách thành thành phần client (`topbar-demo.tsx`) vì trang server không truyền được hàm `onBack`.

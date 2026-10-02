@@ -7,3 +7,10 @@ export { Mascot, type Expr, type MascotColor, type MascotProps } from "./Mascot/
 export { WordPicture, type WordPictureProps } from "./WordPicture/WordPicture";
 export { PICTURE_NAMES, type PictureName } from "./WordPicture/pictures";
 export { SpeakerButton, type SpeakerButtonProps, type SpeakerButtonSize } from "./SpeakerButton/SpeakerButton";
+export { Avatar, type AvatarHair, type AvatarProps } from "./Avatar/Avatar";
+export { Card, type CardProps } from "./Card/Card";
+export { ChoiceCard, type ChoiceCardProps, type ChoiceState } from "./ChoiceCard/ChoiceCard";
+export { LevelChip, type LevelChipProps } from "./LevelChip/LevelChip";
+export { ProgressBar, type ProgressBarProps } from "./ProgressBar/ProgressBar";
+export { StatChip, type StatChipProps, type StatKind } from "./StatChip/StatChip";
+export { Topbar, type TopbarLearner, type TopbarProps } from "./Topbar/Topbar";

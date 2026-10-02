@@ -1,0 +1,52 @@
+.topbar {
+  height: var(--size-topbar);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  box-sizing: border-box;
+  position: relative;
+  z-index: var(--z-sticky);
+}
+.side {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.me {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.name {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.level {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: var(--text-title--font-weight);
+}
+
+/* Màn nhỏ hơn 1440 thì lề hẹp lại (bản xem trước dùng container query, ở đây dùng media query). */
+@media (max-width: 1400px) {
+  .topbar {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}

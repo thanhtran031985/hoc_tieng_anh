@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 | 0 | Button, KeyHint, Icons | ✅ | Trang xem: /dev/ui |
 | 1 | Mascot và WordPicture | ✅ | Trang xem: /dev/ui |
 | 2 | SpeakerButton | ✅ | Trang xem: /dev/ui |
-| 3 | Card, thẻ đáp án, ProgressBar, StatChip, Topbar | ⬜ | |
+| 3 | Card, thẻ đáp án, ProgressBar, StatChip, Topbar | ✅ | Thêm LevelChip, Avatar |
 | 4 | Dialog, FeedbackBar, DataStates, khung xương | ⬜ | |
 
 ## Nhật ký
@@ -42,6 +42,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
   - Không hex/px trong code mới; `tsc`, `lint` không lỗi.
 - Việc cần làm thủ công: mở `/dev/ui`, bấm các nút loa và nghe giọng thật (Chrome/Edge); nghe giọng trên máy học sinh vì danh sách giọng phụ thuộc hệ điều hành.
 
+### Bước 3 — Card, thẻ đáp án, ProgressBar, StatChip, Topbar (02/10/2026)
+- Tạo `src/components/ui/{Card,ChoiceCard,ProgressBar,StatChip,LevelChip,Avatar,Topbar}` (mỗi cái `.tsx` + `.module.css`; `Avatar` có thêm `avatar-art.ts`), mục mới trên `/dev/ui` (thẻ, thẻ đáp án 6 trạng thái, thanh tiến độ, chip thống kê, 3 thanh trên cùng, ảnh hồ sơ), `topbar-demo.tsx`, token mới trong `globals.css` (xem `decisions.md`).
+- Kiểm tra:
+  - Thẻ đáp án đủ trạng thái: thường, rê chuột, đang chọn, đúng (✓ + nảy), chưa đúng (↻ + lắc), mờ; ảnh chụp 1440×900 khớp `Card/preview.html`.
+  - So `getComputedStyle` với bản xem trước: thẻ đáp án 5 trạng thái, thẻ nội dung, 3 chip, thanh tiến độ — màu viền, màu nền, bóng, bo góc, đệm, khoảng cách, cỡ chữ, độ mờ, `transform` đều khớp (chỉ khác kích thước do bố cục của trang xem và hoạt ảnh bật lên, bản xem trước tắt hoạt ảnh).
+  - Nét vẽ avatar tái tạo khớp từng ký tự với `Bong.avatar` (4 kiểu tóc × 3 cấp).
+  - Không hex/px/rgba trong code mới (ngoài nét vẽ và chữ mô tả); `tsc`, `lint` không lỗi.
+- Việc cần làm thủ công: mở `/dev/ui`, rê chuột/nhấn thẻ đáp án, bấm Tab qua thẻ.
+
 ## Bước tiếp theo
 
-Bước 3 — Card, thẻ đáp án, ProgressBar, StatChip, Topbar (kế hoạch ở `plan.md`).
+Bước 4 — Dialog, FeedbackBar, DataStates, khung xương (kế hoạch ở `plan.md`).

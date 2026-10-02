@@ -154,6 +154,17 @@
   --size-key-in-btn: 24px;
   --pad-key: 7px;
   --size-speaker-m: 56px;
+  --lift-choice: 4px;
+  --lip-choice-hover: 10px;
+  --badge-size: 40px;
+  --badge-offset: 14px;
+  --shake: 8px;
+  --size-chip: 48px;
+  --avatar-ring: 3px;
+  --size-progress: 20px;
+  --size-progress-s: 12px;
+  --progress-shine: rgba(255, 255, 255, 0.45);
+  --skeleton-shine: rgba(255, 255, 255, 0.65);
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;

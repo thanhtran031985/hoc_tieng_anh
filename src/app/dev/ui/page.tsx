@@ -1,19 +1,27 @@
 import { notFound } from "next/navigation";
 import {
+  Avatar,
   Button,
+  Card,
+  ChoiceCard,
   ICON_NAMES,
   Icon,
   IconButton,
   KeyHint,
+  LevelChip,
   Mascot,
   PICTURE_NAMES,
+  ProgressBar,
   SpeakerButton,
+  StatChip,
   WordPicture,
   type ButtonVariant,
+  type ChoiceState,
   type Expr,
   type MascotColor,
 } from "@/components/ui";
 import { HotkeysDemo } from "./hotkeys-demo";
+import { TopbarDemo } from "./topbar-demo";
 
 // Trang xem thành phần giao diện (chỉ chạy khi phát triển). Trang chỉ dùng class token, không có mã hex/px.
 
@@ -68,6 +76,15 @@ function silentWavDataUrl(): string {
   buffer.writeUInt32LE(samples * 2, 40);
   return `data:audio/wav;base64,${buffer.toString("base64")}`;
 }
+
+const choices: { title: string; state: ChoiceState; force?: "hover"; word: string }[] = [
+  { title: "Thường", state: "default", word: "cat" },
+  { title: "Rê chuột", state: "default", force: "hover", word: "dog" },
+  { title: "Đang chọn", state: "selected", word: "fish" },
+  { title: "Đúng", state: "correct", word: "bird" },
+  { title: "Chưa đúng", state: "retry", word: "cat" },
+  { title: "Mờ (gợi ý loại)", state: "dim", word: "dog" },
+];
 
 function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: React.ReactNode }) {
   return (
@@ -243,6 +260,90 @@ export default function DevUiPage() {
           <div className="flex flex-col items-center gap-2">
             <SpeakerButton word="duck" size="m" data-playing="true" />
             <span className="font-body text-caption text-ink-soft">Đang phát (ép)</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="sec-card" title="Thẻ" note="Thẻ nội dung (mặt trắng, shadow-card), thẻ phẳng và thẻ bấm được.">
+        <div className="flex flex-wrap items-start gap-6">
+          <Card>
+            <div className="flex items-center gap-3">
+              <WordPicture word="apple" size={64} />
+              <div>
+                <div className="font-body text-label text-ink-soft">Bài tiếp theo</div>
+                <div className="font-display text-title">Fruits</div>
+              </div>
+            </div>
+          </Card>
+          <Card variant="soft">
+            <div className="font-display text-title">Thẻ phẳng</div>
+          </Card>
+          <Card interactive>
+            <div className="font-display text-title">Bấm được</div>
+          </Card>
+          <Card interactive data-force="hover">
+            <div className="font-display text-title">Rê chuột (ép)</div>
+          </Card>
+        </div>
+      </Section>
+
+      <Section
+        id="sec-choice"
+        title="Thẻ đáp án"
+        note="Là nút; đúng và chưa đúng luôn có biểu tượng đi kèm màu. Nhãn phím ở góc trên trái."
+      >
+        <div className="flex flex-wrap items-start gap-6">
+          {choices.map((c, i) => (
+            <div key={c.title} className="flex flex-col items-center gap-2">
+              <ChoiceCard
+                state={c.state}
+                keyHint={String((i % 4) + 1)}
+                data-force={c.force}
+                className="px-8 py-6"
+                aria-label={`Đáp án ${c.word}`}
+              >
+                <WordPicture word={c.word} size={84} />
+              </ChoiceCard>
+              <span className="font-body text-caption text-ink-soft">{c.title}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="sec-progress" title="Thanh tiến độ" note="Màu theo cấp (data-level); kèm số dạng chữ cạnh thanh.">
+        <div className="flex max-w-content flex-col gap-4">
+          <div data-level="3" className="flex items-center gap-4">
+            <ProgressBar value={3} max={10} label="Tiến độ bài học" />
+            <span className="font-body text-body text-ink-soft">3/10</span>
+          </div>
+          <div data-level="7" className="flex items-center gap-4">
+            <ProgressBar value={7} max={10} size="s" label="Tiến độ cấp" />
+            <span className="font-body text-caption text-ink-soft">7/10 · cỡ s</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <ProgressBar value={0} max={10} />
+            <span className="font-body text-body text-ink-soft">0/10 · không màu cấp (brand)</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="sec-stat" title="Chip thống kê và thanh trên cùng" note="Thứ tự Sao · Xu · Chuỗi ngày. Số dùng kiểu chữ stat.">
+        <div className="flex flex-wrap items-center gap-6">
+          <StatChip kind="stars" value={128} label="sao" />
+          <StatChip kind="coins" value={340} label="xu" />
+          <StatChip kind="streak" value={5} label="ngày học liên tiếp" />
+          <StatChip kind="stars" value={129} label="sao" bump />
+          <span className="font-body text-caption text-ink-soft">Chip cuối đang nảy (bump)</span>
+        </div>
+        <div className="mt-6 flex flex-col gap-4">
+          <TopbarDemo />
+          <div className="flex items-center gap-6">
+            <Avatar name="Minh An" level={1} hair="buns" size={96} />
+            <Avatar name="Bảo Ngọc" level={5} hair="bob" size={96} />
+            <Avatar name="Gia Huy" level={10} hair="spiky" size={96} />
+            <Avatar name="Bé" level={3} hair="short" size={96} />
+            <LevelChip level={3} name="Lá xanh" />
+            <LevelChip level={8} name="London" />
           </div>
         </div>
       </Section>

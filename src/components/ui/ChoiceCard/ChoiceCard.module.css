@@ -1,0 +1,103 @@
+.choice {
+  position: relative;
+  border: var(--border-thick) solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 var(--lip-m) 0 0 var(--line);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition:
+    transform var(--duration-base),
+    box-shadow var(--duration-base),
+    border-color var(--duration-base),
+    background-color var(--duration-base),
+    opacity var(--duration-base);
+  padding: var(--space-4);
+  box-sizing: border-box;
+  color: inherit;
+  font: inherit;
+}
+/* data-force chỉ dùng ở trang /dev/ui để chụp trạng thái rê chuột. */
+.choice:hover:not(:disabled),
+.choice[data-force="hover"] {
+  transform: translateY(calc(-1 * var(--lift-choice)));
+  border-color: var(--brand-soft-shade);
+  box-shadow: 0 var(--lip-choice-hover) 0 0 var(--brand-soft-shade);
+}
+.choice:active:not(:disabled) {
+  transform: translateY(var(--lift-choice));
+  box-shadow: 0 calc(2 * var(--lip-flat)) 0 0 var(--line);
+}
+.selected {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  box-shadow: 0 var(--lip-m) 0 0 var(--brand);
+}
+.correct {
+  border-color: var(--success);
+  background: var(--success-soft);
+  box-shadow: 0 var(--lip-m) 0 0 var(--success-shade);
+  animation: pop 0.45s ease;
+}
+.retry {
+  border-color: var(--retry);
+  background: var(--retry-soft);
+  box-shadow: 0 var(--lip-m) 0 0 var(--retry-shade);
+  animation: shake 0.45s ease;
+}
+.dim,
+.choice:disabled.dim {
+  opacity: 0.35;
+  transform: scale(0.96);
+  cursor: default;
+}
+
+.badge {
+  position: absolute;
+  top: calc(-1 * var(--badge-offset));
+  right: calc(-1 * var(--badge-offset));
+  width: var(--badge-size);
+  height: var(--badge-size);
+  border-radius: var(--radius-round);
+  display: grid;
+  place-items: center;
+  color: var(--ink-on-dark);
+}
+.correct .badge {
+  background: var(--success);
+}
+.retry .badge {
+  background: var(--retry);
+  color: var(--ink);
+}
+
+@keyframes pop {
+  40% {
+    transform: scale(1.06);
+  }
+}
+@keyframes shake {
+  20% {
+    transform: translateX(calc(-1 * var(--shake)));
+  }
+  40% {
+    transform: translateX(var(--shake));
+  }
+  60% {
+    transform: translateX(calc(-0.625 * var(--shake)));
+  }
+  80% {
+    transform: translateX(calc(0.5 * var(--shake)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choice {
+    transition-duration: 1ms !important;
+    animation: none !important;
+  }
+}

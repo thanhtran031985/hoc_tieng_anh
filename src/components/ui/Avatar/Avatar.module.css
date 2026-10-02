@@ -1,0 +1,8 @@
+.avatar {
+  display: block;
+  flex: none;
+  border-radius: var(--radius-round);
+  box-shadow:
+    0 0 0 var(--avatar-ring) var(--surface),
+    0 var(--lip-s) 0 var(--avatar-ring) var(--line);
+}
