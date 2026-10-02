@@ -20,3 +20,4 @@ export { FeedbackBar, type FeedbackBarProps } from "./FeedbackBar/FeedbackBar";
 export { Skeleton, type SkeletonProps, type SkeletonRadius } from "./Skeleton/Skeleton";
 export { Bubble, type BubbleProps } from "./Bubble/Bubble";
 export { TextField, type TextFieldProps } from "./TextField/TextField";
+export { ButtonLink, type ButtonLinkProps } from "./Button/ButtonLink";

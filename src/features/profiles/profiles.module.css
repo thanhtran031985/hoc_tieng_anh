@@ -1,0 +1,182 @@
+.screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.top {
+  height: var(--size-topbar);
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  box-sizing: border-box;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: var(--text-stat--font-weight);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12) var(--size-topbar);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-6);
+  margin: min(var(--space-8), 3vh) 0 min(var(--space-10), 5vh);
+}
+.headMascot {
+  width: min(var(--size-mascot-head), 17vh);
+  height: auto;
+}
+.title {
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.grid {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+/* Thẻ hồ sơ của bé: là nút (gửi biểu mẫu chọn hồ sơ). */
+.pf {
+  width: var(--size-profile-card);
+  height: min(var(--size-profile-card-h), 38vh);
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  text-align: center;
+  position: relative;
+  padding: var(--space-6) var(--space-4);
+  box-sizing: border-box;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    transform var(--duration-base),
+    box-shadow var(--duration-base);
+}
+.pf:hover,
+.pf:focus-visible {
+  transform: translateY(calc(-1 * var(--lift-choice)));
+  box-shadow: var(--shadow-raised);
+}
+.avatar {
+  width: min(var(--size-avatar-card), 16vh);
+  height: auto;
+}
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 800;
+  color: var(--ink);
+}
+.grade {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.tag {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: var(--text-key--line-height);
+  font-weight: 800;
+  padding: calc(3 * var(--lip-flat)) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--level-7-soft);
+  color: var(--level-7-ink);
+}
+
+/* Thẻ "Thêm hồ sơ" viền đứt. */
+.add {
+  background: transparent;
+  box-shadow: none;
+  border: var(--border-thick) dashed var(--line-strong);
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.add:hover,
+.add:focus-visible {
+  box-shadow: none;
+  border-color: var(--brand);
+  color: var(--brand-shade);
+}
+.plus {
+  width: min(var(--size-plus), 15vh);
+  aspect-ratio: 1;
+  border-radius: var(--radius-round);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  box-shadow: var(--shadow-card);
+}
+.add .name {
+  color: inherit;
+}
+
+.skeletonCard {
+  width: var(--size-profile-card);
+  height: min(var(--size-profile-card-h), 38vh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 1400px) {
+  .top,
+  .main {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pf {
+    transition-duration: 1ms !important;
+  }
+}
