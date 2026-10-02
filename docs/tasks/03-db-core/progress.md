@@ -5,7 +5,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Schema tài khoản và hồ sơ | ✅ | Migration `accounts` |
-| 1 | Schema lộ trình và nội dung | ⬜ | |
+| 1 | Schema lộ trình và nội dung | ✅ | Migration `curriculum` |
 | 2 | Schema kết quả học | ⬜ | |
 | 3 | Seed khung 10 cấp | ⬜ | |
 
@@ -18,6 +18,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 - Việc cần làm thủ công: chạy `npx prisma studio`, tạo 1 user (mật khẩu điền chuỗi bất kỳ vì Studio không băm) và 2 learner gắn `user_id` đó, kiểm tra thấy đủ cột; xóa dữ liệu thử sau khi xem.
 
 
+### Bước 1 — Schema lộ trình và nội dung (02/10/2026)
+- Thêm 10 model vào `prisma/schema.prisma` (`Stage`, `Level`, `Unit`, `Lesson`, `LessonStep`, `Word`, `Topic`, `WordTopic`, `Question`, `Media`) và enum `ContentStatus`, `LessonKind`, `MediaType`; `learners.current_level_id` có khóa ngoại tới `levels`. Migration `20261002075224_curriculum`.
+- Tạo `src/lib/schemas/{lesson-step-config,question,word-extra}.ts` và `src/server/curriculum.ts`.
+- Kiểm tra (script chạy bằng Node trên database thật, đã dọn): chuỗi stage → level → unit → lesson → lesson_step đúng; bước xếp theo `sort_order`; bài nháp không hiện cho học sinh, xuất bản rồi thì hiện; xóa lesson xóa step (từ và câu hỏi còn nguyên); xóa unit xóa lesson và step; xóa từ đang dùng trong bài, xóa level đang có unit, xóa stage đang có level đều bị chặn (P2003); một từ thuộc nhiều chủ đề, trùng (word, topic) và tên topic trùng bị chặn (P2002); xóa từ xóa `word_topic`; xóa level thì `current_level_id` về null; `media.path` trùng bị chặn; Zod nhận câu hỏi hợp lệ và từ chối đáp án ngoài lựa chọn, 1 lựa chọn, dạng lạ, cấu hình sai. `tsc`, `lint` không lỗi.
+- Việc cần làm thủ công: không có (xem Prisma Studio nếu muốn kiểm tra các bảng mới).
+
 ## Bước tiếp theo
 
-Bước 1 — Schema lộ trình và nội dung (kế hoạch ở `plan.md`).
+Bước 2 — Schema kết quả học (kế hoạch ở `plan.md`).

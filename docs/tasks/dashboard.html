@@ -91,14 +91,14 @@
           <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">⋯</button>
         </div>
       </div>
-      <p class="subtitle">Sinh lúc 2026-10-02 14:51 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
+      <p class="subtitle">Sinh lúc 2026-10-02 14:56 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
     </div>
 
     <div class="stats">
       <div class="stat"><div class="stat-value">12</div><div class="stat-label">tổng số task</div></div>
       <div class="stat"><div class="stat-value" style="color:#34d399">1</div><div class="stat-label">✅ xong</div></div>
       <div class="stat"><div class="stat-value"><span style="color:#22d3ee">1</span> / <span style="color:#94a3b8">10</span></div><div class="stat-label">🔄 đang làm / ⬜ chưa làm</div></div>
-      <div class="stat"><div class="stat-value">63%</div><div class="stat-label">bước đã xong (5/8)</div></div>
+      <div class="stat"><div class="stat-value">75%</div><div class="stat-label">bước đã xong (6/8)</div></div>
     </div>
 
     
@@ -170,10 +170,10 @@
           <text x="568" y="177" font-size="12" text-anchor="end">🔄</text>
           <text x="386" y="176" fill="white" font-size="12" font-weight="600">03-db-core</text>
           <text x="362" y="196" fill="#94a3b8" font-size="9">Cơ sở dữ liệu lõi và lộ trình 10 cấp</text>
-          <text x="362" y="218" fill="#cbd5e1" font-size="9">1/4 bước</text>
-          <text x="568" y="218" fill="#94a3b8" font-size="9" text-anchor="end">25%</text>
+          <text x="362" y="218" fill="#cbd5e1" font-size="9">2/4 bước</text>
+          <text x="568" y="218" fill="#94a3b8" font-size="9" text-anchor="end">50%</text>
           <rect x="362" y="228" width="206" height="5" rx="2.5" fill="#1e293b"/>
-          <rect x="362" y="228" width="52" height="5" rx="2.5" fill="#34d399"/>
+          <rect x="362" y="228" width="103" height="5" rx="2.5" fill="#34d399"/>
         </g>
         <g>
           <title>04 — 04-auth-profiles: Đăng nhập gia đình và hồ sơ bé (chưa làm)</title>
@@ -339,8 +339,8 @@
         </div>
         <p class="task-title">Cơ sở dữ liệu lõi và lộ trình 10 cấp</p>
         <p class="meta">Nhánh: <code>feat/03-db-core</code> · Cập nhật: 02/10/2026 · Phụ thuộc: 01</p>
-        <div class="bar"><div class="bar-fill" style="width:25%"></div></div><div class="bar-label">1/4 bước · 25%</div>
-        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Schema tài khoản và hồ sơ</div><div class="note">Migration <code>accounts</code></div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 1 · Schema lộ trình và nội dung</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 2 · Schema kết quả học</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 3 · Seed khung 10 cấp</div></div></li></ul>
+        <div class="bar"><div class="bar-fill" style="width:50%"></div></div><div class="bar-label">2/4 bước · 50%</div>
+        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Schema tài khoản và hồ sơ</div><div class="note">Migration <code>accounts</code></div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 1 · Schema lộ trình và nội dung</div><div class="note">Migration <code>curriculum</code></div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 2 · Schema kết quả học</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 3 · Seed khung 10 cấp</div></div></li></ul>
         <p class="links"><a href="03-db-core/task.md">task.md</a> · <a href="03-db-core/progress.md">progress.md</a></p>
       </div>
       <div class="card task-card">
@@ -460,7 +460,7 @@
   </div>
 
   <script type="application/json" id="tasks-data">{
-  "generatedAt": "2026-10-02 14:51 (UTC+07:00)",
+  "generatedAt": "2026-10-02 14:56 (UTC+07:00)",
   "warnings": [],
   "tasks": [
     {
@@ -556,8 +556,8 @@
             "step": "1",
             "numbered": true,
             "name": "Schema lộ trình và nội dung",
-            "status": "todo",
-            "note": ""
+            "status": "done",
+            "note": "Migration `curriculum`"
           },
           {
             "step": "2",
@@ -577,7 +577,7 @@
         "hasTable": true
       },
       "stepsTotal": 4,
-      "stepsDone": 1,
+      "stepsDone": 2,
       "level": 1
     },
     {

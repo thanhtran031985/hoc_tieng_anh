@@ -1,0 +1,35 @@
+import { z } from "zod";
+
+// Cấu hình riêng của từng bước trong bài, lưu ở cột JSON `lesson_steps.config`.
+// `activity_type` là chuỗi (không phải enum database) để giai đoạn sau thêm dạng bài mà không phải ALTER bảng.
+
+/** Dạng bài của giai đoạn 1 (PRD C8: 8.1–8.4). */
+export const ACTIVITY_TYPES = ["word_card", "listen_choose_picture", "match_pairs", "choose_word_for_picture"] as const;
+export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
+export type ActivityType = z.infer<typeof activityTypeSchema>;
+
+const choiceCount = z.number().int().min(2).max(4);
+
+export const lessonStepConfigSchemas = {
+  /** 8.1 Thẻ từ. */
+  word_card: z.object({ showExample: z.boolean().default(true) }),
+  /** 8.2 Nghe và chọn hình. */
+  listen_choose_picture: z.object({ autoPlay: z.boolean().default(true), optionCount: choiceCount.default(3) }),
+  /** 8.3 Nối cặp. */
+  match_pairs: z.object({ pairCount: z.number().int().min(3).max(6).default(4), mode: z.enum(["click", "drag"]).default("click") }),
+  /** 8.4 Chọn từ đúng cho hình. */
+  choose_word_for_picture: z.object({ optionCount: choiceCount.default(3) }),
+} satisfies Record<ActivityType, z.ZodType>;
+
+export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;
+
+/**
+ * Kiểm tra cấu hình theo dạng bài; thiếu trường thì lấy mặc định.
+ * Trả về null nếu dạng bài chưa được hỗ trợ hoặc cấu hình sai.
+ */
+export function parseLessonStepConfig(activityType: string, config: unknown): LessonStepConfig | null {
+  const type = activityTypeSchema.safeParse(activityType);
+  if (!type.success) return null;
+  const result = lessonStepConfigSchemas[type.data].safeParse(config ?? {});
+  return result.success ? result.data : null;
+}

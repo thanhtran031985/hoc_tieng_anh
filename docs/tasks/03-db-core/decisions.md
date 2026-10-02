@@ -27,3 +27,11 @@
 ### 02/10/2026 — Hàm truy cập hồ sơ (`src/server/learners.ts`)
 - `listLearners(userId)`, `getLearner(userId, learnerId)` (null nếu không có hoặc không thuộc tài khoản, không phân biệt hai trường hợp để tránh dò số hồ sơ), `requireLearner` (ném `LearnerAccessError`), `createLearner`, `updateLearnerSettings`. Mọi thao tác ghi qua Zod (`src/lib/schemas/learner.ts`, `learner-settings.ts`).
 - Cùng quy ước với bản `goi-du-an/` ở task 02: nhánh này cũng thêm `goi-du-an/` vào `.gitignore`, ESLint và `tsc` (giống hệt nhánh `feat/02-ui-kit`, không gây xung đột khi gộp).
+
+### 02/10/2026 — Lộ trình và nội dung (Bước 1)
+- Bảng: `stages`, `levels`, `units`, `lessons`, `lesson_steps`, `words`, `topics`, `word_topic` (khóa chính ghép), `questions`, `media`; thêm khóa ngoại `learners.current_level_id → levels` (`SET NULL`). Migration `20261002075224_curriculum` (10 bảng, 11 khóa ngoại).
+- Khóa ngoại: stage→level, level→unit/word/question `RESTRICT` (cấp là dữ liệu cố định do seed nạp); unit→lesson, lesson→step `CASCADE`; step→word/question `RESTRICT` (không xóa từ hoặc câu hỏi đang dùng trong bài); word_topic theo cả từ và chủ đề `CASCADE`.
+- Chuỗi: `levels.color` lưu tên token (`level-1`…`level-10`), `levels.theme` lưu `tieu-hoc` hoặc `thcs`, `levels.number` duy nhất (TinyInt). `activity_type`, `questions.type`, `skill` là chuỗi, kiểm bằng Zod (`ACTIVITY_TYPES`, `QUESTION_TYPES`, `SKILLS`); GĐ1 có 4 dạng bài: `word_card`, `listen_choose_picture`, `match_pairs`, `choose_word_for_picture`.
+- Zod: `lesson-step-config.ts` (cấu hình mặc định theo dạng bài, `parseLessonStepConfig` trả null nếu sai), `question.ts` (đề bài chữ/hình/âm thanh/từ; lựa chọn 2–4 có mã duy nhất; đáp án đúng phải nằm trong lựa chọn; nối cặp 3–6 cặp; `validateQuestionData` ném lỗi khi ghi, `parseQuestionData` trả null khi đọc), `word-extra.ts`.
+- `src/server/curriculum.ts`: `listStages`, `getLevelByNumber`, `listUnits`, `listLessons`, `getLessonWithSteps`; học sinh chỉ thấy nội dung `published` (mặc định `publishedOnly`), bước trả kèm config và câu hỏi đã kiểm.
+- Chưa thêm duy nhất cho `words.word`: cùng một từ có thể có nhiều nghĩa/loại từ; task 05 quyết định nếu cần khóa duy nhất (word, loại từ, cấp).
