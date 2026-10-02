@@ -2,14 +2,14 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Kiến trúc hệ thống đã có trong code (sau task 08)",
+    "title": "Kiến trúc hệ thống đã có trong code (sau task 09)",
     "locale": "vi",
     "quality_profile": "showcase",
     "output": "docs/so-do/tong-quan/architecture-he-thong.html",
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "f30365ff7a306531251e16efb1464b6c4ccd4333"
+      "revision": "b303db0eaaf6a304baf300f76c928bf40a60d6bb"
     }
   },
   "components": [
@@ -100,7 +100,7 @@
       "id": "kid",
       "type": "frontend",
       "label": "Màn của bé",
-      "sublabel": "/home /map /lesson /review /notebook",
+      "sublabel": "/home /map /lesson /review…",
       "pos": [
         480,
         300
@@ -285,7 +285,7 @@
       "id": "modules",
       "type": "backend",
       "label": "Hàm đọc, ghi dữ liệu",
-      "sublabel": "src/server: bài, ôn tập, sổ từ",
+      "sublabel": "src/server: bài, ôn, xếp lớp",
       "pos": [
         480,
         560
@@ -306,9 +306,9 @@
           "label": "completeReview"
         },
         {
-          "path": "src/server/notebook.ts",
-          "line": 30,
-          "label": "getNotebook"
+          "path": "src/server/placement.ts",
+          "line": 123,
+          "label": "completePlacement"
         }
       ]
     },
@@ -316,7 +316,7 @@
       "id": "rules",
       "type": "backend",
       "label": "Quy tắc (hàm thuần)",
-      "sublabel": "mở khóa, sao, 5 hộp, phiên ôn",
+      "sublabel": "mở khóa, sao, 5 hộp, xếp lớp",
       "pos": [
         700,
         560
@@ -337,9 +337,9 @@
           "label": "nextReview"
         },
         {
-          "path": "src/lib/rules/review-play.ts",
-          "line": 25,
-          "label": "buildReviewSteps"
+          "path": "src/lib/rules/placement.ts",
+          "line": 37,
+          "label": "answerPlacement"
         }
       ]
     },

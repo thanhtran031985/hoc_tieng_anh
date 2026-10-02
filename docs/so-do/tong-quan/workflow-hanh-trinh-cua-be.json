@@ -9,7 +9,7 @@
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "f30365ff7a306531251e16efb1464b6c4ccd4333"
+      "revision": "b303db0eaaf6a304baf300f76c928bf40a60d6bb"
     },
     "legend": {
       "mode": "auto",
@@ -37,16 +37,7 @@
       "label": "Tổng quan cấp và các nút phụ"
     }
   ],
-  "groups": [
-    {
-      "id": "g_xepLop",
-      "label": "Chưa làm · task 09",
-      "lane": "vao",
-      "fromCol": 3,
-      "toCol": 3,
-      "variant": "dashed"
-    }
-  ],
+  "groups": [],
   "mainPath": [
     "login",
     "profiles",
@@ -114,8 +105,8 @@
         {
           "path": "src/features/profiles/create/CreateProfileFlow.tsx",
           "line": 36,
-          "end_line": 38,
-          "label": "lưu xong → /home"
+          "end_line": 39,
+          "label": "lưu xong → /placement"
         },
         {
           "path": "src/features/profiles/create/StepAudio.tsx",
@@ -128,16 +119,26 @@
       "id": "placement",
       "lane": "vao",
       "col": 3,
-      "type": "messagebus",
+      "type": "frontend",
       "label": "Bài xếp lớp",
-      "sublabel": "PRD C4",
-      "tag": "task 09",
+      "sublabel": "/placement · 12 câu",
       "width": 126,
       "sources": [
         {
-          "path": "docs/PRD.md",
-          "line": 146,
-          "label": "PRD C4"
+          "path": "src/app/(kid)/placement/page.tsx",
+          "line": 12,
+          "end_line": 18,
+          "label": "đã học thì về /home"
+        },
+        {
+          "path": "src/features/placement/PlacementFlow.tsx",
+          "line": 23,
+          "label": "PlacementFlow"
+        },
+        {
+          "path": "src/server/placement.ts",
+          "line": 123,
+          "label": "completePlacement"
         }
       ]
     },
@@ -334,8 +335,7 @@
       "id": "e-create-placement",
       "from": "create",
       "to": "placement",
-      "variant": "dashed",
-      "role": "branch"
+      "label": "tạo xong"
     },
     {
       "id": "e-home-map",
@@ -381,14 +381,21 @@
       "from": "home",
       "to": "notebook",
       "label": "Sổ từ"
+    },
+    {
+      "id": "e-placement-home",
+      "from": "placement",
+      "to": "home",
+      "label": "Bắt đầu học",
+      "variant": "emphasis"
     }
   ],
   "cards": [
     {
       "dot": "emerald",
-      "title": "Đã làm (task 01–08)",
+      "title": "Đã làm (task 01–09)",
       "items": [
-        "Đăng nhập, chọn hồ sơ, tạo hồ sơ 3 bước",
+        "Đăng nhập, chọn hồ sơ, tạo hồ sơ 3 bước, bài xếp lớp 12 câu",
         "Trang chủ, tổng quan 10 cấp, bản đồ đảo",
         "Học trọn bài (5 dạng), nhận sao và xu, mở bài sau",
         "Ôn tập hôm nay theo 5 hộp; Sổ từ theo mức thuộc"
@@ -398,7 +405,6 @@
       "dot": "amber",
       "title": "Chưa làm",
       "items": [
-        "Bài xếp lớp (task 09)",
         "Hết giờ học (task 10)",
         "Bộ sưu tập, Phòng của tớ (GĐ2): hai nút lớn còn là Sắp có"
       ]

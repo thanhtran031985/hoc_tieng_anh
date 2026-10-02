@@ -17,3 +17,10 @@
 - Chọn cấp khác: chỉ cấp Tiểu học (1–5) đã có nội dung (hiện 1–4); thiết kế vẽ 5 đảo.
 - Nút quay lại ở màn giới thiệu: "Về chọn hồ sơ" → `/profiles` (hồ sơ đã được tạo), khác bản xem trước ("Quay lại tạo hồ sơ"). Tạo hồ sơ xong chuyển tới `/placement`.
 - Không làm: trạng thái lỗi "Loa chưa phát được" của Screen16 (giọng đọc của trình duyệt không có sự kiện lỗi để bắt); lưu tiến độ dở.
+
+### 03/10/2026 — Tổng kết: khác với task.md gốc
+- Thêm `pickQuestion` (chọn câu kế từ kho theo cấp) vào `placement.ts`; câu hỏi dựng ở server theo từng cấp, client chọn câu theo cấp hiện tại.
+- Không đổi database; bài xếp lớp khóa lại khi bé đã học bài hoặc đã có nhật ký `exam`.
+- Màn lỗi (`error.tsx`) có thêm nút "Bắt đầu theo lớp" (về /home, giữ cấp theo lớp đã đặt lúc tạo hồ sơ).
+- Không làm: bài THCS, trạng thái lỗi "Loa chưa phát được", lưu tiến độ dở.
+- Sơ đồ: thêm `workflow-xep-lop`; vẽ lại hành trình của bé và kiến trúc.

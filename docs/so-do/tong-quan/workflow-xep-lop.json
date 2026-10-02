@@ -1,0 +1,194 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Task 09: bé mới làm bài xếp lớp thế nào",
+    "locale": "vi",
+    "quality_profile": "showcase",
+    "output": "docs/so-do/tong-quan/workflow-xep-lop.html",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "b303db0eaaf6a304baf300f76c928bf40a60d6bb"
+    }
+  },
+  "lanes": [
+    {
+      "id": "chinh",
+      "label": "Đường chính của bé"
+    },
+    {
+      "id": "nhanh",
+      "label": "Lối rẽ"
+    }
+  ],
+  "mainPath": [
+    "intro",
+    "quiz",
+    "result",
+    "home"
+  ],
+  "nodes": [
+    {
+      "id": "intro",
+      "lane": "chinh",
+      "col": 0,
+      "type": "frontend",
+      "label": "Giới thiệu",
+      "sublabel": "rồng rủ chơi 12 câu",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/placement/PlacementIntro.tsx",
+          "line": 29,
+          "label": "PlacementIntro"
+        }
+      ]
+    },
+    {
+      "id": "quiz",
+      "lane": "chinh",
+      "col": 1,
+      "type": "frontend",
+      "label": "12 câu",
+      "sublabel": "không báo đúng sai",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/placement/PlacementQuiz.tsx",
+          "line": 33,
+          "label": "PlacementQuiz"
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "lane": "chinh",
+      "col": 2,
+      "type": "frontend",
+      "label": "Cấp đề xuất",
+      "sublabel": "nhận xét, chọn cấp khác",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/placement/PlacementResult.tsx",
+          "line": 58,
+          "label": "PlacementResult"
+        },
+        {
+          "path": "src/server/placement.ts",
+          "line": 123,
+          "label": "completePlacement"
+        }
+      ]
+    },
+    {
+      "id": "home",
+      "lane": "chinh",
+      "col": 3,
+      "type": "frontend",
+      "label": "Trang chủ",
+      "sublabel": "ở cấp đã chọn",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/server/placement.ts",
+          "line": 173,
+          "label": "applyStartLevel"
+        }
+      ]
+    },
+    {
+      "id": "skip",
+      "lane": "nhanh",
+      "col": 0,
+      "type": "frontend",
+      "label": "Bỏ qua",
+      "sublabel": "hỏi xác nhận cấp theo lớp",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/placement/PlacementIntro.tsx",
+          "line": 108,
+          "end_line": 119,
+          "label": "hộp thoại xác nhận"
+        }
+      ]
+    },
+    {
+      "id": "early",
+      "lane": "nhanh",
+      "col": 2,
+      "type": "frontend",
+      "label": "Dừng giữa chừng",
+      "sublabel": "làm tiếp hoặc theo lớp",
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/features/placement/PlacementFlow.tsx",
+          "line": 78,
+          "end_line": 82,
+          "label": "stop"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-intro-quiz",
+      "from": "intro",
+      "to": "quiz",
+      "label": "Bắt đầu",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-quiz-result",
+      "from": "quiz",
+      "to": "result",
+      "label": "đủ 12 câu",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-result-home",
+      "from": "result",
+      "to": "home",
+      "label": "Bắt đầu học",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-intro-skip",
+      "from": "intro",
+      "to": "skip"
+    },
+    {
+      "id": "e-skip-home",
+      "from": "skip",
+      "to": "home",
+      "label": "đồng ý"
+    },
+    {
+      "id": "e-quiz-early",
+      "from": "quiz",
+      "to": "early",
+      "label": "×, Dừng lại"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Luật chọn câu",
+      "items": [
+        "Bắt đầu ở cấp = lớp; đúng 3 câu liền lên 1 cấp, sai 2 câu liền xuống 1 cấp",
+        "Cấp đề xuất: cấp cao nhất đúng từ 70%"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa làm",
+      "items": [
+        "Bài xếp lớp THCS 20–25 câu (GĐ3); lớp 6 trở lên thấy màn Chưa có bài xếp lớp",
+        "Bố mẹ xếp lớp lại trong khu Bố mẹ (task 11)"
+      ]
+    }
+  ]
+}

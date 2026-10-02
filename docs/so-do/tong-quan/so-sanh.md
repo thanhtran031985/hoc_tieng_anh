@@ -1,6 +1,6 @@
-# So sánh code với PRD và task.md — tổng quan (sau task 08)
+# So sánh code với PRD và task.md — tổng quan (sau task 09)
 
-Cập nhật: 03/10/2026 · Bản chốt code: `f30365f` · Phạm vi: các task 01–08 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
+Cập nhật: 03/10/2026 · Bản chốt code: `b303db0` · Phạm vi: các task 01–09 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
 
 Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý chính của PRD; **nhỏ** = lệch nhẹ, hoặc đã nằm trong kế hoạch của task sau.
 
@@ -8,7 +8,7 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 |---|---|---|---|---|
 | 1 | **quan trọng** | Trang `/admin` chỉ cần role `admin`, **không cần mở cổng bố mẹ**. Tài khoản đăng ký đầu tiên tự thành `admin`, nên tài khoản gia đình thường là admin: máy đang đăng nhập thì bé gõ `/admin` là vào được, không cần PIN. Hiện trang chỉ là giữ chỗ nên chưa lộ dữ liệu, nhưng task 12 phải chặn trước khi có nội dung (bạn đã quyết định làm ở task 12; việc cần làm ghi ở `docs/tasks/12-admin-content/decisions.md`). | `src/app/(admin)/admin/page.tsx:11`, `src/server/session.ts:31-35`, `src/server/users.ts:8-10` | PRD dòng 126: Cổng bố mẹ → Khu vực bố mẹ → Quản trị nội dung |
 | 2 | nhỏ | Cổng bố mẹ chỉ có ở màn chọn hồ sơ. Trang chủ chỉ có hộp Cài đặt (Đổi bé, Đăng xuất), không có nút vào khu bố mẹ. | `src/app/(kid)/profiles/page.tsx:24`, `src/features/kid/KidTopbar.tsx:39-42` | PRD dòng 126 ("Ở mọi màn"), dòng 138 |
-| 3 | nhỏ (task 09) | Tạo hồ sơ xong đi thẳng `/home`, chưa có bài xếp lớp. | `src/features/profiles/create/CreateProfileFlow.tsx:36-38` | PRD dòng 114, 146–152 (C4) |
+| 3 | nhỏ | Tạo hồ sơ xong chuyển tới `/placement` (bài xếp lớp Tiểu học, task 09); THCS (lớp ≥ 6) chưa có bài xếp lớp nên thấy màn "Chưa có bài xếp lớp" rồi bắt đầu theo lớp (kẹp ở cấp 4). | `src/features/profiles/create/CreateProfileFlow.tsx:38`, `src/server/placement.ts:63` | PRD dòng 114, 146–152 (C4) |
 | 4 | nhỏ | Tạo hồ sơ chỉ hỏi tên, lớp, bạn rồng; chưa hỏi năm sinh và sách tiếng Anh ở trường (cột `birth_year`, `textbook` đã có trong database nhưng không có ô nhập). | `src/features/profiles/create/CreateProfileFlow.tsx:36`, `prisma/schema.prisma:54-57` | PRD dòng 142 (C3) |
 | 5 | nhỏ | Không có ô "Nhớ đăng nhập trên máy này"; phiên luôn nhớ 30 ngày. | `src/auth.config.ts:7-12` | PRD dòng 132 (C1) |
 | 6 | nhỏ (GĐ3) | Hồ sơ THCS chưa có PIN riêng (cột `learners.pin` có, chưa có màn đặt và hỏi PIN). | `prisma/schema.prisma:74` | PRD dòng 137 (C2) |
@@ -30,6 +30,8 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 22 | nhỏ | Lịch hộp theo PRD (1/3/7/14/30 ngày), không theo chữ cứng của bản xem trước (2/4 ngày); màu mức thuộc theo thiết kế, không theo PRD C12 (đỏ nhạt, cam…). | `src/lib/rules/review-box.ts:6,28` | PRD C12, Screen19 |
 | 23 | nhỏ (GĐ3) | THCS chưa có câu ngữ pháp từng sai trong phiên ôn (chưa có bài ngữ pháp); phiên chỉ có từ vựng, tối đa 20 mục. | `src/lib/rules/review-play.ts:10-12` | PRD C11 |
 | 24 | nhỏ | Dừng giữa phiên ôn thì không ghi gì lên server; tiến độ dở chỉ giữ trên máy theo ngày. Sổ từ chưa lọc theo mức, chưa in; từ chưa thuộc bài nào của chủ đề đã xuất bản chỉ hiện ở "Tất cả". | `src/features/review/ReviewPlayer.tsx:36`, `src/server/notebook.ts:30` | PRD C12 |
+| 25 | nhỏ | Bài xếp lớp: 12 câu cố định (PRD 10–15), câu lấy từ từ có hình của chủ đề đã xuất bản theo cấp, không theo thứ tự "con vật → màu → số…" của bản xem trước; chỉ nghe-chọn-hình; chưa có đề xuất từ nhận xét THCS (ngữ pháp, đọc). Cấp đề xuất chỉ để gợi ý, bé hoặc bố mẹ đổi được. | `src/lib/rules/placement.ts:5-13`, `src/server/placement.ts:63` | PRD C4 |
+| 26 | nhỏ | Không có cờ "đã xếp lớp" trong database: bài xếp lớp chỉ vào được khi bé chưa học bài nào và chưa có nhật ký `exam`; bố mẹ xếp lại (task 11) chưa có. Nút quay lại ở màn giới thiệu về `/profiles` (hồ sơ đã được tạo), khác bản xem trước. | `src/server/placement.ts:55-60` | PRD C4, Screen15 |
 
 ## Khớp với PRD (đã kiểm)
 
