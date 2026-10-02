@@ -6,7 +6,7 @@ Ngày tạo: 02/10/2026 · Giai đoạn: GĐ1 · Phụ thuộc: 02, 04, 05 · Nh
 Bé vào trang chủ thấy nhiệm vụ hôm nay, mở tổng quan 10 cấp và bản đồ đảo để chọn bài.
 
 ## Phạm vi
-- Trong: trang chủ (nhiệm vụ hôm nay, sao, xu, chuỗi ngày, 4 nút lớn), tổng quan 10 cấp, bản đồ một đảo, quy tắc mở khóa chặng và trùm.
+- Trong: trang chủ (nhiệm vụ hôm nay, sao, xu, chuỗi ngày, 4 nút lớn), tổng quan 10 cấp, bản đồ đảo dùng chung một bố cục cho cấp 1–5 (đổi màu cấp và vùng đất theo chủ đề của cấp; cấp chưa có bài hiện "Sắp có"), quy tắc mở khóa chặng và trùm.
 - Ngoài: Bộ sưu tập, Phòng của tớ (GĐ2: nút hiện nhưng mở màn "Sắp có"), bản đồ thành phố THCS.
 
 ## Thiết kế

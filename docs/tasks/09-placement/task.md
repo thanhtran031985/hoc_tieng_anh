@@ -1,6 +1,6 @@
 # 09-placement — Bài xếp lớp
 
-Ngày tạo: 02/10/2026 · Giai đoạn: GĐ1 · Phụ thuộc: 07 · Nhánh: `feat/09-placement`
+Ngày tạo: 02/10/2026 · Giai đoạn: GĐ1 · Phụ thuộc: 05, 07 · Nhánh: `feat/09-placement`
 
 ## Mục tiêu
 Bé mới làm một bài ngắn dạng trò chơi để web đề xuất cấp bắt đầu.
@@ -13,7 +13,7 @@ Bé mới làm một bài ngắn dạng trò chơi để web đề xuất cấp 
 Chưa có màn riêng: dùng bố cục Screen07 (bỏ dải phản hồi đúng/sai, thanh tiến độ hình ngôi sao) và Screen12 cho màn kết quả.
 
 ## Quyết định kiến trúc
-- `src/lib/rules/placement.ts`: bắt đầu ở cấp = lớp (tối đa 5 ở GĐ1), đúng 3 câu liên tiếp lên 1 mức, sai 2 câu liên tiếp xuống 1 mức; cấp đề xuất là mức cao nhất đúng ≥ 70%.
+- `src/lib/rules/placement.ts`: bắt đầu ở cấp = lớp, nhưng không vượt cấp cao nhất đã có nội dung `published` (GĐ1: cấp 4), đúng 3 câu liên tiếp lên 1 mức, sai 2 câu liên tiếp xuống 1 mức; cấp đề xuất là mức cao nhất đúng ≥ 70%.
 - Câu hỏi lấy ngẫu nhiên từ từ vựng của từng cấp.
 
 ## Các bước

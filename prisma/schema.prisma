@@ -94,7 +94,9 @@ model Learner {
 // Lộ trình: chặng → cấp → chủ đề (unit) → bài học → bước trong bài
 // ---------------------------------------------------------------------------
 
+/// `planned`: chủ đề có trong khung chương trình nhưng chưa soạn nội dung (chỉ dùng cho units); học sinh chỉ thấy `published`.
 enum ContentStatus {
+  planned
   draft
   published
 }
@@ -146,17 +148,24 @@ model Level {
 
 /// Chủ đề trong một cấp (vd Fruits).
 model Unit {
-  id        Int           @id @default(autoincrement())
-  levelId   Int           @map("level_id")
-  title     String        @db.VarChar(150)
-  titleVi   String        @map("title_vi") @db.VarChar(150)
-  image     String?       @db.VarChar(255)
-  sortOrder Int           @map("sort_order")
-  status    ContentStatus @default(draft)
+  id          Int           @id @default(autoincrement())
+  levelId     Int           @map("level_id")
+  /// Khóa ổn định trong cấp (kebab-case), để seed và nhập Excel chạy lại không trùng.
+  slug        String        @db.VarChar(100)
+  title       String        @db.VarChar(150)
+  titleVi     String        @map("title_vi") @db.VarChar(150)
+  image       String?       @db.VarChar(255)
+  /// Nguồn từ mục tiêu (vd Cambridge Starters).
+  source      String?       @db.VarChar(100)
+  /// Danh sách từ mục tiêu của chủ đề (mảng chuỗi), dùng để soạn nội dung và tạo bài.
+  targetWords Json?         @map("target_words")
+  sortOrder   Int           @map("sort_order")
+  status      ContentStatus @default(draft)
 
   level   Level    @relation(fields: [levelId], references: [id], onDelete: Restrict)
   lessons Lesson[]
 
+  @@unique([levelId, slug])
   @@index([levelId, sortOrder])
   @@map("units")
 }
