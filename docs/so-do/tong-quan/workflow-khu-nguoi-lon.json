@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Khu bố mẹ và quản trị: ai vào được bằng cách nào",
+    "locale": "vi",
+    "quality_profile": "showcase",
+    "output": "docs/so-do/tong-quan/workflow-khu-nguoi-lon.html",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "53db61827304e55304ae4dcf6b646dec63116e74"
+    },
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": { "label": "Màn hình đã có trong code" },
+        "messagebus": { "label": "Chưa làm (task sau)" }
+      }
+    }
+  },
+  "lanes": [
+    { "id": "trinhduyet", "label": "Trình duyệt (bố mẹ)" },
+    { "id": "maychu", "label": "Máy chủ kiểm tra" },
+    { "id": "chualam", "label": "Màn chưa làm" }
+  ],
+  "groups": [
+    { "id": "g_quantri", "label": "Chưa làm · task 12", "lane": "chualam", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["btn", "dlg", "action", "gate", "guard", "parent"],
+  "nodes": [
+    {
+      "id": "btn", "lane": "trinhduyet", "col": 0, "type": "frontend",
+      "label": "Nút Bố mẹ", "sublabel": "ổ khóa ở /profiles", "width": 126,
+      "sources": [{ "path": "src/app/(kid)/profiles/page.tsx", "line": 24, "label": "ParentGate" }]
+    },
+    {
+      "id": "dlg", "lane": "trinhduyet", "col": 1, "type": "frontend",
+      "label": "Hộp thoại cổng", "sublabel": "PIN hoặc mật khẩu", "width": 126,
+      "sources": [{ "path": "src/features/parent/ParentGate.tsx", "line": 15, "end_line": 50, "label": "gọi action, thành công → /parent" }]
+    },
+    {
+      "id": "parent", "lane": "trinhduyet", "col": 4, "type": "frontend",
+      "label": "Khu vực bố mẹ", "sublabel": "/parent (giữ chỗ)", "tag": "task 11 làm tiếp", "width": 126,
+      "sources": [{ "path": "src/app/(parent)/parent/page.tsx", "line": 10, "end_line": 21, "label": "trang giữ chỗ" }]
+    },
+    {
+      "id": "url", "lane": "trinhduyet", "col": 5, "type": "external",
+      "label": "Gõ thẳng /admin", "sublabel": "không có nút dẫn tới", "width": 126
+    },
+    {
+      "id": "action", "lane": "maychu", "col": 2, "type": "backend",
+      "label": "Kiểm tra PIN", "sublabel": "unlockParentAction", "tag": "sai 5 lần: khóa tạm", "width": 126,
+      "sources": [
+        { "path": "src/features/parent/actions.ts", "line": 18, "end_line": 38, "label": "đúng PIN hoặc mật khẩu" },
+        { "path": "src/server/rate-limit.ts", "line": 36, "label": "PIN_LIMIT 5 lần / 10 phút" }
+      ]
+    },
+    {
+      "id": "gate", "lane": "maychu", "col": 3, "type": "security",
+      "label": "Mở cổng 15 phút", "sublabel": "cookie ký, httpOnly", "width": 126,
+      "sources": [{ "path": "src/server/parent-gate.ts", "line": 12, "end_line": 21, "label": "openParentGate" }]
+    },
+    {
+      "id": "guard", "lane": "maychu", "col": 4, "type": "security",
+      "label": "requireParentGate", "sublabel": "hết hạn: về /profiles", "width": 126,
+      "sources": [
+        { "path": "src/app/(parent)/layout.tsx", "line": 4, "end_line": 7, "label": "layout của /parent" },
+        { "path": "src/server/parent-gate.ts", "line": 35, "end_line": 39, "label": "kiểm cookie" }
+      ]
+    },
+    {
+      "id": "role", "lane": "maychu", "col": 5, "type": "security",
+      "label": "requireRole(admin)", "sublabel": "người khác thấy 404", "width": 126,
+      "sources": [{ "path": "src/server/session.ts", "line": 31, "end_line": 35, "label": "chỉ role admin" }]
+    },
+    {
+      "id": "admin", "lane": "chualam", "col": 5, "type": "messagebus",
+      "label": "Quản trị nội dung", "sublabel": "/admin (giữ chỗ)", "tag": "task 12", "width": 126,
+      "sources": [{ "path": "src/app/(admin)/admin/page.tsx", "line": 10, "end_line": 21, "label": "trang giữ chỗ" }]
+    }
+  ],
+  "edges": [
+    { "id": "e-btn-dlg", "from": "btn", "to": "dlg", "label": "bấm", "variant": "emphasis" },
+    { "id": "e-dlg-action", "from": "dlg", "to": "action", "label": "PIN / mật khẩu", "variant": "emphasis" },
+    { "id": "e-action-dlg", "from": "action", "to": "dlg", "label": "sai: thử lại", "variant": "security", "role": "error" },
+    { "id": "e-action-gate", "from": "action", "to": "gate", "label": "đúng", "variant": "emphasis" },
+    { "id": "e-gate-guard", "from": "gate", "to": "guard", "label": "cookie" },
+    { "id": "e-guard-parent", "from": "guard", "to": "parent", "label": "cho vào", "variant": "emphasis" },
+    { "id": "e-url-role", "from": "url", "to": "role", "label": "không qua cổng", "variant": "security" },
+    { "id": "e-role-admin", "from": "role", "to": "admin", "label": "đúng role", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Cổng bố mẹ (đã làm)",
+      "items": [
+        "Đã có PIN: nhập PIN hoặc mật khẩu; chưa có: đặt PIN lần đầu",
+        "Sai nhiều lần thì khóa tạm; mở rồi sống 15 phút"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Khác với PRD",
+      "items": [
+        "PRD: quản trị nằm sau khu bố mẹ; code: /admin chỉ cần role admin, không cần mở cổng",
+        "Cổng chỉ có ở màn chọn hồ sơ, chưa có ở mọi màn"
+      ]
+    }
+  ]
+}
