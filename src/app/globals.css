@@ -345,6 +345,8 @@
   --size-dot: 12px;
   --size-dot-on: 32px;
   --flip-duration: 520ms;
+  --size-choice-pic: 272px;
+  --size-q-dragon: 120px;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;

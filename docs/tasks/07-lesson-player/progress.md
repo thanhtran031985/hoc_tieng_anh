@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 |---|---|---|---|
 | 0 | Khung bài học và luồng câu hỏi | ✅ | 03/10/2026 |
 | 1 | Thẻ từ (Screen08) | ✅ | 03/10/2026 |
-| 2 | Nghe và chọn hình (Screen07) | ⬜ | |
+| 2 | Nghe và chọn hình (Screen07) | ✅ | 03/10/2026 |
 | 3 | Nối từ với hình (Screen09) | ⬜ | |
 | 4 | Chọn từ đúng cho hình (Screen18) | ⬜ | |
 | 5 | Lật thẻ ghép cặp (Screen10) | ⬜ | |
@@ -27,6 +27,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Kiểm tra (Edge không đầu, database tạm): bài 13 có 7 thẻ; Space và bấm thẻ lật/úp, tiêu đề đổi "Nghĩa của từ"; → sang thẻ 2 (chấm đổi, "Thẻ trước" bật), ← về thẻ 1; loa bật `data-playing`; thẻ cuối → đứng yên, Enter sang bước kế; 1366×768, 1440×900, 1920×1080 không cuộn; không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
 - Việc thủ công: không (nghe giọng đọc thật cần trình duyệt có giọng tiếng Anh).
 
+### Bước 2 — Nghe và chọn hình (Screen07) (03/10/2026)
+- Đã làm: `ListenChooseStep` (rồng, loa lớn tự đọc từ khi hiện câu, lưới hình đáp án có nhãn phím 1–4, Nghe lại ⟦Space⟧, Gợi ý ⟦H⟧, Kiểm tra ⟦Enter⟧), `choice-flow.ts` (luồng chọn đáp án dùng chung với bước 4: sai lần 1 thử lại, lần 2 tự gợi ý, lần 3 hiện đáp án), `ChoiceFeedback` (dải đúng/chưa đúng/xem đáp án), `burst.ts` (sao bay vào thanh tiến độ, tắt khi giảm chuyển động).
+- Token mới: `--size-choice-pic`, `--size-q-dragon`.
+- Kiểm tra (Edge không đầu, database tạm): Enter khi chưa chọn không kiểm tra; H bỏ 1 hình ("Còn 2 hình thôi!", nút Gợi ý tắt); chọn đúng → thẻ xanh ✓ + dải "Tuyệt vời!" + từ, phiên âm, nghĩa, Enter sang câu kế; sai lần 1 → "Chưa đúng rồi, thử lại nhé!" ("Đây là xin lỗi…"); sai lần 2 → tự bật gợi ý; sai lần 3 → "Mình xem đáp án nhé!", đáp án đúng sáng xanh, tổng số bước 22 → 23 (câu làm lại ở cuối); không cuộn ở 1366×768; không lỗi console. `tsc`, `lint`, `npm test` (63/63) sạch.
+- Việc thủ công: không.
+
 ## Bước tiếp theo
 
-Bước 2 — Nghe và chọn hình (Screen07)
+Bước 3 — Nối từ với hình (Screen09)

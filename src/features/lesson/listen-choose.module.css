@@ -1,0 +1,51 @@
+/* Nghe và chọn hình (Screen07): rồng, loa lớn, lưới hình đáp án. */
+.q {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+.side {
+  width: min(var(--size-q-dragon), 14vh);
+}
+.side svg {
+  width: 100%;
+  height: auto;
+}
+.speakCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: calc(var(--size-q-dragon) * 2);
+}
+.caption {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.hintTip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--info-soft);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.opts {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), min(var(--size-choice-pic), 33vh));
+  gap: var(--space-6);
+}
+.opt {
+  aspect-ratio: 1;
+  padding: 0;
+}
+.opt svg,
+.opt img {
+  width: 72%;
+  height: auto;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import type { PlayStep } from "@/lib/rules/lesson-play";
+import { ListenChooseStep } from "./ListenChooseStep";
 import { StubStep } from "./StubStep";
 import type { StepProps } from "./types";
 import { WordCardStep } from "./WordCardStep";
@@ -10,6 +11,8 @@ export function StepView({ step, ...rest }: StepProps & { step: PlayStep }) {
   switch (step.kind) {
     case "word_card":
       return <WordCardStep step={step} {...rest} />;
+    case "listen_choose_picture":
+      return <ListenChooseStep step={step} {...rest} />;
     default:
       return <StubStep step={step} {...rest} />;
   }
