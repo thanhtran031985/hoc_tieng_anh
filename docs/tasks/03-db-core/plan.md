@@ -1,0 +1,32 @@
+# Kế hoạch task 03-db-core — Cơ sở dữ liệu lõi và lộ trình 10 cấp
+
+## Context
+Task 01 đã nối Prisma 7.10 + MariaDB (XAMPP) với một model tạm `SetupCheck`; task 02 (UI kit) xong. Task 03 dựng các bảng GĐ1 theo PRD Phần G và nạp khung 4 chặng/10 cấp (PRD A1) để task 04 (đăng nhập, hồ sơ), 05 (nội dung), 06–11 dùng. Không có giao diện. Nhánh `feat/03-db-core` tách từ `main` (task chỉ phụ thuộc 01); mỗi bước commit `03-db-core: step N — …` (chỉ `git add` đúng tệp, KHÔNG `git add -A` vì có `prompt-*.md` rời ở thư mục gốc) và push. Cuối task chạy quy trình `finish-task`, đổi README ✅, rồi sang task 04.
+
+## Quyết định thiết kế (ghi vào `decisions.md`)
+1. **Tên:** model PascalCase số ít (`User`, `Learner`, `LessonStep`…), `@@map` sang bảng snake_case số nhiều (`users`, `lesson_steps`…); field camelCase có `@map("snake_case")` để cột đúng PRD. Khóa chính `Int @id @default(autoincrement())`, riêng `answer_logs` dùng `BigInt` (bảng lớn nhất).
+2. **Enum Prisma** (MySQL ENUM, chạy được cả MariaDB và MySQL 8) chỉ cho tập giá trị nhỏ và ổn định: `Role` (admin, parent), `UiTheme` (tieu_hoc, thcs, auto), `ContentStatus` (draft, published), `LessonKind` (lesson, unit_test, level_test, review), `AnswerSource` (lesson, review, exam), `MediaType` (image, audio). Tập mở rộng theo giai đoạn (`activity_type`, `questions.type`, `skill`) lưu `String` + Zod enum để GĐ sau thêm không cần ALTER.
+3. **Cột JSON** (`Learner.settings`, `LessonStep.config`, `Word.extra`, `Question.prompt|options|answer`, `AnswerLog.answer`) dùng `Json`; schema Zod tương ứng ở `src/lib/schemas/` (`learner-settings.ts`, `lesson-step-config.ts`, `word-extra.ts`, `question.ts`, `answer-log.ts`, `index.ts`), dùng chung server và client. Rủi ro: MariaDB lưu `JSON` là `LONGTEXT` + CHECK; kiểm tra đọc/ghi qua adapter ở Bước 0, nếu lệch thì thêm bước chuyển chuỗi ↔ object trong `src/server/`.
+4. **Khóa ngoại:** stage→level và level→unit `Restrict` (cấp cố định); unit→lesson, lesson→step, lesson→progress/attempt, learner→mọi bảng kết quả, user→learner đều `Cascade`; step→word/question `Restrict` (không xóa từ đang dùng trong bài); answer_logs→word/question `SetNull` (giữ lịch sử).
+5. **Ràng buộc duy nhất:** `users.email`, `stages.name`, `levels.number`, `topics.name`, `lesson_progress (learner_id, lesson_id)`, `review_cards (learner_id, word_id)` và `(learner_id, question_id)`, `word_topic (word_id, topic_id)` làm khóa chính ghép. Chỉ mục: `review_cards (learner_id, due_on)`, `answer_logs (learner_id, created_at)`, `lesson_steps (lesson_id, sort_order)`.
+6. **Ngoài phạm vi:** exams, grammar_points, textbook_*, writings, recordings, rewards, school_tests, exam_attempts (GĐ sau); do đó `lesson_steps` chưa có `grammar_point_id`.
+7. **Màu cấp trong `levels.color`:** lưu tên token (`level-1`…`level-10`), `theme` = `tieu-hoc` (cấp 1–5) hoặc `thcs` (6–10), khớp `data-level`/`data-theme`.
+8. **Chạy seed không cài package:** `prisma.config.ts` thêm `migrations.seed = "node prisma/seed.ts"` (Node 25 chạy TypeScript trực tiếp); generator Prisma đặt `importFileExtension = "ts"` để import của client sinh ra có đuôi `.ts`, `tsconfig.json` thêm `allowImportingTsExtensions`. Seed dùng đường dẫn tương đối có đuôi `.ts` và tự dựng `PrismaClient` + adapter (không dùng alias `@/`). Yêu cầu Node ≥ 22.18 khi chạy seed trên máy khác. Nếu cách này không chạy được thì ghi vào `decisions.md` và dùng seed `.mjs` thuần SQL (không cài thêm gói).
+9. **Truy cập dữ liệu:** `src/server/learners.ts` (`listLearners(userId)`, `getLearner(userId, learnerId)` kiểm tra hồ sơ thuộc tài khoản, ném lỗi/`null` nếu không), `src/server/progress.ts` (đọc/ghi `lesson_progress`, `review_cards` luôn qua `getLearner`), `src/server/curriculum.ts` (đọc stage→level→unit→lesson, không cần `userId`). `db.ts` giữ nguyên. Không import Prisma vào client component.
+
+## Các bước
+**Bước 0 — Schema tài khoản và hồ sơ:** xóa `SetupCheck`; thêm `User`, `Learner` (+ enum `Role`, `UiTheme`), generator `importFileExtension`; `npx prisma migrate dev --name accounts` (shadow DB của XAMPP root); `src/lib/schemas/learner-settings.ts` (giới hạn giờ/khung giờ, giọng đọc `en-US|en-GB`, tốc độ, mục tiêu ngày); `src/server/learners.ts`. Kiểm tra: migrate thành công; script tạo 1 user + 2 learner, đọc lại `settings`, thử `getLearner` với `userId` khác (phải bị từ chối), xóa user thì xóa learner; dọn dữ liệu thử. Liệt kê lệnh Prisma Studio cho người dùng.
+
+**Bước 1 — Schema lộ trình và nội dung:** `Stage`, `Level`, `Unit`, `Lesson`, `LessonStep`, `Word`, `Topic`, `WordTopic`, `Question`, `Media` (+ enum `ContentStatus`, `LessonKind`, `MediaType`); `migrate dev --name curriculum`; Zod `lesson-step-config.ts`, `word-extra.ts`, `question.ts`; `src/server/curriculum.ts`. Kiểm tra: quan hệ stage → level → unit → lesson → lesson_step đúng; xóa lesson xóa step; xóa unit xóa lesson; xóa level đang có unit bị chặn.
+
+**Bước 2 — Schema kết quả học:** `LessonProgress`, `LessonAttempt`, `AnswerLog`, `ReviewCard`, `StudySession` (+ enum `AnswerSource`); `migrate dev --name results`; Zod `answer-log.ts`; `src/server/progress.ts`. Kiểm tra: trùng `(learner, lesson)` ở `lesson_progress` và `(learner, word)` ở `review_cards` bị chặn (lỗi P2002); xóa learner xóa toàn bộ kết quả; `answer_logs.id` BigInt đọc/ghi được.
+
+**Bước 3 — Seed khung 10 cấp:** `prisma/seed.ts` với `upsert` theo khóa duy nhất: 4 chặng (Khởi đầu, Tiểu học, THCS, Nâng cao) và 10 cấp (số, tên, `cefr`, `description` = trọng tâm PRD A1, `color`, `theme`); đăng ký `migrations.seed`; `npx prisma db seed`. Kiểm tra: chạy lại nhiều lần không tạo trùng (đếm = 4 và 10 sau 3 lần chạy), cấp 1–2 thuộc chặng Khởi đầu, 3–5 Tiểu học, 6–9 THCS, 10 Nâng cao; sửa tay một dòng rồi seed lại thì dữ liệu về đúng bản gốc.
+
+## Kiểm tra cuối task
+`npx tsc --noEmit`, `npm run lint`, `npm run build` không lỗi; `prisma migrate reset --force` hoặc tạo database trống `hoc_tieng_anh_verify` rồi `migrate deploy` từ đầu + `db seed` chạy sạch (xóa database phụ sau khi thử); kiểm tra bảng `utf8mb4_unicode_ci` và tên bảng chữ thường khớp `@@map`. Phần thử thủ công cho người dùng: Prisma Studio tạo 1 user + 2 learner.
+
+## Tệp chính
+- Sửa: `prisma/schema.prisma`, `prisma.config.ts`, `tsconfig.json` (nếu cần `allowImportingTsExtensions`), `docs/tasks/03-db-core/*`, `docs/tasks/README.md`.
+- Tạo: `prisma/migrations/*` (3 migration), `prisma/seed.ts`, `src/lib/schemas/*.ts`, `src/server/{learners,curriculum,progress}.ts`.
+- Tái dùng: `src/server/db.ts` (singleton `db`), `zod` 4.x, `bcryptjs` (chưa dùng ở task này; băm PIN/mật khẩu ở task 04).

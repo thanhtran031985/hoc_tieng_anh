@@ -1,14 +1,410 @@
+// Cơ sở dữ liệu Edu / Học cùng Bông (PRD Phần G, giai đoạn 1).
+// Quy ước: model PascalCase số ít, @@map sang bảng snake_case số nhiều, field camelCase có @map sang cột snake_case.
+// Chạy được trên MariaDB (XAMPP) và MySQL 8: không dùng tính năng riêng của một bên.
+
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  // Import trong client sinh ra có đuôi .ts để Node chạy được prisma/seed.ts mà không cần công cụ build.
+  importFileExtension = "ts"
 }
 
 datasource db {
   provider = "mysql"
 }
 
-// Model tạm để thử migrate ở task 01. Xóa ở task 03 (db-core).
-model SetupCheck {
+// ---------------------------------------------------------------------------
+// Tài khoản và hồ sơ
+// ---------------------------------------------------------------------------
+
+enum Role {
+  admin
+  parent
+}
+
+enum UiTheme {
+  tieu_hoc @map("tieu-hoc")
+  thcs
+  auto
+}
+
+/// Tài khoản gia đình (parent) và quản trị nội dung (admin).
+model User {
   id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(191)
+  /// Mật khẩu đã băm bằng bcrypt, không bao giờ lưu dạng thuần.
+  password  String   @db.VarChar(100)
+  role      Role     @default(parent)
+  /// Mã PIN phụ huynh (4–6 số) đã băm bằng bcrypt.
+  parentPin String?  @map("parent_pin") @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  learners Learner[]
+
+  @@map("users")
+}
+
+/// Hồ sơ học sinh; mỗi hồ sơ thuộc một tài khoản gia đình.
+model Learner {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @map("user_id")
+  name           String    @db.VarChar(100)
+  birthYear      Int?      @map("birth_year") @db.SmallInt
+  schoolGrade    Int?      @map("school_grade") @db.TinyInt
+  /// Bộ sách giáo khoa đang học ở trường (vd "Global Success").
+  textbook       String?   @db.VarChar(100)
+  /// Kiểu ảnh hồ sơ: short | bob | buns | spiky.
+  avatar         String    @default("short") @db.VarChar(30)
+  /// Màu rồng Bông: ngoc | dao | nang | tim.
+  mascot         String    @default("ngoc") @db.VarChar(20)
+  mascotName     String    @default("Bông") @map("mascot_name") @db.VarChar(50)
+  uiTheme        UiTheme   @default(auto) @map("ui_theme")
+  /// Cấp hiện tại của bé.
+  currentLevelId Int?      @map("current_level_id")
+  stars          Int       @default(0)
+  coins          Int       @default(0)
+  xp             Int       @default(0)
+  streakDays     Int       @default(0) @map("streak_days")
+  /// Thẻ nghỉ phép chuỗi ngày (mỗi tuần một thẻ).
+  streakFreezes  Int       @default(1) @map("streak_freezes")
+  lastStudyDate  DateTime? @map("last_study_date") @db.Date
+  /// PIN hồ sơ đã băm bằng bcrypt.
+  pin            String?   @db.VarChar(100)
+  /// Cài đặt (JSON): giới hạn giờ, khung giờ, giọng đọc, mục tiêu ngày. Schema: src/lib/schemas/learner-settings.ts.
+  settings       Json?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentLevel   Level?           @relation("LearnerCurrentLevel", fields: [currentLevelId], references: [id], onDelete: SetNull)
+  lessonProgress LessonProgress[]
+  lessonAttempts LessonAttempt[]
+  answerLogs     AnswerLog[]
+  reviewCards    ReviewCard[]
+  studySessions  StudySession[]
+
+  @@index([userId])
+  @@index([currentLevelId])
+  @@map("learners")
+}
+
+// ---------------------------------------------------------------------------
+// Lộ trình: chặng → cấp → chủ đề (unit) → bài học → bước trong bài
+// ---------------------------------------------------------------------------
+
+enum ContentStatus {
+  draft
+  published
+}
+
+enum LessonKind {
+  lesson
+  unit_test
+  level_test
+  review
+}
+
+enum MediaType {
+  image
+  audio
+}
+
+/// 4 chặng: Khởi đầu, Tiểu học, THCS, Nâng cao.
+model Stage {
+  id        Int    @id @default(autoincrement())
+  name      String @unique @db.VarChar(100)
+  sortOrder Int    @map("sort_order")
+
+  levels Level[]
+
+  @@map("stages")
+}
+
+/// 10 cấp độ. `color` là tên token màu (level-1 … level-10), `theme` là bộ giao diện (tieu-hoc hoặc thcs).
+model Level {
+  id          Int    @id @default(autoincrement())
+  stageId     Int    @map("stage_id")
+  number      Int    @unique @db.TinyInt
+  name        String @db.VarChar(100)
+  /// Khung tham chiếu (Pre-A1, A1, A2, B1…).
+  cefr        String @db.VarChar(30)
+  description String @db.Text
+  color       String @db.VarChar(30)
+  theme       String @db.VarChar(20)
+
+  stage     Stage      @relation(fields: [stageId], references: [id], onDelete: Restrict)
+  units     Unit[]
+  words     Word[]
+  questions Question[]
+  learners  Learner[]  @relation("LearnerCurrentLevel")
+
+  @@index([stageId])
+  @@map("levels")
+}
+
+/// Chủ đề trong một cấp (vd Fruits).
+model Unit {
+  id        Int           @id @default(autoincrement())
+  levelId   Int           @map("level_id")
+  title     String        @db.VarChar(150)
+  titleVi   String        @map("title_vi") @db.VarChar(150)
+  image     String?       @db.VarChar(255)
+  sortOrder Int           @map("sort_order")
+  status    ContentStatus @default(draft)
+
+  level   Level    @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  lessons Lesson[]
+
+  @@index([levelId, sortOrder])
+  @@map("units")
+}
+
+model Lesson {
+  id        Int           @id @default(autoincrement())
+  unitId    Int           @map("unit_id")
+  title     String        @db.VarChar(150)
+  kind      LessonKind    @default(lesson)
+  sortOrder Int           @map("sort_order")
+  minutes   Int           @default(10) @db.TinyInt
+  status    ContentStatus @default(draft)
+
+  unit     Unit             @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  steps    LessonStep[]
+  progress LessonProgress[]
+  attempts LessonAttempt[]
+
+  @@index([unitId, sortOrder])
+  @@map("lessons")
+}
+
+/// Một bước trong bài học: một dạng bài (`activity_type`) gắn với một từ hoặc một câu hỏi, cấu hình riêng ở `config` (JSON).
+model LessonStep {
+  id           Int    @id @default(autoincrement())
+  lessonId     Int    @map("lesson_id")
+  sortOrder    Int    @map("sort_order")
+  /// word_card, listen_choose_picture, match_pairs, choose_word_for_picture… (kiểm bằng Zod).
+  activityType String @map("activity_type") @db.VarChar(50)
+  wordId       Int?   @map("word_id")
+  questionId   Int?   @map("question_id")
+  /// Schema: src/lib/schemas/lesson-step-config.ts.
+  config       Json?
+
+  lesson   Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  word     Word?     @relation(fields: [wordId], references: [id], onDelete: Restrict)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@index([lessonId, sortOrder])
+  @@index([wordId])
+  @@index([questionId])
+  @@map("lesson_steps")
+}
+
+// ---------------------------------------------------------------------------
+// Nội dung: từ vựng, chủ đề từ, câu hỏi, thư viện hình và âm thanh
+// ---------------------------------------------------------------------------
+
+model Word {
+  id           Int      @id @default(autoincrement())
+  word         String   @db.VarChar(100)
+  ipa          String?  @db.VarChar(100)
+  partOfSpeech String?  @map("part_of_speech") @db.VarChar(30)
+  meaningVi    String   @map("meaning_vi") @db.VarChar(255)
+  exampleEn    String?  @map("example_en") @db.VarChar(500)
+  exampleVi    String?  @map("example_vi") @db.VarChar(500)
+  image        String?  @db.VarChar(255)
+  audio        String?  @db.VarChar(255)
+  exampleAudio String?  @map("example_audio") @db.VarChar(255)
+  levelId      Int      @map("level_id")
+  /// Họ từ, cụm từ đi kèm… Schema: src/lib/schemas/word-extra.ts.
+  extra        Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  level       Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  topics      WordTopic[]
+  steps       LessonStep[]
+  answerLogs  AnswerLog[]
+  reviewCards ReviewCard[]
+
+  @@index([word])
+  @@index([levelId])
+  @@map("words")
+}
+
+model Topic {
+  id     Int    @id @default(autoincrement())
+  name   String @unique @db.VarChar(100)
+  nameVi String @map("name_vi") @db.VarChar(100)
+
+  words WordTopic[]
+
+  @@map("topics")
+}
+
+/// Một từ có thể thuộc nhiều chủ đề.
+model WordTopic {
+  wordId  Int @map("word_id")
+  topicId Int @map("topic_id")
+
+  word  Word  @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([wordId, topicId])
+  @@index([topicId])
+  @@map("word_topic")
+}
+
+/// Ngân hàng câu hỏi. `prompt`, `options`, `answer` là JSON; schema: src/lib/schemas/question.ts.
+model Question {
+  id          Int           @id @default(autoincrement())
+  type        String        @db.VarChar(50)
+  prompt      Json
+  options     Json?
+  answer      Json
+  explanation String?       @db.Text
+  levelId     Int           @map("level_id")
+  skill       String        @default("vocabulary") @db.VarChar(30)
+  difficulty  Int           @default(1) @db.TinyInt
+  status      ContentStatus @default(draft)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  level       Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  steps       LessonStep[]
+  answerLogs  AnswerLog[]
+  reviewCards ReviewCard[]
+
+  @@index([levelId, type])
+  @@map("questions")
+}
+
+/// Thư viện hình và âm thanh đã tải lên.
+model Media {
+  id        Int       @id @default(autoincrement())
+  path      String    @unique @db.VarChar(255)
+  type      MediaType
+  /// Kích thước tệp (byte).
+  size      Int
+  alt       String?   @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map("media")
+}
+
+// ---------------------------------------------------------------------------
+// Kết quả học
+// ---------------------------------------------------------------------------
+
+enum AnswerSource {
+  lesson
+  review
+  exam
+}
+
+/// Kết quả tốt nhất của mỗi bài (mỗi bé một dòng cho mỗi bài).
+model LessonProgress {
+  id          Int       @id @default(autoincrement())
+  learnerId   Int       @map("learner_id")
+  lessonId    Int       @map("lesson_id")
+  bestStars   Int       @default(0) @map("best_stars") @db.TinyInt
+  attempts    Int       @default(0)
+  completedAt DateTime? @map("completed_at")
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  lesson  Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([learnerId, lessonId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+/// Từng lần học một bài.
+model LessonAttempt {
+  id         Int       @id @default(autoincrement())
+  learnerId  Int       @map("learner_id")
+  lessonId   Int       @map("lesson_id")
+  startedAt  DateTime  @default(now()) @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+  correct    Int       @default(0)
+  wrong      Int       @default(0)
+  stars      Int       @default(0) @db.TinyInt
+  xp         Int       @default(0)
+  coins      Int       @default(0)
+
+  learner    Learner     @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  lesson     Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answerLogs AnswerLog[]
+
+  @@index([learnerId, lessonId])
+  @@index([learnerId, startedAt])
+  @@index([lessonId])
+  @@map("lesson_attempts")
+}
+
+/// Từng câu trả lời, dùng để thống kê kỹ năng và tìm từ hay sai.
+model AnswerLog {
+  id         BigInt       @id @default(autoincrement())
+  learnerId  Int          @map("learner_id")
+  questionId Int?         @map("question_id")
+  wordId     Int?         @map("word_id")
+  source     AnswerSource
+  attemptId  Int?         @map("attempt_id")
+  isCorrect  Boolean      @map("is_correct")
+  /// Câu trả lời của bé. Schema: src/lib/schemas/answer-log.ts.
+  answer     Json?
+  timeMs     Int?         @map("time_ms")
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  learner  Learner        @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  question Question?      @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  word     Word?          @relation(fields: [wordId], references: [id], onDelete: SetNull)
+  attempt  LessonAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+
+  @@index([learnerId, createdAt])
+  @@index([learnerId, wordId])
+  @@index([questionId])
+  @@index([wordId])
+  @@index([attemptId])
+  @@map("answer_logs")
+}
+
+/// Thẻ ôn tập lặp lại (5 hộp): mỗi thẻ gắn với một từ hoặc một câu hỏi.
+model ReviewCard {
+  id             Int       @id @default(autoincrement())
+  learnerId      Int       @map("learner_id")
+  wordId         Int?      @map("word_id")
+  questionId     Int?      @map("question_id")
+  /// Hộp 1–5.
+  box            Int       @default(1) @db.TinyInt
+  dueOn          DateTime  @map("due_on") @db.Date
+  correctCount   Int       @default(0) @map("correct_count")
+  wrongCount     Int       @default(0) @map("wrong_count")
+  lastReviewedAt DateTime? @map("last_reviewed_at")
+
+  learner  Learner   @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  word     Word?     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([learnerId, wordId])
+  @@unique([learnerId, questionId])
+  @@index([learnerId, dueOn])
+  @@index([wordId])
+  @@index([questionId])
+  @@map("review_cards")
+}
+
+/// Phiên học, để tính phút học và giới hạn giờ.
+model StudySession {
+  id        Int       @id @default(autoincrement())
+  learnerId Int       @map("learner_id")
+  startedAt DateTime  @default(now()) @map("started_at")
+  endedAt   DateTime? @map("ended_at")
+  minutes   Int       @default(0)
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+
+  @@index([learnerId, startedAt])
+  @@map("study_sessions")
 }
