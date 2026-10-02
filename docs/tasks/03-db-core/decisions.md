@@ -42,3 +42,15 @@
 - Thẻ ôn tập "gắn với từ hoặc câu hỏi" (đúng một trong hai) kiểm bằng Zod (`reviewCardInputSchema`), không dùng `CHECK` của database vì MariaDB và MySQL 8 xử lý khác nhau. Hai ràng buộc duy nhất không chặn nhiều thẻ có `NULL` ở cột còn lại, nên chỉ ghi qua `upsertReviewCard`.
 - `src/server/progress.ts`: `getLessonProgress`, `listLessonProgress`, `startLessonAttempt` (chỉ bài đã xuất bản), `finishLessonAttempt` (giao dịch: ghi lượt học, giữ sao cao nhất, tăng số lần), `logAnswer`, `upsertReviewCard`, `listDueReviewCards`, `startStudySession`, `endStudySession`. Mọi hàm gọi `requireLearner(userId, learnerId)` trước; lượt học/phiên học còn được kiểm là của đúng bé (`AttemptAccessError`).
 - Số sao, xu, XP và lịch ôn (PRD Phần F) KHÔNG tính ở đây: `finishLessonAttempt` nhận kết quả đã tính (Zod giới hạn sao 1–3) và các hàm thuần để tính nằm ở `src/lib/` do task 07 và 08 viết.
+
+### 02/10/2026 — Seed khung 10 cấp (Bước 3)
+- `prisma/seed.ts` (đăng ký ở `prisma.config.ts` → `migrations.seed`): 4 chặng (Khởi đầu, Tiểu học, THCS, Nâng cao) và 10 cấp theo bảng PRD A1; `upsert` theo `stages.name` và `levels.number`, phần `update` ghi đè về bản gốc nên chạy lại nhiều lần không tạo trùng và sửa tay một dòng rồi seed lại thì về đúng bản gốc.
+- `levels`: `description` là cột "Trọng tâm" của PRD; `cefr` là khung tham chiếu rút gọn kèm tên bài thi Cambridge (≤ 30 ký tự, vd "A1 → A2 (Flyers)"); `color` = `level-N`; `theme` = `tieu-hoc` (cấp 1–5) hoặc `thcs` (cấp 6–10). Cấp 1–2 thuộc Khởi đầu, 3–5 Tiểu học, 6–9 THCS, 10 Nâng cao. Cột "lớp tương ứng" và "từ vựng tích lũy" của PRD chưa có cột riêng (bảng `levels` theo PRD G); nằm trong tài liệu, không seed.
+- Tài khoản quản trị (`ADMIN_EMAIL`/`ADMIN_PASSWORD`) KHÔNG seed ở task này: cần băm bcrypt và thuộc phần đăng nhập, để task 04.
+- Seed tự nạp `.env` khi chạy trực tiếp (`node prisma/seed.ts`); qua `prisma db seed` thì biến môi trường đã có sẵn.
+- Chưa kiểm tra trên MySQL 8 (máy chỉ có MariaDB 10.4 của XAMPP). Migration chỉ dùng kiểu và cú pháp chung (ENUM, JSON, DATETIME(3), TINYINT, BIGINT, khóa ngoại), nên cần chạy `prisma migrate deploy` một lần trên MySQL 8 của hosting trước khi dùng thật.
+
+### 02/10/2026 — Tổng kết task 03 (khác với `task.md` gốc)
+- Thêm `src/server/learners.ts`, `curriculum.ts`, `progress.ts` (hàm truy cập có kiểm tra quyền sở hữu hồ sơ) và các schema Zod ở `src/lib/schemas/` cho mọi cột JSON, ngoài phần schema + seed đã nêu trong `task.md`.
+- Hai việc để task sau: hàm thuần cho sao/XP/xu và lịch ôn 5 hộp (PRD Phần F) ở `src/lib/` (task 07, 08); tài khoản quản trị mẫu (task 04). Tập `activity_type`/`questions.type` mới thêm khi có dạng bài mới, không cần migration.
+- Việc cần theo dõi trước khi lên hosting: lỗi `npm audit` (xem mục đầu file) và chạy `migrate deploy` trên MySQL 8.
