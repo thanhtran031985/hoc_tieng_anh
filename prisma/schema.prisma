@@ -1,14 +1,84 @@
+// Cơ sở dữ liệu Edu / Học cùng Bông (PRD Phần G, giai đoạn 1).
+// Quy ước: model PascalCase số ít, @@map sang bảng snake_case số nhiều, field camelCase có @map sang cột snake_case.
+// Chạy được trên MariaDB (XAMPP) và MySQL 8: không dùng tính năng riêng của một bên.
+
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  // Import trong client sinh ra có đuôi .ts để Node chạy được prisma/seed.ts mà không cần công cụ build.
+  importFileExtension = "ts"
 }
 
 datasource db {
   provider = "mysql"
 }
 
-// Model tạm để thử migrate ở task 01. Xóa ở task 03 (db-core).
-model SetupCheck {
+// ---------------------------------------------------------------------------
+// Tài khoản và hồ sơ
+// ---------------------------------------------------------------------------
+
+enum Role {
+  admin
+  parent
+}
+
+enum UiTheme {
+  tieu_hoc @map("tieu-hoc")
+  thcs
+  auto
+}
+
+/// Tài khoản gia đình (parent) và quản trị nội dung (admin).
+model User {
   id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(191)
+  /// Mật khẩu đã băm bằng bcrypt, không bao giờ lưu dạng thuần.
+  password  String   @db.VarChar(100)
+  role      Role     @default(parent)
+  /// Mã PIN phụ huynh (4–6 số) đã băm bằng bcrypt.
+  parentPin String?  @map("parent_pin") @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  learners Learner[]
+
+  @@map("users")
+}
+
+/// Hồ sơ học sinh; mỗi hồ sơ thuộc một tài khoản gia đình.
+model Learner {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @map("user_id")
+  name           String    @db.VarChar(100)
+  birthYear      Int?      @map("birth_year") @db.SmallInt
+  schoolGrade    Int?      @map("school_grade") @db.TinyInt
+  /// Bộ sách giáo khoa đang học ở trường (vd "Global Success").
+  textbook       String?   @db.VarChar(100)
+  /// Kiểu ảnh hồ sơ: short | bob | buns | spiky.
+  avatar         String    @default("short") @db.VarChar(30)
+  /// Màu rồng Bông: ngoc | dao | nang | tim.
+  mascot         String    @default("ngoc") @db.VarChar(20)
+  mascotName     String    @default("Bông") @map("mascot_name") @db.VarChar(50)
+  uiTheme        UiTheme   @default(auto) @map("ui_theme")
+  /// Cấp hiện tại (khóa ngoại tới levels được thêm ở bước lộ trình).
+  currentLevelId Int?      @map("current_level_id")
+  stars          Int       @default(0)
+  coins          Int       @default(0)
+  xp             Int       @default(0)
+  streakDays     Int       @default(0) @map("streak_days")
+  /// Thẻ nghỉ phép chuỗi ngày (mỗi tuần một thẻ).
+  streakFreezes  Int       @default(1) @map("streak_freezes")
+  lastStudyDate  DateTime? @map("last_study_date") @db.Date
+  /// PIN hồ sơ đã băm bằng bcrypt.
+  pin            String?   @db.VarChar(100)
+  /// Cài đặt (JSON): giới hạn giờ, khung giờ, giọng đọc, mục tiêu ngày. Schema: src/lib/schemas/learner-settings.ts.
+  settings       Json?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("learners")
 }
