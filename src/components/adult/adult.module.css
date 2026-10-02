@@ -843,3 +843,27 @@ select.input {
   border-color: var(--field-error);
   background: var(--field-error-bg);
 }
+
+/* ---- Thang CEFR (thẻ trình độ ước lượng) ---- */
+.cefr {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--lip-s);
+  margin-top: var(--space-1);
+}
+.cefr span {
+  height: var(--space-2);
+  border-radius: var(--lip-s);
+  background: var(--surface-sunk);
+}
+.cefrOn {
+  background: var(--chart-1) !important;
+}
+.cefrLabels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  font-size: var(--text-adm-label);
+  line-height: var(--text-adm-label--line-height);
+  font-weight: 600;
+  color: var(--ink-soft);
+}

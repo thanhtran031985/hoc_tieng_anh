@@ -36,6 +36,7 @@ export function VBars({ data, unit = "", reference, max, every = 0, height, aria
   const top = Math.max(0, ...data.map((d) => d.v), reference?.v ?? 0);
   const axisMax = max ?? (Math.ceil((top * 1.15) / 10) * 10 || 10);
   const highest = Math.max(0, ...data.map((d) => d.v));
+  const highestIndex = data.findIndex((d) => d.v === highest);
   const pct = (v: number) => `${(v / axisMax) * 100}%`;
 
   return (
@@ -52,9 +53,9 @@ export function VBars({ data, unit = "", reference, max, every = 0, height, aria
           ))}
         </div>
         <div className={styles.cols}>
-          {data.map((d) => (
-            <div key={d.k + d.v} className={styles.bar} {...handlers(d.tip ?? `${d.k}: ${formatNumber(d.v)} ${unit}`.trim(), `.${styles.barM}`)}>
-              {d.v > 0 && d.v === highest && <span className={styles.barV}>{formatNumber(d.v)}</span>}
+          {data.map((d, i) => (
+            <div key={d.k + i} className={styles.bar} {...handlers(d.tip ?? `${d.k}: ${formatNumber(d.v)} ${unit}`.trim(), `.${styles.barM}`)}>
+              {d.v > 0 && i === highestIndex && <span className={styles.barV}>{formatNumber(d.v)}</span>}
               <span className={styles.barM} style={{ height: d.v > 0 ? `max(${pct(d.v)}, var(--space-1))` : 0, background: d.level ? `var(--level-${d.level})` : "var(--chart-1)" }} />
             </div>
           ))}

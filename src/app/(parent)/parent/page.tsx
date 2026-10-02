@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
-import { ButtonLink } from "@/components/ui";
-import { LogoutButton } from "@/features/auth/LogoutButton";
-import styles from "@/features/parent/parent.module.css";
+import { NoKids, OverviewView } from "@/features/parent/OverviewView";
+import { pickKidId } from "@/features/parent/kid-select";
+import { listLearners } from "@/server/learners";
 import { requireParentGate } from "@/server/parent-gate";
+import { getOverview } from "@/server/reports/overview";
 
-export const metadata: Metadata = { title: "Khu vực bố mẹ — Học cùng Bông" };
+export const metadata: Metadata = { title: "Tổng quan — Khu bố mẹ" };
 
-// Giữ chỗ: task 11 dựng trang tổng quan của bố mẹ.
-export default async function ParentPage() {
+// Tổng quan học tập của một bé (chọn bằng ?kid=). Danh sách con chỉ gồm hồ sơ của tài khoản; id lạ thì dùng con đầu tiên.
+export default async function ParentOverviewPage({ searchParams }: { searchParams: Promise<{ kid?: string | string[] }> }) {
   const user = await requireParentGate();
-  return (
-    <main className={styles.page}>
-      <h1 className={styles.heading}>Khu vực của bố mẹ</h1>
-      <p className={styles.lead}>Xin chào {user.name}. Trang tổng quan học tập sẽ có ở task 11.</p>
-      <div className={styles.row}>
-        <ButtonLink href="/profiles" variant="secondary" size="m" label="Về chọn hồ sơ" />
-        <LogoutButton />
-      </div>
-    </main>
-  );
+  const learners = await listLearners(user.id);
+  const kidId = pickKidId(learners, (await searchParams).kid);
+  if (kidId === null) return <NoKids />;
+  return <OverviewView key={kidId} data={await getOverview(user.id, kidId)} />;
 }

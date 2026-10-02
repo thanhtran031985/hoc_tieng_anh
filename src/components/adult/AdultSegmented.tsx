@@ -10,15 +10,17 @@ type Props<T extends string> = {
   options: readonly (readonly [T, string])[];
   onChange: (value: T) => void;
   className?: string;
+  /** Ẩn nhãn nhìn thấy (vẫn đọc được bằng trình đọc màn hình), vd bộ chọn 7/30 ngày trên đầu thẻ. */
+  labelHidden?: boolean;
 };
 
 /** Nhóm lựa chọn một (radiogroup): ← → hoặc ↑ ↓ đổi lựa chọn, Tab ra khỏi nhóm. */
-export function AdultSegmented<T extends string>({ label, value, options, onChange, className }: Props<T>) {
+export function AdultSegmented<T extends string>({ label, value, options, onChange, className, labelHidden }: Props<T>) {
   const id = useId();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   return (
     <div className={cn(styles.field, className)}>
-      <span className={styles.h3} id={`${id}-l`}>
+      <span className={cn(styles.h3, labelHidden && "sr-only")} id={`${id}-l`}>
         {label}
       </span>
       <div className={styles.seg} role="radiogroup" aria-labelledby={`${id}-l`}>
