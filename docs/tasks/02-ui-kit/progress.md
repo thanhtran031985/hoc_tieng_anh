@@ -1,6 +1,6 @@
 # Tiến độ — 02-ui-kit — Bộ thành phần giao diện Tiểu học
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 02/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -61,6 +61,21 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
   - Không hex/px/rgba trong code mới (trừ hai mốc media query); `tsc`, `lint` không lỗi.
 - Việc cần làm thủ công: mở `/dev/ui`, thử hộp thoại bằng bàn phím (Tab, Esc, Enter) và dải phản hồi.
 
+### Kiểm tra cuối task và rà soát (02/10/2026)
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` đều không lỗi. Bản production (`next start`): `/` trả 200, `/dev/ui` và `/dev-tokens` trả 404.
+- `/dev/ui` ở 1440×900 và 1366×768: không tràn ngang (`scrollWidth` = `clientWidth`); thanh trên cùng thu lề ở 1366 theo media query; từng mục so với `preview.html` tương ứng (nút, nhãn phím, icon, rồng, hình từ vựng, loa, thẻ, thẻ đáp án, thanh tiến độ, chip, thanh trên cùng, hộp thoại, dải phản hồi, trống/lỗi).
+- Rà soát theo quy tắc code: không secret/Prisma trong component; không hex/px cố định trong `.tsx`/`.module.css` (trừ nét vẽ SVG và hai mốc media query); mọi hoạt ảnh có nhánh `prefers-reduced-motion`; nút chỉ có icon có `aria-label`; không có nội dung học viết cứng trong component (chữ trên `/dev/ui` chỉ là mẫu xem).
+- Sự cố đã xử lý: commit Bước 4 vô tình đưa thư mục `goi-du-an/` và hai tệp `prompt-*.md` vào kho; đã gỡ ở commit `4c792fa` (xem `decisions.md`).
+
+### Checklist thử tay (cần người dùng)
+Chạy `npm run dev`, mở `http://localhost:3000/dev/ui`:
+- [ ] Rê chuột, nhấn và bấm Tab qua các nút: viền focus tím rõ, nút nhô lên/lún xuống đúng cảm giác.
+- [ ] Bấm các nút loa và nghe giọng thật (Chrome/Edge); thử nút giọng Anh.
+- [ ] Rồng Bông nhún, vẫy tay, ngủ; bật "giảm chuyển động" của hệ điều hành thì rồng đứng yên.
+- [ ] Hộp thoại: Tab xoay vòng, Esc đóng và trả focus; dải phản hồi: Enter bấm "Tiếp tục".
+- [ ] Mục "Phím tắt": bấm "Bật thử phím tắt", thử 1–4, A–D, Enter, Space, ←/→, Esc; gõ trong ô nhập không kích hoạt.
+- Đã tự kiểm tra bằng trình duyệt headless các mục trên (hành vi, kiểu dáng, ảnh chụp); mục nghe giọng thật và cảm giác chuyển động cần kiểm tay.
+
 ## Bước tiếp theo
 
-Kiểm tra cuối task: `tsc`, `lint`, `build`, so `/dev/ui` với từng `preview.html` ở 1440×900 và 1366×768, rồi chạy quy trình `finish-task`.
+Hoàn thành (chờ anh/chị thử tay checklist ở trên). Task kế tiếp theo thứ tự: 03-db-core.

@@ -70,3 +70,10 @@
 ### 02/10/2026 — Bản giải nén `goi-du-an/` không đưa vào kho
 - Bối cảnh: trong lúc làm Bước 4, thư mục `goi-du-an/` (bản giải nén của `goi-du-an.zip`) và hai tệp `prompt-1-tieuhoc.md`, `prompt-2-thcs.md` xuất hiện ở thư mục gốc; lệnh `git add -A` của commit Bước 4 đã đưa chúng vào kho và đẩy lên GitHub (commit `fe2c142`).
 - Quyết định: gỡ cả ba khỏi kho (`git rm --cached`, tệp trên đĩa còn nguyên), thêm `goi-du-an/` vào `.gitignore` (như `goi-du-an.zip`), loại khỏi ESLint và `tsc` (bản sao `bundle.js` gây 5 cảnh báo lint). Hai tệp `prompt-*.md` chỉ gỡ khỏi kho, chưa ignore: anh/chị quyết định có giữ trong kho hay không. Từ nay commit bằng danh sách tệp cụ thể, không dùng `git add -A`.
+
+### 02/10/2026 — Tổng kết task 02 (khác với `task.md` gốc)
+- Props đổi tên ở những chỗ React bắt buộc (`key` → `shortcut`, `attrs` → thuộc tính HTML thật, `cls` → `className`/`corner`, `Dialog`/`FeedbackBar` điều khiển bằng `open`); các props còn lại giữ đúng `index.d.ts`.
+- Thêm ngoài danh sách phạm vi vì thành phần khác cần: `IconButton` (nút quay lại của Topbar), `LevelChip` và `Avatar` (Topbar), `Skeleton` (khung xương), `cn` (ghép lớp CSS).
+- Chưa làm (để task sau): hiệu ứng sao bay vào chip sao (`Bong.burst`) ở task 07; chọn giọng Mỹ/Anh theo cài đặt hồ sơ ở task 11 (component đã nhận `accent`); âm thanh mp3 thật ở GĐ2.
+- Nét vẽ rồng, hình từ vựng, icon, avatar chép nguyên từ `bundle.js` (sinh bằng cách chạy bundle trong Node) nên giống thiết kế từng nét; hex trong các file nét vẽ là màu vẽ.
+- Việc cần theo dõi: `dangerouslySetInnerHTML` chỉ nhận chuỗi hằng số trong repo (không có dữ liệu người dùng); khi task 05 thêm hình mới vào `WORD_PICTURES` cũng chỉ nhận SVG do mình vẽ.

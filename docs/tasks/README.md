@@ -5,7 +5,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | # | Task | Trạng thái | Phụ thuộc | Nhánh git |
 |---|---|---|---|---|
 | 01 | [01-setup](01-setup/task.md) — Khởi tạo dự án | ✅ | — | `feat/01-setup` |
-| 02 | [02-ui-kit](02-ui-kit/task.md) — Bộ thành phần giao diện Tiểu học | 🔄 | 01 | `feat/02-ui-kit` |
+| 02 | [02-ui-kit](02-ui-kit/task.md) — Bộ thành phần giao diện Tiểu học | ✅ | 01 | `feat/02-ui-kit` |
 | 03 | [03-db-core](03-db-core/task.md) — Cơ sở dữ liệu lõi và lộ trình 10 cấp | ⬜ | 01 | `feat/03-db-core` |
 | 04 | [04-auth-profiles](04-auth-profiles/task.md) — Đăng nhập gia đình và hồ sơ bé | ⬜ | 02, 03 | `feat/04-auth-profiles` |
 | 05 | [05-content-l1-l2](05-content-l1-l2/task.md) — Nội dung mẫu cấp 1–2 | ⬜ | 03 | `feat/05-content-l1-l2` |
