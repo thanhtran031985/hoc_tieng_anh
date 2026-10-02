@@ -23,3 +23,6 @@ goi-du-an.zip
 *.tsbuildinfo
 .DS_Store
 npm-debug.log*
+
+# Bản giải nén của gói dự án (goi-du-an.zip), không đưa vào kho
+goi-du-an/

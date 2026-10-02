@@ -66,3 +66,7 @@
 - Media query dùng mốc 1400px (rộng) và 800px (cao) giống bản xem trước đổi từ container query: biến CSS không dùng được trong media query nên đây là chỗ duy nhất còn px trong `.module.css`.
 - Token thêm: `--size-dialog` 540px, `--size-state-text` 560px, `--dialog-mascot-lift` 110px, `--size-feedback-min-h` 132px, `--size-feedback-mascot` 112px, `--feedback-mascot-lift` 64px.
 - `/dev/ui`: mục thử phím tắt chỉ bật khi bấm nút "Bật thử phím tắt", để không tranh Enter/Esc với hộp thoại và dải phản hồi.
+
+### 02/10/2026 — Bản giải nén `goi-du-an/` không đưa vào kho
+- Bối cảnh: trong lúc làm Bước 4, thư mục `goi-du-an/` (bản giải nén của `goi-du-an.zip`) và hai tệp `prompt-1-tieuhoc.md`, `prompt-2-thcs.md` xuất hiện ở thư mục gốc; lệnh `git add -A` của commit Bước 4 đã đưa chúng vào kho và đẩy lên GitHub (commit `fe2c142`).
+- Quyết định: gỡ cả ba khỏi kho (`git rm --cached`, tệp trên đĩa còn nguyên), thêm `goi-du-an/` vào `.gitignore` (như `goi-du-an.zip`), loại khỏi ESLint và `tsc` (bản sao `bundle.js` gây 5 cảnh báo lint). Hai tệp `prompt-*.md` chỉ gỡ khỏi kho, chưa ignore: anh/chị quyết định có giữ trong kho hay không. Từ nay commit bằng danh sách tệp cụ thể, không dùng `git add -A`.
