@@ -15,3 +15,8 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 02/10/2026 | Từ nhiều chữ (`ice cream`, `wake up`, `next to`…) và `o'clock` được giữ trong danh sách từ mục tiêu | Là đơn vị từ vựng của Starters/Movers |
 | 02/10/2026 | Số từ mục tiêu cấp 6–10: 400, 400, 400, 500, 500 (suy từ số từ cộng dồn PRD A1: 1.700, 2.100, 2.500, 3.000, 3.500) | PRD chỉ ghi số cộng dồn cho THCS |
 | 02/10/2026 | Mỗi cấp THCS 10 chủ đề (task.md cho 10–12) | Đủ phủ các chủ điểm trong mô tả cấp ở PRD |
+| 02/10/2026 | `match_pairs` không có `wordId`: nối các từ có hình của chính bài đó, số cặp ở `config.pairCount` (3–6); task 07 chọn từ từ các thẻ từ của bài | Schema bước chỉ có một `wordId`; không đổi schema của task 03 |
+| 02/10/2026 | Chia bài: tối đa 8 từ, chia đều (13 → 7 + 6); trường hợp lẻ như 9 từ chia 5 + 4 | Không có cách chia 9 từ thành các bài 5–8 từ |
+| 02/10/2026 | Trận trùm là bài `kind = unit_test`, tối đa 12 bước, xen nghe-chọn-hình và chọn-từ-cho-hình, trộn có hạt giống (cùng kết quả khi seed lại); chủ đề không có từ nào có hình thì không có trận trùm | Trận trùm cần hình; chạy seed lại không đổi nội dung |
+| 02/10/2026 | Số lựa chọn mỗi câu = min(3, số từ có hình) cho nghe-chọn-hình, min(3, số từ) cho chọn-từ-cho-hình; dưới 2 thì bỏ dạng đó | Cần đủ đáp án nhiễu |
+| 02/10/2026 | Thêm `npm test` = `node --test "src/**/*.test.ts"` | Chưa có test runner; Node có sẵn, không cài package |

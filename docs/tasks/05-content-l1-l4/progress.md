@@ -7,7 +7,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 0 | Cột và trạng thái mới cho units | ✅ | 02/10/2026 |
 | 1 | Khung cấp 1–5 (Tiểu học) | ✅ | 02/10/2026 |
 | 2 | Khung cấp 6–10 | ✅ | 02/10/2026 |
-| 3 | Hàm tạo bài tự động | ⬜ | |
+| 3 | Hàm tạo bài tự động | ✅ | 02/10/2026 |
 | 4 | Từ vựng cấp 3 | ⬜ | |
 | 5 | Hình minh họa cấp 3 | ⬜ | |
 | 6 | Bài học cấp 3 và seed | ⬜ | |
@@ -33,6 +33,11 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Kiểm tra: `node scripts/check-curriculum.mjs` đạt, 10 cấp, 3494 từ khác nhau (PRD cộng dồn ≈ 3.500), không trùng giữa các cấp, mỗi cấp 10 chủ đề; seed 2 lần: lần 1 tạo 50 chủ đề mới, lần 2 tạo 0 (tổng 90, cả 10 cấp có chủ đề `planned`); tsc và lint sạch.
 - Việc thủ công: cấp 9 hụt 8 từ so với 500 (492, trong ngưỡng 10%). Danh sách từ cấp 6–10 là bản đầu để làm khung; khi soạn chi tiết (GĐ sau) có thể thêm/bớt.
 
+### Bước 3 — Hàm tạo bài tự động (02/10/2026)
+- Đã làm: `src/lib/rules/lesson-builder.ts` (hàm thuần `buildLessons`, `splitLessonSizes`); test `src/lib/rules/lesson-builder.test.ts`; script `npm test` (`node --test`, không cài package).
+- Kiểm tra: 12 test đạt: 13 từ → 2 bài (7 + 6 từ) + 1 trận trùm; thứ tự bước thẻ từ → nghe chọn hình → nối cặp → chọn từ cho hình; từ thiếu hình chỉ có thẻ từ; chủ đề không có hình thì không có trận trùm; trận trùm ≤ 12 bước, xen hai dạng, cùng kết quả khi chạy lại. `npx tsc --noEmit`, `npm run lint`, `npm run build` sạch.
+- Việc thủ công: không.
+
 ## Bước tiếp theo
 
-Bước 3 — Hàm tạo bài tự động (`src/lib/rules/lesson-builder.ts` + test bằng `node --test`).
+Bước 4 — Từ vựng cấp 3 (≈250 từ: phiên âm, loại từ, nghĩa, câu ví dụ Anh và Việt) trong `prisma/seed/content/level-03/<slug>.json`.
