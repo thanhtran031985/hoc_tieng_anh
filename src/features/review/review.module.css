@@ -1,0 +1,206 @@
+/* Màn bắt đầu Ôn tập hôm nay (Screen19): rồng + số từ đến hạn, 5 hộp ghi nhớ, chân màn có nút bắt đầu. Không cuộn ở 1366×768. */
+.rv {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-12) var(--space-6);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+}
+.top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+.dragon {
+  flex: none;
+  width: min(var(--size-review-dragon), 17vh);
+  height: auto;
+}
+.intro {
+  flex: 1;
+  min-width: 0;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.sub {
+  margin: var(--space-2) 0 0;
+  color: var(--ink-soft);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+}
+.dueCard {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+}
+.dueNum {
+  color: var(--brand);
+  font-family: var(--font-display);
+  font-size: var(--text-display-xl);
+  line-height: 1;
+  font-weight: 800;
+}
+.dueText {
+  display: flex;
+  flex-direction: column;
+}
+.dueText b {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+}
+.dueText span {
+  color: var(--ink-soft);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+
+/* ---- 5 hộp ---- */
+.boxes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(var(--size-memory-box), 1fr));
+  gap: var(--space-4);
+  align-items: end;
+}
+.box {
+  background: var(--ms);
+  border: var(--border-thick) solid var(--m);
+  box-shadow: 0 var(--lip-l) 0 var(--m);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-4);
+  min-width: 0;
+}
+.dueBox {
+  transform: translateY(calc(-1 * var(--space-1)));
+}
+.lid {
+  height: var(--size-box-lid);
+  background: var(--m);
+  margin-bottom: var(--space-2);
+}
+.boxHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+}
+.boxNo {
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+  color: var(--ink-soft);
+}
+.boxCount {
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: 800;
+}
+.boxName {
+  padding: 0 var(--space-4);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 800;
+}
+.boxSched {
+  padding: 0 var(--space-4);
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+}
+.boxPics {
+  display: flex;
+  padding: var(--space-2) var(--space-4) var(--space-2) calc(var(--space-4) + var(--space-3));
+  min-height: var(--size-box-pic);
+}
+.boxPic {
+  width: var(--size-box-pic);
+  height: var(--size-box-pic);
+  margin-left: calc(-1 * var(--space-3));
+  border-radius: var(--radius-round);
+  background: var(--surface);
+  box-shadow: 0 0 0 var(--border-thin) var(--ms);
+  display: grid;
+  place-items: center;
+}
+.boxTag {
+  align-self: flex-start;
+  margin: 0 var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+}
+.boxRest {
+  color: var(--ink-soft);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.footActs {
+  display: flex;
+  gap: var(--space-3);
+}
+.hint {
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+}
+
+/* ---- Đang tải ---- */
+.skBoxes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(var(--size-memory-box), 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 1400px) {
+  .rv {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+  .boxes,
+  .skBoxes {
+    gap: var(--space-3);
+  }
+}
+@media (max-height: 800px) {
+  .rv {
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
+  .boxPics {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}

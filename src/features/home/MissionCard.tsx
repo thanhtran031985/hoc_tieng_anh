@@ -23,6 +23,8 @@ export function MissionCard({ data }: { data: HomeData | null }) {
 
   const { review, next, levelNumber, levelComplete, levelHasContent, missions, hasStarted } = data;
   const isNewLearner = !hasStarted && review.dueCount === 0;
+  // Chỉ hiện dòng Ôn tập khi có từ đến hạn hoặc hôm nay bé đã ôn (để thấy đã xong); không có gì để ôn thì ẩn.
+  const showReview = !isNewLearner && (review.dueCount > 0 || review.doneToday);
 
   return (
     <Card className={styles.mis} role="region" aria-labelledby="missions-title">
@@ -35,7 +37,7 @@ export function MissionCard({ data }: { data: HomeData | null }) {
         )}
       </h2>
 
-      {!isNewLearner && (
+      {showReview && (
         <div className={styles.task}>
           <div className={`${styles.taskIcon} ${styles.reviewIcon}`}>
             <Icon name="replay" size={40} />
@@ -50,7 +52,7 @@ export function MissionCard({ data }: { data: HomeData | null }) {
                   ))}
                 </span>
               )}
-              <span className={styles.muted}>{review.dueCount > 0 ? `${review.dueCount} từ cần ôn` : "Hôm nay chưa có từ cần ôn"}</span>
+              <span className={styles.muted}>{review.dueCount > 0 ? `${review.dueCount} từ cần ôn` : "Hôm nay ôn xong rồi"}</span>
             </div>
           </div>
           {review.dueCount > 0 && (

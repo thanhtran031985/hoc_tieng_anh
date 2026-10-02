@@ -2,6 +2,7 @@ import { computeLessonStates, findNextLesson, summarizeUnits, type MapLesson } f
 import { dayStartInstant, today } from "@/lib/rules/dates";
 import { db } from "./db";
 import { requireLearner } from "./learners";
+import { dueCardWhere } from "./review";
 
 // Dữ liệu cho trang chủ của bé. Đi qua `requireLearner` nên chỉ đọc được hồ sơ thuộc tài khoản đang đăng nhập.
 
@@ -29,7 +30,8 @@ export type HomeData = {
   levelComplete: boolean;
   /** Bé đã từng xong ít nhất một bài (ở bất kỳ cấp nào). */
   hasStarted: boolean;
-  review: { dueCount: number; pictures: PictureRef[] };
+  /** `dueCount`: từ có hình đến hạn ôn hôm nay; `doneToday`: hôm nay bé đã ôn ít nhất một lượt. */
+  review: { dueCount: number; doneToday: boolean; pictures: PictureRef[] };
   next: HomeNextLesson | null;
   /** Số chặng đã xong / tổng số chặng thường của cấp. */
   levelProgress: { done: number; total: number };
@@ -68,7 +70,7 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
       where: { learnerId, lesson: { status: "published", unit: { levelId: level.id, status: "published" } } },
       select: { lessonId: true, bestStars: true },
     }),
-    db.reviewCard.count({ where: { learnerId, wordId: { not: null }, dueOn: { lte: day } } }),
+    db.reviewCard.count({ where: dueCardWhere(learnerId, day) }),
     // Hình mẫu trên thẻ Ôn tập: chỉ lấy từ đã có hình để khỏi hiện khung trống.
     db.reviewCard.findMany({
       where: { learnerId, dueOn: { lte: day }, word: { image: { not: null } } },
@@ -128,7 +130,7 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
     levelHasContent: units.length > 0,
     levelComplete: units.length > 0 && next === null,
     hasStarted: startedCount > 0,
-    review: { dueCount, pictures: duePictures.flatMap((c) => (c.word ? [c.word] : [])) },
+    review: { dueCount, doneToday: reviewsToday > 0, pictures: duePictures.flatMap((c) => (c.word ? [c.word] : [])) },
     next,
     levelProgress: { done: doneLessons, total: totalLessons },
     learnedWords,

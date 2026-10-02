@@ -367,6 +367,13 @@
   --size-bigstar: 104px;
   --size-bigstar-mid: 128px;
   --size-tile-h: 70px;
+  --size-review-dragon: 150px;
+  --size-box-lid: 14px;
+  --size-box-pic: 48px;
+  --size-box-pic-in: 36px;
+  --size-box-sk: 230px;
+  --size-hop: 26px;
+  --size-move-pic: 52px;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;
