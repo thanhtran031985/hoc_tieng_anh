@@ -1,0 +1,18 @@
+[
+  { "word": "toy", "ipa": "/tɔɪ/", "part_of_speech": "noun", "meaning_vi": "đồ chơi", "example_en": "I have a toy.", "example_vi": "Mình có một món đồ chơi." },
+  { "word": "ball", "ipa": "/bɔːl/", "part_of_speech": "noun", "meaning_vi": "quả bóng", "example_en": "I have a ball.", "example_vi": "Mình có một quả bóng." },
+  { "word": "kite", "ipa": "/kaɪt/", "part_of_speech": "noun", "meaning_vi": "cái diều", "example_en": "I have a kite.", "example_vi": "Mình có một cái diều." },
+  { "word": "teddy", "ipa": "/ˈtedi/", "part_of_speech": "noun", "meaning_vi": "gấu bông", "example_en": "I love my teddy.", "example_vi": "Mình yêu chú gấu bông của mình." },
+  { "word": "doll", "ipa": "/dɒl/", "part_of_speech": "noun", "meaning_vi": "búp bê", "example_en": "I have a doll.", "example_vi": "Mình có một con búp bê." },
+  { "word": "car", "ipa": "/kɑː/", "part_of_speech": "noun", "meaning_vi": "ô tô", "example_en": "I have a red car.", "example_vi": "Mình có một chiếc ô tô đỏ." },
+  { "word": "train", "ipa": "/treɪn/", "part_of_speech": "noun", "meaning_vi": "tàu hỏa", "example_en": "I see a train.", "example_vi": "Mình thấy một đoàn tàu." },
+  { "word": "bike", "ipa": "/baɪk/", "part_of_speech": "noun", "meaning_vi": "xe đạp", "example_en": "I have a bike.", "example_vi": "Mình có một chiếc xe đạp." },
+  { "word": "robot", "ipa": "/ˈrəʊbɒt/", "part_of_speech": "noun", "meaning_vi": "rô-bốt", "example_en": "I have a robot.", "example_vi": "Mình có một con rô-bốt." },
+  { "word": "puzzle", "ipa": "/ˈpʌzl/", "part_of_speech": "noun", "meaning_vi": "bộ xếp hình", "example_en": "I like this puzzle.", "example_vi": "Mình thích bộ xếp hình này." },
+  { "word": "game", "ipa": "/ɡeɪm/", "part_of_speech": "noun", "meaning_vi": "trò chơi", "example_en": "I like this game.", "example_vi": "Mình thích trò chơi này." },
+  { "word": "balloon", "ipa": "/bəˈluːn/", "part_of_speech": "noun", "meaning_vi": "quả bóng bay", "example_en": "I have a red balloon.", "example_vi": "Mình có một quả bóng bay đỏ." },
+  { "word": "drum", "ipa": "/drʌm/", "part_of_speech": "noun", "meaning_vi": "cái trống", "example_en": "I have a drum.", "example_vi": "Mình có một cái trống." },
+  { "word": "boat", "ipa": "/bəʊt/", "part_of_speech": "noun", "meaning_vi": "con thuyền", "example_en": "I see a boat.", "example_vi": "Mình thấy một chiếc thuyền." },
+  { "word": "plane", "ipa": "/pleɪn/", "part_of_speech": "noun", "meaning_vi": "máy bay", "example_en": "I see a plane.", "example_vi": "Mình thấy một chiếc máy bay." },
+  { "word": "block", "ipa": "/blɒk/", "part_of_speech": "noun", "meaning_vi": "khối gỗ xếp hình", "example_en": "I have a block.", "example_vi": "Mình có một khối gỗ." }
+]

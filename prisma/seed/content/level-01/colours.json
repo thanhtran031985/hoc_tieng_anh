@@ -1,0 +1,14 @@
+[
+  { "word": "red", "ipa": "/red/", "part_of_speech": "adjective", "meaning_vi": "màu đỏ", "example_en": "The apple is red.", "example_vi": "Quả táo màu đỏ." },
+  { "word": "blue", "ipa": "/bluː/", "part_of_speech": "adjective", "meaning_vi": "màu xanh dương", "example_en": "The ball is blue.", "example_vi": "Quả bóng màu xanh dương." },
+  { "word": "yellow", "ipa": "/ˈjeləʊ/", "part_of_speech": "adjective", "meaning_vi": "màu vàng", "example_en": "The banana is yellow.", "example_vi": "Quả chuối màu vàng." },
+  { "word": "green", "ipa": "/ɡriːn/", "part_of_speech": "adjective", "meaning_vi": "màu xanh lá", "example_en": "The frog is green.", "example_vi": "Con ếch màu xanh lá." },
+  { "word": "pink", "ipa": "/pɪŋk/", "part_of_speech": "adjective", "meaning_vi": "màu hồng", "example_en": "The pig is pink.", "example_vi": "Con heo màu hồng." },
+  { "word": "purple", "ipa": "/ˈpɜːpl/", "part_of_speech": "adjective", "meaning_vi": "màu tím", "example_en": "The grapes are purple.", "example_vi": "Chùm nho màu tím." },
+  { "word": "brown", "ipa": "/braʊn/", "part_of_speech": "adjective", "meaning_vi": "màu nâu", "example_en": "The bear is brown.", "example_vi": "Con gấu màu nâu." },
+  { "word": "black", "ipa": "/blæk/", "part_of_speech": "adjective", "meaning_vi": "màu đen", "example_en": "The cat is black.", "example_vi": "Con mèo màu đen." },
+  { "word": "white", "ipa": "/waɪt/", "part_of_speech": "adjective", "meaning_vi": "màu trắng", "example_en": "The rabbit is white.", "example_vi": "Con thỏ màu trắng." },
+  { "word": "grey", "ipa": "/ɡreɪ/", "part_of_speech": "adjective", "meaning_vi": "màu xám", "example_en": "The mouse is grey.", "example_vi": "Con chuột màu xám." },
+  { "word": "colour", "ipa": "/ˈkʌlə/", "part_of_speech": "noun", "meaning_vi": "màu sắc", "example_en": "What colour is it?", "example_vi": "Nó màu gì?" },
+  { "word": "rainbow", "ipa": "/ˈreɪnbəʊ/", "part_of_speech": "noun", "meaning_vi": "cầu vồng", "example_en": "I see a rainbow.", "example_vi": "Mình thấy một cầu vồng." }
+]

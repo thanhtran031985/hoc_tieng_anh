@@ -1,0 +1,18 @@
+[
+  { "word": "family", "ipa": "/ˈfæməli/", "part_of_speech": "noun", "meaning_vi": "gia đình", "example_en": "I love my family.", "example_vi": "Mình yêu gia đình mình." },
+  { "word": "mother", "ipa": "/ˈmʌðə/", "part_of_speech": "noun", "meaning_vi": "mẹ", "example_en": "This is my mother.", "example_vi": "Đây là mẹ của mình." },
+  { "word": "father", "ipa": "/ˈfɑːðə/", "part_of_speech": "noun", "meaning_vi": "bố", "example_en": "This is my father.", "example_vi": "Đây là bố của mình." },
+  { "word": "mum", "ipa": "/mʌm/", "part_of_speech": "noun", "meaning_vi": "mẹ (gọi thân mật)", "example_en": "I love my mum.", "example_vi": "Mình yêu mẹ." },
+  { "word": "dad", "ipa": "/dæd/", "part_of_speech": "noun", "meaning_vi": "bố (gọi thân mật)", "example_en": "I love my dad.", "example_vi": "Mình yêu bố." },
+  { "word": "brother", "ipa": "/ˈbrʌðə/", "part_of_speech": "noun", "meaning_vi": "anh/em trai", "example_en": "He is my brother.", "example_vi": "Cậu ấy là anh trai của mình." },
+  { "word": "sister", "ipa": "/ˈsɪstə/", "part_of_speech": "noun", "meaning_vi": "chị/em gái", "example_en": "She is my sister.", "example_vi": "Cô ấy là chị gái của mình." },
+  { "word": "grandmother", "ipa": "/ˈɡrænmʌðə/", "part_of_speech": "noun", "meaning_vi": "bà", "example_en": "She is my grandmother.", "example_vi": "Bà ấy là bà của mình." },
+  { "word": "grandfather", "ipa": "/ˈɡrænfɑːðə/", "part_of_speech": "noun", "meaning_vi": "ông", "example_en": "He is my grandfather.", "example_vi": "Ông ấy là ông của mình." },
+  { "word": "grandma", "ipa": "/ˈɡrænmɑː/", "part_of_speech": "noun", "meaning_vi": "bà (gọi thân mật)", "example_en": "I love my grandma.", "example_vi": "Mình yêu bà." },
+  { "word": "grandpa", "ipa": "/ˈɡrænpɑː/", "part_of_speech": "noun", "meaning_vi": "ông (gọi thân mật)", "example_en": "I love my grandpa.", "example_vi": "Mình yêu ông." },
+  { "word": "baby", "ipa": "/ˈbeɪbi/", "part_of_speech": "noun", "meaning_vi": "em bé", "example_en": "I see a baby.", "example_vi": "Mình thấy một em bé." },
+  { "word": "man", "ipa": "/mæn/", "part_of_speech": "noun", "meaning_vi": "người đàn ông", "example_en": "He is a man.", "example_vi": "Ông ấy là một người đàn ông." },
+  { "word": "woman", "ipa": "/ˈwʊmən/", "part_of_speech": "noun", "meaning_vi": "người phụ nữ", "example_en": "She is a woman.", "example_vi": "Bà ấy là một người phụ nữ." },
+  { "word": "aunt", "ipa": "/ɑːnt/", "part_of_speech": "noun", "meaning_vi": "cô, dì", "example_en": "She is my aunt.", "example_vi": "Cô ấy là dì của mình." },
+  { "word": "uncle", "ipa": "/ˈʌŋkl/", "part_of_speech": "noun", "meaning_vi": "chú, bác, cậu", "example_en": "He is my uncle.", "example_vi": "Ông ấy là chú của mình." }
+]

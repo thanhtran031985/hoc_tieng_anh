@@ -1,6 +1,6 @@
 # Tiến độ — 05-content-l1-l4 — Khung chương trình 10 cấp và nội dung cấp 1–4
 
-Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 02/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -13,7 +13,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 6 | Bài học cấp 3 và seed | ✅ | 02/10/2026 |
 | 7 | Từ vựng, hình, bài học cấp 4 | ✅ | 02/10/2026 |
 | 8 | Từ vựng, hình, bài học cấp 2 | ✅ | 02/10/2026 |
-| 9 | Từ vựng, hình, bài học cấp 1 | ⬜ | |
+| 9 | Từ vựng, hình, bài học cấp 1 | ✅ | 02/10/2026 |
 
 ## Nhật ký
 
@@ -65,6 +65,31 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 - Kiểm tra: `check-content.mjs` đạt (750 từ cấp 2–4); `check-pictures.mjs` đạt (cấp 2: 170/200 từ có hình; không từ nào cụ thể bị bỏ trừ neck, shoulder, back, cheek, chin, elbow vì khó vẽ rõ); `npx prisma db seed` ra 24 chủ đề `published`, 750 từ, 125 bài; tsc, lint sạch.
 - Việc thủ công: xem lướt hình.
 
+### Bước 9 — Từ vựng, hình, bài học cấp 1 (02/10/2026)
+- Đã làm: 150 từ cấp 1 trong `prisma/seed/content/level-01/` (8 chủ đề; câu ví dụ chỉ dùng từ cấp 1 và từ thông dụng); 140 hình SVG (22 hình mẫu của thiết kế được chuyển thành tệp SVG, 118 hình vẽ mới: chào hỏi, số 4–10 bằng số chấm, màu, gia đình, con vật, trái cây, đồ chơi, đồ vật trong phòng); `gen-pictures.mjs` xóa tệp cũ trước khi ghi để không sót hình.
+- Kiểm tra: `check-content.mjs` đạt (900 từ cấp 1–4); `check-pictures.mjs` đạt (cấp 1: 140/150, thiếu số 11–20); đã xem các hình trên trang xem thử.
+
+### Rà soát và kiểm tra cuối task (02/10/2026)
+| Mục | Đánh giá | Bằng chứng |
+|---|---|---|
+| Cột `slug`, `source`, `target_words`, trạng thái `planned` | ✅ | `prisma/schema.prisma`, migration `20261002100000_unit_curriculum` |
+| Khung 10 cấp (JSON) và seed không đè chủ đề đã soạn | ✅ | `prisma/seed/curriculum/`, `prisma/seed/curriculum.ts` |
+| Hàm tạo bài tự động + test | ✅ | `src/lib/rules/lesson-builder.ts` (+ `.test.ts`, 12 test) |
+| Nội dung cấp 1–4 và seed `published` | ✅ | `prisma/seed/content/`, `prisma/seed/content.ts` |
+| Hình SVG đúng phong cách, không chữ | ✅ | `public/media/pictures/` (670 hình), `scripts/check-pictures.mjs` |
+| Zod cho mọi ghi DB của seed | ✅ | `src/lib/schemas/curriculum.ts`, `content.ts` |
+| Không Prisma/secret trong client component | ✅ | `WordPicture` chỉ nhận `src` |
+| Học sinh chỉ thấy `published` | ✅ | `src/server/curriculum.ts` (mặc định `publishedOnly`) |
+| Từ cụ thể nào cũng có hình | ⚠️ | 670/900 từ có hình; từ trừu tượng không vẽ (decisions.md) |
+
+- Seed trên database trống (`hoc_tieng_anh_verify`, đã xóa sau khi thử): `migrate deploy` + `db seed`: 90 chủ đề (cấp 1–4 `published` = 32, cấp 5–10 `planned` = 58), 900 từ, 154 bài (122 bài thường + 32 trận trùm), 2704 bước; chủ đề `published` nào cũng có trận trùm; chạy lần 2 cho cùng kết quả.
+- `npx tsc --noEmit`, `npm run lint`, `npm test` (12/12), `npm run build` đều sạch.
+
+### Checklist test thủ công (bạn tự kiểm)
+- [ ] Mở vài hình trong `public/media/pictures/` (hoặc chạy `node scripts/gen-pictures.mjs --sheet hinh.html` rồi mở `hinh.html`) và xem có hình nào khó hiểu.
+- [ ] Đọc lướt phiên âm và câu tiếng Việt của vài chủ đề (tôi soạn, chưa có người rà).
+- [ ] `npx prisma db seed` trên database của bạn: thấy "Nội dung: 32 chủ đề, 900 từ…"; mở Prisma Studio hoặc SQL `SELECT status, COUNT(*) FROM units GROUP BY status;` ra 32 `published`, 58 `planned`.
+
 ## Bước tiếp theo
 
-Bước 9 — Từ vựng, hình, bài học cấp 1 (≈150 từ), rồi kiểm tra cuối task (database trống, tsc, lint, build) và đóng task. Theo yêu cầu của bạn: xong task 05 thì DỪNG, không làm task 06.
+Hoàn thành. Task 06 chưa làm theo yêu cầu của bạn (chờ cập nhật thiết kế).

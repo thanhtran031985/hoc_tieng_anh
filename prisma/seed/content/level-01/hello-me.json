@@ -1,0 +1,16 @@
+[
+  { "word": "hello", "ipa": "/həˈləʊ/", "part_of_speech": "interjection", "meaning_vi": "xin chào", "example_en": "Hello, I am Mai.", "example_vi": "Xin chào, mình là Mai." },
+  { "word": "hi", "ipa": "/haɪ/", "part_of_speech": "interjection", "meaning_vi": "chào (thân mật)", "example_en": "Hi, Anna!", "example_vi": "Chào Anna!" },
+  { "word": "goodbye", "ipa": "/ˌɡʊdˈbaɪ/", "part_of_speech": "interjection", "meaning_vi": "tạm biệt", "example_en": "Goodbye, Mum!", "example_vi": "Tạm biệt mẹ!" },
+  { "word": "name", "ipa": "/neɪm/", "part_of_speech": "noun", "meaning_vi": "tên", "example_en": "My name is Nam.", "example_vi": "Tên mình là Nam." },
+  { "word": "boy", "ipa": "/bɔɪ/", "part_of_speech": "noun", "meaning_vi": "bạn nam, cậu bé", "example_en": "He is a boy.", "example_vi": "Cậu ấy là một cậu bé." },
+  { "word": "girl", "ipa": "/ɡɜːl/", "part_of_speech": "noun", "meaning_vi": "bạn nữ, cô bé", "example_en": "She is a girl.", "example_vi": "Cô ấy là một cô bé." },
+  { "word": "friend", "ipa": "/frend/", "part_of_speech": "noun", "meaning_vi": "bạn bè", "example_en": "Tom is my friend.", "example_vi": "Tom là bạn của mình." },
+  { "word": "teacher", "ipa": "/ˈtiːtʃə/", "part_of_speech": "noun", "meaning_vi": "giáo viên", "example_en": "She is my teacher.", "example_vi": "Cô ấy là giáo viên của mình." },
+  { "word": "student", "ipa": "/ˈstjuːdnt/", "part_of_speech": "noun", "meaning_vi": "học sinh", "example_en": "I am a student.", "example_vi": "Mình là học sinh." },
+  { "word": "yes", "ipa": "/jes/", "part_of_speech": "interjection", "meaning_vi": "vâng, có", "example_en": "Yes, I am.", "example_vi": "Vâng, đúng vậy." },
+  { "word": "no", "ipa": "/nəʊ/", "part_of_speech": "interjection", "meaning_vi": "không", "example_en": "No, I am not.", "example_vi": "Không, mình không phải." },
+  { "word": "please", "ipa": "/pliːz/", "part_of_speech": "interjection", "meaning_vi": "làm ơn", "example_en": "Come here, please.", "example_vi": "Làm ơn lại đây." },
+  { "word": "thanks", "ipa": "/θæŋks/", "part_of_speech": "interjection", "meaning_vi": "cảm ơn", "example_en": "Thanks, Mum!", "example_vi": "Con cảm ơn mẹ!" },
+  { "word": "sorry", "ipa": "/ˈsɒri/", "part_of_speech": "interjection", "meaning_vi": "xin lỗi", "example_en": "Sorry, Dad!", "example_vi": "Con xin lỗi bố!" }
+]

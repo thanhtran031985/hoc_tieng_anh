@@ -1,10 +1,12 @@
 // Sinh hình minh họa từ vựng: scripts/pictures/level-NN.mjs → public/media/pictures/<từ>.svg
 // Chạy: node scripts/gen-pictures.mjs [--sheet đường-dẫn.html]   (--sheet ghi thêm trang xem hình để kiểm tra bằng mắt; SHEET_FROM, SHEET_COUNT chọn khoảng hình)
-import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { pictureSlug } from "../src/lib/picture-path.ts";
 
 const OUT = new URL("../public/media/pictures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
+// Tệp SVG là sản phẩm sinh ra: xóa hết rồi ghi lại để không sót hình của từ đã bỏ.
+for (const f of readdirSync(OUT).filter((x) => x.endsWith(".svg"))) rmSync(new URL(f, OUT));
 
 const files = readdirSync(new URL("./pictures/", import.meta.url)).filter((f) => /^level-\d+\.mjs$/.test(f)).sort();
 const all = new Map(); // từ → { level, svg }
