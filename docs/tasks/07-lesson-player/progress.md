@@ -10,7 +10,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 3 | Nối từ với hình (Screen09) | ✅ | 03/10/2026 |
 | 4 | Chọn từ đúng cho hình (Screen18) | ✅ | 03/10/2026 |
 | 5 | Lật thẻ ghép cặp (Screen10) | ✅ | 03/10/2026 |
-| 6 | Kết thúc bài và lưu kết quả (Screen12) | ⬜ | |
+| 6 | Kết thúc bài và lưu kết quả (Screen12) | ✅ | 03/10/2026 |
 
 ## Nhật ký
 
@@ -52,6 +52,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Kiểm tra (Edge không đầu, database tạm đã seed lại): 12 thẻ; lật 2 thẻ không khớp → viền cam, lượt tăng, lời "Chưa khớp rồi…"; ghép đủ 6 cặp → dải "Ghép xong 6 cặp!", Enter sang bước kế; mũi tên di chuyển focus đúng, Enter lật; không có đồng hồ; không cuộn ở 1366×768, 1440×900, 1920×1080; không lỗi console. `tsc`, `lint` sạch.
 - Việc thủ công: chạy `npx prisma db seed` trên database thật để có bước lật thẻ (seed bỏ qua chủ đề đã có tiến độ học; player vẫn chạy bình thường khi bài chưa có bước này).
 
+### Bước 6 — Kết thúc bài và lưu kết quả (Screen12) (03/10/2026)
+- Đã làm: hàm thuần `lesson-score.ts` (sao, thưởng, sao cộng thêm), `review-box.ts` (5 hộp 1/3/7/14/30 ngày) + 12 test (77/77); schema dùng chung `lesson-complete.ts`; `src/server/level-nodes.ts` (trạng thái chặng của một cấp, dùng chung với `lesson-play.ts`); `src/server/lesson-complete.ts` (`completeLesson`: kiểm hồ sơ, bài đã mở, chỉ nhận từ thuộc bài; trong một transaction ghi lượt học, nhật ký câu trả lời, `lesson_progress`, cộng sao/xu/XP, chuỗi ngày bằng `recordStudyDay`, thẻ ôn tập, phiên học); server action `completeLessonAction` (Zod, `requireUser` + `requireActiveLearner`); `LessonEnd` (rồng, 3 sao hiện lần lượt, xu/XP, câu đúng, thời gian, "Từ vừa học" nghe được, Về bản đồ, Bài tiếp theo, Làm lại để được 3 sao, trạng thái đang lưu và lỗi lưu) + `lesson-end.module.css`; `LessonPlayer` ghi kết quả, giữ kết quả trên máy tới khi lưu xong, Thử lại bằng Enter.
+- Token mới: `--size-end-card`, `--size-end-card-s`, `--size-end-dragon`, `--size-bigstar`, `--size-bigstar-mid`, `--size-tile-h`.
+- Kiểm tra (Edge không đầu, database tạm): học trọn bài 1 (23 bước) chỉ bằng bàn phím: ra màn kết thúc, 1 sao (40% đúng), +15 xu; hồ sơ: sao 1, xu 15, chuỗi 1 ngày; `lesson_progress` best 1; 29 nhật ký câu trả lời; 7 thẻ ôn hộp 1 đến hạn ngày mai; 1 phiên học 2 phút; `localStorage` đã dọn. Mất mạng khi lưu (chặn POST): màn kết thúc báo "Chưa lưu được kết quả" giữ sao và xu, DB chưa ghi, kết quả còn trên máy; bỏ chặn rồi Enter = Thử lại: ghi đúng 1 lượt học (2 lượt tổng), 3 sao, xu 15 → 40, sao hồ sơ 3 (chỉ cộng 2 vì đã có 1 sao); mở lại bài thì học từ đầu, không ghi lần nữa; bản đồ: chặng 1 có 3 sao, chặng 2 thành "đang học"; trang chủ hiện 3 sao, 40 xu, chuỗi 1. Không cuộn ở 1366×768; không lỗi console. `tsc`, `lint`, `npm test` sạch.
+- Việc thủ công: không.
+
 ## Bước tiếp theo
 
-Bước 6 — Kết thúc bài và lưu kết quả (Screen12)
+Hết các bước của task.md. Kiểm tra cuối task rồi chạy /finish-task.

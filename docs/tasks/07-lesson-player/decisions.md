@@ -13,3 +13,11 @@
 - Bối cảnh: bản xem trước Screen21 ghi "Dừng lại" nhận Esc ở một chỗ và "Esc hoặc bấm ra ngoài = Học tiếp" ở chỗ khác.
 - Quyết định: "Học tiếp" là nút chính (Enter); Esc và bấm ra ngoài đều là ở lại bài; "Dừng lại" chỉ bấm chuột hoặc Tab + Enter.
 - Lý do: Esc mở hộp thoại, nếu Esc lần hai lại thoát bài thì bé dễ lỡ tay (nguyên tắc không phạt).
+
+### 03/10/2026 — Chi tiết lưu kết quả và các quyết định phát sinh khi làm
+- Sao do server tính từ kết quả từng mục (`lesson-score.ts`): đúng ngay lần đầu ≥ 90% → 3 sao, ≥ 70% → 2, còn lại 1. Bài không có mục chấm (chỉ thẻ từ) được 3 sao. Mục làm lại ở cuối bài không tính sao nhưng vẫn ghi nhật ký.
+- Thưởng: cấp 1–5 là 10 xu + 5 xu mỗi sao; cấp 6–10 là 20 XP + 10 XP mỗi sao. Làm lại bài vẫn nhận xu; số sao của hồ sơ chỉ cộng phần vượt kết quả tốt nhất cũ (`newStars`).
+- Một lượt học chỉ ghi một lần: client gửi `startedAtMs` cố định, gửi lại (Thử lại sau khi mất mạng) thì server trả kết quả đã lưu, không cộng thêm. Kết quả nằm trong `localStorage` tới khi lưu xong; mở lại bài đã xong nhưng chưa lưu thì tự lưu tiếp.
+- Thẻ ôn tập tạo ở `review-box.ts`: từ mới vào hộp 1, đến hạn ngày mai; từ đã có thẻ thì đúng lên hộp, sai về hộp 1.
+- Trò chơi lật thẻ giữ thanh tiến độ của bài ở đầu màn (bản xem trước dùng thanh riêng không có tiến độ) để tiến độ đi liền mạch.
+- `useHotkeys` thêm `capture` để bước nối nhận Esc (bỏ nhấc từ) trước Esc mở hộp thoại thoát.

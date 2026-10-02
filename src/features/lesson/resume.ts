@@ -8,6 +8,8 @@ export type SavedLesson = {
   session: Session;
   /** Tổng thời gian đang học (ms), mỗi bước tối đa vài phút để lúc bỏ máy không bị tính. */
   activeMs: number;
+  /** Lúc bắt đầu bài (ms), giữ nguyên để gửi lại kết quả vẫn chỉ ghi một lần; 0 nếu chưa xong bước nào. */
+  startedAt: number;
 };
 
 const storageKey = (learnerId: number, lessonId: number) => `edu:lesson:${learnerId}:${lessonId}`;
@@ -27,7 +29,8 @@ export function parseSaved(raw: string | null, validBaseIds: ReadonlySet<string>
     const data = JSON.parse(raw) as Partial<SavedLesson>;
     if (data.v !== 1 || typeof data.activeMs !== "number" || !Number.isFinite(data.activeMs) || data.activeMs < 0) return null;
     const session = restoreSession(data.session, validBaseIds);
-    return session ? { v: 1, session, activeMs: data.activeMs } : null;
+    const startedAt = typeof data.startedAt === "number" && Number.isFinite(data.startedAt) ? data.startedAt : 0;
+    return session ? { v: 1, session, activeMs: data.activeMs, startedAt } : null;
   } catch {
     return null;
   }

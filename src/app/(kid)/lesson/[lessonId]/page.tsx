@@ -29,5 +29,5 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
 
   const mascot = toMascotColor(learner.mascot);
   if (plan.steps.length === 0) return <LessonEmpty level={plan.levelNumber} mascot={mascot} />;
-  return <LessonPlayer plan={plan} learnerId={learner.id} mascot={mascot} />;
+  return <LessonPlayer plan={plan} learnerId={learner.id} learnerName={learner.name} mascot={mascot} />;
 }

@@ -1,9 +1,10 @@
 import { parseLessonStepConfig } from "@/lib/schemas";
 import { buildPlaySteps, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
 import { today } from "@/lib/rules/dates";
-import { computeLessonStates, levelStatus, type MapLesson } from "@/lib/rules/unlock";
+import { levelStatus } from "@/lib/rules/unlock";
 import { db } from "./db";
 import { requireLearner } from "./learners";
+import { getLevelNodes } from "./level-nodes";
 
 // Dữ liệu để chơi một bài học. Đi qua `requireLearner` nên chỉ đọc được hồ sơ thuộc tài khoản đang đăng nhập,
 // và chỉ trả về bài đã xuất bản, đã mở với bé này (không lộ nội dung bài còn khóa).
@@ -49,13 +50,8 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
 
   if (levelStatus(unit.level.number, learner.currentLevel?.number ?? 1) === "locked") throw new LessonLockedError();
 
-  const [levelLessons, progress, unitCards] = await Promise.all([
-    db.lesson.findMany({
-      where: { status: "published", unit: { levelId: unit.level.id, status: "published" } },
-      orderBy: [{ unit: { sortOrder: "asc" } }, { sortOrder: "asc" }],
-      select: { id: true, unitId: true, kind: true },
-    }),
-    db.lessonProgress.findMany({ where: { learnerId, lesson: { unit: { levelId: unit.level.id } } }, select: { lessonId: true, bestStars: true } }),
+  const [{ nodes }, unitCards] = await Promise.all([
+    getLevelNodes(learnerId, unit.level.id),
     db.lessonStep.findMany({
       where: { lesson: { unitId: unit.id, status: "published" }, activityType: "word_card", wordId: { not: null } },
       orderBy: [{ lesson: { sortOrder: "asc" } }, { sortOrder: "asc" }],
@@ -63,8 +59,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
     }),
   ]);
 
-  const mapLessons: MapLesson[] = levelLessons.map((l) => ({ id: l.id, unitId: l.unitId, kind: l.kind }));
-  const node = computeLessonStates(mapLessons, new Map(progress.map((p) => [p.lessonId, p.bestStars]))).find((n) => n.id === lesson.id);
+  const node = nodes.find((n) => n.id === lesson.id);
   if (!node || node.state === "locked") throw new LessonLockedError();
 
   const unitWords = unitCards.flatMap((c) => (c.word ? [c.word] : []));
