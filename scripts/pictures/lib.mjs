@@ -77,3 +77,19 @@ export function face({ skin = C.skin, eyes = true, mouth = "smile", cheeks = tru
   if (mouth === "smile") s += stroke("M50 78 q10 10 20 0");
   return s;
 }
+
+// ---- Hình dùng chung giữa các cấp
+export const rayCircle = (cx, cy, r, fill = C.yellow) => rays(cx, cy, r + 6, r + 16, 8) + circle(cx, cy, r, fill);
+export const window4 = (x, y, w, h, fill = C.sky) => rect(x, y, w, h, fill, 3);
+export const waves = (d) => stroke(d, "#fff", 4).replace("/>", ' opacity=".8"/>');
+export const wheel = (x, y, r = 11) => circle(x, y, r, C.ink) + circle(x, y, r * 0.42, C.grey);
+export const pine = (x, y, s = 1) => rect(x - 4 * s, y + 24 * s, 8 * s, 14 * s, C.brown, 2) + poly(`${x},${y - 20 * s} ${x + 22 * s},${y + 14 * s} ${x - 22 * s},${y + 14 * s}`, C.green) + poly(`${x},${y - 4 * s} ${x + 26 * s},${y + 30 * s} ${x - 26 * s},${y + 30 * s}`, "#3d9a35");
+export const tree = (x, y, s = 1) => rect(x - 5 * s, y, 10 * s, 24 * s, C.brown, 3) + union(C.leaf, uc(x, y - 6 * s, 22 * s), uc(x - 16 * s, y + 6 * s, 15 * s), uc(x + 16 * s, y + 6 * s, 15 * s));
+export const heart = (cx, cy, s, fill) => path(`M${cx} ${cy + 6 * s} C${cx - 20 * s} ${cy - 8 * s} ${cx - 10 * s} ${cy - 20 * s} ${cx} ${cy - 8 * s} C${cx + 10 * s} ${cy - 20 * s} ${cx + 20 * s} ${cy - 8 * s} ${cx} ${cy + 6 * s}Z`, fill);
+/** Dấu thập (chữ thập đỏ, nhà thuốc). */
+export const cross = (cx, cy, s, fill) => path(`M${cx - s} ${cy - 3 * s} H${cx + s} V${cy - s} H${cx + 3 * s} V${cy + s} H${cx + s} V${cy + 3 * s} H${cx - s} V${cy + s} H${cx - 3 * s} V${cy - s} H${cx - s}Z`, fill);
+/** Người: thân (áo) rồi mặt, mũ và vật cầm tay. */
+export const torso = (fill) => path("M14 118 Q18 98 42 94 H78 Q102 98 106 118Z", fill);
+export const worker = (hat, shirt, extra = "") => torso(shirt) + face() + hat + extra;
+export const cap = (c, d = C.ink) => path("M26 48 Q26 14 60 14 Q94 14 94 48Z", c) + rect(22, 44, 76, 8, d, 4);
+export const hardHat = (c) => path("M26 48 Q26 14 60 14 Q94 14 94 48Z", c) + rect(18, 44, 84, 9, c, 4) + rect(52, 10, 16, 10, c, 3);

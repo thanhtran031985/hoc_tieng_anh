@@ -11,7 +11,7 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 | 4 | Từ vựng cấp 3 | ✅ | 02/10/2026 |
 | 5 | Hình minh họa cấp 3 | ✅ | 02/10/2026 |
 | 6 | Bài học cấp 3 và seed | ✅ | 02/10/2026 |
-| 7 | Từ vựng, hình, bài học cấp 4 | ⬜ | |
+| 7 | Từ vựng, hình, bài học cấp 4 | ✅ | 02/10/2026 |
 | 8 | Từ vựng, hình, bài học cấp 2 | ⬜ | |
 | 9 | Từ vựng, hình, bài học cấp 1 | ⬜ | |
 
@@ -51,9 +51,15 @@ Trạng thái chung: ⬜ · Cập nhật lần cuối: 02/10/2026
 ### Bước 6 — Bài học cấp 3 và seed (02/10/2026)
 - Đã làm: `prisma/seed/content.ts` (đọc `content/level-NN/*.json`, kiểm bằng Zod, ghi từ, chủ đề từ, liên kết từ–chủ đề, bài học và bước bằng `buildLessons` trong một giao dịch mỗi chủ đề, đổi chủ đề sang `published`; đặt `words.image` theo tệp hình có thật); gọi từ `prisma/seed.ts` sau khung chương trình.
 - Kiểm tra: `npx prisma db seed` chạy 2 lần cho cùng kết quả (8 chủ đề cấp 3 `published`, 250 từ, 8 chủ đề từ, 250 liên kết, 41 bài, 679 bước, không trùng); mỗi chủ đề có 3–5 bài thường và 1 trận trùm (`unit_test`, ≤ 12 bước); 160 từ có `image`; `match_pairs` không có `wordId`, `pairCount` đúng; tsc và lint sạch.
-- Số bài theo chủ đề (bài thường + trận trùm): daily-routines 4+1, days-months-seasons 4+1, weather-nature 2+1, sports 3+1… (xem đầu ra seed); chủ đề ít hình (ngày tháng) có bài chỉ gồm thẻ từ.
+- Số bài theo chủ đề (bài thường + trận trùm): daily-routines 4+1, days-months-seasons 4+1, weather-nature 3+1, sports 4+1, hobbies-music 4+1, meals-food 5+1, describing-people 4+1, holidays-transport 5+1 (tổng 33 bài thường + 8 trận trùm = 41); chủ đề ít hình (ngày tháng) có bài chỉ gồm thẻ từ.
 - Việc thủ công: không.
+
+### Bước 7 — Từ vựng, hình, bài học cấp 4 (02/10/2026)
+- Đã làm: 300 từ cấp 4 trong `prisma/seed/content/level-04/` (8 chủ đề; phiên âm, loại từ, nghĩa, câu ví dụ Anh và Việt; câu ví dụ dùng quá khứ đơn và so sánh); `check-content.mjs` biết thêm dạng bất quy tắc (bought, went…), so sánh hơn/nhất, sở hữu cách, và cho phép chính từ đang dạy trong câu ví dụ của nó; 200 hình SVG mới cho cấp 4 (`scripts/pictures/level-04*.mjs`: địa điểm, biển chỉ đường, nghề nghiệp, sức khỏe, mua sắm, truyện, trường học và công nghệ, động từ vẽ được); seed cấp 4.
+- Kiểm tra: `check-content.mjs 3 4` đạt (550 từ); `check-pictures.mjs 3 4` đạt (cấp 4: 200/300 từ có hình); `npx prisma db seed` 2 lần cho cùng kết quả: 16 chủ đề `published`, 550 từ, 89 bài; cấp 4 có 8 chủ đề, 4–6 bài thường mỗi chủ đề và 1 trận trùm (đủ cả 8); tsc, lint sạch. Đã xem các hình trên trang xem thử và sửa hình yếu (dragon, dentist, secretary).
+- Ngoài phạm vi nhưng cần để lint sạch: thêm `cap-nhat-*/**` vào bỏ qua của `eslint.config.mjs` (thư mục `cap-nhat-thiet-ke/` bạn tải về chứa tệp `.js`/`.d.ts` làm lint lỗi).
+- Việc thủ công: xem lướt hình và đọc vài chủ đề.
 
 ## Bước tiếp theo
 
-Bước 7 — Từ vựng, hình, bài học cấp 4 (≈300 từ).
+Bước 8 — Từ vựng, hình, bài học cấp 2 (≈200 từ).
