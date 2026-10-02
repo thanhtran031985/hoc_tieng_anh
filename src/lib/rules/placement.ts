@@ -82,3 +82,18 @@ export function placementComment(name: string, strong: readonly string[], weak: 
   if (strong.length > 0) return `${name} nhận ra ${joinList(strong)} rất nhanh! Mình bắt đầu ở ${levelLabel} để học tiếp nhé!`;
   return `Mọi thứ còn khá mới với ${name}. Mình bắt đầu ở ${levelLabel} để học thật chắc nhé!`;
 }
+
+/**
+ * Câu hỏi kế tiếp từ kho câu hỏi theo cấp: lấy câu chưa hỏi ở đúng cấp; hết thì thử cấp thấp hơn rồi cao hơn, gần nhất trước.
+ * Trả null khi kho đã hết sạch.
+ */
+export function pickQuestion<Q extends { id: string }>(pools: Readonly<Record<number, readonly Q[]>>, level: number, used: ReadonlySet<string>): Q | null {
+  const levels = Object.keys(pools)
+    .map(Number)
+    .sort((a, b) => Math.abs(a - level) - Math.abs(b - level) || a - b);
+  for (const l of levels) {
+    const found = pools[l].find((q) => !used.has(q.id));
+    if (found) return found;
+  }
+  return null;
+}

@@ -5,6 +5,7 @@ export * from "./learner";
 export * from "./learner-settings";
 export * from "./lesson-complete";
 export * from "./lesson-step-config";
+export * from "./placement";
 export * from "./question";
 export * from "./review-complete";
 export * from "./word-extra";

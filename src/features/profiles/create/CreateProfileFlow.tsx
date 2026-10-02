@@ -35,7 +35,7 @@ export function CreateProfileFlow({ levels }: Props) {
     try {
       const result = await createLearnerAction({ name, schoolGrade: grade, mascot: pet, mascotName: petName });
       if (result.ok) {
-        router.push("/home");
+        router.push("/placement");
         return;
       }
       setSaveError(result.message);

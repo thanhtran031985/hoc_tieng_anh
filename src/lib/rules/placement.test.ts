@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { answerPlacement, createPlacement, isPlacementDone, placementComment, startLevel, suggestLevel, type PlacementState } from "./placement.ts";
+import { answerPlacement, createPlacement, isPlacementDone, pickQuestion, placementComment, startLevel, suggestLevel, type PlacementState } from "./placement.ts";
 
 const run = (grade: number, maxLevel: number, answers: string): PlacementState => {
   let state = createPlacement(grade, maxLevel);
@@ -73,5 +73,19 @@ describe("placementComment", () => {
     assert.match(text, /Trái cây còn hơi mới/);
     assert.doesNotMatch(text, /điểm|\d+ câu/);
     assert.match(placementComment("Minh", [], [], "Cấp 1 · Hạt giống"), /còn khá mới với Minh/);
+  });
+});
+
+describe("pickQuestion", () => {
+  const pools = { 1: [{ id: "a" }, { id: "b" }], 2: [{ id: "c" }], 4: [{ id: "d" }] };
+  it("lấy câu chưa hỏi ở đúng cấp; hết thì lấy cấp gần nhất", () => {
+    assert.equal(pickQuestion(pools, 1, new Set())?.id, "a");
+    assert.equal(pickQuestion(pools, 1, new Set(["a"]))?.id, "b");
+    assert.equal(pickQuestion(pools, 1, new Set(["a", "b"]))?.id, "c");
+    assert.equal(pickQuestion(pools, 3, new Set())?.id, "c");
+    assert.equal(pickQuestion(pools, 2, new Set(["c", "a", "b"]))?.id, "d");
+  });
+  it("kho hết thì null", () => {
+    assert.equal(pickQuestion(pools, 2, new Set(["a", "b", "c", "d"])), null);
   });
 });
