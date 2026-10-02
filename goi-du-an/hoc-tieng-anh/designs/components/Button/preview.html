@@ -1,0 +1,31 @@
+<!-- @dsCard group="Chung · Điều khiển" height=470 subtitle="5 kiểu × 4 trạng thái: thường, rê chuột, nhấn, vô hiệu — và viền focus khi Tab" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nút — preview</title>
+<style>
+  body { background: var(--bg); padding: 12px; }
+  table { border-collapse: separate; border-spacing: 18px 16px; }
+  th { font: 800 13px/16px var(--font-body); color: var(--ink-soft); text-align: left; }
+  td { vertical-align: middle; }
+  .sizes { display: flex; gap: 20px; align-items: center; padding: 6px 18px 0; flex-wrap: wrap; }
+  .t { font: 800 13px/16px var(--font-body); color: var(--ink-soft); }
+</style></head>
+<body class="b-root">
+<table data-level="1" id="t"></table>
+<div class="sizes" data-level="2" id="s"></div>
+<script>
+  var B = window.Bong;
+  var vars = [['primary','Chính','Kiểm tra'],['secondary','Phụ','Nghe lại'],['level','Theo cấp','Học tiếp'],['success','Đúng','Tiếp tục'],['retry','Thử lại','Thử lại']];
+  var st = [['', 'Thường'], ['is-hover', 'Rê chuột'], ['is-active', 'Nhấn'], ['dis', 'Vô hiệu'], ['focus', 'Focus (Tab)']];
+  var h = '<tr><th></th>' + st.map(function (s) { return '<th>' + s[1] + '</th>'; }).join('') + '</tr>';
+  vars.forEach(function (v) {
+    h += '<tr><th>' + v[1] + '</th>' + st.map(function (s) {
+      return '<td>' + B.btn({ label: v[2], variant: v[0], size: 'm', cls: s[0] === 'dis' || s[0] === 'focus' ? '' : s[0], disabled: s[0] === 'dis', attrs: s[0] === 'focus' ? 'data-focus' : '' }) + '</td>';
+    }).join('') + '</tr>';
+  });
+  document.getElementById('t').innerHTML = h;
+  document.getElementById('s').innerHTML = '<span class="t">Cỡ:</span>' + B.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter' }) + '<span class="t">L · 64px</span>' + B.btn({ label: 'Học tiếp', variant: 'level', size: 'm' }) + '<span class="t">M · 52px</span>' + B.btn({ label: 'Bỏ qua', variant: 'secondary', size: 's' }) + '<span class="t">S · 40px</span>' + B.btn({ label: 'Gợi ý', variant: 'secondary', icon: 'bulb', size: 'm' }) + '<span class="t">có icon</span>';
+  document.querySelectorAll('[data-focus]').forEach(function (b) { b.style.outline = '4px solid var(--focus)'; b.style.outlineOffset = '3px'; });
+</script>
+</body>
+</html>

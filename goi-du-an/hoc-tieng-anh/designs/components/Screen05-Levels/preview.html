@@ -1,0 +1,123 @@
+<!-- @dsCard group="Màn Tiểu học · 3–5 Trang chủ & bản đồ" height=700 subtitle="4. Tổng quan 10 cấp: con đường qua 5 đảo Tiểu học và 5 thành phố THCS (ví dụ hồ sơ Bảo Ngọc, đang ở Cấp 3)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tổng quan 10 cấp — preview</title>
+<style>
+  .scr { background: var(--bg-sea); }
+  .lvw { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+  .lvmap { position: relative; width: min(1344px, calc(100cqw - 64px), calc((100cqh - 72px - 110px) * 1.946)); aspect-ratio: 1440 / 740; }
+  .lvmap > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .stop { position: absolute; transform: translate(-50%, -50%); width: 17%; aspect-ratio: 1.6; border: 0; background: none; cursor: pointer; border-radius: var(--radius-xl); padding: 0; }
+  .stop .lab { position: absolute; left: 50%; top: 92%; transform: translateX(-50%); white-space: nowrap; background: var(--surface); color: var(--lv-ink); padding: 4px 14px; border-radius: var(--radius-pill); font: 800 16px/20px var(--font-body); box-shadow: 0 3px 0 var(--line); display: flex; gap: 6px; align-items: center; }
+  .stop .lab b { color: var(--ink); font-family: var(--font-display); font-size: 18px; }
+  .stop.locked .art { filter: grayscale(.85) brightness(1.12); opacity: .7; }
+  .stop.locked .lab { color: var(--ink-soft); }
+  .stop .badge { position: absolute; top: 2%; right: 14%; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 3px 0 rgba(43,36,64,.2); }
+  .stop.done .badge { background: var(--success); color: var(--ink-on-dark); }
+  .stop.locked .badge { background: var(--surface); color: var(--ink-soft); }
+  .stop .art { position: absolute; inset: 0; transition: transform var(--duration-base); }
+  .stop:hover .art { transform: translateY(-6px) scale(1.03); }
+  .stop.cur::before { content: ""; position: absolute; inset: 6% 2% -2%; border-radius: 50%; background: var(--surface); opacity: .55; animation: glow 1.8s ease-in-out infinite; }
+  @keyframes glow { 50% { transform: scale(1.08); opacity: .25; } }
+  .pin { position: absolute; left: 50%; bottom: 62%; transform: translateX(-50%); pointer-events: none; }
+  .pin > span { display: flex; flex-direction: column; align-items: center; animation: b-hop 1.4s ease-in-out infinite; }
+  .pin .b-avatar-svg { border-radius: 50%; box-shadow: 0 0 0 4px var(--surface), 0 0 0 7px var(--lv); }
+  .pin .here { margin-bottom: 6px; background: var(--lv); color: var(--on-lv); font: 800 14px/18px var(--font-body); padding: 4px 12px; border-radius: var(--radius-pill); white-space: nowrap; }
+  .pin > span::after { content: ""; width: 0; height: 0; border: 9px solid transparent; border-top-color: var(--surface); margin-top: 2px; }
+  .zone { position: absolute; font: 800 15px/18px var(--font-body); color: var(--ink); background: var(--surface); padding: 6px 14px; border-radius: var(--radius-pill); box-shadow: var(--shadow-card); display: flex; gap: 6px; align-items: center; }
+  .legend { position: absolute; left: 50%; transform: translateX(-50%); bottom: var(--space-4); display: flex; gap: var(--space-3); }
+  .legend span { display: flex; align-items: center; gap: 6px; background: var(--surface); padding: 6px 12px; border-radius: var(--radius-pill); font: 800 14px/18px var(--font-body); }
+  .legend i { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+  .tip { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -30%); display: flex; align-items: center; gap: var(--space-2); pointer-events: none; }
+  .tip .b-bubble { max-width: 340px; } .tip .b-bubble::after { left: auto; right: -9px; top: 40%; bottom: auto; }
+  .lvw .b-state { position: absolute; inset: 0; background: var(--bg-sea); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = B.kids[1], K = kid;
+  var P = [[150, 560], [420, 610], [690, 548], [960, 606], [1240, 540], [1250, 226], [985, 176], [720, 226], [455, 176], [190, 226]];
+  function road(pts) {
+    var a = [[20, 650]].concat(pts.slice(0, 5), [[1390, 390]], pts.slice(5), [[30, 150]]);
+    var d = 'M' + a[0][0] + ' ' + a[0][1];
+    for (var i = 0; i < a.length - 1; i++) {
+      var p0 = a[i - 1] || a[i], p1 = a[i], p2 = a[i + 1], p3 = a[i + 2] || p2;
+      d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ' ' + p2[1];
+    }
+    return d;
+  }
+  var L = 'stroke="var(--dragon-line)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+  var PLANT = [
+    '<ellipse cx="120" cy="58" rx="16" ry="12" fill="#b77c22" ' + L + '/><path d="M114 54 q6 -6 12 0" fill="none" stroke="#ffe6a3" stroke-width="3" stroke-linecap="round"/>',
+    '<path d="M120 66 V44" stroke="var(--level-2-shade)" stroke-width="5" stroke-linecap="round"/><path d="M120 48 C100 48 98 30 104 26 C118 26 122 40 120 48Z M120 44 C134 44 142 30 138 22 C124 22 120 32 120 44Z" fill="var(--level-2)" ' + L + '/>',
+    '<path d="M120 68 V30" stroke="#7a5a2a" stroke-width="6" stroke-linecap="round"/>' + [[96, 40], [144, 36], [104, 22], [136, 18], [120, 10]].map(function (p) { return '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="16" ry="10" fill="var(--level-3)" ' + L + ' transform="rotate(' + (p[0] < 120 ? -25 : 25) + ' ' + p[0] + ' ' + p[1] + ')"/>'; }).join(''),
+    '<path d="M120 70 V24 M120 44 L96 28 M120 38 L146 22" stroke="#8a5a35" stroke-width="7" stroke-linecap="round"/><circle cx="94" cy="24" r="12" fill="var(--level-4)" ' + L + '/><circle cx="148" cy="18" r="13" fill="var(--level-4)" ' + L + '/><circle cx="120" cy="16" r="15" fill="var(--level-4)" ' + L + '/>',
+    '<path d="M112 72 L114 30 L126 30 L128 72Z" fill="#8a5a35" ' + L + '/><circle cx="120" cy="10" r="30" fill="var(--level-5)" ' + L + '/><circle cx="92" cy="28" r="20" fill="var(--level-5)" ' + L + '/><circle cx="148" cy="28" r="20" fill="var(--level-5)" ' + L + '/><circle cx="110" cy="0" r="5" fill="var(--level-5-soft)"/>'
+  ];
+  var CITY = [
+    '<rect x="88" y="10" width="16" height="56" rx="3" fill="var(--level-6)" ' + L + '/><rect x="112" y="10" width="16" height="56" rx="3" fill="var(--level-6)" ' + L + '/><rect x="136" y="10" width="16" height="56" rx="3" fill="var(--level-6)" ' + L + '/><path d="M80 10 Q120 -2 162 6 L160 12 Q120 6 80 16Z" fill="var(--level-6-shade)" ' + L + '/>',
+    '<path d="M76 66 Q86 18 112 26 Q100 44 100 66Z" fill="#fff" ' + L + '/><path d="M100 66 Q112 8 144 18 Q128 40 128 66Z" fill="#fff" ' + L + '/><path d="M128 66 Q140 28 166 36 Q154 50 154 66Z" fill="#fff" ' + L + '/><path d="M70 66 H170" ' + L + ' stroke="var(--level-7-shade)"/>',
+    '<rect x="108" y="0" width="24" height="66" rx="3" fill="var(--level-8)" ' + L + '/><path d="M104 2 L120 -22 L136 2Z" fill="var(--level-8-shade)" ' + L + '/><circle cx="120" cy="18" r="8" fill="#fff" ' + L + '/><path d="M120 13 V18 H124" stroke="var(--dragon-line)" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="80" y="34" width="22" height="32" rx="3" fill="var(--level-8)" ' + L + '/><rect x="138" y="40" width="22" height="26" rx="3" fill="var(--level-8)" ' + L + '/>',
+    '<rect x="110" y="-2" width="22" height="68" rx="3" fill="var(--level-9)" ' + L + '/><path d="M116 -2 L121 -26 L126 -2Z" fill="var(--level-9-shade)" ' + L + '/><rect x="84" y="24" width="22" height="42" rx="3" fill="var(--level-9)" ' + L + '/><rect x="136" y="16" width="24" height="50" rx="3" fill="var(--level-9)" ' + L + '/>',
+    '<path d="M118 66 L120 -22 L122 66Z" fill="var(--level-10)" ' + L + '/><ellipse cx="120" cy="6" rx="12" ry="7" fill="var(--level-10-shade)" ' + L + '/><rect x="86" y="36" width="20" height="30" rx="3" fill="var(--level-10)" ' + L + '/><rect x="134" y="28" width="22" height="38" rx="3" fill="var(--level-10)" ' + L + '/>'
+  ];
+  function art(l) {
+    var n = l.n, base;
+    if (l.kind === 'island') base = '<ellipse cx="120" cy="92" rx="112" ry="36" fill="var(--bg-sea-deep)"/><ellipse cx="120" cy="84" rx="98" ry="30" fill="var(--dragon-belly)" ' + L + '/><ellipse cx="120" cy="76" rx="76" ry="22" fill="var(--level-' + n + ')" ' + L + '/>' + PLANT[n - 1];
+    else base = '<ellipse cx="120" cy="92" rx="112" ry="34" fill="var(--bg-sea-deep)"/><rect x="40" y="64" width="160" height="34" rx="17" fill="var(--level-' + n + '-soft)" ' + L + '/>' + CITY[n - 6];
+    return '<svg class="art" viewBox="0 -30 240 150" aria-hidden="true">' + base + '</svg>';
+  }
+  function stops(cur, doneTo, showPin) {
+    return B.levels.map(function (l, i) {
+      var st = l.n <= doneTo ? 'done' : l.n === cur ? 'cur' : 'locked';
+      var x = P[i][0] / 1440 * 100, y = P[i][1] / 740 * 100;
+      var lbl = 'Cấp ' + l.n + ' ' + l.name + (st === 'done' ? ', đã qua' : st === 'cur' ? ', bé đang ở đây' : ', còn khoá');
+      return '<button type="button" class="stop ' + st + '" data-level="' + l.n + '" data-n="' + l.n + '" style="left:' + x + '%;top:' + y + '%" aria-label="' + lbl + '">' + art(l) +
+        (st === 'done' ? '<span class="badge">' + B.icon('check', 24) + '</span>' : st === 'locked' ? '<span class="badge">' + B.icon('lock', 20) + '</span>' : '') +
+        (st === 'cur' && showPin ? '<span class="pin"><span><span class="here">Bé đang ở đây</span>' + B.avatar(K, 56) + '</span></span>' : '') +
+        '<span class="lab">' + l.n + ' <b>' + l.name + '</b></span></button>';
+    }).join('');
+  }
+  function mapSvg(doneTo, cur) {
+    var d = road(P);
+    var doneLen = doneTo === 0 ? 0 : 1;
+    return '<svg viewBox="0 0 1440 740" aria-hidden="true">' +
+      '<path d="' + d + '" fill="none" stroke="var(--bg-sea-deep)" stroke-width="64" stroke-linecap="round"/>' +
+      '<path d="' + d + '" fill="none" stroke="var(--dragon-belly)" stroke-width="44" stroke-linecap="round"/>' +
+      '<path d="' + d + '" fill="none" stroke="var(--surface)" stroke-width="6" stroke-dasharray="2 22" stroke-linecap="round"/>' +
+      '<g fill="none" stroke="var(--surface)" stroke-width="4" stroke-linecap="round" opacity=".8"><path d="M60 80 q14 -10 28 0 q14 10 28 0"/><path d="M1300 680 q14 -10 28 0 q14 10 28 0"/><path d="M600 390 q14 -10 28 0 q14 10 28 0"/><path d="M880 400 q14 -10 28 0 q14 10 28 0"/></g></svg>';
+  }
+  function page(o) {
+    return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: o.kid || kid, title: '', stars: o.done ? 642 : 0, coins: o.done ? 1210 : 0, streak: o.done ? 12 : 0 }) +
+      '<div class="lvw"><div class="lvmap">' + mapSvg(o.done, o.cur) + stops(o.cur, o.done, true) +
+      '<span class="zone" style="left:2%;top:93%">Tiểu học · 5 hòn đảo</span><span class="zone" style="left:2%;top:2%">THCS · 5 thành phố</span></div>' +
+      '<div class="legend" aria-hidden="true"><span><i style="background:var(--success)">' + B.icon('check', 14) + '</i>Đã qua</span><span><i style="background:var(--level-3)"></i>Đang học</span><span><i style="background:var(--surface-sunk);color:var(--ink-soft)">' + B.icon('lock', 12) + '</i>Còn khoá</span></div>' +
+      (o.tip ? '<div class="tip">' + B.bubble(o.tip, 'right') + B.dragon(o.expr || 'chao', 120) + '</div>' : '') + '</div></div>';
+  }
+  B.screen({
+    labels: { empty: 'Trống (mới bắt đầu)' },
+    notes: { normal: 'Bấm một điểm dừng: đã qua → ôn lại, đang học → vào đảo, còn khoá → Bông giải thích (không chặn gắt).', loading: 'Con đường hiện trước, các điểm dừng là khung xương.', empty: 'Hồ sơ mới: chưa qua cấp nào, bắt đầu ở Cấp 1.', error: 'Không tải được tiến độ.' },
+    states: {
+      normal: function () { return page({ done: 2, cur: 3 }); },
+      loading: function () { return B.topbar({ back: true, kid: kid, stars: '··', coins: '··', streak: '··' }) + '<div class="lvw"><div class="lvmap">' + mapSvg(0, 0) + P.map(function (p) { return '<span class="b-sk" style="position:absolute;left:' + (p[0] / 14.4) + '%;top:' + (p[1] / 7.4) + '%;transform:translate(-50%,-50%);width:13%;aspect-ratio:2.2;border-radius:50%"></span>'; }).join('') + '</div></div>'; },
+      empty: function () { K = B.kids[0]; var h = page({ kid: B.kids[0], done: 0, cur: 1, tip: 'Hành trình bắt đầu từ <b>đảo Hạt giống</b>. Đi thôi!', expr: 'vui' }); K = kid; return h; },
+      error: function () { return B.topbar({ back: true, kid: kid }) + '<div class="lvw">' + B.stateBlock({ kind: 'error', title: 'Bông chưa vẽ được bản đồ', text: 'Mạng đang chậm. Bé bấm Thử lại nhé!' }) + '</div>'; }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        scr.querySelectorAll('.stop').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var n = +b.dataset.n, l = B.levels[n - 1];
+            if (b.classList.contains('locked')) ctx.dialog({ expr: 'suynghi', title: (l.kind === 'island' ? 'Đảo ' : '') + l.name + ' còn khoá', body: 'Bé học xong cấp đang học là mở được ngay. Cố lên nhé!', actions: [{ label: 'Đã hiểu', variant: 'primary', key: 'Enter' }] });
+            else if (b.classList.contains('done')) ctx.dialog({ expr: 'vui', title: 'Ôn lại ' + l.name + '?', body: 'Bé đã qua cấp này rồi. Ôn lại để giữ sao thật sáng nhé!', actions: [{ label: 'Ôn lại', variant: 'primary', key: 'Enter' }, { label: 'Để sau', variant: 'secondary' }] });
+            else { ctx.burst(b); }
+          });
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

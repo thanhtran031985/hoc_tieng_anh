@@ -1,0 +1,98 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-feedback);
+  transform: translateY(115%);
+  visibility: hidden;
+  transition:
+    transform var(--duration-slide) cubic-bezier(0.2, 0.9, 0.3, 1.15),
+    visibility 0s linear var(--duration-slide);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-dialog);
+}
+.bar[data-open] {
+  transform: translateY(0);
+  visibility: visible;
+  transition-delay: 0s;
+}
+.ok {
+  background: var(--success-soft);
+}
+.retry {
+  background: var(--retry-soft);
+}
+
+.inner {
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: var(--space-5) var(--space-12) var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--size-feedback-min-h);
+}
+.mascot {
+  width: var(--size-feedback-mascot);
+  margin-top: calc(-1 * var(--feedback-mascot-lift));
+  flex: none;
+}
+.text {
+  flex: 1;
+  min-width: 0;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: var(--text-title--font-weight);
+}
+.ok .title {
+  color: var(--success-shade);
+}
+.retry .title {
+  color: var(--retry-shade);
+}
+.detail {
+  margin-top: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: var(--text-body--font-weight);
+}
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* Màn nhỏ hơn 1440 thì lề hẹp lại; màn thấp hơn 800 thì dải thấp hơn (bản xem trước dùng container query). */
+@media (max-width: 1400px) {
+  .inner {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}
+@media (max-height: 800px) {
+  .inner {
+    --size-feedback-min-h: 112px;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
+}

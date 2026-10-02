@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 | 1 | Mascot và WordPicture | ✅ | Trang xem: /dev/ui |
 | 2 | SpeakerButton | ✅ | Trang xem: /dev/ui |
 | 3 | Card, thẻ đáp án, ProgressBar, StatChip, Topbar | ✅ | Thêm LevelChip, Avatar |
-| 4 | Dialog, FeedbackBar, DataStates, khung xương | ⬜ | |
+| 4 | Dialog, FeedbackBar, DataStates, khung xương | ✅ | Thêm Skeleton |
 
 ## Nhật ký
 
@@ -51,6 +51,16 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
   - Không hex/px/rgba trong code mới (ngoài nét vẽ và chữ mô tả); `tsc`, `lint` không lỗi.
 - Việc cần làm thủ công: mở `/dev/ui`, rê chuột/nhấn thẻ đáp án, bấm Tab qua thẻ.
 
+### Bước 4 — Dialog, FeedbackBar, DataStates, khung xương (02/10/2026)
+- Tạo `src/components/ui/{Dialog,FeedbackBar,DataStates,Skeleton}` (`DataStates/DataState.tsx`), mục mới trên `/dev/ui` (`overlays-demo.tsx`, khung giả lập màn hình), token mới (xem `decisions.md`), sửa `hotkeys-demo.tsx` thành bật/tắt.
+- Kiểm tra (Chrome headless):
+  - Dialog: mở thì focus vào "Học tiếp"; Tab 4 lần xoay vòng Nghỉ đã → Học tiếp → Nghỉ đã → Học tiếp (không ra ngoài hộp); Shift+Tab đi ngược; Esc đóng, chạy nút "Esc" (log "Nghỉ đã") và trả focus về nút "Mở hộp thoại"; Enter trên nút "Học tiếp" chạy và đóng; đóng xong hộp có `inert`.
+  - FeedbackBar: mở thì trượt lên (`translateY(0)`) và focus vào nút "Tiếp tục"; Enter đóng (trượt xuống 115%, `inert`, ẩn); dải Chưa đúng cũng vậy; Enter khi focus ở body vẫn bấm được nút chính.
+  - DataStates: Trống có rồng suy nghĩ, tiêu đề, một câu, một nút (`role="status"`); Lỗi có rồng động viên và nút Thử lại (`role="alert"`, bấm chạy `onRetry`); khung xương đang tải có vệt sáng chạy.
+  - Ảnh chụp 1440×900 của hộp thoại và dải Đúng khớp `Dialog/preview.html`, `FeedbackBar/preview.html`.
+  - Không hex/px/rgba trong code mới (trừ hai mốc media query); `tsc`, `lint` không lỗi.
+- Việc cần làm thủ công: mở `/dev/ui`, thử hộp thoại bằng bàn phím (Tab, Esc, Enter) và dải phản hồi.
+
 ## Bước tiếp theo
 
-Bước 4 — Dialog, FeedbackBar, DataStates, khung xương (kế hoạch ở `plan.md`).
+Kiểm tra cuối task: `tsc`, `lint`, `build`, so `/dev/ui` với từng `preview.html` ở 1440×900 và 1366×768, rồi chạy quy trình `finish-task`.

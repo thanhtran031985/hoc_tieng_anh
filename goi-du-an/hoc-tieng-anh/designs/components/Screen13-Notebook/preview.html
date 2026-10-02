@@ -1,0 +1,68 @@
+<!-- @dsCard group="Màn Tiểu học · 10–12 Kết thúc & ôn tập" height=700 subtitle="11. Sổ từ: lưới thẻ từ viền màu theo 5 mức độ thuộc, lọc theo chủ đề" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Sổ từ — preview</title>
+<style>
+  .nb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-6); padding: var(--space-2) 0 var(--space-4); flex-wrap: wrap; }
+  .nb-head h1 { display: flex; align-items: baseline; gap: var(--space-3); }
+  .legend { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .lg { display: flex; align-items: center; gap: 6px; background: var(--surface); border-radius: var(--radius-pill); padding: 5px 12px 5px 6px; font: 800 14px/18px var(--font-body); }
+  .lg .sw { width: 22px; height: 22px; border-radius: 50%; border: 4px solid; box-sizing: border-box; background: var(--surface); }
+  .filters { display: flex; gap: var(--space-3); margin-bottom: var(--space-5); flex-wrap: wrap; }
+  .fchip { height: 48px; padding: 0 var(--space-5); border-radius: var(--radius-pill); border: var(--border-thin) solid var(--line-strong); background: var(--surface); font: 800 17px/20px var(--font-body); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); box-shadow: 0 4px 0 var(--line); transition: transform var(--duration-fast); }
+  .fchip:hover { transform: translateY(-2px); }
+  .fchip .n { font-size: 14px; color: var(--ink-soft); }
+  .fchip[aria-checked="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); box-shadow: 0 4px 0 var(--ink-soft); }
+  .fchip[aria-checked="true"] .n { color: var(--ink-on-dark-soft); }
+  .gridw { flex: 1; min-height: 0; overflow: auto; margin: 0 calc(-1 * var(--space-3)); padding: var(--space-2) var(--space-3) var(--space-6); }
+  .wg { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: var(--space-5); }
+  .wc { background: var(--surface); border: var(--border-thick) solid var(--m); border-radius: var(--radius-lg); box-shadow: 0 5px 0 var(--m); padding: var(--space-3) var(--space-3) var(--space-4); display: flex; flex-direction: column; align-items: center; gap: var(--space-1); position: relative; }
+  .wc .pips { align-self: stretch; display: flex; justify-content: space-between; align-items: center; }
+  .wc .pips span { display: flex; gap: 4px; } .wc .pips i { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-sunk); } .wc .pips i.on { background: var(--m); }
+  .wc .pips b { font: 800 12px/16px var(--font-body); color: var(--ink-soft); }
+  .wc .b-pic { width: 88px; height: 88px; }
+  .wc .row { display: flex; align-items: center; gap: var(--space-2); }
+  .wc .en { font: 700 26px/30px var(--font-display); }
+  .wc .vi { font: 700 15px/18px var(--font-body); color: var(--ink-soft); }
+  .sk-card { height: 214px; border-radius: var(--radius-lg); background: var(--surface); padding: var(--space-4); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); box-sizing: border-box; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = B.kids[0];
+  var M = { cat: 5, dog: 5, fish: 4, bird: 4, duck: 3, rabbit: 2, apple: 5, banana: 4, grapes: 3, orange: 2, pear: 1, strawberry: 1, ball: 3, kite: 2, teddy: 1, red: 4, blue: 3, yellow: 2, green: 1, one: 5, two: 4, three: 3 };
+  var ML = ['', 'Mới gặp', 'Đang nhớ', 'Khá nhớ', 'Nhớ tốt', 'Thuộc lòng'];
+  var S = { topic: 'all' };
+  var words = Object.keys(M);
+  function count(t) { return words.filter(function (w) { return t === 'all' || B.words[w].topic === t; }).length; }
+  function header(n) {
+    var lg = [1, 2, 3, 4, 5].map(function (m) { return '<span class="lg"><span class="sw" style="border-color:var(--mastery-' + m + ')"></span>' + m + ' · ' + ML[m] + '</span>'; }).join('');
+    return '<div class="nb-head"><h1 class="display-l">Sổ từ của An <span class="label b-muted">' + n + ' từ</span></h1><div class="legend" aria-label="Mức độ thuộc">' + lg + '</div></div>';
+  }
+  function filters(off) {
+    var t = [['all', 'Tất cả']].concat(Object.keys(B.topics).map(function (k) { return [k, B.topics[k]]; }));
+    return '<div class="filters" role="radiogroup" aria-label="Lọc theo chủ đề">' + t.map(function (x) { return '<button type="button" role="radio" class="fchip" data-t="' + x[0] + '" aria-checked="' + (S.topic === x[0]) + '"' + (off ? ' disabled' : '') + '>' + x[1] + (off ? '' : '<span class="n">' + count(x[0]) + '</span>') + '</button>'; }).join('') + '</div>';
+  }
+  function grid() {
+    return '<div class="gridw"><div class="wg">' + words.filter(function (w) { return S.topic === 'all' || B.words[w].topic === S.topic; }).sort(function (a, b) { return M[a] - M[b]; }).map(function (w) {
+      var m = M[w], p = ''; for (var i = 1; i <= 5; i++) p += '<i class="' + (i <= m ? 'on' : '') + '"></i>';
+      return '<article class="wc" style="--m:var(--mastery-' + m + ')"><div class="pips"><span aria-hidden="true">' + p + '</span><b>' + ML[m] + '</b></div>' + B.pic(w, 88) + '<div class="row">' + B.speak(w, 's') + '<span class="en">' + w + '</span></div><span class="vi">' + B.words[w].vi + '</span></article>';
+    }).join('') + '</div></div>';
+  }
+  var tb = function () { return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid }); };
+  B.screen({
+    level: 1,
+    notes: { normal: 'Sắp xếp từ mức thấp lên để bé thấy từ cần ôn trước. Viền + chấm + chữ cùng báo mức độ (không chỉ dựa vào màu). Lưới cuộn bên trong khi nhiều từ.', loading: 'Khung xương lưới thẻ.', empty: 'Chưa học từ nào.', error: 'Không tải được sổ từ.' },
+    states: {
+      normal: function () { return tb() + '<div class="scr__body">' + header(words.length) + filters() + grid() + '</div>'; },
+      loading: function () { var c = ''; for (var i = 0; i < 12; i++) c += '<div class="sk-card">' + B.sk('100%', '12px', 'var(--radius-pill)') + B.sk('88px', '88px', '50%') + B.sk('70%', '26px', 'var(--radius-pill)') + B.sk('45%', '16px', 'var(--radius-pill)') + '</div>'; return tb() + '<div class="scr__body">' + header('··') + filters(true) + '<div class="gridw"><div class="wg">' + c + '</div></div></div>'; },
+      empty: function () { return tb() + '<div class="scr__body">' + header(0) + B.stateBlock({ kind: 'empty', expr: 'suynghi', title: 'Sổ từ còn trống', text: 'Mỗi từ bé học sẽ được Bông ghi vào đây. Học bài đầu tiên nhé!', action: B.btn({ label: 'Học bài đầu tiên', size: 'l', icon: 'map' }) }) + '</div>'; },
+      error: function () { return tb() + '<div class="scr__body">' + header('··') + B.stateBlock({ kind: 'error', title: 'Sổ từ chưa mở được', text: 'Mạng đang chập chờn. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelectorAll('[data-t]').forEach(function (b) { b.addEventListener('click', function () { S.topic = b.dataset.t; ctx.setState('normal'); ctx.scr.querySelector('[data-t="' + S.topic + '"]').focus(); }); }); } }
+  });
+})();
+</script>
+</body>
+</html>

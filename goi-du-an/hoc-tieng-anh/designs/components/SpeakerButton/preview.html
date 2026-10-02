@@ -1,0 +1,20 @@
+<!-- @dsCard group="Chung · Điều khiển" height=210 subtitle="Mọi từ tiếng Anh đều có nút loa — bấm để nghe" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nút loa — preview</title>
+<style>
+  body { background: var(--bg); }
+  .w { display: inline-flex; align-items: center; gap: 12px; background: var(--surface); padding: 10px 18px 10px 12px; border-radius: var(--radius-pill); box-shadow: var(--shadow-card); }
+</style></head>
+<body>
+<div class="dsf-demo b-root" id="r"></div>
+<script>
+  var B = window.Bong;
+  document.getElementById('r').innerHTML =
+    '<div>' + B.speak('cat', 'l', 'Nghe câu hỏi') + '<div class="cap">L · 112px · câu hỏi nghe</div></div>' +
+    '<div>' + B.speak('dog', 'm') + '<div class="cap">M · 56px · thẻ từ</div></div>' +
+    '<div><span class="w">' + B.speak('apple', 's') + '<span class="word en">apple</span></span><div class="cap">S · 40px · cạnh mỗi từ</div></div>' +
+    '<div><span class="w">' + B.speak('I eat an apple.', 's', 'Nghe câu ví dụ') + '<span class="body">I eat an apple.</span></span><div class="cap">Câu ví dụ</div></div>';
+</script>
+</body>
+</html>

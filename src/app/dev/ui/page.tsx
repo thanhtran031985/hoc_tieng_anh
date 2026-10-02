@@ -21,6 +21,7 @@ import {
   type MascotColor,
 } from "@/components/ui";
 import { HotkeysDemo } from "./hotkeys-demo";
+import { OverlaysDemo } from "./overlays-demo";
 import { TopbarDemo } from "./topbar-demo";
 
 // Trang xem thành phần giao diện (chỉ chạy khi phát triển). Trang chỉ dùng class token, không có mã hex/px.
@@ -346,6 +347,14 @@ export default function DevUiPage() {
             <LevelChip level={8} name="London" />
           </div>
         </div>
+      </Section>
+
+      <Section
+        id="sec-overlays"
+        title="Hộp thoại, dải phản hồi, khung xương, Trống và Lỗi"
+        note="Hộp thoại và dải phản hồi mở trong khung giả lập một màn hình."
+      >
+        <OverlaysDemo />
       </Section>
 
       <Section id="sec-hotkeys" title="Phím tắt (useHotkeys)" note="Bấm 1–4, A–D, Enter, Space, ← →, Esc. Gõ trong ô nhập thì phím tắt không chạy.">
