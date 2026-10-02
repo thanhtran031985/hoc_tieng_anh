@@ -1,5 +1,17 @@
 import { notFound } from "next/navigation";
-import { Button, ICON_NAMES, Icon, IconButton, KeyHint, type ButtonVariant } from "@/components/ui";
+import {
+  Button,
+  ICON_NAMES,
+  Icon,
+  IconButton,
+  KeyHint,
+  Mascot,
+  PICTURE_NAMES,
+  WordPicture,
+  type ButtonVariant,
+  type Expr,
+  type MascotColor,
+} from "@/components/ui";
 import { HotkeysDemo } from "./hotkeys-demo";
 
 // Trang xem thành phần giao diện (chỉ chạy khi phát triển). Trang chỉ dùng class token, không có mã hex/px.
@@ -20,6 +32,22 @@ const states = [
   { id: "disabled", title: "Vô hiệu" },
   { id: "focus", title: "Focus (Tab)" },
 ] as const;
+
+const expressions: { expr: Expr; title: string; use: string }[] = [
+  { expr: "chao", title: "Chào", use: "Trang chủ, đăng nhập, mở đầu bài" },
+  { expr: "vui", title: "Vui mừng", use: "Trả lời đúng (dải phản hồi xanh)" },
+  { expr: "dongvien", title: "Động viên", use: "Chưa đúng, lỗi tải — luôn kèm “thử lại”" },
+  { expr: "suynghi", title: "Suy nghĩ", use: "Đang tải, trạng thái trống, gợi ý" },
+  { expr: "ngu", title: "Ngủ", use: "Hết giờ học, tạm nghỉ" },
+  { expr: "chucmung", title: "Chúc mừng", use: "Kết thúc bài, qua cấp, thắng trùm" },
+];
+
+const mascotColors: { color: MascotColor; title: string }[] = [
+  { color: "ngoc", title: "Rồng Ngọc (mặc định)" },
+  { color: "dao", title: "Rồng Đào" },
+  { color: "nang", title: "Rồng Nắng" },
+  { color: "tim", title: "Rồng Tím" },
+];
 
 function Section({ id, title, note, children }: { id: string; title: string; note?: string; children: React.ReactNode }) {
   return (
@@ -116,6 +144,41 @@ export default function DevUiPage() {
             <li key={name} className="flex flex-col items-center gap-2 rounded-md bg-surface p-4 text-ink shadow-card">
               <Icon name={name} size={32} />
               <span className="font-body text-caption text-ink-soft">{name}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section
+        id="sec-mascot"
+        title="Rồng Bông"
+        note="6 biểu cảm và 4 màu. Bật “giảm chuyển động” trong hệ điều hành thì rồng đứng yên."
+      >
+        <div className="grid grid-cols-6 gap-3">
+          {expressions.map((x) => (
+            <div key={x.expr} className="flex flex-col items-center gap-2 rounded-lg bg-surface px-2 pb-3 pt-4 shadow-card">
+              <Mascot expr={x.expr} size={150} />
+              <div className="font-body text-label text-ink">{x.title}</div>
+              <div className="text-center font-body text-caption text-ink-soft">{x.use}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 flex flex-wrap items-end gap-4">
+          {mascotColors.map((v) => (
+            <div key={v.color} className="flex flex-col items-center gap-1 font-body text-caption text-ink">
+              <Mascot expr="chao" size={96} color={v.color} />
+              {v.title}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="sec-wordpicture" title="Hình từ vựng" note="Khung 120×120, nét viền dragon-line. Màu trong hình là màu vẽ.">
+        <ul className="grid grid-cols-8 gap-3">
+          {PICTURE_NAMES.map((w) => (
+            <li key={w} className="flex flex-col items-center gap-1 rounded-lg bg-surface px-2 pb-2 pt-3 shadow-card">
+              <WordPicture word={w} size={72} />
+              <span className="font-display text-label">{w}</span>
             </li>
           ))}
         </ul>

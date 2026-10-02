@@ -32,3 +32,11 @@
 
 ### 02/10/2026 — Cách đối chiếu với thiết kế
 - Trang tham chiếu tĩnh và trình chụp ảnh Chrome headless (CDP) nằm trong thư mục tạm của phiên, không đưa vào repo. So sánh bằng ảnh chụp và bằng `getComputedStyle` của từng thành phần so với `preview.html`.
+
+### 02/10/2026 — Mascot và WordPicture (Bước 1)
+- Nét vẽ rồng (6 biểu cảm) và 22 hình từ vựng được sinh bằng cách chạy `bundle.js` trong Node rồi chép phần ruột `<svg>` vào `src/components/ui/Mascot/dragon-parts.ts` và `src/components/ui/WordPicture/pictures.ts`; giữ nguyên từng nét, không vẽ lại. Render bằng `dangerouslySetInnerHTML` với chuỗi hằng số.
+- Hex trong hai file này là màu vẽ của hình (theo `WordPictures/README.md`: "màu bên trong hình minh hoạ là màu vẽ, không phải token giao diện"). Hai file được loại khỏi kiểm tra hex/px. Task 05 (nội dung mẫu cấp 1–2) thêm hình mới bằng cách thêm khóa vào `WORD_PICTURES`.
+- Dữ liệu mẫu `Bong.words` (nghĩa, phiên âm, câu ví dụ) và `Bong.topics` không đưa vào component: sẽ lấy từ database.
+- Màu rồng: `Mascot` nhận prop `color` (`ngoc|dao|nang|tim`) đặt `data-dragon` trên chính SVG; `globals.css` có `[data-dragon="dao|nang|tim"]` nên đặt một lần trên `<html>` hoặc vùng chứa cũng được (thay cho lớp `dragon-dao`…).
+- Hoạt ảnh trong `Mascot.module.css` (`:global(.dg-wave)` v.v. vì ruột SVG là chuỗi HTML). Gốc xoay đổi từ px sang phần trăm khung nhìn 200×210 (69% 62,857143% và 50% 61,904762%), cho kết quả giống hệt. Biên độ nhún/nhảy/thở/lơ lửng là token mới `--dragon-bob|hop|breathe|float`. `prefers-reduced-motion` tắt mọi hoạt ảnh (đã kiểm tra bằng giả lập).
+- `WordPicture` với từ chưa có hình hiện khung SVG trống (như bản gốc) để giữ bố cục.

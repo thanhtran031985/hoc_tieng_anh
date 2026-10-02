@@ -153,6 +153,12 @@
   --size-key: 26px;
   --size-key-in-btn: 24px;
   --pad-key: 7px;
+
+  /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
+  --dragon-bob: 6px;
+  --dragon-hop: 16px;
+  --dragon-breathe: 2px;
+  --dragon-float: 6px;
 }
 
 /* ---- Màu theo cấp: đặt data-level="1..10" trên vùng chứa (từ designs/components/bundle.css) ---- */
@@ -411,6 +417,11 @@
 @utility border-thick {
   border-width: var(--border-thick);
 }
+
+/* ---- Màu rồng Bông: đặt data-dragon="dao|nang|tim" trên vùng chứa (mặc định ngọc) ---- */
+[data-dragon="dao"]  { --dragon-body: var(--dragon-dao-body);  --dragon-wing: var(--dragon-dao-wing); }
+[data-dragon="nang"] { --dragon-body: var(--dragon-nang-body); --dragon-wing: var(--dragon-nang-wing); }
+[data-dragon="tim"]  { --dragon-body: var(--dragon-tim-body);  --dragon-wing: var(--dragon-tim-wing); }
 
 /* ---- Nền tảng ---- */
 body {

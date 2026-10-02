@@ -1,0 +1,77 @@
+.dragon {
+  display: block;
+  overflow: visible;
+  animation: bob 3.2s ease-in-out infinite;
+}
+.vui,
+.chucmung {
+  animation: hop 1.1s ease-in-out infinite;
+}
+.ngu {
+  animation: breathe 3.6s ease-in-out infinite;
+}
+
+/* Gốc xoay tính theo phần trăm khung nhìn 200×210 (vẫy tay quanh vai, vỗ cánh quanh lưng). */
+.dragon :global(.dg-wave) {
+  transform-origin: 69% 62.857143%;
+  animation: wave 1.4s ease-in-out infinite;
+}
+.dragon :global(.dg-z) {
+  animation: float 2.6s ease-in-out infinite;
+}
+.dragon :global(.dg-q) {
+  animation: float 2s ease-in-out infinite;
+}
+.dragon :global(.dg-wings) {
+  transform-origin: 50% 61.904762%;
+  animation: flap 1.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  50% {
+    transform: translateY(calc(-1 * var(--dragon-bob)));
+  }
+}
+@keyframes hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(calc(-1 * var(--dragon-hop))) rotate(-2deg);
+  }
+  60% {
+    transform: translateY(0) scaleY(0.97);
+  }
+}
+@keyframes breathe {
+  50% {
+    transform: scale(1.02, 0.98) translateY(var(--dragon-breathe));
+  }
+}
+@keyframes wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+@keyframes float {
+  50% {
+    transform: translateY(calc(-1 * var(--dragon-float)));
+  }
+}
+@keyframes flap {
+  50% {
+    transform: scaleX(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon,
+  .dragon :global(*) {
+    animation: none !important;
+  }
+}
