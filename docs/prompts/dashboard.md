@@ -24,7 +24,7 @@ Tạo dashboard tiến độ task cho dự án. KHÔNG sửa code ứng dụng.
 - File tự chứa, mở trực tiếp bằng trình duyệt (file://) vẫn chạy. Dữ liệu nhúng
   sẵn trong HTML, không dùng fetch.
 - Nội dung:
-  a. Header: tên dự án (Covet), thời điểm sinh file, số liệu tổng: tổng số task,
+  a. Header: tên dự án (Học cùng Bông), thời điểm sinh file, số liệu tổng: tổng số task,
      số ✅/🔄/⬜, % bước đã xong trên toàn dự án.
   b. Sơ đồ SVG phụ thuộc: mỗi task một ô (số, tên, "x/y bước"), màu theo trạng
      thái, mũi tên theo cột "Phụ thuộc" trong README. Vị trí TỰ TÍNH theo cấp

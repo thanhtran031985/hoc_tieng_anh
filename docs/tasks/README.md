@@ -1,21 +1,23 @@
-# Danh sách task GĐ1 (bản nháp)
+# Danh sách task GĐ1
 
-Bản nháp để chép vào `docs/tasks/`. Mỗi thư mục có một `task.md` viết theo các mục mà lệnh `/start-task` và `/finish-task` kiểm tra (Mục tiêu, Phạm vi, Thiết kế, Quyết định kiến trúc, Các bước có Kiểm tra). Nếu `_template/task.md` của Covet có mục khác, bố/mẹ chép nội dung vào đúng mục của template.
+Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.md` (Mục tiêu, Phạm vi, Thiết kế, Quyết định kiến trúc, Các bước có Kiểm tra). Bảng này là nguồn của `npm run tasks:dashboard`: giữ đúng các cột `#`, `Task`, `Trạng thái`, `Phụ thuộc`, `Nhánh git`.
 
-| NN | Thư mục | Tên | Trạng thái | Phụ thuộc | Nhánh |
-|---|---|---|---|---|---|
-| 01 | `01-setup` | Khởi tạo dự án | 🔄 | — | `feat/01-setup` |
-| 02 | `02-ui-kit` | Bộ thành phần giao diện Tiểu học | ⬜ | 01 | `feat/02-ui-kit` |
-| 03 | `03-db-core` | Cơ sở dữ liệu lõi và lộ trình 10 cấp | ⬜ | 01 | `feat/03-db-core` |
-| 04 | `04-auth-profiles` | Đăng nhập gia đình và hồ sơ bé | ⬜ | 02, 03 | `feat/04-auth-profiles` |
-| 05 | `05-content-l1-l2` | Nội dung mẫu cấp 1–2 | ⬜ | 03 | `feat/05-content-l1-l2` |
-| 06 | `06-home-map` | Trang chủ và bản đồ | ⬜ | 02, 04, 05 | `feat/06-home-map` |
-| 07 | `07-lesson-player` | Khung bài học và 4 dạng bài cơ bản | ⬜ | 02, 05, 06 | `feat/07-lesson-player` |
-| 08 | `08-review-notebook` | Ôn tập lặp lại và Sổ từ | ⬜ | 07 | `feat/08-review-notebook` |
-| 09 | `09-placement` | Bài xếp lớp | ⬜ | 07 | `feat/09-placement` |
-| 10 | `10-time-limit` | Giới hạn giờ học | ⬜ | 04, 07 | `feat/10-time-limit` |
-| 11 | `11-parent-area` | Khu vực bố mẹ: tổng quan và cài đặt | ⬜ | 04, 08, 10 · cần thiết kế Prompt 3 | `feat/11-parent-area` |
-| 12 | `12-admin-content` | Quản trị nội dung cơ bản | ⬜ | 03, 05 · cần thiết kế Prompt 3 | `feat/12-admin-content` |
+| # | Task | Trạng thái | Phụ thuộc | Nhánh git |
+|---|---|---|---|---|
+| 01 | [01-setup](01-setup/task.md) — Khởi tạo dự án | 🔄 | — | `feat/01-setup` |
+| 02 | [02-ui-kit](02-ui-kit/task.md) — Bộ thành phần giao diện Tiểu học | ⬜ | 01 | `feat/02-ui-kit` |
+| 03 | [03-db-core](03-db-core/task.md) — Cơ sở dữ liệu lõi và lộ trình 10 cấp | ⬜ | 01 | `feat/03-db-core` |
+| 04 | [04-auth-profiles](04-auth-profiles/task.md) — Đăng nhập gia đình và hồ sơ bé | ⬜ | 02, 03 | `feat/04-auth-profiles` |
+| 05 | [05-content-l1-l2](05-content-l1-l2/task.md) — Nội dung mẫu cấp 1–2 | ⬜ | 03 | `feat/05-content-l1-l2` |
+| 06 | [06-home-map](06-home-map/task.md) — Trang chủ và bản đồ | ⬜ | 02, 04, 05 | `feat/06-home-map` |
+| 07 | [07-lesson-player](07-lesson-player/task.md) — Khung bài học và 4 dạng bài cơ bản | ⬜ | 02, 05, 06 | `feat/07-lesson-player` |
+| 08 | [08-review-notebook](08-review-notebook/task.md) — Ôn tập lặp lại và Sổ từ | ⬜ | 07 | `feat/08-review-notebook` |
+| 09 | [09-placement](09-placement/task.md) — Bài xếp lớp | ⬜ | 07 | `feat/09-placement` |
+| 10 | [10-time-limit](10-time-limit/task.md) — Giới hạn giờ học | ⬜ | 04, 07 | `feat/10-time-limit` |
+| 11 | [11-parent-area](11-parent-area/task.md) — Khu vực bố mẹ: tổng quan và cài đặt | ⬜ | 04, 08, 10 | `feat/11-parent-area` |
+| 12 | [12-admin-content](12-admin-content/task.md) — Quản trị nội dung cơ bản | ⬜ | 03, 05 | `feat/12-admin-content` |
+
+Task 11 và 12 cần thiết kế Prompt 3 trước khi làm giao diện.
 
 ## Thứ tự làm đề xuất
 1. **01 → 02 → 03** dựng nền: dự án, bộ thành phần, cơ sở dữ liệu.

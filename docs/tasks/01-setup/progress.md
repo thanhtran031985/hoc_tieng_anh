@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 | 0 | Khởi tạo Next.js | ✅ | |
 | 1 | Kết nối MySQL | ✅ | Prisma 7.10 + adapter-mariadb |
 | 2 | Token và font | ✅ | Trang thử: /dev-tokens |
-| 3 | Quy trình task | ⬜ | Script `tasks:dashboard` đã có trong package.json |
+| 3 | Quy trình task | ✅ | Dashboard báo Cảnh báo: 0 |
 
 ## Nhật ký
 
@@ -43,6 +43,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 - Việc cần làm thủ công: chạy `npm run dev`, mở `http://localhost:3000/dev-tokens` xem bằng mắt.
 - Lưu ý: `@utility border-thin|thick` áp viền cả 4 cạnh; một cạnh dùng `border-b-(length:--border-thin)`.
 
+### Bước 3 — Quy trình task (02/10/2026)
+- `_template/`, `scripts/tasks-dashboard.mjs`, `docs/prompts/dashboard.md` và script `tasks:dashboard` đã có sẵn nên không chép lại. Đổi chữ Covet → Học cùng Bông ở script (tiêu đề, chân trang, tên file PNG/PDF) và prompt.
+- Dashboard báo 13 cảnh báo vì bảng trong `docs/tasks/README.md` thiếu cột `#`/`Task`. Đã chuyển bảng sang định dạng dashboard đọc được (nội dung giữ nguyên), chi tiết ở `decisions.md`.
+- Kiểm tra: `npm run tasks:dashboard` báo "Cảnh báo: 0", đọc được 12 task, task 01 hiện 3/4 bước ✅ trước khi cập nhật bước này.
+- Việc cần làm thủ công: mở `docs/tasks/dashboard.html` trong trình duyệt xem sơ đồ phụ thuộc.
+
 ## Bước tiếp theo
 
-Bước 3 — Quy trình task: sửa chữ "Covet" trong `scripts/tasks-dashboard.mjs` và `docs/prompts/dashboard.md`, tạo `progress.md`/`decisions.md` còn thiếu, xử lý cảnh báo dashboard (hiện 13) về 0.
+Kiểm tra cuối task (`tsc`, `lint`, `build`), rồi đổi trạng thái task 01 thành ✅ trong `docs/tasks/README.md`.

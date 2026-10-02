@@ -59,3 +59,12 @@
 
 ### 02/10/2026 — Remote git
 - Quyết định: kho GitHub `https://github.com/thanhtran031985/hoc_tieng_anh.git` (remote `origin` đã thêm). Mọi commit sau này đưa lên đây. Chỉ push khi anh/chị đồng ý; nhánh làm việc hiện là `feat/01-setup`, nhánh chính `main`.
+
+### 02/10/2026 — Chuyển bảng `docs/tasks/README.md` sang định dạng dashboard đọc được
+- Bối cảnh: script `tasks-dashboard.mjs` chỉ nhận bảng có cột `#`, `Task`, `Trạng thái` (tùy chọn `Phụ thuộc`, `Nhánh git`); bảng nháp dùng cột `NN`, `Thư mục`, `Tên` nên dashboard báo 13 cảnh báo.
+- Quyết định: đổi bảng sang `| # | Task | Trạng thái | Phụ thuộc | Nhánh git |`, cột Task dạng `[NN-slug](NN-slug/task.md) — Tên`. Nội dung các task giữ nguyên. Ghi chú "cần thiết kế Prompt 3" của task 11, 12 chuyển thành một dòng dưới bảng (cột Phụ thuộc chỉ chứa số task). Bỏ chữ "bản nháp" và nhắc tới Covet trong phần mở đầu.
+- Ảnh hưởng: khi thêm task mới giữ đúng các cột này.
+
+### 02/10/2026 — Đổi tên Covet thành Học cùng Bông trong dashboard
+- Quyết định: `scripts/tasks-dashboard.mjs` (tiêu đề, chân trang, tên file PNG/PDF `edu-tasks-dashboard`) và `docs/prompts/dashboard.md`.
+- Ghi chú: `_template/`, script và prompt đã có sẵn trong dự án nên không cần chép từ Covet. Task 02–12 chưa có `progress.md`/`decisions.md`; tạo từ `_template/` khi bắt đầu từng task (dashboard hiển thị "chưa có tiến độ", không cảnh báo).

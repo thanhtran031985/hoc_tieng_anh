@@ -564,7 +564,7 @@ function renderPage(tasks, generatedAt) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Covet — Tiến độ task</title>
+  <title>Học cùng Bông — Tiến độ task</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" integrity="sha384-en/ztfPSRkGfME4KIm05joYXynqzUgbsG5nMrj/xEFAHXkeZfO3yMK8QQ+mP7p1/" crossorigin="anonymous"></script>
@@ -641,7 +641,7 @@ function renderPage(tasks, generatedAt) {
     <div class="header">
       <div class="header-row">
         <div class="pulse-dot"></div>
-        <h1>Covet — Tiến độ task</h1>
+        <h1>Học cùng Bông — Tiến độ task</h1>
         <div class="toolbar">
           <div class="toolbar-actions">
             <button onclick="copyAsImage(this)">📋 Copy</button>
@@ -675,7 +675,7 @@ function renderPage(tasks, generatedAt) {
     <h2 class="section-title">Chú thích</h2>
     <div class="card"><ul class="legend">${legendHtml}</ul></div>
 
-    <p class="footer">Covet • File sinh tự động bởi npm run tasks:dashboard — không sửa tay</p>
+    <p class="footer">Học cùng Bông • File sinh tự động bởi npm run tasks:dashboard — không sửa tay</p>
   </div>
 
   <script type="application/json" id="tasks-data">${data}</script>
@@ -705,7 +705,7 @@ function renderPage(tasks, generatedAt) {
         const pad = 32;
         const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2 });
         const link = document.createElement('a');
-        link.download = 'covet-tasks-dashboard.png';
+        link.download = 'edu-tasks-dashboard.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
         btn.textContent = '✓ Done!';
@@ -728,7 +728,7 @@ function renderPage(tasks, generatedAt) {
         const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
         const pdf = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height], hotfixes: ['px_scaling'] });
         pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save('covet-tasks-dashboard.pdf');
+        pdf.save('edu-tasks-dashboard.pdf');
         btn.textContent = '✓ Done!';
       } catch (e) {
         btn.textContent = '✗ Failed';
