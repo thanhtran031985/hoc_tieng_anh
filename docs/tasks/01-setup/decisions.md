@@ -37,3 +37,25 @@
 ### 02/10/2026 — `designs/` và `scripts/` bị loại khỏi tsconfig và ESLint
 - Quyết định: `exclude`/`globalIgnores` hai thư mục này.
 - Lý do: `designs/` là bản tải về từ Claude Design (không sửa); `scripts/` là file `.mjs` công cụ.
+
+### 02/10/2026 — Cách đưa token vào Tailwind v4 (`src/app/globals.css`)
+- Bối cảnh: token `radius-*`, `shadow-*`, `font-*` trùng tên namespace của Tailwind; ánh xạ `--radius-sm: var(--radius-sm)` trong `@theme inline` sẽ tự tham chiếu vòng.
+- Quyết định:
+  - `:root` chứa màu, `space-*`, `size-*`, `border-*`, `duration-*`, `z-*` (đúng tên trong DESIGN_SYSTEM mục 13), cộng khối `[data-level="1..10"]` chép nguyên từ `bundle.css` dòng 9–18.
+  - `@theme inline` ánh xạ màu → `bg-brand`, `text-ink`, `bg-lv`… và `space-N` → `p-4`, `gap-6`…; `size-*` → `h-btn-l`, `w-speaker-s`, `h-topbar`, `min-h-lesson`, `max-w-content`.
+  - `radius-*`, `shadow-*`, `font-*` và 15 kiểu chữ khai báo thẳng trong `@theme static` (một nơi duy nhất, vẫn dùng được `var(--radius-md)`).
+  - Bỏ bảng màu, cỡ chữ, bo góc, bóng, khoảng cách và container mặc định của Tailwind. Vì vậy `p-7`, `w-32`, `text-xl`… không tồn tại: chỉ dùng token.
+  - Tailwind không có namespace cho z-index, thời lượng và độ dày viền, nên thêm `@utility`: `z-map|sticky|feedback|dialog|burst`, `duration-fast|base|slide|celebrate`, `border-thin|thick` (áp cả 4 cạnh; một cạnh dùng `border-b-(length:--border-thin)`).
+  - Kiểu chữ: `text-<kiểu>` đặt cỡ + dòng + đậm; họ chữ chọn riêng: `font-display` cho `display-xl … button-l`, `font-body` cho `body-l … key`, `font-thcs` cho `thcs-*`.
+- Ảnh hưởng: `globals.css` được sinh một lần từ `docs/DESIGN_SYSTEM.md` mục 13; từ nay sửa tay. Token đổi thì sửa theo `designs/tokens.json` / DESIGN_SYSTEM.md rồi cập nhật `globals.css`.
+
+### 02/10/2026 — Font tải bằng `next/font/google`
+- Quyết định: Baloo 2 (500–800), Nunito (500–900), Be Vietnam Pro (400/500/700), subsets `latin` + `vietnamese`. Biến `--font-baloo`, `--font-nunito`, `--font-be-vietnam-pro` đặt trên `<html>`, `globals.css` gom thành `--font-display|body|thcs`.
+- Ảnh hưởng: lần `next build` đầu cần mạng để tải font (đã chạy thành công).
+
+### 02/10/2026 — Trang thử token `/dev-tokens`
+- Quyết định: giữ `src/app/dev-tokens/page.tsx`, chỉ chạy khi phát triển; production trả 404 (đã kiểm tra bằng `next start`).
+- Lý do: đối chiếu token với thiết kế ở các task sau; task 02 có thể thay bằng trang xem thành phần.
+
+### 02/10/2026 — Remote git
+- Quyết định: kho GitHub `https://github.com/thanhtran031985/hoc_tieng_anh.git` (remote `origin` đã thêm). Mọi commit sau này đưa lên đây. Chỉ push khi anh/chị đồng ý; nhánh làm việc hiện là `feat/01-setup`, nhánh chính `main`.

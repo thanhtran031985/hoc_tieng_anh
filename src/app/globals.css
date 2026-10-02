@@ -1,1 +1,405 @@
 @import "tailwindcss";
+
+/* =========================================================
+   Học cùng Bông — token thiết kế
+   Nguồn: docs/DESIGN_SYSTEM.md mục 13 (sinh từ designs/tokens.json).
+   Mã hex/px chỉ được nằm trong file này. Component chỉ dùng class/biến token.
+   ========================================================= */
+
+/* ---- Token (biến CSS dùng trực tiếp: var(--ink), var(--space-4)…) ---- */
+:root {
+  --bg: #fff8ec;
+  --bg-sea: #bfe9f7;
+  --bg-sea-deep: #8fd6ee;
+  --bg-night: #23264f;
+  --surface: #ffffff;
+  --surface-soft: #fff1d9;
+  --surface-sunk: #f4ead8;
+  --line: #ecdfc8;
+  --line-strong: #9d8a6c;
+  --ink: #2b2440;
+  --ink-soft: #5e5670;
+  --ink-disabled: #a39cb0;
+  --ink-on-dark: #ffffff;
+  --ink-on-dark-soft: #c9cbf2;
+  --brand: #1c6fd1;
+  --brand-shade: #14539f;
+  --brand-hover: #2a7fe3;
+  --brand-soft: #e2eeff;
+  --brand-soft-shade: #c3d8f5;
+  --scrim: rgba(43, 36, 64, 0.45);
+  --focus: #5b2ee8;
+  --star: #ffc531;
+  --star-shade: #e39a00;
+  --star-empty: #e6dccb;
+  --coin: #ffb300;
+  --streak: #ff7a3d;
+  --success: #22873f;
+  --success-shade: #176a31;
+  --success-soft: #dcf5e2;
+  --retry: #f39646;
+  --retry-shade: #a04e0f;
+  --retry-soft: #ffead6;
+  --info-soft: #e9e4ff;
+  --mastery-1: #cfc6dc;
+  --mastery-2: #ffc94d;
+  --mastery-3: #3fb0ee;
+  --mastery-4: #7a4fe6;
+  --mastery-5: #1f9a52;
+  --dragon-body: #3cc2a8;
+  --dragon-belly: #ffe6a3;
+  --dragon-wing: #ff9f6b;
+  --dragon-cheek: #ff8fa8;
+  --dragon-line: #2b2440;
+  --dragon-dao-body: #ff9fbf;
+  --dragon-dao-wing: #9b7bf2;
+  --dragon-nang-body: #ffcf4a;
+  --dragon-nang-wing: #3fa9f5;
+  --dragon-tim-body: #a88bf5;
+  --dragon-tim-wing: #ffcf4a;
+  --level-1: #f4a51c;
+  --level-1-shade: #b77c22;
+  --level-1-soft: #fdf1db;
+  --level-1-ink: #906225;
+  --on-level-1: #2b2440;
+  --level-2: #7dbe31;
+  --level-2-shade: #618e31;
+  --level-2-soft: #eaf5de;
+  --level-2-ink: #537731;
+  --on-level-2: #2b2440;
+  --level-3: #14a88f;
+  --level-3-shade: #167f74;
+  --level-3-soft: #d9f1ed;
+  --level-3-ink: #16766f;
+  --on-level-3: #2b2440;
+  --level-4: #2f9bea;
+  --level-4-shade: #2975b6;
+  --level-4-soft: #deeffc;
+  --level-4-ink: #286dab;
+  --on-level-4: #2b2440;
+  --level-5: #7a4fe6;
+  --level-5-shade: #5f3eb3;
+  --level-5-soft: #eae3fb;
+  --level-5-ink: #7049d4;
+  --on-level-5: #ffffff;
+  --level-6: #c93686;
+  --level-6-shade: #982c6e;
+  --level-6-soft: #f6dfec;
+  --level-6-ink: #b0317a;
+  --on-level-6: #ffffff;
+  --level-7: #0b7fab;
+  --level-7-shade: #0f6189;
+  --level-7-soft: #d8ebf2;
+  --level-7-ink: #0d6e97;
+  --on-level-7: #ffffff;
+  --level-8: #c8463c;
+  --level-8-shade: #973839;
+  --level-8-soft: #f6e1e0;
+  --level-8-ink: #b03f3a;
+  --on-level-8: #ffffff;
+  --level-9: #4b4fc4;
+  --level-9-shade: #3d3e9b;
+  --level-9-soft: #e2e3f6;
+  --level-9-ink: #4b4fc4;
+  --on-level-9: #ffffff;
+  --level-10: #2e7d5b;
+  --level-10-shade: #28604f;
+  --level-10-soft: #deeae5;
+  --level-10-ink: #2c7257;
+  --on-level-10: #ffffff;
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --size-btn-l: 64px;
+  --size-btn-m: 52px;
+  --size-btn-s: 40px;
+  --size-speaker-l: 112px;
+  --size-speaker-s: 40px;
+  --size-topbar: 72px;
+  --size-content-max: 1440px;
+  --size-lesson-min-h: 768px;
+  --border-thin: 2px;
+  --border-thick: 4px;
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slide: 320ms;
+  --duration-celebrate: 900ms;
+  --z-map: 1;
+  --z-sticky: 10;
+  --z-feedback: 40;
+  --z-dialog: 50;
+  --z-burst: 60;
+}
+
+/* ---- Màu theo cấp: đặt data-level="1..10" trên vùng chứa (từ designs/components/bundle.css) ---- */
+[data-level="1"]  { --lv: var(--level-1);  --lv-shade: var(--level-1-shade);  --lv-soft: var(--level-1-soft);  --lv-ink: var(--level-1-ink);  --on-lv: var(--on-level-1); }
+[data-level="2"]  { --lv: var(--level-2);  --lv-shade: var(--level-2-shade);  --lv-soft: var(--level-2-soft);  --lv-ink: var(--level-2-ink);  --on-lv: var(--on-level-2); }
+[data-level="3"]  { --lv: var(--level-3);  --lv-shade: var(--level-3-shade);  --lv-soft: var(--level-3-soft);  --lv-ink: var(--level-3-ink);  --on-lv: var(--on-level-3); }
+[data-level="4"]  { --lv: var(--level-4);  --lv-shade: var(--level-4-shade);  --lv-soft: var(--level-4-soft);  --lv-ink: var(--level-4-ink);  --on-lv: var(--on-level-4); }
+[data-level="5"]  { --lv: var(--level-5);  --lv-shade: var(--level-5-shade);  --lv-soft: var(--level-5-soft);  --lv-ink: var(--level-5-ink);  --on-lv: var(--on-level-5); }
+[data-level="6"]  { --lv: var(--level-6);  --lv-shade: var(--level-6-shade);  --lv-soft: var(--level-6-soft);  --lv-ink: var(--level-6-ink);  --on-lv: var(--on-level-6); }
+[data-level="7"]  { --lv: var(--level-7);  --lv-shade: var(--level-7-shade);  --lv-soft: var(--level-7-soft);  --lv-ink: var(--level-7-ink);  --on-lv: var(--on-level-7); }
+[data-level="8"]  { --lv: var(--level-8);  --lv-shade: var(--level-8-shade);  --lv-soft: var(--level-8-soft);  --lv-ink: var(--level-8-ink);  --on-lv: var(--on-level-8); }
+[data-level="9"]  { --lv: var(--level-9);  --lv-shade: var(--level-9-shade);  --lv-soft: var(--level-9-soft);  --lv-ink: var(--level-9-ink);  --on-lv: var(--on-level-9); }
+[data-level="10"] { --lv: var(--level-10); --lv-shade: var(--level-10-shade); --lv-soft: var(--level-10-soft); --lv-ink: var(--level-10-ink); --on-lv: var(--on-level-10); }
+
+/* ---- Tailwind: ánh xạ token → class (bg-brand, text-ink, p-4, h-btn-l, max-w-content…) ----
+   Bỏ bảng màu, cỡ chữ, bo góc, bóng và khoảng cách mặc định của Tailwind: chỉ dùng token. */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-bg: var(--bg);
+  --color-bg-sea: var(--bg-sea);
+  --color-bg-sea-deep: var(--bg-sea-deep);
+  --color-bg-night: var(--bg-night);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-sunk: var(--surface-sunk);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-disabled: var(--ink-disabled);
+  --color-ink-on-dark: var(--ink-on-dark);
+  --color-ink-on-dark-soft: var(--ink-on-dark-soft);
+  --color-brand: var(--brand);
+  --color-brand-shade: var(--brand-shade);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-shade: var(--brand-soft-shade);
+  --color-scrim: var(--scrim);
+  --color-focus: var(--focus);
+  --color-star: var(--star);
+  --color-star-shade: var(--star-shade);
+  --color-star-empty: var(--star-empty);
+  --color-coin: var(--coin);
+  --color-streak: var(--streak);
+  --color-success: var(--success);
+  --color-success-shade: var(--success-shade);
+  --color-success-soft: var(--success-soft);
+  --color-retry: var(--retry);
+  --color-retry-shade: var(--retry-shade);
+  --color-retry-soft: var(--retry-soft);
+  --color-info-soft: var(--info-soft);
+  --color-mastery-1: var(--mastery-1);
+  --color-mastery-2: var(--mastery-2);
+  --color-mastery-3: var(--mastery-3);
+  --color-mastery-4: var(--mastery-4);
+  --color-mastery-5: var(--mastery-5);
+  --color-dragon-body: var(--dragon-body);
+  --color-dragon-belly: var(--dragon-belly);
+  --color-dragon-wing: var(--dragon-wing);
+  --color-dragon-cheek: var(--dragon-cheek);
+  --color-dragon-line: var(--dragon-line);
+  --color-dragon-dao-body: var(--dragon-dao-body);
+  --color-dragon-dao-wing: var(--dragon-dao-wing);
+  --color-dragon-nang-body: var(--dragon-nang-body);
+  --color-dragon-nang-wing: var(--dragon-nang-wing);
+  --color-dragon-tim-body: var(--dragon-tim-body);
+  --color-dragon-tim-wing: var(--dragon-tim-wing);
+  --color-level-1: var(--level-1);
+  --color-level-1-shade: var(--level-1-shade);
+  --color-level-1-soft: var(--level-1-soft);
+  --color-level-1-ink: var(--level-1-ink);
+  --color-on-level-1: var(--on-level-1);
+  --color-level-2: var(--level-2);
+  --color-level-2-shade: var(--level-2-shade);
+  --color-level-2-soft: var(--level-2-soft);
+  --color-level-2-ink: var(--level-2-ink);
+  --color-on-level-2: var(--on-level-2);
+  --color-level-3: var(--level-3);
+  --color-level-3-shade: var(--level-3-shade);
+  --color-level-3-soft: var(--level-3-soft);
+  --color-level-3-ink: var(--level-3-ink);
+  --color-on-level-3: var(--on-level-3);
+  --color-level-4: var(--level-4);
+  --color-level-4-shade: var(--level-4-shade);
+  --color-level-4-soft: var(--level-4-soft);
+  --color-level-4-ink: var(--level-4-ink);
+  --color-on-level-4: var(--on-level-4);
+  --color-level-5: var(--level-5);
+  --color-level-5-shade: var(--level-5-shade);
+  --color-level-5-soft: var(--level-5-soft);
+  --color-level-5-ink: var(--level-5-ink);
+  --color-on-level-5: var(--on-level-5);
+  --color-level-6: var(--level-6);
+  --color-level-6-shade: var(--level-6-shade);
+  --color-level-6-soft: var(--level-6-soft);
+  --color-level-6-ink: var(--level-6-ink);
+  --color-on-level-6: var(--on-level-6);
+  --color-level-7: var(--level-7);
+  --color-level-7-shade: var(--level-7-shade);
+  --color-level-7-soft: var(--level-7-soft);
+  --color-level-7-ink: var(--level-7-ink);
+  --color-on-level-7: var(--on-level-7);
+  --color-level-8: var(--level-8);
+  --color-level-8-shade: var(--level-8-shade);
+  --color-level-8-soft: var(--level-8-soft);
+  --color-level-8-ink: var(--level-8-ink);
+  --color-on-level-8: var(--on-level-8);
+  --color-level-9: var(--level-9);
+  --color-level-9-shade: var(--level-9-shade);
+  --color-level-9-soft: var(--level-9-soft);
+  --color-level-9-ink: var(--level-9-ink);
+  --color-on-level-9: var(--on-level-9);
+  --color-level-10: var(--level-10);
+  --color-level-10-shade: var(--level-10-shade);
+  --color-level-10-soft: var(--level-10-soft);
+  --color-level-10-ink: var(--level-10-ink);
+  --color-on-level-10: var(--on-level-10);
+  --color-lv: var(--lv);
+  --color-lv-shade: var(--lv-shade);
+  --color-lv-soft: var(--lv-soft);
+  --color-lv-ink: var(--lv-ink);
+  --color-on-lv: var(--on-lv);
+
+  /* p-4, gap-6, m-8…: số = bậc token space-N. h-btn-l, w-speaker-s, min-h-lesson: token size-*. */
+  --spacing-*: initial;
+  --spacing-0: var(--space-0);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-btn-l: var(--size-btn-l);
+  --spacing-btn-m: var(--size-btn-m);
+  --spacing-btn-s: var(--size-btn-s);
+  --spacing-speaker-l: var(--size-speaker-l);
+  --spacing-speaker-s: var(--size-speaker-s);
+  --spacing-topbar: var(--size-topbar);
+  --spacing-lesson: var(--size-lesson-min-h);
+  --container-*: initial;
+  --container-content: var(--size-content-max);
+}
+
+/* Giá trị khai báo thẳng ở đây (không đặt trong :root) vì trùng tên với namespace của Tailwind.
+   "static" để biến luôn được sinh ra, dùng được cả dạng var(--radius-md). */
+@theme static {
+  --radius-*: initial;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+  --radius-round: 50%;
+
+  --shadow-*: initial;
+  --shadow-card: 0 4px 0 0 #ecdfc8, 0 10px 24px rgba(91, 66, 30, 0.08);
+  --shadow-raised: 0 6px 0 0 #e3d3b6, 0 16px 32px rgba(91, 66, 30, 0.12);
+  --shadow-dialog: 0 24px 64px rgba(43, 36, 64, 0.28);
+  --shadow-lip: 0 6px 0 0 rgba(20, 20, 60, 0.22);
+  --shadow-inset: inset 0 3px 0 rgba(91, 66, 30, 0.10);
+  --shadow-focus: 0 0 0 3px #ffffff, 0 0 0 6px #5b2ee8;
+
+  /* Họ chữ: biến --font-baloo / --font-nunito / --font-be-vietnam-pro do next/font đặt trên <html> (src/app/layout.tsx). */
+  --font-*: initial;
+  --font-display: var(--font-baloo), var(--font-nunito), system-ui, sans-serif;
+  --font-body: var(--font-nunito), var(--font-baloo), system-ui, sans-serif;
+  --font-thcs: var(--font-be-vietnam-pro), system-ui, sans-serif;
+
+  /* Thang chữ: text-<kiểu> đặt cỡ + dòng + đậm. Họ chữ đi kèm: font-display cho 7 kiểu đầu
+     (display-xl … button-l), font-body cho 6 kiểu sau (body-l … key), font-thcs cho thcs-*. */
+  --text-*: initial;
+  --text-display-xl: 56px;
+  --text-display-xl--line-height: 62px;
+  --text-display-xl--font-weight: 800;
+  --text-display-l: 40px;
+  --text-display-l--line-height: 48px;
+  --text-display-l--font-weight: 800;
+  --text-title: 28px;
+  --text-title--line-height: 36px;
+  --text-title--font-weight: 700;
+  --text-word-xl: 72px;
+  --text-word-xl--line-height: 80px;
+  --text-word-xl--font-weight: 800;
+  --text-word: 32px;
+  --text-word--line-height: 40px;
+  --text-word--font-weight: 700;
+  --text-stat: 24px;
+  --text-stat--line-height: 28px;
+  --text-stat--font-weight: 800;
+  --text-button-l: 24px;
+  --text-button-l--line-height: 28px;
+  --text-button-l--font-weight: 800;
+  --text-body-l: 22px;
+  --text-body-l--line-height: 30px;
+  --text-body-l--font-weight: 700;
+  --text-body: 18px;
+  --text-body--line-height: 26px;
+  --text-body--font-weight: 600;
+  --text-button: 20px;
+  --text-button--line-height: 24px;
+  --text-button--font-weight: 800;
+  --text-label: 16px;
+  --text-label--line-height: 20px;
+  --text-label--font-weight: 800;
+  --text-caption: 14px;
+  --text-caption--line-height: 18px;
+  --text-caption--font-weight: 700;
+  --text-key: 13px;
+  --text-key--line-height: 16px;
+  --text-key--font-weight: 800;
+  --text-thcs-title: 28px;
+  --text-thcs-title--line-height: 36px;
+  --text-thcs-title--font-weight: 700;
+  --text-thcs-body: 17px;
+  --text-thcs-body--line-height: 26px;
+  --text-thcs-body--font-weight: 500;
+}
+
+/* Tailwind không có namespace cho z-index, thời lượng và độ dày viền: khai báo class riêng. */
+@utility z-map {
+  z-index: var(--z-map);
+}
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-feedback {
+  z-index: var(--z-feedback);
+}
+@utility z-dialog {
+  z-index: var(--z-dialog);
+}
+@utility z-burst {
+  z-index: var(--z-burst);
+}
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+@utility duration-base {
+  transition-duration: var(--duration-base);
+}
+@utility duration-slide {
+  transition-duration: var(--duration-slide);
+}
+@utility duration-celebrate {
+  transition-duration: var(--duration-celebrate);
+}
+@utility border-thin {
+  border-width: var(--border-thin);
+}
+@utility border-thick {
+  border-width: var(--border-thick);
+}
+
+/* ---- Nền tảng ---- */
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}

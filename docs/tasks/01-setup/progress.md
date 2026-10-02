@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 |---|---|---|---|
 | 0 | Khởi tạo Next.js | ✅ | |
 | 1 | Kết nối MySQL | ✅ | Prisma 7.10 + adapter-mariadb |
-| 2 | Token và font | ⬜ | |
+| 2 | Token và font | ✅ | Trang thử: /dev-tokens |
 | 3 | Quy trình task | ⬜ | Script `tasks:dashboard` đã có trong package.json |
 
 ## Nhật ký
@@ -30,6 +30,19 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 02/10/2026
 - Việc cần làm thủ công: mở phpMyAdmin xác nhận bảng.
 - Lưu ý: `npm audit` báo 4 lỗi mức high ở các gói đã cài. Chưa xử lý (không chạy `audit fix --force` khi chưa hỏi).
 
+### Bước 2 — Token và font (02/10/2026)
+- Sinh `src/app/globals.css` từ `docs/DESIGN_SYSTEM.md` mục 13 (144 token) và `designs/components/bundle.css` dòng 9–18 (khối `data-level`), không chép tay. Cách ánh xạ sang Tailwind v4 ghi ở `decisions.md`.
+- `src/app/layout.tsx` nạp Baloo 2, Nunito, Be Vietnam Pro bằng `next/font/google`.
+- Tạo trang thử `src/app/dev-tokens/page.tsx`: 10 ô màu cấp (qua `data-level` + `bg-lv`) và 15 kiểu chữ.
+- Kiểm tra:
+  - Xem trang bằng ảnh chụp 1440 px: 10 màu cấp đúng, 15 kiểu chữ đúng họ chữ, có dấu tiếng Việt.
+  - CSS sinh ra có cỡ/dòng/đậm khớp bảng chữ (vd `display-xl` 56/62/800, `word-xl` 72/80/800, `key` 13/16/800, `thcs-body` 17/26/500).
+  - `grep` không có hex/px nào trong `src/` ngoài `globals.css`.
+  - `npx tsc --noEmit`, `npm run lint`, `npm run build` đều không lỗi. Bản production (`next start`): `/` trả 200, `/dev-tokens` trả 404.
+- Token thiếu: không có. Token chữ (14 kiểu) không nằm trong `:root` của DESIGN_SYSTEM nên khai báo trực tiếp trong `@theme static` theo bảng mục 3.
+- Việc cần làm thủ công: chạy `npm run dev`, mở `http://localhost:3000/dev-tokens` xem bằng mắt.
+- Lưu ý: `@utility border-thin|thick` áp viền cả 4 cạnh; một cạnh dùng `border-b-(length:--border-thin)`.
+
 ## Bước tiếp theo
 
-Bước 2 — Token và font: chuyển token từ `designs/tokens.json` vào `globals.css` + `@theme inline`, thêm khối `data-level`, nạp font Baloo 2 / Nunito / Be Vietnam Pro.
+Bước 3 — Quy trình task: sửa chữ "Covet" trong `scripts/tasks-dashboard.mjs` và `docs/prompts/dashboard.md`, tạo `progress.md`/`decisions.md` còn thiếu, xử lý cảnh báo dashboard (hiện 13) về 0.
