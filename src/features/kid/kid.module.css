@@ -1,0 +1,42 @@
+/* Khung màn của bé: thanh trên cùng + thân màn căn giữa, tối đa --size-content-max. */
+.screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+}
+.seaScreen {
+  composes: screen;
+  background: var(--bg-sea);
+}
+.body {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12) var(--space-8);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.settings {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+/* Màn nhỏ hơn 1440 thì lề hẹp lại; màn thấp thì bớt đệm đáy. */
+@media (max-width: 1400px) {
+  .body {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}
+@media (max-height: 800px) {
+  .body {
+    padding-bottom: var(--space-6);
+  }
+}

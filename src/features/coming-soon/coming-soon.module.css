@@ -1,0 +1,108 @@
+/* Màn "Sắp có" (Screen22): rồng Bông đang xây, khối chữ màu cấp xếp dần, lời nhắn ngắn, nút Về trang chủ. */
+.cs {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-12) var(--space-8);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: min(var(--space-4), 2vh);
+  text-align: center;
+}
+.site {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-6);
+}
+.mascot {
+  width: min(var(--size-soon-mascot), 34vh);
+  height: auto;
+}
+.blocks {
+  display: grid;
+  grid-template-columns: repeat(3, min(var(--size-soon-block), 8vh));
+  gap: var(--space-2);
+  align-items: end;
+  margin-bottom: var(--space-3);
+}
+.blocks i {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  background: var(--lv);
+  box-shadow: inset 0 calc(-1 * var(--lip-m)) 0 var(--lv-shade);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: 1;
+  font-weight: 800;
+  font-style: normal;
+  color: var(--on-lv);
+}
+.blocks i:not(.top) {
+  grid-row: 2;
+}
+.blocks i.top {
+  grid-row: 1;
+  grid-column: 2;
+  animation: drop 2.4s ease-in-out infinite;
+}
+@keyframes drop {
+  0%,
+  30% {
+    transform: translateY(calc(-1 * var(--space-10)));
+    opacity: 0;
+  }
+  55%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--level-1-soft);
+  color: var(--level-1-ink);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.text {
+  max-width: var(--size-soon-text);
+  margin: 0;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+}
+
+@media (max-width: 1400px) {
+  .cs {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blocks i.top {
+    animation: none;
+  }
+}

@@ -292,6 +292,27 @@
   --size-feedback-mascot: 112px;
   --feedback-mascot-lift: 64px;
 
+  /* Trang chủ của bé (Screen04) và màn "Sắp có" (Screen22). */
+  --size-home-side-l: 440px;
+  --size-home-side-r: 360px;
+  --size-home-side-l-s: 420px;
+  --size-home-side-r-s: 330px;
+  --size-task-icon: 72px;
+  --size-task-pic: 60px;
+  --size-mini-pic: 32px;
+  --mini-pic-overlap: 6px;
+  --size-isle-h: 150px;
+  --size-nav-h: 128px;
+  --size-nav-icon: 80px;
+  --size-mascot-home: 320px;
+  --size-mascot-state: 120px;
+  --shadow-tile: 0 8px 0 var(--line), 0 14px 28px rgba(91, 66, 30, 0.08);
+  --shadow-tile-hover: 0 11px 0 var(--line), 0 18px 32px rgba(91, 66, 30, 0.1);
+  --shadow-tile-active: 0 2px 0 var(--line);
+  --size-soon-mascot: 280px;
+  --size-soon-text: 560px;
+  --size-soon-block: 64px;
+
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;
   --dragon-hop: 16px;

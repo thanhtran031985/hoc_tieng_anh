@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { addDays, dateOnly, diffDays, weekStart } from "./dates.ts";
+import { addDays, dateOnly, dayStartInstant, diffDays, weekStart } from "./dates.ts";
 import { freezesAvailable, recordStudyDay, streakForDisplay, type StreakState } from "./streak.ts";
 
 // Tháng 10/2026: 28/9 là thứ Hai, 2/10 là thứ Sáu, 4/10 là Chủ nhật, 5/10 là thứ Hai.
@@ -12,6 +12,11 @@ describe("dates", () => {
   it("dateOnly lấy ngày lịch ở múi giờ Việt Nam", () => {
     assert.equal(iso(dateOnly(new Date("2026-10-01T18:30:00Z"))), "2026-10-02");
     assert.equal(iso(dateOnly(new Date("2026-10-01T16:59:00Z"))), "2026-10-01");
+  });
+
+  it("dayStartInstant là 00:00 giờ Việt Nam của ngày đó (17:00 UTC hôm trước)", () => {
+    assert.equal(dayStartInstant(d("2026-10-02")).toISOString(), "2026-10-01T17:00:00.000Z");
+    assert.equal(dayStartInstant(d("2026-10-02"), "UTC").toISOString(), "2026-10-02T00:00:00.000Z");
   });
 
   it("weekStart là thứ Hai; diffDays và addDays khớp nhau", () => {

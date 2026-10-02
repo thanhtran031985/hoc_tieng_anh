@@ -24,3 +24,16 @@
 ### 02/10/2026 — Màn "Sắp có" cho các nút chưa làm
 - Một component `ComingSoon` dùng chung; route mỏng `/collection`, `/room`, `/notebook`, `/review`, `/lesson/[lessonId]` để không có nút nào dẫn tới 404. Task 07/08 thay các route này bằng màn thật.
 - Thêm biểu cảm `tiec` và `xaydung` cho `Mascot` (cùng thành phần MascotMore); `tiec` chưa dùng ở task này.
+
+### 02/10/2026 — Nhiệm vụ hôm nay và các số trên trang chủ
+- "Nhiệm vụ hôm nay X/Y": nhiệm vụ Ôn tập có khi còn thẻ đến hạn hoặc hôm nay đã ôn; xong khi hết thẻ đến hạn và hôm nay có ôn (đọc `answer_logs` nguồn `review`). Nhiệm vụ bài học có khi còn bài tiếp theo hoặc hôm nay đã xong bài (đọc `lesson_attempts.finishedAt`). Hai bảng này chỉ được ghi từ task 07/08.
+- Bé mới (chưa xong bài nào, không có thẻ ôn): chỉ hiện "Bài đầu tiên!" + lời nhắn, không có dòng Ôn tập và không có bộ đếm.
+- "Hôm nay: X/Y phút": X là tổng `study_sessions.minutes` từ 00:00 giờ Việt Nam; Y là `settings.dailyGoalMinutes` (mặc định 10).
+- Hình mẫu trên dòng Ôn tập chỉ lấy từ đã có hình (không hiện khung trống).
+- Nhãn "Sổ từ": số thẻ ôn tập của bé ("N từ đã học"); task 08 có thể đổi cách đếm.
+
+### 02/10/2026 — Khác với thiết kế (Screen04)
+- Thẻ cấp: hòn đảo dùng hình của màn tổng quan (`LevelArt`, cây theo từng cấp), vì thiết kế chỉ vẽ mầm cho cấp 1 trong khi màn tổng quan vẽ hạt giống cho cấp 1; dùng một bộ hình cho mọi cấp.
+- Nút Cài đặt (bánh răng) mở hộp thoại có "Đổi bé" và "Đăng xuất" (giữ chức năng của trang giữ chỗ cũ); khu vực bố mẹ vào qua cổng PIN ở màn chọn hồ sơ, sẽ thêm lối vào ở task 11.
+- Cấp đã xong hết hoặc chưa có nội dung: thẻ "Bài tiếp theo" đổi thành "Bé đã xong cấp này!" / "Cấp N sắp có" kèm nút "Xem các cấp" (Enter).
+- Thêm `shortcut` cho `ButtonLink` để hiện nhãn phím Enter trên nút điều hướng.
