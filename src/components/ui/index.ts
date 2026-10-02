@@ -18,3 +18,5 @@ export { DataState, type DataStateProps } from "./DataStates/DataState";
 export { Dialog, type DialogAction, type DialogProps } from "./Dialog/Dialog";
 export { FeedbackBar, type FeedbackBarProps } from "./FeedbackBar/FeedbackBar";
 export { Skeleton, type SkeletonProps, type SkeletonRadius } from "./Skeleton/Skeleton";
+export { Bubble, type BubbleProps } from "./Bubble/Bubble";
+export { TextField, type TextFieldProps } from "./TextField/TextField";

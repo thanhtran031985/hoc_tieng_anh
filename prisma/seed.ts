@@ -1,7 +1,8 @@
-// Nạp khung lộ trình: 4 chặng và 10 cấp (PRD Phần A1). Chạy: npx prisma db seed
+// Nạp khung lộ trình (4 chặng, 10 cấp; PRD Phần A1) và tài khoản quản trị từ ADMIN_EMAIL, ADMIN_PASSWORD. Chạy: npx prisma db seed
 // Chạy lại bao nhiêu lần cũng được: dùng upsert theo khóa duy nhất (stages.name, levels.number) và ghi đè về bản gốc.
 // Node chạy trực tiếp file TypeScript này (không cần công cụ build), nên dùng đường dẫn tương đối có đuôi .ts.
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import bcrypt from "bcryptjs";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
 
 try {
@@ -98,6 +99,30 @@ const LEVELS: { number: number; stage: StageName; name: string; cefr: string; de
 
 const db = new PrismaClient({ adapter: new PrismaMariaDb(process.env.DATABASE_URL!) });
 
+const MIN_ADMIN_PASSWORD = 8;
+
+/** Tài khoản quản trị từ .env. Chạy lại không đổi mật khẩu của tài khoản đã có; chỉ bảo đảm vai trò admin. */
+async function seedAdmin() {
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) {
+    console.log("Bỏ qua tài khoản quản trị: chưa đặt ADMIN_EMAIL, ADMIN_PASSWORD trong .env.");
+    return;
+  }
+  if (password.length < MIN_ADMIN_PASSWORD) {
+    console.warn(`Bỏ qua tài khoản quản trị: ADMIN_PASSWORD cần ít nhất ${MIN_ADMIN_PASSWORD} ký tự.`);
+    return;
+  }
+  const existing = await db.user.findUnique({ where: { email } });
+  if (!existing) {
+    await db.user.create({ data: { name: "Quản trị viên", email, password: await bcrypt.hash(password, 12), role: "admin" } });
+    console.log("Đã tạo tài khoản quản trị.");
+  } else if (existing.role !== "admin") {
+    await db.user.update({ where: { id: existing.id }, data: { role: "admin" } });
+    console.log("Đã cấp vai trò quản trị cho tài khoản có sẵn.");
+  }
+}
+
 async function main() {
   const stageIds = new Map<string, number>();
   for (const stage of STAGES) {
@@ -118,6 +143,7 @@ async function main() {
   }
 
   const [stages, levels] = await Promise.all([db.stage.count(), db.level.count()]);
+  await seedAdmin();
   console.log(`Seed xong: ${stages} chặng, ${levels} cấp.`);
 }
 

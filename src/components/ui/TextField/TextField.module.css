@@ -1,0 +1,84 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.label {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+  color: var(--ink);
+}
+.control {
+  position: relative;
+}
+.input {
+  height: var(--size-input);
+  border-radius: var(--radius-md);
+  border: var(--border-thin) solid var(--line-strong);
+  background: var(--surface);
+  padding: 0 var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  color: var(--ink);
+  box-sizing: border-box;
+  width: 100%;
+  transition:
+    box-shadow var(--duration-base),
+    border-color var(--duration-base);
+}
+.input::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+.input:focus {
+  border-color: var(--focus);
+}
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.invalid {
+  border-color: var(--retry-shade);
+  background: var(--retry-soft);
+}
+.withAdornment {
+  padding-right: calc(var(--size-iconbtn-inline) + 2 * var(--iconbtn-inset));
+}
+.adornment {
+  position: absolute;
+  right: var(--iconbtn-inset);
+  top: var(--iconbtn-inset);
+}
+/* Nút icon nằm trong ô nhỏ hơn nút thường và phẳng. */
+.adornment > button,
+.adornment > button:hover,
+.adornment > button:active {
+  width: var(--size-iconbtn-inline);
+  height: var(--size-iconbtn-inline);
+  box-shadow: none;
+}
+.hint {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.hintError {
+  color: var(--retry-shade);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input {
+    transition-duration: 1ms !important;
+  }
+}

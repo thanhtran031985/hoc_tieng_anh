@@ -169,6 +169,17 @@
   --size-state-text: 560px;
   --dialog-mascot-lift: 110px;
   --size-feedback-min-h: 132px;
+  --size-input: 56px;
+  --size-iconbtn-inline: 44px;
+  --iconbtn-inset: 6px;
+  --size-bubble-max: 420px;
+  --bubble-tail: 22px;
+  --bubble-tail-offset: 9px;
+  --bubble-tail-inset: 48px;
+  --size-auth-card: 480px;
+  --size-mascot-hero: 340px;
+  --hill-rim: 14px;
+  --size-spinner: 22px;
   --size-feedback-mascot: 112px;
   --feedback-mascot-lift: 64px;
 

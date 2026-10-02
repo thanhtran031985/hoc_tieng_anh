@@ -1,0 +1,33 @@
+.bubble {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  max-width: var(--size-bubble-max);
+  font-family: var(--font-body);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  width: var(--bubble-tail);
+  height: var(--bubble-tail);
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: var(--lip-s);
+  bottom: calc(-1 * var(--bubble-tail-offset));
+  left: var(--bubble-tail-inset);
+}
+.right::after {
+  left: auto;
+  right: var(--bubble-tail-inset);
+}
+.side::after {
+  bottom: auto;
+  top: 40%;
+  left: calc(-1 * var(--bubble-tail-offset));
+}
