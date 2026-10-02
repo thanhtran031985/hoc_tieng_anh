@@ -1,9 +1,10 @@
-// Nạp khung lộ trình (4 chặng, 10 cấp; PRD Phần A1) và tài khoản quản trị từ ADMIN_EMAIL, ADMIN_PASSWORD. Chạy: npx prisma db seed
+// Nạp khung lộ trình (4 chặng, 10 cấp; PRD Phần A1), khung chương trình (chủ đề từng cấp, prisma/seed/curriculum) và tài khoản quản trị từ ADMIN_EMAIL, ADMIN_PASSWORD. Chạy: npx prisma db seed
 // Chạy lại bao nhiêu lần cũng được: dùng upsert theo khóa duy nhất (stages.name, levels.number) và ghi đè về bản gốc.
 // Node chạy trực tiếp file TypeScript này (không cần công cụ build), nên dùng đường dẫn tương đối có đuôi .ts.
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
+import { seedCurriculum } from "./seed/curriculum.ts";
 
 try {
   process.loadEnvFile(".env");
@@ -142,9 +143,11 @@ async function main() {
     await db.level.upsert({ where: { number: level.number }, create: { number: level.number, ...fields }, update: fields });
   }
 
-  const [stages, levels] = await Promise.all([db.stage.count(), db.level.count()]);
+  await seedCurriculum(db);
+
+  const [stages, levels, units] = await Promise.all([db.stage.count(), db.level.count(), db.unit.count()]);
   await seedAdmin();
-  console.log(`Seed xong: ${stages} chặng, ${levels} cấp.`);
+  console.log(`Seed xong: ${stages} chặng, ${levels} cấp, ${units} chủ đề.`);
 }
 
 main()

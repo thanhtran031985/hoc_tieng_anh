@@ -1,0 +1,18 @@
+[
+  { "slug": "hello-me", "title": "Hello and me", "title_vi": "Xin chào và bản thân", "source": "Cambridge Starters",
+    "target_words": ["hello", "hi", "goodbye", "name", "boy", "girl", "friend", "teacher", "student", "yes", "no", "please", "thanks", "sorry"] },
+  { "slug": "numbers-1-20", "title": "Numbers 1–20", "title_vi": "Số 1–20", "source": "Cambridge Starters",
+    "target_words": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"] },
+  { "slug": "colours", "title": "Colours", "title_vi": "Màu sắc", "source": "Cambridge Starters",
+    "target_words": ["red", "blue", "yellow", "green", "pink", "purple", "brown", "black", "white", "grey", "colour", "rainbow"] },
+  { "slug": "my-family", "title": "My family", "title_vi": "Gia đình em", "source": "Cambridge Starters",
+    "target_words": ["family", "mother", "father", "mum", "dad", "brother", "sister", "grandmother", "grandfather", "grandma", "grandpa", "baby", "man", "woman", "aunt", "uncle"] },
+  { "slug": "animals", "title": "Animals", "title_vi": "Con vật", "source": "Cambridge Starters",
+    "target_words": ["cat", "dog", "fish", "bird", "duck", "rabbit", "mouse", "horse", "cow", "pig", "sheep", "goat", "chicken", "hen", "frog", "turtle", "spider", "bee", "butterfly", "ant", "snail", "bear", "monkey", "elephant", "lion", "tiger", "snake", "giraffe", "crocodile", "parrot"] },
+  { "slug": "fruit", "title": "Fruit", "title_vi": "Trái cây", "source": "Cambridge Starters",
+    "target_words": ["apple", "banana", "grapes", "orange", "pear", "strawberry", "lemon", "mango", "pineapple", "watermelon", "peach", "cherry", "coconut", "plum", "melon", "lime", "fruit", "berry"] },
+  { "slug": "toys", "title": "Toys", "title_vi": "Đồ chơi", "source": "Cambridge Starters",
+    "target_words": ["toy", "ball", "kite", "teddy", "doll", "car", "train", "bike", "robot", "puzzle", "game", "balloon", "drum", "boat", "plane", "block"] },
+  { "slug": "my-room", "title": "My room", "title_vi": "Phòng của em", "source": "Cambridge Starters",
+    "target_words": ["room", "bed", "chair", "table", "desk", "door", "window", "lamp", "clock", "book", "bag", "picture", "shelf", "floor", "wall", "mirror", "box", "pillow", "blanket", "television", "phone", "computer", "radio", "sofa"] }
+]

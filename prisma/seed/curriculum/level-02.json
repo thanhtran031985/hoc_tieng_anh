@@ -1,0 +1,18 @@
+[
+  { "slug": "school-things", "title": "School things", "title_vi": "Đồ dùng học tập", "source": "Cambridge Starters",
+    "target_words": ["school", "classroom", "pen", "pencil", "ruler", "rubber", "crayon", "paint", "paper", "notebook", "scissors", "glue", "board", "pencil case", "schoolbag", "page", "letter", "word", "number", "lesson", "homework", "class"] },
+  { "slug": "food-drink", "title": "Food and drink", "title_vi": "Đồ ăn, thức uống", "source": "Cambridge Starters",
+    "target_words": ["food", "drink", "water", "milk", "juice", "tea", "coffee", "bread", "rice", "egg", "cake", "biscuit", "sandwich", "pizza", "burger", "chips", "sausage", "meat", "soup", "salad", "cheese", "butter", "sweet", "chocolate", "ice cream", "jam", "carrot", "potato", "tomato", "onion", "bean", "pea"] },
+  { "slug": "body-face", "title": "Body and face", "title_vi": "Cơ thể và khuôn mặt", "source": "Cambridge Starters",
+    "target_words": ["body", "head", "face", "hair", "eye", "ear", "nose", "mouth", "tooth", "neck", "shoulder", "arm", "hand", "finger", "leg", "knee", "foot", "toe", "tummy", "back", "tongue", "cheek", "thumb", "chin", "elbow", "heart"] },
+  { "slug": "clothes", "title": "Clothes", "title_vi": "Quần áo", "source": "Cambridge Starters",
+    "target_words": ["clothes", "shirt", "t-shirt", "dress", "skirt", "trousers", "jeans", "shorts", "jacket", "coat", "jumper", "sock", "shoe", "boot", "hat", "cap", "scarf", "glove", "pyjamas", "uniform", "glasses", "pocket"] },
+  { "slug": "actions", "title": "Actions", "title_vi": "Hành động", "source": "Cambridge Starters",
+    "target_words": ["run", "jump", "walk", "swim", "fly", "climb", "sit", "stand", "read", "write", "draw", "sing", "dance", "play", "eat", "sleep", "wash", "clap", "throw", "catch", "kick", "open", "close", "look", "listen", "point", "stop", "go"] },
+  { "slug": "house-rooms", "title": "House and rooms", "title_vi": "Ngôi nhà", "source": "Cambridge Starters",
+    "target_words": ["house", "home", "kitchen", "bathroom", "bedroom", "living room", "garden", "garage", "stairs", "roof", "bath", "shower", "toilet", "fridge", "cooker", "cupboard", "carpet", "curtain", "key", "towel", "soap", "flat"] },
+  { "slug": "wild-animals", "title": "Wild animals", "title_vi": "Thú rừng", "source": "Cambridge Starters",
+    "target_words": ["zebra", "hippo", "kangaroo", "panda", "wolf", "fox", "deer", "camel", "gorilla", "dolphin", "whale", "shark", "octopus", "penguin", "owl", "eagle", "squirrel", "bat", "crab", "seal"] },
+  { "slug": "describing-places", "title": "Describing words and places", "title_vi": "Từ miêu tả và vị trí", "source": "Cambridge Starters",
+    "target_words": ["big", "small", "tall", "short", "long", "happy", "sad", "hot", "cold", "new", "old", "good", "bad", "fast", "slow", "in", "on", "under", "behind", "next to", "between", "here", "there", "where", "what", "who", "how many", "which"] }
+]
