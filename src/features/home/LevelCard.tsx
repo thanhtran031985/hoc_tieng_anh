@@ -40,7 +40,7 @@ export function LevelCard({ data }: { data: HomeData | null }) {
         </span>
         <div className={styles.goalText}>
           <div className={styles.label}>
-            Hôm nay: {studyToday.minutes}/{studyToday.goalMinutes} phút
+            Hôm nay: {studyToday.minutes}/{studyToday.goalMinutes} phút{studyToday.remainingMinutes !== null && ` · còn ${studyToday.remainingMinutes} phút`}
           </div>
           <ProgressBar className={styles.goalBar} size="s" value={studyToday.minutes} max={studyToday.goalMinutes} label="Phút học hôm nay" />
         </div>

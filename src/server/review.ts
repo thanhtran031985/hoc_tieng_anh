@@ -177,7 +177,8 @@ export async function completeReview(userId: number, learnerId: number, input: u
         lastStudyDate: streak.lastStudyDate,
       },
     });
-    await tx.studySession.create({ data: { learnerId, startedAt, endedAt: now, minutes } });
+    // Dòng đánh dấu phiên ôn (chống ghi đôi theo `startedAt`); phút học do StudyClock ghi từng phút nên ở đây là 0.
+    await tx.studySession.create({ data: { learnerId, startedAt, endedAt: now, minutes: 0 } });
   });
 
   return { ...reward, total: results.length, minutes, up: moves.filter((m) => m.to > m.from), back: moves.filter((m) => m.to <= m.from).length };

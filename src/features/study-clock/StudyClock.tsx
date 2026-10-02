@@ -1,0 +1,140 @@
+"use client";
+
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import type { StudyStatus } from "@/server/study-time";
+import { getStudyStatusAction, recordStudyMinuteAction } from "./actions";
+
+// Đồng hồ giờ học của bé. Đếm từng giây khi tab đang hiện và bé vừa thao tác trong 60 giây gần nhất; đủ 60 giây thì gửi một nhịp,
+// server ghi một phút học (study_sessions). Phần lẻ giữ trong localStorage để đổi trang không bị mất.
+// Hết giờ thì chuyển về /time-up; riêng khi bé đang trong bài (bài học, ôn tập, xếp lớp) chỉ đặt cờ `exhausted`
+// để trình chơi cho bé làm nốt câu đang dở rồi mới chuyển (xem `useTimeUpRedirect`).
+
+const IDLE_MS = 60 * 1000;
+const SECONDS_PER_MINUTE = 60;
+const PERSIST_EVERY_SECONDS = 5;
+const FLOW_PREFIXES = ["/lesson", "/review", "/placement"];
+const NO_CLOCK_PREFIXES = ["/profiles", "/time-up"];
+
+const startsWith = (path: string, prefixes: readonly string[]) => prefixes.some((p) => path === p || path.startsWith(`${p}/`));
+const storageKey = (learnerId: number) => `edu:clock:${learnerId}`;
+
+function readSeconds(learnerId: number): number {
+  try {
+    const value = Number(window.localStorage.getItem(storageKey(learnerId)));
+    return Number.isFinite(value) && value > 0 && value < SECONDS_PER_MINUTE ? Math.trunc(value) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function writeSeconds(learnerId: number, seconds: number): void {
+  try {
+    window.localStorage.setItem(storageKey(learnerId), String(seconds));
+  } catch {
+    // Không lưu được thì thôi, chỉ mất phần lẻ dưới 1 phút.
+  }
+}
+
+const ClockContext = createContext({ exhausted: false });
+
+/** Bé đã hết giờ học hôm nay (trình chơi dùng để chuyển sang /time-up sau khi xong câu hiện tại). */
+export const useStudyClock = () => useContext(ClockContext);
+
+/** Trình chơi gọi khi bé vừa xong một câu/bước (`step` đổi): hết giờ thì chuyển sang màn Hết giờ học. */
+export function useTimeUpRedirect(step: unknown): void {
+  const { exhausted } = useStudyClock();
+  const router = useRouter();
+  const first = useRef(true);
+  useEffect(() => {
+    // Lần đầu vào bài không chuyển (bài do server chặn nếu đã hết giờ); chỉ chuyển khi bé vừa xong một bước.
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    if (exhausted) router.replace("/time-up");
+  }, [step, exhausted, router]);
+}
+
+export function StudyClock({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [status, setStatus] = useState<StudyStatus | null>(null);
+  const pathRef = useRef(pathname);
+  const lastInput = useRef(0);
+  const seconds = useRef(0);
+  const learnerRef = useRef<number | null>(null);
+  const sending = useRef(false);
+  const stopped = startsWith(pathname, NO_CLOCK_PREFIXES);
+
+  useEffect(() => {
+    pathRef.current = pathname;
+  }, [pathname]);
+
+  const apply = useCallback(
+    (next: StudyStatus | null) => {
+      setStatus(next);
+      if (!next) {
+        learnerRef.current = null;
+        return;
+      }
+      if (learnerRef.current !== next.learnerId) {
+        learnerRef.current = next.learnerId;
+        seconds.current = readSeconds(next.learnerId);
+      }
+      if (next.exhausted && !startsWith(pathRef.current, FLOW_PREFIXES) && !startsWith(pathRef.current, NO_CLOCK_PREFIXES)) router.replace("/time-up");
+    },
+    [router],
+  );
+
+  // Ghi nhận bé còn thao tác.
+  useEffect(() => {
+    const touch = () => {
+      lastInput.current = Date.now();
+    };
+    touch();
+    const events = ["pointerdown", "pointermove", "keydown", "wheel", "touchstart"] as const;
+    events.forEach((name) => window.addEventListener(name, touch, { passive: true }));
+    return () => events.forEach((name) => window.removeEventListener(name, touch));
+  }, []);
+
+  // Mỗi lần đổi trang (có thể đã đổi hồ sơ) lấy lại giờ học từ server.
+  useEffect(() => {
+    if (stopped) return;
+    let cancelled = false;
+    void getStudyStatusAction().then((next) => {
+      if (!cancelled) apply(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname, stopped, apply]);
+
+  // Đếm giây học; đủ một phút thì gửi nhịp.
+  useEffect(() => {
+    if (stopped) return;
+    const timer = window.setInterval(() => {
+      const learnerId = learnerRef.current;
+      if (learnerId === null || document.visibilityState !== "visible" || Date.now() - lastInput.current > IDLE_MS) return;
+      seconds.current += 1;
+      if (seconds.current % PERSIST_EVERY_SECONDS === 0) writeSeconds(learnerId, seconds.current);
+      if (seconds.current >= SECONDS_PER_MINUTE && !sending.current) {
+        seconds.current -= SECONDS_PER_MINUTE;
+        writeSeconds(learnerId, seconds.current);
+        sending.current = true;
+        void recordStudyMinuteAction()
+          .then((next) => apply(next))
+          .finally(() => {
+            sending.current = false;
+          });
+      }
+    }, 1000);
+    return () => {
+      window.clearInterval(timer);
+      if (learnerRef.current !== null) writeSeconds(learnerRef.current, seconds.current);
+    };
+  }, [stopped, apply]);
+
+  const value = useMemo(() => ({ exhausted: status?.exhausted ?? false }), [status?.exhausted]);
+  return <ClockContext.Provider value={value}>{children}</ClockContext.Provider>;
+}

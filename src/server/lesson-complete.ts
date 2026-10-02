@@ -116,7 +116,6 @@ export async function completeLesson(userId: number, learnerId: number, input: u
         update: fields,
       });
     }
-    await tx.studySession.create({ data: { learnerId, startedAt, endedAt: now, minutes } });
   });
 
   return { stars, coins: reward.coins, xp: reward.xp, correct, total: scored.length, minutes, nextLessonId: await nextLessonIdFor(learnerId, levelId) };

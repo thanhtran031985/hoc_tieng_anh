@@ -1,5 +1,6 @@
 import { computeLessonStates, findNextLesson, summarizeUnits, type MapLesson } from "@/lib/rules/unlock";
 import { dayStartInstant, today } from "@/lib/rules/dates";
+import { studyAllowance } from "@/lib/rules/study-time";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { dueCardWhere } from "./review";
@@ -37,8 +38,8 @@ export type HomeData = {
   levelProgress: { done: number; total: number };
   /** Số từ bé đã học (có thẻ ôn tập). */
   learnedWords: number;
-  /** Phút đã học hôm nay so với mục tiêu ngày. */
-  studyToday: { minutes: number; goalMinutes: number };
+  /** Phút đã học hôm nay so với giới hạn bố mẹ đặt (không có thì mục tiêu ngày); `remainingMinutes` null là không giới hạn. */
+  studyToday: { minutes: number; goalMinutes: number; remainingMinutes: number | null };
   /** Nhiệm vụ hôm nay: số đã xong / tổng. */
   missions: { done: number; total: number };
 };
@@ -114,6 +115,8 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
     };
   }
 
+  const usedMinutes = minutes._sum.minutes ?? 0;
+  const allowance = studyAllowance(learner.settings.dailyLimitMinutes, learner.settings.bonus, day.toISOString().slice(0, 10), usedMinutes);
   const totalLessons = summaries.reduce((sum, s) => sum + s.lessonCount, 0);
   const doneLessons = summaries.reduce((sum, s) => sum + s.doneCount, 0);
 
@@ -134,7 +137,7 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
     next,
     levelProgress: { done: doneLessons, total: totalLessons },
     learnedWords,
-    studyToday: { minutes: minutes._sum.minutes ?? 0, goalMinutes: learner.settings.dailyGoalMinutes },
+    studyToday: { minutes: usedMinutes, goalMinutes: allowance.total ?? learner.settings.dailyGoalMinutes, remainingMinutes: allowance.remaining },
     missions,
   };
 }

@@ -15,12 +15,20 @@ export const voiceSettingsSchema = z.object({
   speed: z.enum(["normal", "slow"]).default("normal"),
 });
 
+/** Phút bố mẹ thêm cho bé hôm nay (yyyy-mm-dd); sang ngày mới thì hết hiệu lực. */
+export const studyBonusSchema = z.object({
+  date: z.string().regex(/^d{4}-d{2}-d{2}$/),
+  minutes: z.number().int().min(0).max(240),
+});
+
 export const learnerSettingsSchema = z.object({
   /** Giới hạn phút học mỗi ngày; null là không giới hạn. */
   dailyLimitMinutes: z.number().int().min(5).max(240).nullable().default(null),
   /** Khung giờ được học trong ngày; null là mọi giờ. */
   studyWindow: studyWindowSchema.nullable().default(null),
   voice: voiceSettingsSchema.prefault({}),
+  /** Phút thêm sau khi bố mẹ nhập PIN ở màn Hết giờ học. */
+  bonus: studyBonusSchema.nullable().default(null),
   soundOn: z.boolean().default(true),
   /** Mục tiêu phút học mỗi ngày (THCS chọn 10, 20 hoặc 30). */
   dailyGoalMinutes: z.union([z.literal(10), z.literal(20), z.literal(30)]).default(10),
