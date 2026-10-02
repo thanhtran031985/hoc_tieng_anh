@@ -387,6 +387,13 @@
   --size-fact-icon: 48px;
   --size-fact-icon-s: 40px;
   --size-done-dragon: 220px;
+  --size-timeup-dragon: 340px;
+  --size-cloudbed-w: 480px;
+  --size-cloudbed-h: 130px;
+  --size-moon: 120px;
+  --size-sky-dot: 6px;
+  --size-sky-dot-l: 9px;
+  --size-chip-icon: 32px;
 
   /* Biên độ chuyển động của rồng Bông (nhún, nhảy, thở, bay lơ lửng). */
   --dragon-bob: 6px;

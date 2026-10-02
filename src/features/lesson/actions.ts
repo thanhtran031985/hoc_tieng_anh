@@ -15,7 +15,7 @@ export type CompleteLessonResult = { ok: true; completion: LessonCompletion } | 
  */
 export async function completeLessonAction(input: unknown): Promise<CompleteLessonResult> {
   const user = await requireUser();
-  const learner = await requireActiveLearner();
+  const learner = await requireActiveLearner({ allowTimeUp: true });
   const parsed = completeLessonInputSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: "Kết quả bài học chưa hợp lệ." };
   try {

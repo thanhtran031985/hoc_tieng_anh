@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "./session";
 import { getLearner, type Learner } from "./learners";
 import { LEARNER_COOKIE } from "./cookies";
+import { getStudyStatusFor } from "./study-time";
 import { signValue, verifyValue } from "./signed-cookie";
 
 // Hồ sơ đang chọn lưu trong cookie httpOnly có ký: "<userId>.<learnerId>" + chữ ký HMAC.
@@ -36,9 +37,13 @@ export async function getActiveLearner(): Promise<Learner | null> {
   return getLearner(user.id, Number(match[2]));
 }
 
-/** Dùng ở đầu mọi trang của bé: chưa chọn hồ sơ thì về màn chọn hồ sơ. */
-export async function requireActiveLearner(): Promise<Learner> {
+/**
+ * Dùng ở đầu mọi trang của bé: chưa chọn hồ sơ thì về màn chọn hồ sơ; đã hết giờ học hôm nay thì về màn Hết giờ học.
+ * Server action ghi kết quả học và chính màn Hết giờ học truyền `allowTimeUp` để không bao giờ làm mất kết quả bé vừa làm.
+ */
+export async function requireActiveLearner(options: { allowTimeUp?: boolean } = {}): Promise<Learner> {
   const learner = await getActiveLearner();
   if (!learner) redirect("/profiles");
+  if (!options.allowTimeUp && (await getStudyStatusFor(learner)).exhausted) redirect("/time-up");
   return learner;
 }

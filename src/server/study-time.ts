@@ -1,7 +1,9 @@
 import { dayStartInstant, today } from "@/lib/rules/dates";
-import { studyAllowance } from "@/lib/rules/study-time";
+import { learnerSettingsSchema } from "@/lib/schemas";
+import { grantBonus, studyAllowance } from "@/lib/rules/study-time";
 import { db } from "./db";
 import { requireLearner, type Learner } from "./learners";
+import { checkParentSecret } from "./parent-secret";
 
 // Giờ học trong ngày của một hồ sơ: số phút đã học (cộng từ `study_sessions`), giới hạn bố mẹ đặt và phút thêm.
 // Mọi hàm nhận hồ sơ qua `requireLearner` (hoặc hồ sơ đã kiểm quyền) nên chỉ đọc/ghi được hồ sơ thuộc tài khoản đang đăng nhập.
@@ -59,4 +61,42 @@ export async function recordStudyMinute(userId: number, learnerId: number): Prom
     await db.studySession.create({ data: { learnerId, startedAt: new Date(now.getTime() - 60 * 1000), endedAt: now, minutes: 1 } });
   }
   return getStudyStatusFor(learner);
+}
+
+export type TimeUpSummary = {
+  /** Phút đã học hôm nay. */
+  minutes: number;
+  /** Sao nhận được từ các bài học xong hôm nay. */
+  stars: number;
+  /** Số từ khác nhau bé đã học (có trong nhật ký bài học) hôm nay. */
+  newWords: number;
+};
+
+/** Tóm tắt buổi học hôm nay cho màn Hết giờ học. */
+export async function getTimeUpSummary(userId: number, learnerId: number): Promise<TimeUpSummary> {
+  await requireLearner(userId, learnerId);
+  const dayStart = dayStartInstant(today());
+  const [minutes, stars, words] = await Promise.all([
+    usedMinutesToday(learnerId),
+    db.lessonAttempt.aggregate({ where: { learnerId, finishedAt: { gte: dayStart } }, _sum: { stars: true } }),
+    db.answerLog.findMany({ where: { learnerId, source: "lesson", createdAt: { gte: dayStart }, wordId: { not: null } }, distinct: ["wordId"], select: { wordId: true } }),
+  ]);
+  return { minutes, stars: stars._sum.stars ?? 0, newWords: words.length };
+}
+
+export type AddTimeResult = { ok: true } | { ok: false; message: string };
+
+/**
+ * Bố mẹ thêm 10 phút học cho hôm nay sau khi nhập đúng PIN hoặc mật khẩu. Luôn còn ít nhất 10 phút
+ * (kể cả khi bé đã học quá giới hạn vì làm nốt câu đang dở).
+ */
+export async function addBonusMinutes(userId: number, learnerId: number, secret: unknown): Promise<AddTimeResult> {
+  const learner = await requireLearner(userId, learnerId);
+  const checked = await checkParentSecret(userId, secret);
+  if (!checked.ok) return checked;
+  const used = await usedMinutesToday(learnerId);
+  const bonus = grantBonus(learner.settings.dailyLimitMinutes, learner.settings.bonus, dayKey(), used);
+  const settings = learnerSettingsSchema.parse({ ...learner.settings, bonus });
+  await db.learner.update({ where: { id: learnerId }, data: { settings } });
+  return { ok: true };
 }

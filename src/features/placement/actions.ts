@@ -13,7 +13,7 @@ export type ApplyLevelResult = { ok: true } | { ok: false; message: string };
 /** Ghi kết quả bài xếp lớp của hồ sơ đang chọn và trả cấp đề xuất. Lỗi trả lời nhẹ nhàng để màn kết quả cho Thử lại. */
 export async function completePlacementAction(input: unknown): Promise<CompletePlacementResult> {
   const user = await requireUser();
-  const learner = await requireActiveLearner();
+  const learner = await requireActiveLearner({ allowTimeUp: true });
   const parsed = completePlacementInputSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: "Kết quả bài xếp lớp chưa hợp lệ." };
   try {
@@ -27,7 +27,7 @@ export async function completePlacementAction(input: unknown): Promise<CompleteP
 /** Đặt cấp bắt đầu (từ kết quả, hoặc "Bỏ qua, bắt đầu theo lớp"). */
 export async function applyStartLevelAction(input: unknown): Promise<ApplyLevelResult> {
   const user = await requireUser();
-  const learner = await requireActiveLearner();
+  const learner = await requireActiveLearner({ allowTimeUp: true });
   const parsed = applyStartLevelInputSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: "Cấp này chưa hợp lệ." };
   try {

@@ -10,6 +10,7 @@ import type { PlayStep } from "@/lib/rules/lesson-play";
 import { baseId, completeStep, createSession, currentStepId, isFinished, progressOf, scoredItems, type ItemResult, type Session } from "@/lib/rules/lesson-session";
 import { rewardForReview, wordResults } from "@/lib/rules/review-play";
 import type { ReviewCompletion } from "@/lib/schemas";
+import { useTimeUpRedirect } from "@/features/study-clock/StudyClock";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import type { ReviewPlay } from "@/server/review";
 import { completeReviewAction } from "./actions";
@@ -66,6 +67,8 @@ export function ReviewPlayer({ plan, learnerId, learnerName, mascot, topbar }: P
   const stepId = session ? currentStepId(session) : null;
   const step = stepId ? stepsById.get(baseId(stepId)) : undefined;
   const { value, max } = session ? progressOf(session) : { value: 0, max: plan.steps.length };
+  // Hết giờ học giữa phiên ôn: làm nốt câu đang dở rồi chuyển sang màn Hết giờ học.
+  useTimeUpRedirect(session?.position ?? 0, !finished);
 
   // Kết quả vẫn nằm trong localStorage cho tới khi lưu xong; gửi lại cùng `startedAt` thì server chỉ ghi một lần.
   const runSave = useCallback(

@@ -17,7 +17,7 @@ export const voiceSettingsSchema = z.object({
 
 /** Phút bố mẹ thêm cho bé hôm nay (yyyy-mm-dd); sang ngày mới thì hết hiệu lực. */
 export const studyBonusSchema = z.object({
-  date: z.string().regex(/^d{4}-d{2}-d{2}$/),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   minutes: z.number().int().min(0).max(240),
 });
 

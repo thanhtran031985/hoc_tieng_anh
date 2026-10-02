@@ -19,6 +19,7 @@ import {
   type Session,
 } from "@/lib/rules/lesson-session";
 import type { LessonCompletion } from "@/lib/schemas";
+import { useTimeUpRedirect } from "@/features/study-clock/StudyClock";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import { completeLessonAction } from "./actions";
 import { ExitDialog } from "./ExitDialog";
@@ -79,6 +80,8 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot }: Props) {
   const step = stepId ? stepsById.get(baseId(stepId)) : undefined;
   const { value, max } = session ? progressOf(session) : { value: 0, max: plan.steps.length };
   const mapHref = `/map/${plan.levelNumber}`;
+  // Hết giờ học giữa bài: làm nốt câu đang dở rồi chuyển sang màn Hết giờ học (tiến độ dở đã giữ trên máy).
+  useTimeUpRedirect(session?.position ?? 0, !finished);
 
   // Ghi kết quả lên server. Kết quả vẫn nằm trong localStorage cho tới khi lưu xong; gửi lại cùng `startedAt` thì server chỉ ghi một lần.
   const runSave = useCallback(

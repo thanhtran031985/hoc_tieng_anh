@@ -15,7 +15,7 @@ export type CompleteReviewResult = { ok: true; completion: ReviewCompletion } | 
  */
 export async function completeReviewAction(input: unknown): Promise<CompleteReviewResult> {
   const user = await requireUser();
-  const learner = await requireActiveLearner();
+  const learner = await requireActiveLearner({ allowTimeUp: true });
   const parsed = completeReviewInputSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: "Kết quả ôn tập chưa hợp lệ." };
   try {

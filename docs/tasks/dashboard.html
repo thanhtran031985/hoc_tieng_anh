@@ -91,14 +91,14 @@
           <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">⋯</button>
         </div>
       </div>
-      <p class="subtitle">Sinh lúc 2026-10-03 05:50 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
+      <p class="subtitle">Sinh lúc 2026-10-03 06:03 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
     </div>
 
     <div class="stats">
       <div class="stat"><div class="stat-value">12</div><div class="stat-label">tổng số task</div></div>
       <div class="stat"><div class="stat-value" style="color:#34d399">9</div><div class="stat-label">✅ xong</div></div>
       <div class="stat"><div class="stat-value"><span style="color:#22d3ee">1</span> / <span style="color:#94a3b8">2</span></div><div class="stat-label">🔄 đang làm / ⬜ chưa làm</div></div>
-      <div class="stat"><div class="stat-value">77%</div><div class="stat-label">bước đã xong (44/57)</div></div>
+      <div class="stat"><div class="stat-value">79%</div><div class="stat-label">bước đã xong (45/57)</div></div>
     </div>
 
     
@@ -262,10 +262,10 @@
           <text x="1848" y="303" font-size="12" text-anchor="end">🔄</text>
           <text x="1666" y="302" fill="white" font-size="12" font-weight="600">10-time-limit</text>
           <text x="1642" y="322" fill="#94a3b8" font-size="9">Giới hạn giờ học</text>
-          <text x="1642" y="344" fill="#cbd5e1" font-size="9">1/2 bước</text>
-          <text x="1848" y="344" fill="#94a3b8" font-size="9" text-anchor="end">50%</text>
+          <text x="1642" y="344" fill="#cbd5e1" font-size="9">2/2 bước</text>
+          <text x="1848" y="344" fill="#94a3b8" font-size="9" text-anchor="end">100%</text>
           <rect x="1642" y="354" width="206" height="5" rx="2.5" fill="#1e293b"/>
-          <rect x="1642" y="354" width="103" height="5" rx="2.5" fill="#34d399"/>
+          <rect x="1642" y="354" width="206" height="5" rx="2.5" fill="#34d399"/>
         </g>
         <g>
           <title>11 — 11-parent-area: Khu vực bố mẹ: tổng quan và cài đặt (chưa làm)</title>
@@ -424,8 +424,8 @@
         </div>
         <p class="task-title">Giới hạn giờ học</p>
         <p class="meta">Nhánh: <code>feat/10-time-limit</code> · Cập nhật: 03/10/2026 · Phụ thuộc: 04, 07</p>
-        <div class="bar"><div class="bar-fill" style="width:50%"></div></div><div class="bar-label">1/2 bước · 50%</div>
-        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Ghi phiên học và tính phút</div><div class="note"><code>StudyClock</code> + <code>server/study-time.ts</code> + <code>rules/study-time.ts</code> (test 103/103)</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 1 · Màn Hết giờ học (Screen14)</div></div></li></ul>
+        <div class="bar"><div class="bar-fill" style="width:100%"></div></div><div class="bar-label">2/2 bước · 100%</div>
+        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Ghi phiên học và tính phút</div><div class="note"><code>StudyClock</code> + <code>server/study-time.ts</code> + <code>rules/study-time.ts</code> (test 103/103)</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 1 · Màn Hết giờ học (Screen14)</div><div class="note"><code>/time-up</code>, <code>requireActiveLearner({ allowTimeUp })</code>, thêm giờ bằng PIN</div></div></li></ul>
         <p class="links"><a href="10-time-limit/task.md">task.md</a> · <a href="10-time-limit/progress.md">progress.md</a></p>
       </div>
       <div class="card task-card">
@@ -461,7 +461,7 @@
   </div>
 
   <script type="application/json" id="tasks-data">{
-  "generatedAt": "2026-10-03 05:50 (UTC+07:00)",
+  "generatedAt": "2026-10-03 06:03 (UTC+07:00)",
   "warnings": [],
   "tasks": [
     {
@@ -1004,14 +1004,14 @@
             "step": "1",
             "numbered": true,
             "name": "Màn Hết giờ học (Screen14)",
-            "status": "todo",
-            "note": ""
+            "status": "done",
+            "note": "`/time-up`, `requireActiveLearner({ allowTimeUp })`, thêm giờ bằng PIN"
           }
         ],
         "hasTable": true
       },
       "stepsTotal": 2,
-      "stepsDone": 1,
+      "stepsDone": 2,
       "level": 5
     },
     {

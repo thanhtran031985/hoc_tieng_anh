@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { MascotColor, TopbarLearner } from "@/components/ui";
 import { answerPlacement, createPlacement, isPlacementDone, pickQuestion, suggestLevel, type PlacementState } from "@/lib/rules/placement";
 import type { PlacementSetup } from "@/server/placement";
+import { useTimeUpRedirect } from "@/features/study-clock/StudyClock";
 import { applyStartLevelAction, completePlacementAction } from "./actions";
 import { PlacementIntro } from "./PlacementIntro";
 import { PlacementQuiz } from "./PlacementQuiz";
@@ -33,6 +34,9 @@ export function PlacementFlow({ setup, mascot, learner }: Props) {
   const [error, setError] = useState<string | null>(null);
   const startedAt = useRef(0);
   const [durationMs, setDurationMs] = useState(0);
+
+  // Hết giờ học giữa bài xếp lớp: làm nốt câu đang dở rồi chuyển sang màn Hết giờ học.
+  useTimeUpRedirect(log.length, phase === "quiz");
 
   const question = useMemo(() => (phase === "quiz" ? pickQuestion(pools, state.level, used) : null), [phase, pools, state.level, used]);
 

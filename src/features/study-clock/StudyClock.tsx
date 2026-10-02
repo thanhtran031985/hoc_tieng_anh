@@ -41,19 +41,24 @@ const ClockContext = createContext({ exhausted: false });
 /** Bé đã hết giờ học hôm nay (trình chơi dùng để chuyển sang /time-up sau khi xong câu hiện tại). */
 export const useStudyClock = () => useContext(ClockContext);
 
-/** Trình chơi gọi khi bé vừa xong một câu/bước (`step` đổi): hết giờ thì chuyển sang màn Hết giờ học. */
-export function useTimeUpRedirect(step: unknown): void {
+/**
+ * Trình chơi (bài học, ôn tập, xếp lớp) gọi mỗi lần render với bước hiện tại: khi `step` đổi (bé vừa xong một câu) mà đã hết giờ
+ * thì chuyển sang màn Hết giờ học. Hết giờ giữa lúc đang làm câu thì không ngắt, bé làm nốt câu rồi mới chuyển.
+ * `enabled` tắt ở màn kết thúc để kết quả bài kịp được lưu.
+ */
+export function useTimeUpRedirect(step: unknown, enabled: boolean): void {
   const { exhausted } = useStudyClock();
   const router = useRouter();
-  const first = useRef(true);
+  const latest = useRef({ exhausted, enabled });
   useEffect(() => {
-    // Lần đầu vào bài không chuyển (bài do server chặn nếu đã hết giờ); chỉ chuyển khi bé vừa xong một bước.
-    if (first.current) {
-      first.current = false;
-      return;
-    }
-    if (exhausted) router.replace("/time-up");
-  }, [step, exhausted, router]);
+    latest.current = { exhausted, enabled };
+  });
+  const previous = useRef(step);
+  useEffect(() => {
+    if (previous.current === step) return;
+    previous.current = step;
+    if (latest.current.exhausted && latest.current.enabled) router.replace("/time-up");
+  }, [step, router]);
 }
 
 export function StudyClock({ children }: { children: React.ReactNode }) {
