@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Task 11: mở khóa khu bố mẹ bằng PIN hoặc mật khẩu",
+    "locale": "vi",
+    "output": "docs/so-do/tong-quan/sequence-mo-khoa-bo-me.html",
+    "viewBox": [
+      1080,
+      580
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "2f50a51426fa6e696530f94e99a3bb01e81c02db"
+    }
+  },
+  "participants": [
+    {
+      "id": "me",
+      "type": "external",
+      "label": "Bố mẹ",
+      "sublabel": "trình duyệt"
+    },
+    {
+      "id": "form",
+      "type": "frontend",
+      "label": "Màn cổng",
+      "sublabel": "GateForm",
+      "sources": [
+        {
+          "path": "src/features/parent/GateForm.tsx",
+          "line": 30,
+          "end_line": 60,
+          "label": "submit"
+        }
+      ]
+    },
+    {
+      "id": "action",
+      "type": "backend",
+      "label": "Server action",
+      "sublabel": "unlockParentAction",
+      "sources": [
+        {
+          "path": "src/features/parent/actions.ts",
+          "line": 22,
+          "end_line": 29,
+          "label": "mở cổng khi đúng"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "security",
+      "label": "Kiểm tra",
+      "sublabel": "checkParentSecret",
+      "sources": [
+        {
+          "path": "src/server/parent-secret.ts",
+          "line": 29,
+          "label": "PIN bcrypt hoặc mật khẩu"
+        },
+        {
+          "path": "src/server/rate-limit.ts",
+          "line": 48,
+          "label": "5 lần / 5 phút"
+        }
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "MySQL",
+      "sublabel": "users",
+      "sources": [
+        {
+          "path": "src/server/parent-secret.ts",
+          "line": 29,
+          "end_line": 52,
+          "label": "đọc parent_pin"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 235,
+      "label": "Nhập"
+    },
+    {
+      "from": 245,
+      "to": 402,
+      "label": "Kiểm tra"
+    },
+    {
+      "from": 410,
+      "to": 480,
+      "label": "Kết quả"
+    }
+  ],
+  "messages": [
+    {
+      "id": "go",
+      "from": "me",
+      "to": "form",
+      "y": 165,
+      "label": "gõ PIN, Enter",
+      "variant": "default"
+    },
+    {
+      "id": "gui",
+      "from": "form",
+      "to": "action",
+      "y": 200,
+      "label": "PIN + cách mở",
+      "variant": "emphasis"
+    },
+    {
+      "id": "khoa",
+      "from": "action",
+      "to": "rules",
+      "y": 232,
+      "label": "đã khóa chưa?",
+      "variant": "security"
+    },
+    {
+      "id": "khoa-ok",
+      "from": "rules",
+      "to": "action",
+      "y": 260,
+      "label": "còn lần thử",
+      "variant": "return"
+    },
+    {
+      "id": "doc",
+      "from": "rules",
+      "to": "db",
+      "y": 295,
+      "label": "đọc mã PIN băm",
+      "variant": "default"
+    },
+    {
+      "id": "doc-ok",
+      "from": "db",
+      "to": "rules",
+      "y": 323,
+      "label": "so bcrypt",
+      "variant": "return"
+    },
+    {
+      "id": "ghi",
+      "from": "action",
+      "to": "form",
+      "y": 357,
+      "label": "sai: còn N lần",
+      "variant": "return"
+    },
+    {
+      "id": "mo",
+      "from": "action",
+      "to": "me",
+      "y": 385,
+      "label": "đúng: cookie 15 phút",
+      "variant": "emphasis"
+    },
+    {
+      "id": "vao",
+      "from": "form",
+      "to": "me",
+      "y": 420,
+      "label": "chuyển /parent",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "form",
+      "from": 160,
+      "to": 425,
+      "type": "frontend"
+    },
+    {
+      "participant": "action",
+      "from": 195,
+      "to": 390,
+      "type": "backend"
+    },
+    {
+      "participant": "rules",
+      "from": 227,
+      "to": 328,
+      "type": "security"
+    },
+    {
+      "participant": "db",
+      "from": 290,
+      "to": 328,
+      "type": "database"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Khóa 5 phút",
+      "items": [
+        "Sai 5 lần thì khóa 5 phút, đếm ở server nên tải lại trang vẫn bị khóa",
+        "Tài khoản chưa có PIN: chỉ mở được bằng mật khẩu"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa làm",
+      "items": [
+        "Quên mật khẩu (chưa có luồng đặt lại)",
+        "Bộ đếm nằm trong bộ nhớ một tiến trình (đủ cho chạy một máy)"
+      ]
+    }
+  ]
+}

@@ -1,13 +1,13 @@
-# So sánh code với PRD và task.md — tổng quan (sau task 10)
+# So sánh code với PRD và task.md — tổng quan (sau task 11)
 
-Cập nhật: 03/10/2026 · Bản chốt code: `b8ab74e` · Phạm vi: các task 01–10 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
+Cập nhật: 03/10/2026 · Bản chốt code: `2f50a51` · Phạm vi: các task 01–11 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
 
 Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý chính của PRD; **nhỏ** = lệch nhẹ, hoặc đã nằm trong kế hoạch của task sau.
 
 | # | Mức | Điểm khác | Code (file:dòng) | PRD / task.md |
 |---|---|---|---|---|
 | 1 | **quan trọng** | Trang `/admin` chỉ cần role `admin`, **không cần mở cổng bố mẹ**. Tài khoản đăng ký đầu tiên tự thành `admin`, nên tài khoản gia đình thường là admin: máy đang đăng nhập thì bé gõ `/admin` là vào được, không cần PIN. Hiện trang chỉ là giữ chỗ nên chưa lộ dữ liệu, nhưng task 12 phải chặn trước khi có nội dung (bạn đã quyết định làm ở task 12; việc cần làm ghi ở `docs/tasks/12-admin-content/decisions.md`). | `src/app/(admin)/admin/page.tsx:11`, `src/server/session.ts:31-35`, `src/server/users.ts:8-10` | PRD dòng 126: Cổng bố mẹ → Khu vực bố mẹ → Quản trị nội dung |
-| 2 | nhỏ | Cổng bố mẹ chỉ có ở màn chọn hồ sơ. Trang chủ chỉ có hộp Cài đặt (Đổi bé, Đăng xuất), không có nút vào khu bố mẹ. | `src/app/(kid)/profiles/page.tsx:24`, `src/features/kid/KidTopbar.tsx:39-42` | PRD dòng 126 ("Ở mọi màn"), dòng 138 |
+| 2 | nhỏ | Cổng bố mẹ đã có màn riêng `/parent/unlock` (task 11), nút "Bố mẹ" nằm ở màn chọn hồ sơ; trang chủ của bé vẫn chỉ có hộp Cài đặt (Đổi bé, Đăng xuất), không có nút vào khu bố mẹ. | `src/app/(kid)/profiles/page.tsx:23`, `src/features/kid/KidTopbar.tsx:39-42` | PRD dòng 112 |
 | 3 | nhỏ | Tạo hồ sơ xong chuyển tới `/placement` (bài xếp lớp Tiểu học, task 09); THCS (lớp ≥ 6) chưa có bài xếp lớp nên thấy màn "Chưa có bài xếp lớp" rồi bắt đầu theo lớp (kẹp ở cấp 4). | `src/features/profiles/create/CreateProfileFlow.tsx:38`, `src/server/placement.ts:63` | PRD dòng 114, 146–152 (C4) |
 | 4 | nhỏ | Tạo hồ sơ chỉ hỏi tên, lớp, bạn rồng; chưa hỏi năm sinh và sách tiếng Anh ở trường (cột `birth_year`, `textbook` đã có trong database nhưng không có ô nhập). | `src/features/profiles/create/CreateProfileFlow.tsx:36`, `prisma/schema.prisma:54-57` | PRD dòng 142 (C3) |
 | 5 | nhỏ | Không có ô "Nhớ đăng nhập trên máy này"; phiên luôn nhớ 30 ngày. | `src/auth.config.ts:7-12` | PRD dòng 132 (C1) |
@@ -21,7 +21,7 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 13 | nhỏ | Mở khóa khớp PRD (bài đầu luôn mở; từ 1 sao mở bài sau; trùm mở khi xong mọi bài). Thêm một quyết định PRD không nói: trùm **không chặn** chủ đề kế. Chưa có bố mẹ mở khóa tay (task 11) và bài thi lên cấp (GĐ2). | `src/lib/rules/unlock.ts:1-6,40-71` | PRD dòng 402–405; `docs/tasks/06-home-map/decisions.md` |
 | 14 | nhỏ | `proxy.ts` chỉ chuyển hướng `/profiles`, `/home`, `/parent`, `/admin`; các màn khác của bé (`/levels`, `/map`…) dựa vào `requireUser` ở layout. Không phải lỗ hổng (server vẫn chặn), chỉ không nhất quán. | `src/proxy.ts:9`, `src/app/(kid)/layout.tsx:5` | — |
 | 15 | nhỏ (GĐ3) | Bé lớp 6 trở lên vẫn dùng giao diện Tiểu học (chưa có bộ THCS). | `src/lib/learner-rules.ts:13` | PRD dòng 417 |
-| 16 | nhỏ (task 11, 12) | `/parent` và `/admin` mới là trang giữ chỗ. | `src/app/(parent)/parent/page.tsx:9`, `src/app/(admin)/admin/page.tsx:9` | `docs/tasks/README.md` |
+| 16 | nhỏ (task 12) | `/admin` vẫn là trang giữ chỗ (khu bố mẹ đã làm ở task 11; menu bố mẹ còn các mục Kỹ năng, Kết quả thi, Bài viết, Lịch kiểm tra hiện mờ "Sắp có"). | `src/app/(admin)/admin/page.tsx:9`, `src/components/adult/nav.ts` | `docs/tasks/README.md` |
 | 17 | nhỏ | Bài học chưa có: khởi động ôn lại từ cũ, 3 câu thử thách cuối bài, âm thanh hiệu ứng và nút tắt nhạc nền, chế độ toàn màn hình. Có trò chơi lật thẻ (trong bài có từ 4 từ có hình). | `src/features/lesson/` | PRD dòng 90–99, 193–203 |
 | 18 | nhỏ | Sao, xu do server tính nhưng đúng/sai từng mục do client báo (đáp án nằm ở client để phản hồi tức thì). Chấp nhận cho ứng dụng học của bé; chưa có kiểm tra chống gian lận. | `src/server/lesson-complete.ts:58-62` | — |
 | 19 | nhỏ | Bài đã seed trước task 07 chưa có bước lật thẻ cho tới khi chạy lại `npx prisma db seed`. | `src/lib/rules/lesson-builder.ts:92` | — |
@@ -34,6 +34,10 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 26 | nhỏ | Không có cờ "đã xếp lớp" trong database: bài xếp lớp chỉ vào được khi bé chưa học bài nào và chưa có nhật ký `exam`; bố mẹ xếp lại (task 11) chưa có. Nút quay lại ở màn giới thiệu về `/profiles` (hồ sơ đã được tạo), khác bản xem trước. | `src/server/placement.ts:55-60` | PRD C4, Screen15 |
 | 27 | nhỏ | Giới hạn giờ đo ở trình duyệt: tính khi tab đang hiện và bé thao tác trong 60 giây, gửi nhịp mỗi phút; phần lẻ dưới 1 phút ở lại localStorage. Server chỉ chống nhịp dồn (≥ 50 giây), không phát hiện máy bé cố ý chạy giả thao tác. Chưa có khung giờ được học (GĐ2). | `src/features/study-clock/StudyClock.tsx:64`, `src/server/study-time.ts:56` | PRD D7 |
 | 28 | nhỏ | Thêm giờ bằng PIN/mật khẩu bố mẹ ghi vào `learners.settings.bonus` (mỗi lần +10 phút, đúng ngày); bố mẹ chưa đặt giới hạn bằng giao diện được (task 11, hiện đặt bằng SQL). Cuối bài học không còn ghi `study_sessions` (đã có nhịp mỗi phút). | `src/server/study-time.ts:86-100`, `src/lib/schemas/learner-settings.ts` | task 10 |
+| 29 | nhỏ | Cài đặt của bố mẹ bỏ các mục chưa có dữ liệu hoặc chức năng: ngày được học, nhắc còn 5 phút, thêm 10 phút khi thi, nhạc nền, đọc hướng dẫn tiếng Việt, giữ bài viết/ghi âm khi đặt lại; khung giờ học chỉ lưu, chưa khóa theo giờ (GĐ2). | `src/features/parent/TimePanel.tsx`, `src/features/parent/AppearancePanel.tsx` | Adult07, task 11 |
+| 30 | **quan trọng (bạn quyết)** | Xóa hồ sơ là xóa vĩnh viễn và đặt lại tiến độ không hoàn tác; bản xem trước hứa "khôi phục trong 30 ngày" nhưng chưa có cơ chế thùng rác. Có hộp thoại xác nhận, xóa phải gõ đúng tên. | `src/server/parent-settings.ts:96-118` | Adult07 |
+| 31 | nhỏ | Tổng quan bố mẹ: không có "kỷ lục chuỗi ngày" (chưa lưu) và "học nhiều nhất vào giờ…"; trình độ CEFR chỉ ước lượng theo cấp (PRD A1), chưa đo bằng bài thi; chọn con bằng `?kid=`. | `src/server/reports/overview.ts`, `src/lib/rules/report.ts:68-88` | Adult02 |
+| 32 | nhỏ | Cổng bố mẹ không có "Quên mật khẩu?" (chưa có luồng đặt lại mật khẩu); bộ đếm sai 5 lần/5 phút nằm trong bộ nhớ một tiến trình (đủ cho một máy). | `src/server/rate-limit.ts:48`, `src/features/parent/GateForm.tsx` | Adult01 |
 
 ## Khớp với PRD (đã kiểm)
 

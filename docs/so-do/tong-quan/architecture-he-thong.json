@@ -2,14 +2,14 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Kiến trúc hệ thống đã có trong code (sau task 10)",
+    "title": "Kiến trúc hệ thống đã có trong code (sau task 11)",
     "locale": "vi",
     "quality_profile": "showcase",
     "output": "docs/so-do/tong-quan/architecture-he-thong.html",
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "b8ab74e5831796745aadce981cf10af9fff78f4c"
+      "revision": "2f50a51426fa6e696530f94e99a3bb01e81c02db"
     }
   },
   "components": [
@@ -127,7 +127,7 @@
       "id": "adult",
       "type": "frontend",
       "label": "Màn bố mẹ, quản trị",
-      "sublabel": "/parent · /admin (giữ chỗ)",
+      "sublabel": "/parent đã làm · /admin chờ",
       "pos": [
         700,
         300
@@ -139,9 +139,14 @@
       "sources": [
         {
           "path": "src/app/(parent)/layout.tsx",
-          "line": 4,
-          "end_line": 7,
-          "label": "cổng bố mẹ"
+          "line": 12,
+          "end_line": 26,
+          "label": "khung khu bố mẹ"
+        },
+        {
+          "path": "src/app/(adult-gate)/parent/unlock/page.tsx",
+          "line": 11,
+          "label": "cổng PIN"
         },
         {
           "path": "src/app/(admin)/admin/page.tsx",
@@ -286,7 +291,7 @@
       "id": "modules",
       "type": "backend",
       "label": "Hàm đọc, ghi dữ liệu",
-      "sublabel": "src/server: bài, ôn, giờ học",
+      "sublabel": "src/server: bài, ôn, giờ, báo cáo",
       "pos": [
         480,
         560
@@ -302,14 +307,14 @@
           "label": "requireLearner"
         },
         {
-          "path": "src/server/review.ts",
-          "line": 112,
-          "label": "completeReview"
-        },
-        {
           "path": "src/server/study-time.ts",
           "line": 56,
           "label": "recordStudyMinute"
+        },
+        {
+          "path": "src/server/reports/overview.ts",
+          "line": 49,
+          "label": "getOverview"
         }
       ]
     },
