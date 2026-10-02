@@ -1,0 +1,55 @@
+<!-- @dsCard group="Màn Tiểu học · 1–2 Bắt đầu" height=700 subtitle="1b. Chọn hồ sơ: thẻ từng bé, thêm hồ sơ, nút Bố mẹ có khoá" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Chọn hồ sơ — preview</title>
+<style>
+  .pf-top { display: flex; justify-content: space-between; align-items: center; height: var(--size-topbar); }
+  .pf-brand { display: flex; align-items: center; gap: var(--space-2); font: 800 24px/28px var(--font-display); }
+  .pf-head { display: flex; align-items: flex-end; justify-content: center; gap: var(--space-6); margin: min(var(--space-8), 3cqh) 0 min(var(--space-10), 5cqh); }
+  .pf-head .b-dragon { width: min(150px, 17cqh); height: auto; }
+  .pf-head h1 { margin-bottom: var(--space-6); }
+  .pf-grid { display: flex; justify-content: center; gap: var(--space-8); flex-wrap: wrap; }
+  .pf { width: 240px; height: min(320px, 38cqh); border: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); text-align: center; position: relative; padding: var(--space-6) var(--space-4); }
+  .pf .b-avatar-svg { width: min(136px, 16cqh); height: auto; }
+  .pf .nm { font: 800 28px/34px var(--font-display); color: var(--ink); }
+  .pf .gr { font: 700 16px/20px var(--font-body); color: var(--ink-soft); }
+  .pf .tag { position: absolute; top: var(--space-3); right: var(--space-3); font: 800 12px/16px var(--font-body); padding: 3px 10px; border-radius: var(--radius-pill); background: var(--level-7-soft); color: var(--level-7-ink); }
+  .pf--add { background: transparent; box-shadow: none; border: var(--border-thick) dashed var(--line-strong); color: var(--ink-soft); }
+  .pf--add .plus { width: min(120px, 15cqh); aspect-ratio: 1; border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--brand); box-shadow: var(--shadow-card); }
+  .pf--add:hover { border-color: var(--brand); color: var(--brand-shade); }
+  .parent { display: flex; align-items: center; gap: var(--space-2); }
+  .sk-card { width: 240px; height: min(320px, 38cqh); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+  var B = window.Bong;
+  var topBar = '<div class="scr__body" style="flex:none;padding-bottom:0"><div class="pf-top"><div class="pf-brand">' + B.dragon('vui', 44) + 'Học cùng Bông</div>' +
+    B.btn({ label: 'Bố mẹ', variant: 'secondary', size: 's', icon: 'lock', attrs: 'data-parent aria-label="Khu vực bố mẹ (cần mật khẩu)"' }) + '</div></div>';
+  function head(expr, t) { return '<div class="pf-head">' + B.dragon(expr, 150) + '<h1 class="display-l">' + t + '</h1></div>'; }
+  var stage = ['', 'Tiểu học', 'THCS'];
+  function card(k) {
+    return '<button class="b-card b-card--hover pf" data-level="' + k.level + '" aria-label="' + k.name + ', lớp ' + k.grade + '">' + (k.grade > 5 ? '<span class="tag">THCS</span>' : '') +
+      B.avatar(k, 136) + '<span class="nm">' + k.name + '</span><span class="gr">Lớp ' + k.grade + '</span>' + B.levelChip(k.level) + '</button>';
+  }
+  var add = '<button class="b-card pf pf--add" data-add><span class="plus">' + B.icon('plus', 56) + '</span><span class="nm" style="color:inherit">Thêm hồ sơ</span><span class="gr">Tối đa 6 bé</span></button>';
+  B.screen({
+    notes: { normal: '3 hồ sơ: bé lớp 6 trở lên có nhãn THCS và sẽ vào bộ giao diện THCS. "Bố mẹ" yêu cầu mật khẩu.', loading: 'Khung xương giữ đúng vị trí thẻ.', empty: 'Tài khoản mới, chưa có bé nào.', error: 'Không tải được danh sách hồ sơ.' },
+    states: {
+      normal: function () { return topBar + '<div class="scr__body" style="justify-content:center;padding-bottom:var(--size-topbar)">' + head('chao', 'Ai đang học hôm nay?') + '<div class="pf-grid">' + B.kids.map(card).join('') + add + '</div></div>'; },
+      loading: function () { var c = '<div class="b-card sk-card">' + B.sk('136px', '136px', '50%') + B.sk('140px', '28px', 'var(--radius-pill)') + B.sk('90px', '18px', 'var(--radius-pill)') + '</div>'; return topBar + '<div class="scr__body" style="justify-content:center;padding-bottom:var(--size-topbar)">' + head('suynghi', 'Ai đang học hôm nay?') + '<div class="pf-grid">' + c + c + c + '</div></div>'; },
+      empty: function () { return topBar + '<div class="scr__body">' + B.stateBlock({ kind: 'empty', expr: 'chao', size: 220, title: 'Chưa có hồ sơ nào', text: 'Tạo hồ sơ cho bé để Bông biết bé tên gì và học lớp mấy nhé.', action: B.btn({ label: 'Tạo hồ sơ đầu tiên', icon: 'plus', size: 'l', attrs: 'data-add' }) }) + '</div>'; },
+      error: function () { return topBar + '<div class="scr__body">' + B.stateBlock({ kind: 'error', size: 220, title: 'Bông chưa tìm thấy hồ sơ', text: 'Mạng đang chập chờn. Không phải lỗi của bé đâu!' }) + '</div>'; }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        var p = scr.querySelector('[data-parent]');
+        p && p.addEventListener('click', function () {
+          ctx.dialog({ title: 'Khu vực của bố mẹ', body: 'Bố mẹ nhập mật khẩu để xem báo cáo học tập, giới hạn thời gian và quản lý hồ sơ.<div style="margin-top:16px"><input class="b-input" type="password" placeholder="Mật khẩu tài khoản" aria-label="Mật khẩu"></div>', actions: [{ label: 'Mở khoá', variant: 'primary', key: 'Enter' }, { label: 'Để sau', variant: 'secondary' }] });
+        });
+      }
+    }
+  });
+</script>
+</body>
+</html>

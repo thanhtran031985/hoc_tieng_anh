@@ -1,0 +1,58 @@
+<!-- @dsCard group="Màn Tiểu học · 10–12 Kết thúc & ôn tập" height=700 subtitle="10. Kết thúc bài: rồng chúc mừng, 3 sao, xu nhận được, từ vừa học, Bài tiếp theo / Về bản đồ" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Kết thúc bài — preview</title>
+<style>
+  .end { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; gap: var(--space-12); align-items: center; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-8) var(--space-12); box-sizing: border-box; position: relative; }
+  .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); position: relative; }
+  .hero .b-dragon { width: min(280px, 32cqh); height: auto; }
+  .bigstars { display: flex; align-items: flex-end; gap: var(--space-3); }
+  .bigstars .b-ico { width: min(104px, 12cqh); height: auto; opacity: 0; transform: scale(.2) rotate(-40deg); animation: starIn .5s cubic-bezier(.3,1.6,.5,1) forwards; filter: drop-shadow(0 5px 0 rgba(227,154,0,.35)); }
+  .bigstars .b-ico:nth-child(2) { width: min(128px, 15cqh); margin-bottom: 20px; animation-delay: .35s; }
+  .bigstars .b-ico:nth-child(3) { animation-delay: .7s; }
+  .bigstars .b-ico:first-child { animation-delay: 0s; }
+  @keyframes starIn { to { opacity: 1; transform: scale(1) rotate(0); } }
+  .res { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-8); }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .tile { background: var(--surface-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
+  .tile .v { font: 800 26px/30px var(--font-display); } .tile .l { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .tile--coin { background: var(--level-1-soft); }
+  .words { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2) var(--space-4); }
+  .wr { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border-radius: var(--radius-md); }
+  .wr:hover { background: var(--surface-soft); }
+  .wr .b-pic { width: 44px; height: 44px; }
+  .wr .en { font: 700 22px/26px var(--font-display); } .wr .vi { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .acts { display: flex; gap: var(--space-4); justify-content: flex-end; margin-top: var(--space-2); }
+  .conf { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .conf i { position: absolute; width: 14px; height: 8px; border-radius: 2px; animation: fall 3.2s linear infinite; }
+  @keyframes fall { from { transform: translateY(-40px) rotate(0); } to { transform: translateY(980px) rotate(540deg); } }
+  .note { display: flex; gap: var(--space-3); align-items: center; background: var(--retry-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+  @container (max-height: 800px) { .res { padding: var(--space-6); gap: var(--space-4); } .end { padding-top: var(--space-4); padding-bottom: var(--space-4); } .wr .b-pic { width: 36px; height: 36px; } .display-xl { font-size: 46px; line-height: 52px; } }
+  @container (max-width: 1400px) { .end { grid-template-columns: 1fr 580px; gap: var(--space-8); padding-left: var(--space-10); padding-right: var(--space-10); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, W = ['apple', 'banana', 'grapes', 'orange', 'pear', 'strawberry'];
+  var colors = ['var(--level-1)', 'var(--level-4)', 'var(--level-6)', 'var(--level-2)', 'var(--level-5)', 'var(--star)'];
+  var conf = '<div class="conf" aria-hidden="true">' + Array.apply(null, { length: 26 }).map(function (_, i) { return '<i style="left:' + ((i * 37) % 100) + '%;top:-20px;background:' + colors[i % 6] + ';animation-delay:' + (i * 0.23 % 3).toFixed(2) + 's;animation-duration:' + (2.6 + (i % 5) * 0.4) + 's"></i>'; }).join('') + '</div>';
+  function hero(expr, n, title, sub) { return '<section class="hero">' + B.dragon(expr, 280) + '<div class="bigstars" aria-label="' + n + ' trên 3 sao">' + [0, 1, 2].map(function (i) { return B.icon(i < n ? 'star' : 'starEmpty', 104); }).join('') + '</div><h1 class="display-xl">' + title + '</h1><p class="body-l b-muted">' + sub + '</p></section>'; }
+  function tiles() { return '<div class="tiles"><div class="tile tile--coin">' + B.icon('coin', 36) + '<div><div class="v">+30</div><div class="l">xu</div></div></div><div class="tile"><span style="color:var(--success)">' + B.icon('check', 32) + '</span><div><div class="v">9/10</div><div class="l">câu đúng</div></div></div><div class="tile"><span style="color:var(--brand)">' + B.icon('clock', 32) + '</span><div><div class="v">4 phút</div><div class="l">thời gian</div></div></div></div>'; }
+  function words() { return '<div><h2 class="title" style="margin-bottom:8px">Từ vừa học <span class="label b-muted">(' + W.length + ')</span></h2><div class="words">' + W.map(function (w) { return '<div class="wr">' + B.pic(w, 44) + B.speak(w, 's') + '<div><div class="en">' + w + '</div><div class="vi">' + B.words[w].vi + '</div></div></div>'; }).join('') + '</div></div>'; }
+  function acts(off) { return '<div class="acts">' + B.btn({ label: 'Về bản đồ', variant: 'secondary', size: 'l', icon: 'map', attrs: 'data-map', disabled: off }) + B.btn({ label: 'Bài tiếp theo', size: 'l', key: 'Enter', attrs: 'data-next', disabled: off }) + '</div>'; }
+  B.screen({
+    fit: true, level: 1,
+    notes: { normal: 'Sao xuất hiện lần lượt, xu bay vào. Số sao: 3 = đúng ≥ 90%, 2 = ≥ 70%, 1 = hoàn thành (luôn có ít nhất 1 sao).', loading: 'Đang lưu kết quả: phần chúc mừng hiện ngay, thẻ kết quả là khung xương.', empty: 'Bài ôn tập không có từ mới.', error: 'Chưa lưu được kết quả lên máy chủ: không làm mất sao, cho thử lại.' },
+    states: {
+      normal: function () { return conf + '<div class="end">' + hero('chucmung', 3, 'Giỏi quá, An ơi!', 'Bé đã học xong <b class="en">Fruits</b> · Bài 3') + '<section class="b-card res">' + tiles() + words() + acts() + '</section></div>'; },
+      loading: function () { return '<div class="end">' + hero('suynghi', 3, 'Xong bài rồi!', 'Bông đang ghi lại kết quả…') + '<section class="b-card res"><div class="tiles">' + B.sk('100%', '70px') + B.sk('100%', '70px') + B.sk('100%', '70px') + '</div>' + B.sk('180px', '30px', 'var(--radius-pill)') + '<div class="words">' + Array.apply(null, { length: 6 }).map(function () { return '<div class="wr">' + B.sk('44px', '44px', '50%') + B.sk('60%', '22px', 'var(--radius-pill)') + '</div>'; }).join('') + '</div>' + acts(true) + '</section></div>'; },
+      empty: function () { return conf + '<div class="end">' + hero('chucmung', 2, 'Ôn tập xong rồi!', 'Bé đã ôn lại 8 từ cũ') + '<section class="b-card res">' + tiles() + '<div class="b-card--soft b-card" style="display:flex;gap:16px;align-items:center">' + B.dragon('suynghi', 90) + '<div><div class="title">Không có từ mới</div><p class="body b-muted">Bài ôn tập chỉ ôn lại từ cũ. Xem các từ trong Sổ từ nhé!</p></div></div>' + acts() + '</section></div>'; },
+      error: function () { return '<div class="end">' + hero('dongvien', 3, 'Giỏi quá, An ơi!', 'Bé đã học xong <b class="en">Fruits</b> · Bài 3') + '<section class="b-card res"><div class="note" role="alert">' + B.icon('wifi', 28) + '<div><b class="label">Chưa lưu được kết quả</b><div class="body b-muted">Đừng lo, sao và xu của bé vẫn được giữ trên máy.</div></div></div>' + words() + '<div class="acts">' + B.btn({ label: 'Về bản đồ', variant: 'secondary', size: 'l', icon: 'map' }) + B.btn({ label: 'Thử lại', size: 'l', icon: 'replay', attrs: 'data-retry' }) + '</div></section></div>'; }
+    },
+    mount: { normal: function (scr, ctx) { var n = scr.querySelector('[data-next]'); ctx.later(function () { ctx.burst(scr.querySelector('.bigstars'), null, 12); }, 1000); n.addEventListener('click', function () { ctx.burst(n); }); ctx.onKey(function (e) { if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') n.click(); }); } }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!-- @dsCard group="Màn Tiểu học · 10–12 Kết thúc & ôn tập" height=700 subtitle="12. Hết giờ học: rồng Bông đi ngủ và hẹn bé ngày mai" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Hết giờ học — preview</title>
+<style>
+  .scr { background: var(--bg-night); color: var(--ink-on-dark); }
+  .sky { position: absolute; inset: 0; pointer-events: none; }
+  .sky i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--star); animation: tw 2.4s ease-in-out infinite; }
+  @keyframes tw { 50% { opacity: .25; transform: scale(.6); } }
+  .moon { position: absolute; right: 12%; top: 10%; color: var(--star); filter: drop-shadow(0 0 30px rgba(255,197,49,.45)); }
+  .night { flex: 1; min-height: 0; position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: var(--space-12); width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: 0 var(--space-12); box-sizing: border-box; }
+  .bed { display: flex; flex-direction: column; align-items: center; position: relative; }
+  .bed .b-dragon { width: min(340px, 40cqh); height: auto; position: relative; z-index: 1; margin-bottom: -60px; }
+  .bed .cloudbed { width: min(480px, 56cqh); height: min(130px, 15cqh); border-radius: var(--radius-pill); background: var(--ink-on-dark-soft); box-shadow: inset 0 -14px 0 rgba(35,38,79,.18); position: relative; }
+  .bed .cloudbed::before, .bed .cloudbed::after { content: ""; position: absolute; background: inherit; border-radius: 50%; }
+  .bed .cloudbed::before { width: 40%; height: 120%; left: 10%; top: -45%; } .bed .cloudbed::after { width: 34%; height: 100%; right: 12%; top: -35%; }
+  .msg { display: flex; flex-direction: column; gap: var(--space-4); }
+  .msg .body-l { color: var(--ink-on-dark-soft); }
+  .sum { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-2); }
+  .sum span { display: inline-flex; align-items: center; gap: var(--space-2); background: rgba(255,255,255,.1); border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); font: 800 18px/24px var(--font-body); }
+  .sum .ci { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--brand); }
+  .acts { display: flex; gap: var(--space-4); margin-top: var(--space-6); flex-wrap: wrap; }
+  .nsk { display: block; background: rgba(255,255,255,.12); border-radius: var(--radius-pill); }
+  .nerr { display: flex; align-items: center; gap: var(--space-3); background: rgba(255,255,255,.1); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+  .tomorrow { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--star); font: 800 20px/26px var(--font-body); }
+  .scr :focus-visible { outline-color: var(--star); }
+  .scr .dg-z { fill: var(--ink-on-dark-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var sky = '<div class="sky" aria-hidden="true">' + Array.apply(null, { length: 34 }).map(function (_, i) { return '<i style="left:' + ((i * 41) % 98) + '%;top:' + ((i * 29) % 38) + '%;animation-delay:' + (i % 7 * 0.3) + 's;' + (i % 4 === 0 ? 'width:9px;height:9px;' : '') + '"></i>'; }).join('') + '<span class="moon">' + B.icon('moon', 120) + '</span></div>';
+  function page(sumHtml, title, text) {
+    return sky + '<div class="night"><div class="bed">' + B.dragon('ngu', 340) + '<div class="cloudbed"></div></div><div class="msg"><h1 class="display-xl">' + title + '</h1><p class="body-l">' + text + '</p>' +
+      '<span class="tomorrow">' + B.icon('clock', 26) + 'Hẹn An 17:00 ngày mai</span>' + sumHtml +
+      '<div class="acts">' + B.btn({ label: 'Chúc Bông ngủ ngon', size: 'l', key: 'Enter', attrs: 'data-bye' }) + B.btn({ label: 'Bố mẹ: thêm 10 phút', variant: 'secondary', size: 'l', icon: 'lock', attrs: 'data-more' }) + '</div></div></div>';
+  }
+  var sum = '<div class="sum" aria-label="Hôm nay"><span><span class="ci">' + B.icon('clock', 20) + '</span>20 phút</span><span><span class="ci">' + B.icon('star', 22) + '</span>12 sao</span><span><span class="ci">' + B.icon('book', 20) + '</span>6 từ mới</span></div>';
+  B.screen({
+    labels: { empty: 'Trống (chưa học)' },
+    notes: { normal: 'Hết thời lượng bố mẹ đặt: không có nút "học tiếp" cho bé. Thêm giờ cần mật khẩu bố mẹ.', loading: 'Tóm tắt buổi học đang tải (khung xương trên nền đêm).', empty: 'Hôm nay bé chưa học bài nào nhưng đã hết khung giờ học.', error: 'Không tải được tóm tắt: lời chúc ngủ ngon vẫn hiện.' },
+    states: {
+      normal: function () { return page(sum, 'Hết giờ học rồi!', 'Hôm nay An giỏi lắm. Bông buồn ngủ quá… Mình nghỉ ngơi để mai học tiếp nhé!'); },
+      loading: function () { return page('<div class="sum"><span class="nsk" style="width:130px;height:48px"></span><span class="nsk" style="width:120px;height:48px"></span><span class="nsk" style="width:140px;height:48px"></span></div>', 'Hết giờ học rồi!', 'Bông đang ghi lại buổi học hôm nay…'); },
+      empty: function () { return page('', 'Đến giờ nghỉ rồi!', 'Hôm nay mình chưa kịp học bài nào. Không sao cả — mai Bông chờ An nhé!'); },
+      error: function () { return page('<div class="nerr" role="alert">' + B.icon('wifi', 26) + '<span class="body" style="flex:1">Chưa tải được tóm tắt hôm nay.</span>' + B.btn({ label: 'Thử lại', size: 's', variant: 'secondary', icon: 'replay', attrs: 'data-retry' }) + '</div>', 'Hết giờ học rồi!', 'Hôm nay An giỏi lắm. Bông đi ngủ đây!'); }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        var m = scr.querySelector('[data-more]');
+        m && m.addEventListener('click', function () { ctx.dialog({ title: 'Thêm 10 phút học', body: 'Bố mẹ nhập mật khẩu để cho bé học thêm.<div style="margin-top:16px"><input class="b-input" type="password" placeholder="Mật khẩu bố mẹ" aria-label="Mật khẩu"></div>', actions: [{ label: 'Đồng ý', variant: 'primary', key: 'Enter' }, { label: 'Huỷ', variant: 'secondary' }] }); });
+        var b = scr.querySelector('[data-bye]'); b && b.addEventListener('click', function () { ctx.burst(b); });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

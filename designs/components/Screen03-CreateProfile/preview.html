@@ -1,0 +1,125 @@
+<!-- @dsCard group="Màn Tiểu học · 1–2 Bắt đầu" height=700 subtitle="2. Tạo hồ sơ 3 bước: tên & lớp → chọn linh vật → kiểm tra loa và micro (bấm các bước để xem)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Tạo hồ sơ — preview</title>
+<style>
+  .cp-head { height: 96px; flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: 0 var(--space-12); box-sizing: border-box; }
+  .steps { display: flex; align-items: center; gap: var(--space-2); }
+  .step { display: flex; align-items: center; gap: var(--space-2); border: 0; background: none; cursor: pointer; padding: var(--space-1); border-radius: var(--radius-pill); }
+  .step .dot { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 800 18px/1 var(--font-display); background: var(--surface-sunk); color: var(--ink-soft); }
+  .step .t { font: 800 16px/20px var(--font-body); color: var(--ink-soft); }
+  .step[aria-current="step"] .dot { background: var(--brand); color: var(--ink-on-dark); box-shadow: 0 4px 0 var(--brand-shade); }
+  .step[aria-current="step"] .t { color: var(--ink); }
+  .step.done .dot { background: var(--success); color: var(--ink-on-dark); }
+  .bar { width: 48px; height: 6px; border-radius: var(--radius-pill); background: var(--surface-sunk); }
+  .bar.on { background: var(--success); }
+  .cp-main { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 0 var(--space-12); }
+  .cp-card { width: 1060px; max-width: 100%; height: min(560px, 100%); display: grid; grid-template-columns: 280px 1fr; gap: var(--space-8); align-items: center; padding: var(--space-8) var(--space-10); }
+  .cp-card .mas { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+  .cp-card .mas .b-dragon { width: min(220px, 26cqh); height: auto; }
+  .col { display: flex; flex-direction: column; gap: var(--space-5); }
+  .name-in { height: 72px; font: 800 30px/36px var(--font-display); }
+  .grades { display: flex; gap: var(--space-6); }
+  .gg { display: flex; flex-direction: column; gap: var(--space-2); }
+  .gg .label { color: var(--ink-soft); }
+  .gg .chips { display: flex; gap: var(--space-2); }
+  .gchip { width: 60px; height: 60px; border-radius: var(--radius-md); border: var(--border-thin) solid var(--line-strong); background: var(--surface); font: 800 26px/1 var(--font-display); color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 var(--line); transition: transform var(--duration-fast); }
+  .gchip:hover { transform: translateY(-2px); }
+  .gchip[aria-checked="true"] { background: var(--lv); color: var(--on-lv); border-color: var(--lv-shade); box-shadow: 0 4px 0 var(--lv-shade); }
+  .start { display: flex; align-items: center; gap: var(--space-3); background: var(--surface-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+  .pets { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+  .pet { border-radius: var(--radius-lg); border: var(--border-thick) solid var(--line); background: var(--surface); padding: var(--space-4) var(--space-2); display: flex; flex-direction: column; align-items: center; gap: var(--space-2); cursor: pointer; position: relative; box-shadow: 0 6px 0 var(--line); }
+  .pet .b-dragon { width: min(120px, 15cqh); height: auto; }
+  .pet[aria-checked="true"] { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 6px 0 var(--brand); }
+  .pet[aria-checked="true"]::after { content: ""; position: absolute; top: -12px; right: -12px; width: 36px; height: 36px; border-radius: 50%; background: var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/22px no-repeat; }
+  .pet .label { color: var(--ink); }
+  .av { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .av .p { background: var(--surface-soft); border-radius: var(--radius-lg); padding: var(--space-6); display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; min-height: 300px; justify-content: center; }
+  .mic { width: var(--size-speaker-l); height: var(--size-speaker-l); border-radius: 50%; border: 0; background: var(--level-5); color: var(--on-level-5); box-shadow: 0 8px 0 var(--level-5-shade); display: grid; place-items: center; cursor: pointer; }
+  .meter { display: flex; gap: 6px; align-items: flex-end; height: 40px; }
+  .meter i { width: 10px; border-radius: 5px; background: var(--level-5); height: 8px; transition: height .12s; }
+  .okline { display: flex; align-items: center; gap: var(--space-2); color: var(--success-shade); font: 800 18px/24px var(--font-body); background: var(--success-soft); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); }
+  .ask { display: flex; gap: var(--space-3); }
+  .alert { display: flex; gap: var(--space-3); align-items: center; background: var(--retry-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+  @container (max-height: 800px) { .cp-head { height: 80px; } .cp-card { padding: var(--space-6) var(--space-8); } .av .p { min-height: 240px; padding: var(--space-4); } .col { gap: var(--space-4); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var S = { step: 1, name: 'An', grade: 1, pet: 'dragon-ngoc', petName: 'Bông', heard: false, mic: 0 };
+  var labels = ['Tên và lớp', 'Bạn đồng hành', 'Loa và micro'];
+  function head() {
+    return '<div class="cp-head"><div>' + '<button type="button" class="b-iconbtn" aria-label="Huỷ tạo hồ sơ" data-act="back">' + B.icon('close', 26) + '</button></div><nav class="steps" aria-label="Các bước">' +
+      labels.map(function (l, i) { var n = i + 1; return (i ? '<span class="bar ' + (n <= S.step ? 'on' : '') + '"></span>' : '') + '<button type="button" class="step ' + (n < S.step ? 'done' : '') + '" data-step="' + n + '"' + (n === S.step ? ' aria-current="step"' : '') + '><span class="dot">' + (n < S.step ? B.icon('check', 22) : n) + '</span><span class="t">' + l + '</span></button>'; }).join('') +
+      '</nav><div></div></div>';
+  }
+  function foot(canNext, last) {
+    return '<footer class="lesson-foot"><div>' + (S.step > 1 ? B.btn({ label: 'Quay lại', variant: 'secondary', size: 'l', icon: 'back', attrs: 'data-prev' }) : '<span></span>') +
+      B.btn({ label: last ? 'Bắt đầu học' : 'Tiếp tục', size: 'l', key: 'Enter', disabled: !canNext, attrs: 'data-next' }) + '</div></footer>';
+  }
+  var lvOfGrade = function (g) { return Math.min(g, 10); };
+  function step1(empty) {
+    var nm = empty ? '' : S.name;
+    var gr = function (a, b) { var o = ''; for (var g = a; g <= b; g++) o += '<button type="button" role="radio" class="gchip" data-level="' + lvOfGrade(g) + '" data-grade="' + g + '" aria-checked="' + (!empty && S.grade === g) + '" aria-label="Lớp ' + g + '">' + g + '</button>'; return o; };
+    return '<div class="b-card cp-card"><div class="mas">' + B.bubble(empty ? 'Bé tên là gì nhỉ?' : 'Chào ' + S.name + '! Tên đẹp quá!') + B.dragon(empty ? 'suynghi' : 'chao', 220) + '</div><div class="col">' +
+      '<div class="b-field"><label for="nm" class="title">Tên của bé</label><input id="nm" class="b-input name-in" maxlength="16" placeholder="Gõ tên bé, ví dụ: An" value="' + nm + '">' + (empty ? '<span class="b-hint">Chỉ cần tên gọi ở nhà, tối đa 16 chữ.</span>' : '') + '</div>' +
+      '<div class="b-field"><span class="title">Bé đang học lớp mấy?</span><div class="grades" role="radiogroup" aria-label="Lớp"><div class="gg"><span class="label">Tiểu học</span><div class="chips">' + gr(1, 5) + '</div></div><div class="gg"><span class="label">THCS</span><div class="chips">' + gr(6, 9) + '</div></div></div></div>' +
+      (empty ? '' : '<div class="start" data-level="' + lvOfGrade(S.grade) + '"><span class="label">Bé sẽ bắt đầu ở</span>' + B.levelChip(lvOfGrade(S.grade)) + '<span class="caption b-muted">Bố mẹ đổi được sau.</span></div>') +
+      '</div></div>';
+  }
+  function step2() {
+    var pets = [['dragon-ngoc', 'Rồng Ngọc'], ['dragon-dao', 'Rồng Đào'], ['dragon-nang', 'Rồng Nắng'], ['dragon-tim', 'Rồng Tím']];
+    return '<div class="b-card cp-card" style="grid-template-columns:1fr"><div class="col"><h2 class="title" style="text-align:center">Chọn một bạn rồng để học cùng nhé!</h2>' +
+      '<div class="pets" role="radiogroup" aria-label="Bạn đồng hành">' + pets.map(function (p) { return '<button type="button" role="radio" class="pet ' + p[0] + '" data-pet="' + p[0] + '" aria-checked="' + (S.pet === p[0]) + '">' + B.dragon(S.pet === p[0] ? 'vui' : 'chao', 120) + '<span class="label">' + p[1] + '</span></button>'; }).join('') + '</div>' +
+      '<div class="b-field" style="max-width:420px;margin:0 auto;width:100%"><label for="pn">Đặt tên cho bạn rồng</label><input id="pn" class="b-input" value="' + S.petName + '" maxlength="12"></div></div></div>';
+  }
+  function step3(err) {
+    var bars = ''; for (var i = 0; i < 7; i++) bars += '<i></i>';
+    return '<div class="b-card cp-card" style="grid-template-columns:1fr"><div class="col"><h2 class="title" style="text-align:center">Kiểm tra loa và micro</h2><div class="av">' +
+      '<div class="p">' + B.speak('Hello! I am Bong.', 'l', 'Nghe thử loa') + '<span class="body-l">Bấm loa để nghe Bông nói</span>' +
+      (S.heard ? '<div class="ask"><span class="body-l">Bé có nghe thấy không?</span></div><div class="ask">' + B.btn({ label: 'Có, nghe rõ', variant: 'success', size: 'm', icon: 'check', attrs: 'data-heard="yes"' }) + B.btn({ label: 'Chưa nghe rõ', variant: 'secondary', size: 'm', attrs: 'data-heard="no"' }) + '</div>' : '<span class="caption b-muted">Nhớ bật âm lượng máy tính nhé</span>') + '</div>' +
+      '<div class="p ' + S.pet + '">' + (err ? '<div class="alert" role="alert">' + B.icon('mic', 26) + '<span class="body">Chưa dùng được micro. Bố mẹ bấm <b>Cho phép</b> trên trình duyệt nhé.</span></div>' + B.btn({ label: 'Thử lại', icon: 'replay', size: 'm', attrs: 'data-retry' }) :
+        '<button type="button" class="mic" data-mic aria-label="Bấm và nói Hello">' + B.icon('mic', 48) + '</button><span class="body-l">Bấm rồi nói: <b class="en">“Hello!”</b></span>' +
+        (S.mic === 2 ? '<span class="okline">' + B.icon('check', 22) + 'Tớ nghe thấy rồi!</span>' : '<div class="meter" aria-hidden="true">' + bars + '</div>')) + '</div>' +
+      '</div><button type="button" class="b-btn b-btn--ghost b-btn--s" style="align-self:center">Bỏ qua, kiểm tra sau</button></div></div>';
+  }
+  var ctxRef;
+  B.screen({
+    fit: true,
+    labels: { error: 'Lỗi (micro)' },
+    notes: { normal: 'Bấm số bước trên đầu hoặc Tiếp tục để xem cả 3 bước. Bước 3: bấm loa, rồi bấm micro.', loading: 'Đang lưu hồ sơ sau bước 3.', empty: 'Bước 1 chưa nhập tên: nút Tiếp tục vô hiệu, rồng suy nghĩ.', error: 'Bước 3 khi trình duyệt chặn micro: hướng dẫn bố mẹ + Thử lại; vẫn cho bỏ qua.' },
+    states: {
+      normal: function () { var b = S.step === 1 ? step1() : S.step === 2 ? step2() : step3(); return head() + '<main class="cp-main">' + b + '</main>' + foot(S.step !== 1 || !!S.name, S.step === 3); },
+      loading: function () { S.step = 3; return head() + '<main class="cp-main"><div class="b-card cp-card" style="grid-template-columns:1fr;justify-items:center;text-align:center">' + B.dragon('suynghi', 200) + '<h2 class="title">Bông đang chuẩn bị phòng học cho ' + S.name + '…</h2><div style="width:420px">' + B.ProgressBar(6, 10) + '</div></div></main>' + foot(false, true); },
+      empty: function () { S.step = 1; return head() + '<main class="cp-main">' + step1(true) + '</main>' + foot(false); },
+      error: function () { S.step = 3; return head() + '<main class="cp-main">' + step3(true) + '</main>' + foot(true, true); }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        ctxRef = ctx;
+        scr.querySelectorAll('[data-step]').forEach(function (b) { b.addEventListener('click', function () { S.step = +b.dataset.step; ctx.setState('normal'); }); });
+        var nx = scr.querySelector('[data-next]'), pv = scr.querySelector('[data-prev]');
+        nx && nx.addEventListener('click', function () { if (S.step < 3) { S.step++; ctx.setState('normal'); } else { ctx.setState('loading'); ctx.later(function () { S.step = 1; ctx.setState('normal'); }, 1600); } });
+        pv && pv.addEventListener('click', function () { S.step--; ctx.setState('normal'); });
+        var nm = scr.querySelector('#nm');
+        nm && nm.addEventListener('input', function () { nx.disabled = !nm.value.trim(); if (ctx.state === 'normal') S.name = nm.value.trim(); });
+        scr.querySelectorAll('[data-grade]').forEach(function (b) { b.addEventListener('click', function () { if (ctx.state !== 'normal') { scr.querySelectorAll('[data-grade]').forEach(function (x) { x.setAttribute('aria-checked', x === b); }); return; } S.grade = +b.dataset.grade; var v = nm.value; ctx.setState('normal'); var n2 = ctx.scr.querySelector('#nm'); n2.value = v; ctx.scr.querySelector('[data-grade="' + S.grade + '"]').focus(); }); });
+        scr.querySelectorAll('[data-pet]').forEach(function (b) { b.addEventListener('click', function () { S.pet = b.dataset.pet; ctx.setState('normal'); ctx.scr.querySelector('[data-pet="' + S.pet + '"]').focus(); }); });
+        var sp = scr.querySelector('[data-say^="Hello"]');
+        sp && sp.addEventListener('click', function () { if (!S.heard) ctx.later(function () { S.heard = true; ctx.setState(ctx.state); }, 1300); });
+        scr.querySelectorAll('[data-heard]').forEach(function (b) { b.addEventListener('click', function () { b.dataset.heard === 'yes' ? ctx.burst(b) : B.say('Hello! I am Bong.'); }); });
+        var mic = scr.querySelector('[data-mic]');
+        mic && mic.addEventListener('click', function () {
+          var bars = scr.querySelectorAll('.meter i'); var t = 0;
+          var iv = ctx.every(function () { bars.forEach(function (i) { i.style.height = (8 + Math.random() * 32) + 'px'; }); if (++t > 14) { clearInterval(iv); S.mic = 2; ctx.setState('normal'); } }, 110);
+        });
+        ctx.onKey(function (e) { if (e.key === 'Enter' && nx && !nx.disabled && !/INPUT|BUTTON/.test(document.activeElement.tagName)) nx.click(); });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!-- @dsCard group="Màn Tiểu học · 6–9 Bài học" height=700 subtitle="8. Nối từ với hình — kéo thả bằng chuột; hoặc phím 1–4 nhấc từ rồi 1–4 chọn hình" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nối từ với hình — preview</title>
+<style>
+  .board { display: flex; flex-direction: column; align-items: center; gap: min(var(--space-10), 4cqh); }
+  .pics { display: grid; grid-template-columns: repeat(4, min(250px, 28cqh)); gap: var(--space-6); }
+  .pc { position: relative; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); align-items: stretch; cursor: default; }
+  .pc .b-pic { width: 70%; height: auto; margin: 0 auto; }
+  .pc .b-key--corner { opacity: 0; transition: opacity var(--duration-base); }
+  .holding .pc .b-key--corner { opacity: 1; }
+  .holding .pc:not(.is-correct) { cursor: pointer; }
+  .slot { height: 60px; border-radius: var(--radius-md); border: 3px dashed var(--line-strong); display: grid; place-items: center; color: var(--ink-soft); font: 700 15px/18px var(--font-body); transition: background var(--duration-base), border-color var(--duration-base); }
+  .slot.is-over { border-color: var(--brand); background: var(--brand-soft); border-style: solid; }
+  .pc.is-correct .slot { border: 0; background: transparent; }
+  .tray { display: flex; gap: var(--space-5); min-height: 64px; justify-content: center; padding: var(--space-4) var(--space-6); background: var(--surface-soft); border-radius: var(--radius-xl); }
+  .chip { height: 60px; padding: 0 var(--space-5) 0 var(--space-2); display: inline-flex; align-items: center; gap: var(--space-3); background: var(--surface); border: var(--border-thin) solid var(--line-strong); border-radius: var(--radius-md); box-shadow: 0 5px 0 var(--line-strong); cursor: grab; touch-action: none; user-select: none; position: relative; font: 700 28px/1 var(--font-display); color: var(--ink); transition: box-shadow var(--duration-base), transform var(--duration-base); }
+  .chip .b-key { margin-left: var(--space-1); }
+  .chip:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--line-strong); }
+  .chip.is-held { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 5px 0 var(--brand); transform: translateY(-6px) rotate(-2deg); }
+  .chip.is-drag { cursor: grabbing; z-index: 30; transition: none; box-shadow: 0 18px 30px rgba(43,36,64,.25); pointer-events: none; }
+  .chip.is-back { transition: transform 300ms cubic-bezier(.3,1.4,.5,1); }
+  .chip.is-placed { cursor: default; box-shadow: none; border-color: var(--success); background: var(--success-soft); transform: none; width: 100%; justify-content: center; }
+  .chip.is-placed .b-key { display: none; }
+  .tip { position: absolute; right: var(--space-12); top: 96px; display: flex; align-items: center; gap: var(--space-2); }
+  .tip .b-bubble { max-width: 260px; } .tip .b-bubble::after { left: auto; right: -9px; top: 40%; bottom: auto; }
+  @container (max-height: 800px) { .tip { top: 80px; } .tip .b-dragon { width: 84px; height: auto; } .slot { height: 56px; } .chip { height: 56px; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var PICS = ['cat', 'dog', 'fish', 'bird'], WORDS = ['dog', 'bird', 'cat', 'fish'];
+  var S = { placed: {}, held: null, tip: 'Kéo từ vào đúng hình nhé!', expr: 'chao' };
+  function head() { return '<header class="lesson-head"><button type="button" class="b-iconbtn" aria-label="Thoát bài học" data-exit>' + B.icon('close', 26) + '</button>' + B.ProgressBar(5, 10) + '<span class="count">5/10</span></header>'; }
+  function foot(off) { return '<footer class="lesson-foot"><div><div class="grp">' + B.btn({ label: 'Làm lại', variant: 'secondary', size: 'l', icon: 'replay', attrs: 'data-reset', disabled: off }) + '</div><span class="body b-muted">' + Object.keys(S.placed).length + '/4 cặp đã nối</span></div></footer>'; }
+  function chip(w, i, placed) { return '<span class="chip' + (placed ? ' is-placed' : '') + '" data-w="' + w + '" tabindex="' + (placed ? -1 : 0) + '" role="button" aria-label="Từ ' + w + (placed ? ', đã nối' : '') + '" aria-keyshortcuts="' + (i + 1) + '">' + B.speak(w, 's') + '<span>' + w + '</span>' + B.key(String(i + 1)) + '</span>'; }
+  function body() {
+    return head() + '<main class="lesson-main"><div class="instr"><h1 class="title">Kéo từ vào đúng hình</h1></div><div class="board' + (S.held ? ' holding' : '') + '">' +
+      '<div class="pics">' + PICS.map(function (p, i) { var ok = S.placed[p]; return '<div class="b-choice pc' + (ok ? ' is-correct' : '') + '" data-p="' + p + '" tabindex="0" role="button" aria-label="Hình ' + (i + 1) + (ok ? ', đã nối với ' + p : '') + '">' + B.key(String(i + 1), 'b-key--corner') + (ok ? '<span class="b-badge">' + B.icon('check', 24) + '</span>' : '') + B.pic(p, 160).replace('aria-label="' + p + '"', 'aria-hidden="true"') + '<div class="slot">' + (ok ? chip(p, 0, true) : 'Thả từ vào đây') + '</div></div>'; }).join('') + '</div>' +
+      '<div class="tray" aria-label="Các từ">' + WORDS.map(function (w, i) { return S.placed[w] ? '' : chip(w, i); }).join('') + (Object.keys(S.placed).length === 4 ? '<span class="label b-muted" style="align-self:center">Hết từ rồi!</span>' : '') + '</div></div>' +
+      '<div class="tip">' + B.bubble(S.tip, 'right') + B.dragon(S.expr, 110) + '</div></main>' + foot();
+  }
+  B.screen({
+    fit: true, level: 1,
+    notes: { normal: 'Kéo thả bằng chuột. Bàn phím: 1–4 nhấc từ, rồi 1–4 thả vào hình (nhãn số hiện trên hình khi đang cầm từ). Sai: từ bay về khay, rồng gợi ý nhẹ.', loading: 'Khung xương 4 hình + khay từ.', empty: 'Không có cặp từ–hình.', error: 'Không tải được hình.' },
+    states: {
+      normal: body,
+      loading: function () { return head() + '<main class="lesson-main">' + B.sk('300px', '36px', 'var(--radius-pill)') + '<div class="pics">' + [1, 2, 3, 4].map(function () { return '<div class="b-card" style="display:flex;flex-direction:column;gap:12px;align-items:center">' + B.sk('140px', '140px', '50%') + B.sk('100%', '60px') + '</div>'; }).join('') + '</div><div class="tray">' + B.sk('140px', '60px') + B.sk('140px', '60px') + B.sk('140px', '60px') + B.sk('140px', '60px') + '</div></main>' + foot(true); },
+      empty: function () { return head() + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Chưa có cặp từ nào để nối', text: 'Bông đang chuẩn bị. Mình làm bài tiếp theo nhé!', action: B.btn({ label: 'Bài tiếp theo', size: 'l' }) }) + '</main>' + foot(true); },
+      error: function () { return head() + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Hình chưa hiện ra', text: 'Mạng đang chậm. Mình thử lại nhé!' }) + '</main>' + foot(true); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        var vp = scr.closest('.dsf-vp');
+        function rerender() { ctx.setState('normal'); }
+        function attempt(w, p, chipEl) {
+          if (w === p) {
+            S.placed[p] = true; S.held = null; S.expr = 'vui'; S.tip = ['Giỏi quá!', 'Đúng rồi!', 'Tuyệt vời!', 'Xuất sắc!'][Object.keys(S.placed).length - 1];
+            rerender(); var card = ctx.scr.querySelector('[data-p="' + p + '"]'); ctx.burst(card, ctx.scr.querySelector('.b-progress span'), 8); B.say(p);
+            if (Object.keys(S.placed).length === 4) ctx.later(function () { ctx.feedback({ type: 'ok', title: 'Nối đúng hết rồi!', detail: '<span>Bé được <b>+4 sao</b>. Mình sang phần tiếp nhé!</span>', onAction: function () { S.placed = {}; S.expr = 'chao'; S.tip = 'Kéo từ vào đúng hình nhé!'; rerender(); } }); }, 600);
+          } else {
+            S.held = null; S.expr = 'dongvien'; S.tip = 'Gần đúng rồi! Đây là <b>' + B.words[p].vi + '</b>, bé thử hình khác nhé.';
+            var card = scr.querySelector('[data-p="' + p + '"]'); card.classList.add('is-retry');
+            ctx.later(rerender, 650);
+          }
+        }
+        // kéo thả bằng chuột
+        scr.querySelectorAll('.tray .chip').forEach(function (c) {
+          c.addEventListener('pointerdown', function (e) {
+            if (e.target.closest('.b-speak')) return;
+            e.preventDefault(); var s = vp.__scale || 1, sx = e.clientX, sy = e.clientY, over = null, moved = false;
+            c.setPointerCapture(e.pointerId);
+            function mv(ev) {
+              var dx = (ev.clientX - sx) / s, dy = (ev.clientY - sy) / s; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+              c.classList.add('is-drag'); c.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(-3deg) scale(1.05)';
+              var el = document.elementFromPoint(ev.clientX, ev.clientY), pc = el && el.closest('.pc:not(.is-correct)');
+              if (over && over !== pc) over.querySelector('.slot').classList.remove('is-over');
+              over = pc; if (pc) pc.querySelector('.slot').classList.add('is-over');
+            }
+            function up() {
+              c.removeEventListener('pointermove', mv); c.removeEventListener('pointerup', up);
+              c.classList.remove('is-drag');
+              if (over) { over.querySelector('.slot').classList.remove('is-over'); c.style.transform = ''; attempt(c.dataset.w, over.dataset.p, c); }
+              else if (moved) { c.classList.add('is-back'); c.style.transform = ''; setTimeout(function () { c.classList.remove('is-back'); }, 320); }
+              else { c.style.transform = ''; S.held = c.dataset.w; rerender(); }
+            }
+            c.addEventListener('pointermove', mv); c.addEventListener('pointerup', up);
+          });
+          c.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); S.held = c.dataset.w; rerender(); ctx.scr.querySelector('.pc:not(.is-correct)').focus(); } });
+        });
+        if (S.held) { var h = scr.querySelector('.tray [data-w="' + S.held + '"]'); h && h.classList.add('is-held'); }
+        scr.querySelectorAll('.pc').forEach(function (pc) {
+          var act = function () { if (S.held && !pc.classList.contains('is-correct')) attempt(S.held, pc.dataset.p); };
+          pc.addEventListener('click', act);
+          pc.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); act(); } });
+        });
+        scr.querySelector('[data-reset]').addEventListener('click', function () { S.placed = {}; S.held = null; S.expr = 'chao'; S.tip = 'Kéo từ vào đúng hình nhé!'; rerender(); });
+        scr.querySelector('[data-exit]').addEventListener('click', function () { ctx.dialog({ expr: 'dongvien', title: 'Bé muốn dừng bài học à?', body: 'Còn ' + (4 - Object.keys(S.placed).length) + ' cặp nữa thôi!', actions: [{ label: 'Học tiếp', variant: 'primary', key: 'Enter' }, { label: 'Dừng lại', variant: 'secondary', key: 'Esc' }] }); });
+        ctx.onKey(function (e) {
+          if (!/^[1-4]$/.test(e.key)) { if (e.key === 'Escape' && S.held) { S.held = null; rerender(); } return; }
+          var i = +e.key - 1;
+          if (!S.held) { var w = WORDS[i]; if (!S.placed[w]) { S.held = w; rerender(); } }
+          else { var p = PICS[i]; if (!S.placed[p]) attempt(S.held, p); }
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

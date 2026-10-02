@@ -1,0 +1,14 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// Model tạm để thử migrate ở task 01. Xóa ở task 03 (db-core).
+model SetupCheck {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+}

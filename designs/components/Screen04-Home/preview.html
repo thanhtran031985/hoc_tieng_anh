@@ -1,0 +1,78 @@
+<!-- @dsCard group="Màn Tiểu học · 3–5 Trang chủ & bản đồ" height=700 subtitle="3. Trang chủ: linh vật ở giữa, Nhiệm vụ hôm nay, sao · xu · chuỗi ngày, 4 nút lớn" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Trang chủ — preview</title>
+<style>
+  .hm { flex: 1; min-height: 0; display: grid; grid-template-columns: 440px 1fr 360px; gap: var(--space-8); align-items: center; }
+  .mis { display: flex; flex-direction: column; gap: var(--space-4); }
+  .mis h2 { display: flex; justify-content: space-between; align-items: baseline; }
+  .task { display: grid; grid-template-columns: 72px 1fr; gap: var(--space-4); align-items: center; background: var(--surface-soft); border-radius: var(--radius-lg); padding: var(--space-4); }
+  .task .ic { width: 72px; height: 72px; border-radius: var(--radius-md); display: grid; place-items: center; background: var(--surface); }
+  .task .t { font: 800 22px/28px var(--font-display); }
+  .task .s { display: flex; align-items: center; gap: var(--space-2); margin-top: 2px; }
+  .task .act { grid-column: 1 / -1; display: flex; justify-content: flex-end; align-items: center; gap: var(--space-3); }
+  .task .act .b-progress { max-width: 160px; }
+  .minis { display: flex; margin-right: 10px; } .minis .b-pic { width: 32px; height: 32px; margin-right: -6px; background: var(--surface); border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-soft); }
+  .mid { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+  .mid .b-dragon { width: min(320px, 38cqh); height: auto; }
+  .mid .b-bubble { text-align: center; }
+  .lvcard { display: flex; flex-direction: column; gap: var(--space-4); }
+  .isle { height: min(150px, 17cqh); border-radius: var(--radius-lg); background: var(--bg-sea); position: relative; overflow: hidden; }
+  .isle::before { content: ""; position: absolute; left: 14%; right: 14%; bottom: -36%; height: 90%; border-radius: 50%; background: var(--lv); box-shadow: inset 0 10px 0 var(--lv-soft), 0 0 0 10px var(--bg-sea-deep); }
+  .isle .sprout { position: absolute; left: 50%; bottom: 34%; transform: translateX(-50%); }
+  .goal { display: flex; align-items: center; gap: var(--space-3); }
+  .nav { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); padding-top: var(--space-4); }
+  .navb { height: min(128px, 15cqh); border: 0; border-radius: var(--radius-xl); background: var(--surface); box-shadow: 0 8px 0 var(--line), 0 14px 28px rgba(91,66,30,.08); display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-6); cursor: pointer; transition: transform var(--duration-fast), box-shadow var(--duration-fast); }
+  .navb:hover { transform: translateY(-3px); box-shadow: 0 11px 0 var(--line), 0 18px 32px rgba(91,66,30,.1); }
+  .navb:active { transform: translateY(6px); box-shadow: 0 2px 0 var(--line); }
+  .navb .ci { width: min(80px, 10cqh); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: var(--lv); color: var(--on-lv); box-shadow: inset 0 -5px 0 var(--lv-shade); flex: none; }
+  .navb .ci .b-ico { width: 44%; height: 44%; }
+  .navb { text-align: left; } .navb .nm { font: 800 24px/30px var(--font-display); color: var(--ink); white-space: nowrap; }
+  .navb .sub { font: 700 14px/18px var(--font-body); color: var(--ink-soft); text-align: left; }
+  .mis .b-state { padding: var(--space-4) 0; } .mis .b-state .b-dragon { width: 120px; height: auto; }
+  @container (max-height: 800px) { .task { padding: var(--space-3); } .hm { gap: var(--space-6); } .mis { gap: var(--space-3); } }
+  @container (max-width: 1400px) { .hm { grid-template-columns: 420px 1fr 330px; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = B.kids[0];
+  var tb = function (o) { return B.topbar(Object.assign({ kid: kid, right: '<button type="button" class="b-iconbtn" aria-label="Cài đặt">' + B.icon('gear', 26) + '</button>' }, o || {})); };
+  function missions() {
+    return '<section class="b-card mis" aria-labelledby="mt"><h2 class="title" id="mt">Nhiệm vụ hôm nay <span class="label b-muted">0/2</span></h2>' +
+      '<div class="task"><div class="ic" style="color:var(--level-4-ink)">' + B.icon('replay', 40) + '</div><div><div class="t">Ôn tập</div><div class="s"><div class="minis">' + B.pic('cat', 32) + B.pic('dog', 32) + B.pic('fish', 32) + '</div><span class="body b-muted">5 từ cần ôn</span></div></div>' +
+      '<div class="act">' + B.btn({ label: 'Ôn ngay', variant: 'secondary', size: 'm' }) + '</div></div>' +
+      '<div class="task" data-level="1"><div class="ic">' + B.pic('apple', 60) + '</div><div><div class="t">Bài tiếp theo</div><div class="s"><span class="body"><b class="en">Fruits</b> · Bài 3 · Trái cây</span></div></div>' +
+      '<div class="act"><span class="caption b-muted">2/5 chặng</span>' + B.btn({ label: 'Học tiếp', variant: 'level', size: 'm', key: 'Enter', attrs: 'data-go' }) + '</div></div></section>';
+  }
+  function right() {
+    return '<section class="b-card lvcard" data-level="1"><div style="display:flex;justify-content:space-between;align-items:center">' + B.levelChip(1) + '<span class="caption b-muted">Đảo 1/5</span></div>' +
+      '<div class="isle" aria-hidden="true"><svg class="sprout" width="60" height="60" viewBox="0 0 60 60"><path d="M30 58 V30" stroke="var(--level-2-shade)" stroke-width="5" stroke-linecap="round"/><path d="M30 34 C10 34 8 14 14 10 C30 10 32 26 30 34Z M30 30 C44 30 54 16 50 8 C36 8 30 18 30 30Z" fill="var(--level-2)" stroke="var(--dragon-line)" stroke-width="3" stroke-linejoin="round"/></svg></div>' +
+      '<div><div class="label" style="display:flex;justify-content:space-between"><span>Chặng đã qua</span><span>12/40</span></div><div style="margin-top:8px;display:flex">' + B.ProgressBar(12, 40) + '</div></div>' +
+      '<div class="goal"><span style="color:var(--brand)">' + B.icon('clock', 28) + '</span><div style="flex:1"><div class="label">Hôm nay: 10/15 phút</div><div class="b-progress b-progress--s" style="margin-top:6px"><span style="width:66%;background:var(--brand)"></span></div></div></div></section>';
+  }
+  function nav() {
+    var items = [['map', 'Bản đồ', 'Đảo Hạt giống', 1], ['book', 'Sổ từ', '42 từ đã học', 4], ['gem', 'Bộ sưu tập', '8/30 món', 6], ['house', 'Phòng của tớ', 'Trang trí phòng', 5]];
+    return '<nav class="nav" aria-label="Đi tới">' + items.map(function (x) { return '<button type="button" class="navb" data-level="' + x[3] + '"><span class="ci">' + B.icon(x[0], 40) + '</span><span><span class="nm" style="display:block">' + x[1] + '</span><span class="sub">' + x[2] + '</span></span></button>'; }).join('') + '</nav>';
+  }
+  function page(misHtml, bubble, expr) {
+    return tb() + '<div class="scr__body"><div class="hm">' + misHtml + '<div class="mid">' + B.bubble(bubble) + B.dragon(expr || 'chao', 320) + '</div>' + right() + '</div>' + nav() + '</div>';
+  }
+  var skMis = '<section class="b-card mis"><span class="b-sk" style="width:220px;height:30px;border-radius:var(--radius-pill)"></span>' + [1, 2].map(function () { return '<div class="task"><span class="b-sk" style="width:72px;height:72px;border-radius:var(--radius-md)"></span><div style="display:flex;flex-direction:column;gap:8px">' + B.sk('140px', '24px', 'var(--radius-pill)') + B.sk('180px', '16px', 'var(--radius-pill)') + '</div><div class="act">' + B.sk('140px', '52px') + '</div></div>'; }).join('') + '</section>';
+  B.screen({
+    fit: true,
+    labels: { empty: 'Trống (bé mới)' },
+    notes: { normal: 'Enter = Học tiếp. Nhiệm vụ gồm Ôn tập (từ đến hạn) và Bài tiếp theo trên bản đồ.', loading: 'Thanh trên, linh vật và 4 nút vẫn hiện; chỉ phần dữ liệu là khung xương.', empty: 'Bé vừa tạo hồ sơ: chưa có từ để ôn, chỉ có bài đầu tiên.', error: 'Không tải được nhiệm vụ: lỗi khoanh trong thẻ, phần còn lại vẫn dùng được.' },
+    states: {
+      normal: function () { return page(missions(), 'Chào An! Hôm nay mình học về <b class="en">fruits</b> nhé!'); },
+      loading: function () { return B.topbar({ kid: kid, stars: '··', coins: '··', streak: '··' }) + '<div class="scr__body"><div class="hm">' + skMis + '<div class="mid">' + B.dragon('suynghi', 320) + '</div><section class="b-card lvcard">' + B.sk('160px', '26px', 'var(--radius-pill)') + B.sk('100%', '150px', 'var(--radius-lg)') + B.sk('100%', '20px', 'var(--radius-pill)') + B.sk('100%', '28px', 'var(--radius-pill)') + '</section></div>' + nav() + '</div>'; },
+      empty: function () { return page('<section class="b-card mis"><h2 class="title">Nhiệm vụ hôm nay</h2><div class="task" data-level="1"><div class="ic">' + B.pic('cat', 60) + '</div><div><div class="t">Bài đầu tiên!</div><div class="s"><span class="body"><b class="en">Animals</b> · Con vật</span></div></div><div class="act">' + B.btn({ label: 'Bắt đầu', variant: 'level', size: 'm', key: 'Enter' }) + '</div></div><p class="body b-muted">Chưa có từ nào cần ôn. Học xong bài đầu, Bông sẽ nhắc bé ôn đúng lúc.</p></section>', 'Chào An! Chúng mình bắt đầu nhé!'); },
+      error: function () { return page('<section class="b-card mis">' + B.stateBlock({ kind: 'error', size: 120, title: 'Chưa tải được nhiệm vụ', text: 'Bé vẫn vào Bản đồ để học được nhé.' }).replace('b-btn--l', 'b-btn--m') + '</section>', 'Ối, Bông chưa lấy được nhiệm vụ. Mình thử lại nha!', 'dongvien'); }
+    },
+    mount: { all: function (scr, ctx) { var g = scr.querySelector('[data-go]'); ctx.onKey(function (e) { if (e.key === 'Enter' && g && document.activeElement.tagName !== 'BUTTON') { g.focus(); ctx.burst(g); } }); } }
+  });
+})();
+</script>
+</body>
+</html>

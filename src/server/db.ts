@@ -1,0 +1,15 @@
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { PrismaClient } from "@/generated/prisma/client";
+
+// Chỉ import file này từ server (server action, route handler, server component).
+// Một PrismaClient dùng chung để hot reload của `next dev` không mở thêm kết nối.
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+
+function createClient() {
+  const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
+  return new PrismaClient({ adapter });
+}
+
+export const db = globalForPrisma.prisma ?? createClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;

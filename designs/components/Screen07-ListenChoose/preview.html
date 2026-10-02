@@ -1,0 +1,90 @@
+<!-- @dsCard group="Màn Tiểu học · 6–9 Bài học" height=700 subtitle="6. Nghe và chọn hình — phím 1–4 chọn, Space nghe lại, Enter kiểm tra (thử chọn sai để xem dải động viên)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nghe và chọn hình — preview</title>
+<style>
+  .q { display: flex; align-items: center; gap: var(--space-6); }
+  .q .b-dragon { width: min(120px, 14cqh); height: auto; }
+  .q .side { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+  .opts { display: grid; grid-template-columns: repeat(4, min(272px, 33cqh)); gap: var(--space-6); }
+  .opts .b-choice { aspect-ratio: 1; width: 100%; }
+  .opts .b-pic { width: 72%; height: auto; }
+  .hint-tip { display: flex; align-items: center; gap: var(--space-2); background: var(--info-soft); border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4); }
+  .sk-opts { display: grid; grid-template-columns: repeat(4, min(272px, 33cqh)); gap: var(--space-6); }
+  .sk-opts .b-sk { aspect-ratio: 1; width: 100%; height: auto !important; border-radius: var(--radius-lg) !important; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var QS = [{ a: 'cat', o: ['dog', 'cat', 'fish', 'bird'] }, { a: 'apple', o: ['banana', 'grapes', 'orange', 'apple'] }, { a: 'duck', o: ['duck', 'rabbit', 'bird', 'fish'] }];
+  var S = { q: 0, step: 3, sel: -1, tries: 0, hint: false, done: false };
+  function head(n) { return '<header class="lesson-head">' + '<button type="button" class="b-iconbtn" aria-label="Thoát bài học" data-exit>' + B.icon('close', 26) + '</button>' + B.ProgressBar(n, 10) + '<span class="count">' + n + '/10</span></header>'; }
+  function foot(o) {
+    o = o || {};
+    return '<footer class="lesson-foot"><div><div class="grp">' + B.btn({ label: 'Nghe lại', variant: 'secondary', size: 'l', icon: 'replay', key: 'Space', attrs: 'data-replay', disabled: o.off }) + B.btn({ label: 'Gợi ý', variant: 'secondary', size: 'l', icon: 'bulb', attrs: 'data-hint', disabled: o.off || S.hint }) + '</div>' +
+      B.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter', disabled: o.off || S.sel < 0 || S.done, attrs: 'data-check' }) + '</div></footer>';
+  }
+  function body() {
+    var q = QS[S.q % QS.length];
+    return head(S.step) + '<main class="lesson-main"><div class="instr"><h1 class="title">Nghe và chọn hình đúng</h1></div>' +
+      '<div class="q"><div class="side">' + B.dragon(S.hint ? 'suynghi' : 'chao', 120) + '</div>' + B.speak(q.a, 'l', 'Nghe từ cần chọn') + '<div class="side" style="width:120px">' + (S.hint ? '<span class="hint-tip label">' + B.icon('bulb', 20) + 'Còn 2 hình thôi!</span>' : '<span class="caption b-muted">Bấm loa hoặc ' + B.key('Space') + '</span>') + '</div></div>' +
+      '<div class="opts" role="radiogroup" aria-label="Chọn hình">' + q.o.map(function (w, i) {
+        var dim = S.hint && w !== q.a && i !== hintKeep(q);
+        return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + (dim ? ' is-dim' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-label="Hình ' + (i + 1) + '" aria-keyshortcuts="' + (i + 1) + '"' + (dim ? ' disabled' : '') + '>' + B.key(String(i + 1), 'b-key--corner') + B.pic(w, 200).replace('aria-label="' + w + '"', 'aria-hidden="true"') + '</button>';
+      }).join('') + '</div></main>' + foot();
+  }
+  function hintKeep(q) { for (var i = 0; i < 4; i++) if (q.o[i] !== q.a) return i; }
+  B.screen({
+    fit: true, level: 1,
+    labels: { empty: 'Trống', error: 'Lỗi' },
+    notes: { normal: 'Đúng: sao bay + dải xanh. Chưa đúng: dải cam nhẹ, rồng động viên, Thử lại (không trừ gì). Sai 2 lần: tự bật gợi ý.', loading: 'Đang tải hình và âm thanh của câu hỏi.', empty: 'Bài chưa có câu hỏi (dữ liệu bài học rỗng).', error: 'Không tải được âm thanh: giữ thanh tiến độ, cho thử lại.' },
+    states: {
+      normal: body,
+      loading: function () { return head(S.step) + '<main class="lesson-main">' + B.sk('360px', '36px', 'var(--radius-pill)') + B.sk('112px', '112px', '50%') + '<div class="sk-opts">' + B.sk('', '') + B.sk('', '') + B.sk('', '') + B.sk('', '') + '</div></main>' + foot({ off: true }); },
+      empty: function () { return head(0) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Bài này chưa có câu hỏi', text: 'Bông sẽ báo bé khi bài sẵn sàng. Mình quay về bản đồ nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + foot({ off: true }); },
+      error: function () { return head(S.step) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Loa chưa phát được', text: 'Bông chưa tải được âm thanh. Không phải lỗi của bé đâu!' }) + '</main>' + foot({ off: true }); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        var q = QS[S.q % QS.length];
+        function rerender() { ctx.setState('normal'); }
+        function pick(i) { var b = scr.querySelector('[data-i="' + i + '"]'); if (!b || b.disabled || S.done) return; S.sel = i; rerender(); ctx.scr.querySelector('[data-i="' + i + '"]').focus({ preventScroll: true }); }
+        function check() {
+          if (S.sel < 0 || S.done) return;
+          var card = scr.querySelector('[data-i="' + S.sel + '"]');
+          if (q.o[S.sel] === q.a) {
+            S.done = true; card.classList.remove('is-selected'); card.classList.add('is-correct'); card.insertAdjacentHTML('beforeend', '<span class="b-badge">' + B.icon('check', 24) + '</span>');
+            scr.querySelector('[data-check]').disabled = true;
+            ctx.burst(card, scr.querySelector('.b-progress span'), 10);
+            var w = B.words[q.a];
+            ctx.later(function () { var bar = scr.querySelector('.b-progress span'); bar.style.width = (S.step + 1) * 10 + '%'; scr.querySelector('.count').textContent = (S.step + 1) + '/10'; }, 700);
+            ctx.feedback({ type: 'ok', title: ['Chính xác! Giỏi quá!', 'Tuyệt vời!', 'Đúng rồi!'][S.q % 3], detail: B.speak(q.a, 's') + '<b class="en" style="font-size:26px">' + q.a + '</b><span class="b-muted">' + w.ipa + ' · ' + w.vi + '</span>',
+              onAction: function () { S.q++; S.step = S.step >= 9 ? 1 : S.step + 1; S.sel = -1; S.tries = 0; S.hint = false; S.done = false; rerender(); } });
+          } else {
+            S.tries++; card.classList.remove('is-selected'); card.classList.add('is-retry'); card.insertAdjacentHTML('beforeend', '<span class="b-badge">' + B.icon('replay', 22) + '</span>');
+            scr.querySelector('[data-check]').disabled = true;
+            ctx.feedback({ type: 'retry', title: 'Chưa đúng rồi, thử lại nhé!', detail: '<span>' + (S.tries >= 2 ? 'Bông bật gợi ý cho bé rồi đó. Nghe lại thật kỹ nha!' : 'Đây là <b>' + B.words[q.o[S.sel]].vi + '</b>. Bé nghe lại thật kỹ nha, Bông tin bé làm được!') + '</span>',
+              onAction: function () { S.sel = -1; if (S.tries >= 2) S.hint = true; rerender(); B.say(q.a); } });
+          }
+        }
+        scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+        scr.querySelector('[data-check]').addEventListener('click', check);
+        scr.querySelector('[data-replay]').addEventListener('click', function () { B.say(q.a, scr.querySelector('.b-speak--l')); });
+        scr.querySelector('[data-hint]').addEventListener('click', function () { S.hint = true; rerender(); });
+        scr.querySelector('[data-exit]').addEventListener('click', function () {
+          ctx.dialog({ expr: 'dongvien', title: 'Bé muốn dừng bài học à?', body: 'Còn ' + (10 - S.step) + ' câu nữa thôi! Nếu dừng, lần sau mình học tiếp từ câu này.', actions: [{ label: 'Học tiếp', variant: 'primary', key: 'Enter' }, { label: 'Dừng lại', variant: 'secondary', key: 'Esc' }] });
+        });
+        ctx.onKey(function (e) {
+          if (/^[1-4]$/.test(e.key)) { e.preventDefault(); pick(+e.key - 1); }
+          else if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); B.say(q.a, scr.querySelector('.b-speak--l')); }
+          else if (e.key === 'Enter' && !(document.activeElement && document.activeElement.matches('[data-replay],[data-hint],[data-exit]'))) { e.preventDefault(); check(); }
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

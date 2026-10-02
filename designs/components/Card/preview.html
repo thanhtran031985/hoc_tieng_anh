@@ -1,0 +1,25 @@
+<!-- @dsCard group="Chung · Hiển thị" height=330 subtitle="Thẻ nội dung và thẻ đáp án: thường, rê chuột, đang chọn, đúng, chưa đúng" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Thẻ — preview</title>
+<style>
+  body { background: var(--bg); }
+  .g { display: grid; grid-template-columns: 260px repeat(5, 140px); gap: 20px; align-items: start; padding: 20px 12px; }
+  .ch { width: 140px; height: 150px; }
+  .mini { display: flex; gap: 12px; align-items: center; }
+</style></head>
+<body>
+<div class="g b-root" id="r"></div>
+<script>
+  var B = window.Bong;
+  var cards = [['', 'Thường'], ['is-hover', 'Rê chuột'], ['is-selected', 'Đang chọn'], ['is-correct', 'Đúng'], ['is-retry', 'Chưa đúng']];
+  document.getElementById('r').innerHTML =
+    '<div><div class="b-card"><div class="mini">' + B.pic('apple', 64) + '<div><div class="label b-muted">Bài tiếp theo</div><div class="title">Fruits</div></div></div></div><div class="cap">Thẻ nội dung · shadow-card</div></div>' +
+    cards.map(function (c, i) {
+      var w = ['cat','dog','fish','bird','cat'][i];
+      var badge = c[0] === 'is-correct' ? '<span class="b-badge">' + B.icon('check', 24) + '</span>' : c[0] === 'is-retry' ? '<span class="b-badge">' + B.icon('replay', 22) + '</span>' : '';
+      return '<div><button class="b-choice ch ' + c[0] + '" style="animation:none">' + B.key(String(i % 4 + 1), 'b-key--corner') + badge + B.pic(w, 84) + '</button><div class="cap">' + c[1] + '</div></div>';
+    }).join('');
+</script>
+</body>
+</html>
