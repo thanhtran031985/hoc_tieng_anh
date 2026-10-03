@@ -1,0 +1,142 @@
+/* Bảng điều khiển quản trị (Adult08). */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.span8 {
+  grid-column: span 8;
+}
+.span4 {
+  grid-column: span 4;
+}
+.span12 {
+  grid-column: 1 / -1;
+}
+.updated {
+  text-align: right;
+}
+.sectionTitle {
+  margin: var(--space-2) 0 var(--space-3);
+}
+
+/* Cần bổ sung */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+}
+.pillAlert {
+  background: var(--field-error-bg);
+  color: var(--field-error);
+}
+.warns {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.warns li {
+  display: grid;
+  grid-template-columns: var(--space-8) 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-3) 0;
+  border-top: var(--border-thin) solid var(--line);
+}
+.warns li:first-child {
+  border-top: 0;
+}
+.warnIc {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--adm-radius-md);
+  display: grid;
+  place-items: center;
+  background: var(--field-error-bg);
+  color: var(--field-error);
+}
+.warnInfo {
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+}
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+.allGood {
+  margin: 0;
+}
+
+/* Chủ đề chưa có bài */
+.nob {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.nobList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nobList li {
+  display: grid;
+  grid-template-columns: var(--space-3) minmax(0, 1fr) auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-top: var(--border-thin) solid var(--line);
+}
+.nobList li:first-child {
+  border-top: 0;
+}
+.dot {
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: 50%;
+  background: var(--lv);
+}
+
+/* Bảng độ phủ */
+.levelName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pct {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.track {
+  width: calc(var(--space-16) + var(--space-2));
+  height: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunk);
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  height: 100%;
+  background: var(--chart-1);
+}
+.pctLow b {
+  color: var(--field-error);
+}
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+}

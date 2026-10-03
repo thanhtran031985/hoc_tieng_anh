@@ -15,7 +15,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 09 | [09-placement](09-placement/task.md) — Bài xếp lớp | ✅ | 05, 07 | `feat/09-placement` |
 | 10 | [10-time-limit](10-time-limit/task.md) — Giới hạn giờ học | ✅ | 04, 07 | `feat/10-time-limit` |
 | 11 | [11-parent-area](11-parent-area/task.md) — Khu vực bố mẹ: tổng quan và cài đặt | ✅ | 04, 08, 10 | `feat/11-parent-area` |
-| 12 | [12-admin-content](12-admin-content/task.md) — Quản trị nội dung, nhập chủ đề bằng Excel | ⬜ | 03, 05 | `feat/12-admin-content` |
+| 12 | [12-admin-content](12-admin-content/task.md) — Quản trị nội dung, nhập chủ đề bằng Excel | 🔄 | 03, 05 | `feat/12-admin-content` |
 
 Task 11 cần thiết kế Prompt 3, task 12 cần thiết kế Prompt 3 và Prompt 4 trước khi làm giao diện.
 
