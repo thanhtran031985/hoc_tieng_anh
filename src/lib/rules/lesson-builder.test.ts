@@ -36,6 +36,13 @@ describe("buildLessons", () => {
     assert.equal(lessons[2].title, "Trận trùm: Fruit");
   });
 
+  it("lessonSizes chia bài theo số từ cho trước; tổng không khớp thì chia như mặc định", () => {
+    const custom = buildLessons(makeWords(11), { lessonSizes: [6, 5] }).filter((l) => l.kind === "lesson");
+    assert.deepEqual(custom.map((l) => l.steps.filter((s) => s.activityType === "word_card").length), [6, 5]);
+    const fallback = buildLessons(makeWords(11), { lessonSizes: [6, 6] }).filter((l) => l.kind === "lesson");
+    assert.deepEqual(fallback.map((l) => l.steps.filter((s) => s.activityType === "word_card").length), [6, 5]);
+  });
+
   it("thứ tự bước trong bài: thẻ từ → nghe chọn hình → nối cặp → lật thẻ → chọn từ cho hình", () => {
     const [lesson] = buildLessons(makeWords(5));
     assert.deepEqual(types(lesson.steps), [

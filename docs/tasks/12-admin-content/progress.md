@@ -11,7 +11,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 4 | Soạn bài học (Adult12) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 5 | Thư viện hình và âm thanh (Adult13) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 6 | Nhập và xuất Excel từ vựng, câu hỏi (Adult14) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
-| 7 | Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09) | ⬜ | |
+| 7 | Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 
 ## Nhật ký
 
@@ -58,6 +58,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được: kéo thả tệp bằng chuột thật, tệp .xlsx tạo bằng Excel/Google Sheets (đã thử tệp sinh bằng exceljs), 1366×768.
 - Việc bạn cần làm thủ công: Quản trị › Nhập & xuất Excel: tải tệp mẫu, điền vài từ (cố ý bỏ trống IPA, ghi cấp 11), chọn tệp, sửa lỗi trong ô rồi Lưu; thử tab Xuất ra Excel mở bằng Excel (kiểm chữ có dấu); thử tệp .csv đổi đuôi .xlsx.
 
+### Bước 7 — Nhập chủ đề mới và xuất từ mục tiêu (03/10/2026)
+- Đã làm: tab **Nhập chủ đề mới** ở `/admin/excel` (cũng mở được bằng `?tab=topic`): thanh 4 bước; tải tệp mẫu "Chủ đề mới" 2 trang (Chủ đề: level, name_en, name_vi · Từ vựng: word, ipa, pos, meaning_vi, example_en, example_vi) kèm trang Hướng dẫn; chọn tệp → server đọc, thiếu trang "Chủ đề" hoặc "Từ vựng" thì báo lỗi XLS-422 nói rõ trang nào thiếu; xem trước có thẻ chủ đề (màu theo cấp; "Khớp khung chương trình" · "Chủ đề mới" · "Chủ đề đã có bài" chặn nhập), bảng từ báo lỗi từng dòng và sửa trong ô, nhãn "Từ đã có · Cấp N · chủ đề" và "Chưa có hình" chỉ là cảnh báo (không chặn), lọc Có lỗi / Có cảnh báo / Hợp lệ; công tắc "Tự tạo bài học" + chọn 5–8 từ mỗi bài, danh sách bài sẽ tạo tự cập nhật; nút Nhập chỉ bật khi hết lỗi, qua hộp thoại xác nhận, rồi màn kết quả có liên kết tới Soạn bài học và Cấu trúc lộ trình. **Xuất từ mục tiêu**: ở cây lộ trình, khung chủ đề "Chưa có bài" và ngăn kéo từ mục tiêu có nút "Xuất Excel để điền" (tệp 2 trang điền sẵn tên chủ đề và danh sách từ mục tiêu; từ đã có trong ngân hàng được điền luôn phiên âm, nghĩa, câu ví dụ) và "Nhập Excel" (mở tab Nhập chủ đề mới). Luật thuần ở `src/lib/rules/admin-excel-topic.ts` (+ test), ghi DB ở `src/server/admin/excel-topic.ts`, `importTopicAction` (`requireAdmin()` đầu tiên, kiểm lại tất cả ở server, một giao dịch). `buildLessons` (task 05) thêm tùy chọn `lessonSizes` (có test) để chia bài theo số từ đã chọn.
+- Kiểm tra: `npm test` 186/186; `npx tsc --noEmit`, `npm run lint` không lỗi. Chạy trên trình duyệt thật (database kiểm tra, 1440×900) rồi dọn sạch (900 từ, 154 bài, 58 chủ đề khung như ban đầu): tệp mẫu trống (3 trang) và tệp từ chủ đề khung "Travel" (52 từ, dòng chủ đề điền sẵn), unitId sai → 404, unitId chữ → 400; tệp thiếu trang Từ vựng → lỗi XLS-422; tệp 14 từ có 3 lỗi (thiếu IPA, trùng dòng, thiếu nghĩa) và 14 dòng có cảnh báo (từ đã có ở cấp 2–3, chưa có hình); tên chủ đề viết HOA vẫn khớp chủ đề khung; sửa trong ô thì hết lỗi, nút Nhập mở; chọn 5–8 từ mỗi bài đổi danh sách bài; nhập → chủ đề khung thành Nháp, 3 từ mới và 10 từ cũ dùng lại (13 từ gắn vào chủ đề), 3 bài Nháp (2 bài thường + trận trùm, thời lượng tự tính, bước đúng kiểu); nhập lại cùng tệp → "Chủ đề đã có bài", Nhập bị khóa; chủ đề mới ở cấp 6 → chủ đề Nháp mới ở cuối cấp, từ "swim" dùng lại (không tạo trùng), tắt tự tạo bài thì không có bài; vòng khung: xuất tệp "Nature and environment" (54 từ), điền, nhập lại → chủ đề Nháp với 9 bài Nháp.
+- Chưa tự kiểm được: kéo thả tệp bằng chuột thật, tệp tạo bằng Excel/Google Sheets, 1366×768.
+- Việc bạn cần làm thủ công: Quản trị › Cấu trúc lộ trình › Cấp 5 › một chủ đề "Chưa có bài" › Xuất Excel để điền; mở tệp, điền phiên âm, nghĩa, câu ví dụ cho vài từ (bỏ trống vài ô để thấy lỗi); Nhập Excel → chọn tệp, sửa lỗi, bật Tự tạo bài học, Nhập; rồi mở chủ đề trong cây lộ trình xem 3 bài Nháp.
+
 ## Bước tiếp theo
 
-Bước 7 — Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09)
+Hết 8 bước. Còn "Kiểm tra cuối task" (tsc, lint, build; nhập thử một chủ đề cấp 5 từ Excel, xuất bản, học thử bằng hồ sơ của con) và đóng task bằng quy trình finish-task.

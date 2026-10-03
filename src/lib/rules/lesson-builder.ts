@@ -28,6 +28,8 @@ export type BuildOptions = {
   unitTitle?: string;
   /** Hạt giống để trộn từ trong trận trùm; cùng hạt giống cho cùng kết quả. Mặc định là chuỗi các từ. */
   seed?: string;
+  /** Số từ của từng bài thường (nhập chủ đề bằng Excel, task 12); phải cộng đúng bằng số từ, nếu không thì chia theo `splitLessonSizes`. */
+  lessonSizes?: readonly number[];
 };
 
 /** Mỗi bài tối đa 8 từ (5–8 từ; vài trường hợp lẻ như 9 từ chia 5 + 4). */
@@ -77,7 +79,8 @@ export function buildLessons(words: readonly BuilderWord[], options: BuildOption
 
   const lessons: BuiltLesson[] = [];
   let offset = 0;
-  for (const [index, size] of splitLessonSizes(words.length).entries()) {
+  const customSizes = options.lessonSizes && options.lessonSizes.every((n) => n > 0) && options.lessonSizes.reduce((a, b) => a + b, 0) === words.length ? options.lessonSizes : null;
+  for (const [index, size] of (customSizes ?? splitLessonSizes(words.length)).entries()) {
     const group = words.slice(offset, offset + size);
     offset += size;
     const withPicture = group.filter((w) => w.hasPicture);

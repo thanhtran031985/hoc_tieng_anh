@@ -27,6 +27,7 @@ import { missingLessons } from "@/lib/rules/admin-tree";
 import { addLessonSchema, addUnitSchema, updateLessonSchema, updateLevelSchema, updateStageSchema, updateUnitSchema } from "@/lib/schemas/admin-tree";
 import type { TargetWordRow, TreeData, TreeLesson, TreeLevel, TreeStage, TreeUnit } from "@/server/admin/tree";
 import { addLessonAction, addUnitAction, deleteNodeAction, getTargetWordsAction, reorderAction, updateLessonAction, updateLevelAction, updateStageAction, updateUnitAction, type TreeActionResult } from "./tree-actions";
+import { DownloadLink } from "./excel-parts";
 import styles from "./tree.module.css";
 
 type Kind = "stage" | "level" | "unit" | "lesson";
@@ -551,8 +552,8 @@ function PlannedPanel({ unit, level, rows, onOpen }: { unit: TreeUnit; level: Tr
       <div className={styles.stack}>
         <AdultButton label="Xem danh sách từ mục tiêu" icon="book" variant="secondary" block onClick={onOpen} />
         <div className={styles.actions}>
-          <AdultButton label="Xuất Excel để điền" icon="download" variant="secondary" disabled title="Sắp có" />
-          <AdultButton label="Nhập Excel" icon="upload" disabled title="Sắp có" />
+          <DownloadLink size="m" href={`/admin/excel/template?kind=topic&unitId=${unit.id}`} label="Xuất Excel để điền" />
+          <AdultButtonLink label="Nhập Excel" icon="upload" href="/admin/excel?tab=topic" />
         </div>
       </div>
     </AdultCard>
@@ -586,8 +587,8 @@ function TargetDrawer({ unit, level, rows, onClose }: { unit: TreeUnit; level: T
       title={`Từ mục tiêu · ${unit.title}`}
       footer={
         <>
-          <AdultButton label="Xuất Excel để điền" icon="download" variant="secondary" disabled title="Sắp có" />
-          <AdultButton label="Nhập Excel" icon="upload" disabled title="Sắp có" />
+          <DownloadLink size="m" href={`/admin/excel/template?kind=topic&unitId=${unit.id}`} label="Xuất Excel để điền" />
+          <AdultButtonLink label="Nhập Excel" icon="upload" href="/admin/excel?tab=topic" />
         </>
       }
     >

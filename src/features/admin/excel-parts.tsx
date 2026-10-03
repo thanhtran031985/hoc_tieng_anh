@@ -30,9 +30,9 @@ export function Pill({ tone, children }: { tone?: "ok" | "bad" | "info"; childre
 }
 
 /** Nút tải về là liên kết tới route handler (tệp mẫu, xuất). */
-export function DownloadLink({ href, label }: { href: string; label: string }) {
+export function DownloadLink({ href, label, size = "s" }: { href: string; label: string; size?: "s" | "m" }) {
   return (
-    <a className={cn(adultStyles.btn, adultStyles.btnSecondary, adultStyles.btnS)} href={href} download>
+    <a className={cn(adultStyles.btn, adultStyles.btnSecondary, size === "s" && adultStyles.btnS)} href={href} download>
       <Icon name="download" size={18} />
       <span>{label}</span>
     </a>

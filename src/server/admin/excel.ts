@@ -71,14 +71,14 @@ const wordBank = (words: readonly BankWord[]) => new Map(words.map((w) => [wordK
 // Tệp mẫu
 // ---------------------------------------------------------------------------
 
-function headerStyle(sheet: ExcelJS.Worksheet) {
+export function headerStyle(sheet: ExcelJS.Worksheet) {
   const row = sheet.getRow(1);
   row.font = { bold: true };
   row.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFE8ECF8" } };
   sheet.views = [{ state: "frozen", ySplit: 1 }];
 }
 
-function guideSheet(workbook: ExcelJS.Workbook, title: string, columns: readonly ColumnSpec[]) {
+export function guideSheet(workbook: ExcelJS.Workbook, title: string, columns: readonly ColumnSpec[]) {
   const guide = workbook.addWorksheet("Hướng dẫn");
   guide.addRow([title]).font = { bold: true, size: 14 };
   guide.addRow(["Giữ nguyên dòng tiêu đề ở trang dữ liệu; mỗi dòng dưới đó là một mục. Cột có dấu * là bắt buộc."]);
