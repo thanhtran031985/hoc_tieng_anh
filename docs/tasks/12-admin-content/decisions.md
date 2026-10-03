@@ -64,3 +64,11 @@
 - Chia bài theo số từ mỗi bài chọn (5–8): thuật toán trong `planLessonSizes` (giữ mỗi bài 5–8 từ khi đủ từ; 9 từ là trường hợp duy nhất không chia được → 5 + 4; dưới 5 từ là 1 bài). Chỉ dòng hợp lệ được tính khi xem trước; khi Nhập thì mọi dòng đã hợp lệ. Thêm tùy chọn `lessonSizes` cho `buildLessons` (task 05), mặc định giữ nguyên hành vi cũ.
 - Xuất từ mục tiêu: tệp 2 trang điền sẵn dòng chủ đề và các từ mục tiêu; từ đã có trong ngân hàng được điền luôn các cột đã biết để bố mẹ chỉ phải điền phần còn thiếu. Từ mục tiêu trong DB chỉ là danh sách chữ nên không có nghĩa gợi ý cho từ chưa có.
 - Màn "Nhập chủ đề mới" không có thẻ "Lần xuất gần đây"; kết quả nhập hiện ở màn kết quả có liên kết (Soạn bài học, Cấu trúc lộ trình).
+
+### 03/10/2026 — Tổng kết task 12: khác với task.md gốc
+- Bảng điều khiển có thẻ "Chủ đề" thay thẻ "Chủ điểm ngữ pháp" (GĐ3); `/admin` yêu cầu thêm cổng bố mẹ đang mở (quyết định 03/10).
+- Cây lộ trình: không kéo thả cấp, không "Xuất bản thay đổi (n)", xóa là xóa hẳn (chưa có Thùng rác); luật xuất bản đầy đủ (≥ 3 bước và ≥ 1 hoạt động) thêm ở Soạn bài học.
+- Ngân hàng từ vựng không có Nháp / Xuất bản, lớp SGK, Unit SGK (schema không có); ngân hàng câu hỏi chỉ 8.2–8.4 (thẻ từ 8.1 thêm ở Soạn bài học).
+- Thư viện hình: chỉ tải hình (PNG, JPEG, WebP, SVG, ≤ 2 MB); âm thanh chỉ theo dõi, "Tạo giọng đọc" mờ "Sắp có".
+- Excel: dùng `exceljs`; cột tệp mẫu theo schema thật (không có `grade`, `unit`, `grammar`); nhập chủ đề mới gắn vào chủ đề khung, chủ đề đã có bài là lỗi, từ đã có dùng lại; `buildLessons` (task 05) thêm tùy chọn `lessonSizes`.
+- Đã tự kiểm bằng trình duyệt không đầu trên database kiểm tra; các mục cần mắt người (kéo thả chuột thật, tệp từ Excel/Google Sheets, giao diện 1366×768 từng màn) nằm ở checklist trong progress.md.

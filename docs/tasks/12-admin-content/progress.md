@@ -1,6 +1,6 @@
 # Tiến độ — 12-admin-content — Quản trị nội dung cơ bản
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 03/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -64,6 +64,23 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được: kéo thả tệp bằng chuột thật, tệp tạo bằng Excel/Google Sheets, 1366×768.
 - Việc bạn cần làm thủ công: Quản trị › Cấu trúc lộ trình › Cấp 5 › một chủ đề "Chưa có bài" › Xuất Excel để điền; mở tệp, điền phiên âm, nghĩa, câu ví dụ cho vài từ (bỏ trống vài ô để thấy lỗi); Nhập Excel → chọn tệp, sửa lỗi, bật Tự tạo bài học, Nhập; rồi mở chủ đề trong cây lộ trình xem 3 bài Nháp.
 
+### Rà soát và kiểm tra cuối task (03/10/2026)
+- Rà soát theo task.md và CLAUDE.md: không có mục nào cần sửa. Mọi server action (`*-actions.ts`: 18 hàm, `tree-actions.ts` qua hàm `run`) gọi `requireAdmin()` ở dòng đầu; 4 route handler (`/admin/excel/{template,parse,export}`, `/admin/media/upload`) gọi `getAdminOrNull()`; mọi hàm ghi ở `src/server/admin/` kiểm Zod (hoặc kiểm lại bằng luật thuần); không client component nào import Prisma hay `@/server` ngoài `import type`; CSS khu quản trị không có mã hex hay px cố định; tệp tải lên ở `storage/uploads/` (ngoài `public/`); mọi màn quản trị có `loading.tsx` và `error.tsx`, trạng thái trống ở từng màn.
+- Kiểm quyền trên trình duyệt thật: admin chưa mở cổng bố mẹ → `/admin` về `/profiles`, 4 route handler trả 403; tài khoản `parent` đã mở cổng → `/admin`, `/admin/excel`, `/admin/tree` đều 404 và 4 route handler trả 403.
+- Kiểm tra cuối task: `npx tsc --noEmit`, `npm run lint`, `npm run build` không lỗi; `npm test` 186/186. Nhập thử chủ đề khung "Travel" (cấp 5, 12 từ) từ tệp Excel → 3 bài Nháp (20, 20, 12 bước) → xuất bản → mở bài bằng hồ sơ bé (Bảo): thẻ từ hiện đúng ("Du lịch · Travel"), Enter qua các bước, không cuộn ở 1366×768, không lỗi console. Đã dọn dữ liệu thử.
+
+### Checklist test thủ công (bạn tự làm trên trình duyệt)
+Chuẩn bị: đăng nhập tài khoản admin → Khu bố mẹ → nhập PIN → bấm "Quản trị".
+- [ ] Bảng điều khiển: 4 thẻ, biểu đồ 10 cấp đúng màu cấp, "Chủ đề chưa có bài" đếm đúng theo cấp; nút "Xuất Excel" mở trang Excel.
+- [ ] Cấu trúc lộ trình: kéo thả một bài và một chủ đề rồi tải lại trang (thứ tự còn); ↑/↓ bằng bàn phím; bấm chủ đề "Chưa có bài" mở ngăn kéo từ mục tiêu (lọc Đã có / Chưa có); thử xuất bản bài 0 bước (phải báo lỗi).
+- [ ] Ngân hàng từ vựng: tìm, lọc, sắp xếp; sửa một từ rồi xóa phiên âm / đổi câu ví dụ để thấy lỗi dưới ô; thêm một từ trùng.
+- [ ] Ngân hàng câu hỏi: tạo mỗi dạng 8.2 / 8.3 / 8.4; "Xem như học sinh" chọn thử đáp án đúng, sai.
+- [ ] Soạn bài học: thêm từ và câu hỏi, kéo thả bước, thời lượng tự tính, thử Xuất bản khi dưới 3 bước, Xem trước từng bước.
+- [ ] Hình ảnh & âm thanh: kéo vài tệp (SVG tên trùng từ chưa có hình, .txt đổi thành .png, ảnh lớn hơn 2 MB); lọc "Từ chưa có hình"; nút tạo giọng đọc mờ "Sắp có".
+- [ ] Nhập Excel từ vựng và câu hỏi: tải tệp mẫu, điền (cố ý bỏ trống IPA, cấp 11), chọn tệp, sửa lỗi trong ô, nút Lưu chỉ bật khi hết lỗi; mở tệp xuất .xlsx và .csv bằng Excel xem chữ có dấu.
+- [ ] Nhập chủ đề mới: ở Cấu trúc lộ trình bấm chủ đề "Chưa có bài" cấp 5 › "Xuất Excel để điền"; điền, "Nhập Excel", bật "Tự tạo bài học", Nhập; xem 3 bài Nháp; thêm hình cho từ chưa có hình (Hình ảnh & âm thanh), xuất bản bài và chủ đề, rồi học thử bằng hồ sơ của con.
+- [ ] Tài khoản `parent` (đăng ký thêm tài khoản thứ hai) gõ `/admin` phải thấy 404.
+
 ## Bước tiếp theo
 
-Hết 8 bước. Còn "Kiểm tra cuối task" (tsc, lint, build; nhập thử một chủ đề cấp 5 từ Excel, xuất bản, học thử bằng hồ sơ của con) và đóng task bằng quy trình finish-task.
+Hoàn thành (còn checklist test thủ công ở trên do bạn tự kiểm).
