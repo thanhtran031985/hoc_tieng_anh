@@ -41,3 +41,9 @@
 - Không có bước "Trùm Khỉ Lém" (chưa có ở GĐ1): bước mới chèn cuối bài, trước trò chơi lật thẻ nếu nó đang kết thúc bài. Không có ô "Mục tiêu bài" (không có cột trong `lessons`); số thứ tự "Bài n" hiện qua vị trí trong chủ đề ở cây lộ trình.
 - Thời lượng tự tính từ thời gian ước mỗi dạng bài (thẻ từ 20 giây, nghe–chọn / chọn từ 25 giây, nối cặp 60 giây, lật thẻ 90 giây; giới hạn 5–30 phút) và lưu vào `lessons.minutes` khi Lưu bài.
 - Xem trước dựng bước bằng `buildPlaySteps` ở client từ danh sách bước chưa lưu, nên cần từ có hình cho các dạng chọn hình; bước không dựng được bị bỏ qua và báo nếu không còn bước nào.
+
+### 03/10/2026 — Thư viện hình và âm thanh: phạm vi và bảo mật
+- Chỉ tải hình lên (PNG, JPEG, WebP, SVG; tối đa 2 MB). Âm thanh: bảng theo dõi từ chưa có tệp; tải tệp âm thanh và "Tạo giọng đọc tự động / hàng loạt" để mờ "Sắp có" (GĐ2) theo task.md. Không có thanh phân trang kiểu số trang của thiết kế mà dùng Trang trước / Trang sau; không hiển thị dung lượng của hình mẫu đi kèm (chỉ hình tải lên có cột `size`).
+- Hình tải lên lưu ở `storage/uploads/<tên>-<8 ký tự băm>.<đuôi>` và `words.image` trỏ tới `/uploads/<tên>`, phục vụ qua route handler cần đăng nhập (hình minh họa từ không phải dữ liệu riêng của học sinh nên mọi tài khoản đăng nhập xem được, bé học qua tài khoản gia đình). Nhận dạng ảnh theo nội dung chứ không tin đuôi hay kiểu báo; SVG có script, sự kiện, foreignObject hoặc tham chiếu ngoài bị từ chối; phản hồi có `Content-Security-Policy: sandbox`.
+- Tải lên đi qua route handler (không phải server action) vì cần tiến độ và vượt giới hạn 1 MB của server action; route tự kiểm quyền bằng `getAdminOrNull()` (trả 403 thay vì chuyển trang).
+- Tên tệp trùng tên từ **chưa có hình** thì tự gắn; từ đã có hình thì không ghi đè (báo dùng "Thay hình"). Không có xóa hình khỏi thư viện (chưa có nhu cầu và tránh làm mất hình đang dùng).

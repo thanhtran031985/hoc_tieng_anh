@@ -9,7 +9,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 2 | Ngân hàng từ vựng (Adult10) | ✅ | |
 | 3 | Ngân hàng câu hỏi (Adult11) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 4 | Soạn bài học (Adult12) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
-| 5 | Thư viện hình và âm thanh (Adult13) | ⬜ | |
+| 5 | Thư viện hình và âm thanh (Adult13) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 6 | Nhập và xuất Excel từ vựng, câu hỏi (Adult14) | ⬜ | |
 | 7 | Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09) | ⬜ | |
 
@@ -46,6 +46,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được (cần đăng nhập): giao diện ba cột, kéo thả bằng chuột, lớp phủ xem trước.
 - Việc bạn cần làm thủ công: Quản trị › Soạn bài học › chọn một bài: thêm từ và câu hỏi, kéo thả bước, bấm Xem trước và bước qua từng bước; thử Xuất bản khi bài dưới 3 bước hoặc chưa có hoạt động. Lưu ý lưu lại một bài cũ sẽ tính lại thời lượng (vd 10 → 9 phút).
 
+### Bước 5 — Thư viện hình và âm thanh (03/10/2026)
+- Đã làm: `/admin/media` (`MediaView`, loading, error) hai tab. Hình ảnh: vùng kéo thả + Chọn tệp (nhiều tệp, thanh tiến độ bằng XMLHttpRequest, báo kết quả từng tệp), tìm theo từ, lọc Tất cả / Đã có hình / Từ chưa có hình, phân trang 24; thẻ từ chưa có hình (viền nét đứt) có "Tải hình cho từ này", thẻ có hình có "Thay hình" và "dùng trong n bài"; hình đã tải lên chưa gắn từ nào hiện ở khu riêng với ô "Gắn cho từ". Âm thanh: bảng từ (tìm, lọc tình trạng / cấp, sắp xếp, phân trang) và khối "Tạo giọng đọc hàng loạt" + nút "Tạo" để mờ "Sắp có". Luật thuần ở `src/lib/rules/admin-media.ts` (nhận dạng ảnh theo nội dung, chặn SVG có mã chạy được, đặt tên tệp, ghép tên tệp với từ); ghi ở `src/server/admin/media.ts`; tải lên qua route handler `POST /admin/media/upload` (kiểm `getAdminOrNull()`: admin + cổng bố mẹ mở, không bị giới hạn 1 MB của server action); hình lưu ở `storage/uploads/` (ngoài `public/`, đã gitignore) và phục vụ qua `GET /uploads/<tên>` (cần đăng nhập, tên tệp chỉ nhận dạng đã chuẩn hóa, có CSP sandbox + nosniff). Gán hình cho từ bằng server action `assignImageAction` (`requireAdmin()` đầu tiên).
+- Kiểm tra: `npm test` 163/163; `npx tsc --noEmit`, `npm run lint`, `npm run build` không lỗi. Chạy trên DB và đĩa thật rồi dọn sạch: tệp chữ đổi đuôi .png, SVG có onload, tệp rỗng, tệp > 2 MB đều bị từ chối; SVG hợp lệ tên "eighteen.svg" tự gắn cho từ "eighteen" chưa có hình; tải lại cùng nội dung không lưu trùng; hình không trùng tên nằm ở "chưa gắn" rồi gắn được; đường dẫn "/uploads/../x.png" và hình không có trong thư viện bị từ chối; đọc lại tệp đã lưu được, tên có "../" bị từ chối. Gõ `/uploads/...` khi chưa đăng nhập → 401; `POST /admin/media/upload` chưa đăng nhập → chuyển về `/login`.
+- Chưa tự kiểm được (cần đăng nhập): giao diện, kéo thả tệp bằng chuột, thanh tiến độ, hiển thị hình tải lên qua `/uploads/` trong trình học của bé.
+- Việc bạn cần làm thủ công: Quản trị › Hình ảnh & âm thanh: kéo vài tệp (một SVG tên trùng từ chưa có hình, một tệp .txt đổi thành .png, một ảnh > 2 MB), lọc "Từ chưa có hình", bấm "Tải hình cho từ này", rồi mở một bài có từ đó ở khu của bé xem hình có hiện.
+
 ## Bước tiếp theo
 
-Bước 5 — Thư viện hình và âm thanh (Adult13)
+Bước 6 — Nhập và xuất Excel từ vựng, câu hỏi (Adult14) — HỎI BẠN TRƯỚC KHI CÀI THƯ VIỆN EXCEL
