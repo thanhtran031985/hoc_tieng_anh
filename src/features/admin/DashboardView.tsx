@@ -78,7 +78,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
           expr="chao"
           action={
             <div className={styles.actions}>
-              <AdultButton label="Nhập từ Excel" icon="upload" disabled title="Sắp có" />
+              <AdultButtonLink label="Nhập từ Excel" icon="upload" href="/admin/excel" />
               <AdultButton label="Thêm từ đầu tiên" icon="plus" variant="secondary" disabled title="Sắp có" />
             </div>
           }
@@ -234,7 +234,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
               },
             ]}
             pageSize={5}
-            toolbarRight={<AdultButton label="Xuất Excel" icon="download" variant="secondary" size="s" disabled title="Sắp có" />}
+            toolbarRight={<AdultButtonLink label="Xuất Excel" icon="download" variant="secondary" size="s" href="/admin/excel?tab=exp" />}
           />
         </div>
       </AdultGrid>

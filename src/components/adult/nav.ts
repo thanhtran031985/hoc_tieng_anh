@@ -20,7 +20,7 @@ export const ADMIN_NAV: readonly AdultNavItem[] = [
   { key: "questions", label: "Ngân hàng câu hỏi", icon: "exam", href: "/admin/questions", ready: true },
   { key: "builder", label: "Soạn bài học", icon: "cards", href: "/admin/builder", ready: true },
   { key: "media", label: "Hình ảnh & âm thanh", icon: "image", href: "/admin/media", ready: true },
-  { key: "excel", label: "Nhập & xuất Excel", icon: "sheet", href: "/admin/excel", ready: false },
+  { key: "excel", label: "Nhập & xuất Excel", icon: "sheet", href: "/admin/excel", ready: true },
   { key: "grammar", label: "Chủ điểm ngữ pháp", icon: "grammar", href: "/admin/grammar", ready: false },
   { key: "matrix", label: "Tạo đề thi", icon: "sliders", href: "/admin/matrix", ready: false },
 ];

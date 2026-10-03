@@ -10,7 +10,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 3 | Ngân hàng câu hỏi (Adult11) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 4 | Soạn bài học (Adult12) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 5 | Thư viện hình và âm thanh (Adult13) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
-| 6 | Nhập và xuất Excel từ vựng, câu hỏi (Adult14) | ⬜ | |
+| 6 | Nhập và xuất Excel từ vựng, câu hỏi (Adult14) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 7 | Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09) | ⬜ | |
 
 ## Nhật ký
@@ -52,6 +52,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được (cần đăng nhập): giao diện, kéo thả tệp bằng chuột, thanh tiến độ, hiển thị hình tải lên qua `/uploads/` trong trình học của bé.
 - Việc bạn cần làm thủ công: Quản trị › Hình ảnh & âm thanh: kéo vài tệp (một SVG tên trùng từ chưa có hình, một tệp .txt đổi thành .png, một ảnh > 2 MB), lọc "Từ chưa có hình", bấm "Tải hình cho từ này", rồi mở một bài có từ đó ở khu của bé xem hình có hiện.
 
+### Bước 6 — Nhập và xuất Excel từ vựng, câu hỏi (03/10/2026)
+- Đã làm: thư viện `exceljs` (đã có sẵn trong package.json từ phiên trước, ghi ở decisions.md). Trang `/admin/excel` (`ExcelView`, loading, error) hai tab. **Nhập từ Excel**: thanh 4 bước; tải tệp mẫu (từ vựng, câu hỏi — trang dữ liệu chỉ có dòng tiêu đề + trang "Hướng dẫn"); chọn hoặc kéo thả tệp .xlsx → `POST /admin/excel/parse` đọc ở server → bảng xem trước (tìm, lọc "Chỉ dòng lỗi / hợp lệ", sắp xếp, phân trang), ô lỗi viền cam và sửa ngay trong ô, trạng thái dòng cập nhật tức thì, xóa dòng, số dòng hợp lệ / lỗi; nút "Lưu n từ / câu hỏi" chỉ bật khi hết lỗi, qua hộp thoại xác nhận. **Xuất ra Excel**: chọn dữ liệu (từ vựng / câu hỏi), cấp, trạng thái (chỉ câu hỏi), định dạng .xlsx hoặc .csv UTF-8, cột (phải chọn ≥ 1 cột). Luật thuần ở `src/lib/rules/admin-excel.ts` (+ test), đọc/ghi tệp ở `src/server/admin/excel.ts`, route handler `/admin/excel/{template,parse,export}` (kiểm `getAdminOrNull()`), server action `excel-actions.ts` (`requireAdmin()` đầu tiên, kiểm lại TẤT CẢ dòng ở server trước khi lưu trong một giao dịch). Mục menu "Nhập & xuất Excel" đã bật; các nút "Nhập / Xuất Excel" ở Bảng điều khiển, Ngân hàng từ vựng, Ngân hàng câu hỏi trỏ tới trang này.
+- Kiểm tra: `npm test` 173/173; `npx tsc --noEmit`, `npm run lint` không lỗi. Chạy trên trình duyệt thật (Edge không đầu, database kiểm tra `hoc_tieng_anh_verify`, 1440×900): tải tệp mẫu từ vựng và câu hỏi (200), loại sai (400); tệp 4 dòng báo đúng thiếu IPA / cấp 11 / câu ví dụ không chứa từ / từ đã có; sửa trong ô thì dòng hết lỗi ngay, xóa dòng cuối thì nút Lưu mở, lưu 3 từ vào đúng cấp rồi dọn; nhập lại cùng tệp thì cả 4 dòng báo "đã có"; tệp không phải .xlsx → thông báo XLS-422; xuất csv đúng cột và tên tệp, không chọn cột → báo; câu hỏi: 4 dòng (dạng "8.3" cũng nhận), 2 lỗi (thiếu từ đúng, cấp 6 thiếu giải thích), sửa rồi lưu 3 câu hỏi đúng dạng, trạng thái, kỹ năng, độ khó.
+- Chưa tự kiểm được: kéo thả tệp bằng chuột thật, tệp .xlsx tạo bằng Excel/Google Sheets (đã thử tệp sinh bằng exceljs), 1366×768.
+- Việc bạn cần làm thủ công: Quản trị › Nhập & xuất Excel: tải tệp mẫu, điền vài từ (cố ý bỏ trống IPA, ghi cấp 11), chọn tệp, sửa lỗi trong ô rồi Lưu; thử tab Xuất ra Excel mở bằng Excel (kiểm chữ có dấu); thử tệp .csv đổi đuôi .xlsx.
+
 ## Bước tiếp theo
 
-Bước 6 — Nhập và xuất Excel từ vựng, câu hỏi (Adult14) — HỎI BẠN TRƯỚC KHI CÀI THƯ VIỆN EXCEL
+Bước 7 — Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09)

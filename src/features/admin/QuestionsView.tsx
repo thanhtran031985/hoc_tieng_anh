@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AdultButton, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSegmented, AdultSelect, AdultTable, AdultTextarea, Status, adultStyles, useToast, type AdultColumn } from "@/components/adult";
+import { AdultButton, AdultButtonLink, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSegmented, AdultSelect, AdultTable, AdultTextarea, Status, adultStyles, useToast, type AdultColumn } from "@/components/adult";
 import { Icon, LevelChip, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
@@ -81,7 +81,7 @@ export function QuestionsView({ data }: { data: QuestionsData }) {
         <p className={cn(styles.sum, adultStyles.body, adultStyles.muted)}>
           {rows.length.toLocaleString("vi-VN")} câu hỏi · {rows.filter((r) => !r.hasExplanation).length.toLocaleString("vi-VN")} chưa có giải thích
         </p>
-        <AdultButton label="Nhập Excel" icon="upload" variant="secondary" disabled title="Sắp có" />
+        <AdultButtonLink label="Nhập Excel" icon="upload" variant="secondary" href="/admin/excel" />
         {addButton}
       </div>
       <AdultTable

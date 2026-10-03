@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AdultButton, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSelect, AdultTable, AdultTextarea, adultStyles, useToast, type AdultColumn } from "@/components/adult";
+import { AdultButton, AdultButtonLink, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSelect, AdultTable, AdultTextarea, adultStyles, useToast, type AdultColumn } from "@/components/adult";
 import { Icon, LevelChip, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { PARTS_OF_SPEECH } from "@/lib/schemas/content";
@@ -92,7 +92,7 @@ export function VocabView({ data }: { data: VocabData }) {
         <p className={cn(styles.sum, adultStyles.body, adultStyles.muted)}>
           {nf(rows.length)} từ · {nf(noImage)} chưa có hình · {nf(noAudio)} chưa có âm thanh
         </p>
-        <AdultButton label="Nhập Excel" icon="upload" variant="secondary" disabled title="Sắp có" />
+        <AdultButtonLink label="Nhập Excel" icon="upload" variant="secondary" href="/admin/excel" />
         {addButton}
       </div>
       <AdultTable
