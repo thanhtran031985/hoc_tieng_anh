@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 |---|---|---|---|
 | 0 | Khung quản trị và Bảng điều khiển (Adult08) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 1 | Cây lộ trình (Adult09) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
-| 2 | Ngân hàng từ vựng (Adult10) | ⬜ | |
+| 2 | Ngân hàng từ vựng (Adult10) | ✅ | |
 | 3 | Ngân hàng câu hỏi (Adult11) | ⬜ | |
 | 4 | Soạn bài học (Adult12) | ⬜ | |
 | 5 | Thư viện hình và âm thanh (Adult13) | ⬜ | |
@@ -28,6 +28,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được (cần đăng nhập, kéo thả thật bằng chuột): giao diện cây ở 1440×900 / 1366×768, kéo thả bằng chuột và ↑/↓ bằng bàn phím, bấm chủ đề khung mở ngăn kéo.
 - Việc bạn cần làm thủ công: vào Quản trị › Cấu trúc lộ trình; kéo thử một bài trong chủ đề và một chủ đề trong cấp rồi tải lại trang xem thứ tự còn giữ; thử xuất bản bài chưa có bước (phải báo lỗi dưới ô Trạng thái); bấm một chủ đề "Chưa có bài" ở Cấp 5.
 
+### Bước 2 — Ngân hàng từ vựng (03/10/2026)
+- Đã làm: `/admin/vocab` (`VocabView`, loading, error): bảng 900 từ có tìm (từ, nghĩa, phiên âm), lọc cấp / chủ đề / thiếu hình–âm thanh, sắp xếp, phân trang; bấm dòng hoặc nút bút mở ngăn kéo sửa; nút "Thêm từ" mở ngăn kéo thêm mới. Luật thuần ở `src/lib/rules/admin-vocab.ts` (dạng từ, IPA trong /…/, trùng từ, câu ví dụ chứa từ — nhận cả dạng chia và bất quy tắc), Zod ở `src/lib/schemas/admin-vocab.ts`, ghi DB ở `src/server/admin/vocab.ts`, server action `vocab-actions.ts` (gọi `requireAdmin()` đầu tiên). Tách `src/server/admin/result.ts` (kết quả chung) dùng cho cả cây lộ trình.
+- Kiểm tra: `npm test` 142/142; `npx tsc --noEmit`, `npm run lint`, `npm run build` không lỗi. Chạy trên DB thật rồi dọn: IPA thiếu dấu / → báo; câu ví dụ không chứa từ → báo; từ có dấu → báo; thiếu nghĩa → báo; trùng từ (không phân biệt hoa thường) → báo; thêm mới gắn đúng chủ đề; sửa không đụng tới chủ đề nếu không đổi; chủ đề lạ → báo; bỏ chủ đề; sửa lại một từ có sẵn thành công. Cả 900 từ hiện có đều qua luật dạng từ, IPA và câu ví dụ (không từ nào bị báo sai).
+- Chưa tự kiểm được (cần đăng nhập): giao diện bảng và ngăn kéo.
+- Việc bạn cần làm thủ công: mở Quản trị › Ngân hàng từ vựng, tìm/lọc/sắp xếp thử, sửa một từ rồi xóa phiên âm / đổi câu ví dụ để thấy lỗi dưới ô, thêm một từ trùng.
+
 ## Bước tiếp theo
 
-Bước 2 — Ngân hàng từ vựng (Adult10)
+Bước 3 — Ngân hàng câu hỏi (Adult11)

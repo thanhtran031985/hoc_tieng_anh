@@ -20,3 +20,10 @@
 - Luật xuất bản ở bước này: chủ đề cần ≥ 1 bài; bài cần ≥ 1 bước. Luật đầy đủ (≥ 3 bước và ≥ 1 câu hỏi) thêm ở Bước 4 vì 154 bài đã xuất bản hiện chưa có câu hỏi nào.
 - Thêm bài học vào chủ đề khung "Chưa có bài" thì chủ đề đó thành Nháp. Chuyển chủ đề sang cấp khác thì khóa (slug) đổi nếu trùng trong cấp mới, đứng cuối danh sách.
 - Nút "Xuất Excel để điền" / "Nhập Excel" ở khung chủ đề khung để mờ "Sắp có" tới Bước 7. Từ mục tiêu trong DB chỉ là danh sách chữ (không có nghĩa gợi ý) nên bảng chỉ có cột #, từ, trạng thái trong ngân hàng.
+
+### 03/10/2026 — Ngân hàng từ vựng: khác thiết kế vì schema và phạm vi
+- Bảng `words` không có cột trạng thái (Nháp / Đã xuất bản), lớp SGK, Unit SGK nên bảng và biểu mẫu bỏ các cột/bộ lọc đó, và luật "không xuất bản khi chưa có âm thanh" không áp dụng. Từ luôn dùng được ngay khi lưu.
+- Chủ đề của từ là bảng `topics` (trùng tên chủ đề trong cây lộ trình). Ô Chủ đề liệt kê chủ đề của cấp đã chọn theo cây lộ trình, tạo bản ghi `topics` khi cần; chỉ ghi lại chủ đề khi người dùng đổi ô này hoặc đổi cấp, nên sửa từ có nhiều chủ đề không làm mất chủ đề.
+- Hình và âm thanh chỉ xem trong ngăn kéo; tải hình, gán hình ở Bước 5. "Tạo giọng đọc tự động" để mờ "Sắp có" (GĐ2). Không có chọn hàng nhiều dòng (không có thao tác hàng loạt ở GĐ1).
+- Luật "câu ví dụ chứa từ" khớp theo phần gốc (get → gets, play → playing) và có bảng dạng bất quy tắc (teach → taught, foot → feet) vì 30 câu ví dụ trong seed dùng quá khứ bất quy tắc; từ hoặc câu trống thì chưa kiểm.
+- Trùng từ tính trên toàn ngân hàng, không phân biệt hoa thường (hiện không có từ trùng nào trong 900 từ).

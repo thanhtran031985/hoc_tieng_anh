@@ -1,6 +1,7 @@
 import { addLessonSchema, addUnitSchema, deleteNodeSchema, reorderSchema, targetWordsSchema, updateLessonSchema, updateLevelSchema, updateStageSchema, updateUnitSchema } from "@/lib/schemas/admin-tree";
 import { lessonPublishBlock, sameIdSet, slugify, uniqueSlug, unitPublishBlock } from "@/lib/rules/admin-tree";
 import { db } from "../db";
+import { fail, firstIssue, type AdminResult } from "./result";
 
 // Cây lộ trình quản trị (Adult09): đọc cả cây Chặng → Cấp → Chủ đề → Bài học và các thao tác sửa, thêm, xóa, sắp xếp.
 // Mọi hàm ghi kiểm Zod ở đây; server action (`features/admin/tree-actions.ts`) gọi `requireAdmin()` trước khi vào.
@@ -20,14 +21,7 @@ export type TreeLevel = { id: number; number: number; name: string; units: TreeU
 export type TreeStage = { id: number; name: string; levels: TreeLevel[] };
 export type TreeData = { stages: TreeStage[] };
 
-export type TreeResult = { ok: true; id?: number } | { ok: false; field?: string; message: string };
-
-const fail = (message: string, field?: string): TreeResult => ({ ok: false, message, field });
-
-function firstIssue(error: { issues: readonly { path: readonly PropertyKey[]; message: string }[] }): TreeResult {
-  const issue = error.issues[0];
-  return fail(issue?.message ?? "Dữ liệu chưa hợp lệ.", typeof issue?.path[0] === "string" ? issue.path[0] : undefined);
-}
+export type TreeResult = AdminResult;
 
 export async function getTree(): Promise<TreeData> {
   const stages = await db.stage.findMany({
