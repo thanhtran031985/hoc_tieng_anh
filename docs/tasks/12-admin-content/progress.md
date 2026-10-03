@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 0 | Khung quản trị và Bảng điều khiển (Adult08) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 1 | Cây lộ trình (Adult09) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 2 | Ngân hàng từ vựng (Adult10) | ✅ | |
-| 3 | Ngân hàng câu hỏi (Adult11) | ⬜ | |
+| 3 | Ngân hàng câu hỏi (Adult11) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 4 | Soạn bài học (Adult12) | ⬜ | |
 | 5 | Thư viện hình và âm thanh (Adult13) | ⬜ | |
 | 6 | Nhập và xuất Excel từ vựng, câu hỏi (Adult14) | ⬜ | |
@@ -34,6 +34,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được (cần đăng nhập): giao diện bảng và ngăn kéo.
 - Việc bạn cần làm thủ công: mở Quản trị › Ngân hàng từ vựng, tìm/lọc/sắp xếp thử, sửa một từ rồi xóa phiên âm / đổi câu ví dụ để thấy lỗi dưới ô, thêm một từ trùng.
 
+### Bước 3 — Ngân hàng câu hỏi (03/10/2026)
+- Đã làm: `/admin/questions` (`QuestionsView`, loading, error): bảng có tìm, lọc theo dạng / cấp / kỹ năng / độ khó / giải thích / trạng thái, sắp xếp, phân trang; ngăn kéo rộng thêm và sửa 3 dạng câu hỏi của trình học: 8.2 Nghe và chọn hình, 8.3 Nối từ với hình, 8.4 Chọn từ đúng cho hình (chọn từ trong ngân hàng từ vựng qua ô gợi ý, đánh dấu đáp án đúng, xem hình ngay); giải thích bắt buộc từ cấp 6; "Xem như học sinh" mở lớp phủ toàn màn hình dùng chính `LessonFrame` + `StepView` của task 07 (giao diện Tiểu học cho cấp 1–5, THCS cho cấp 6–10; làm xong một lượt thì bắt đầu lại, không lưu). Luật thuần ở `src/lib/rules/admin-questions.ts` (dựng/đọc `prompt`, `options`, `answer`, bước xem trước), Zod ở `src/lib/schemas/admin-questions.ts`, ghi DB ở `src/server/admin/questions.ts` (kiểm lại bằng `questionDataSchemas` có sẵn), server action `question-actions.ts` (gọi `requireAdmin()` đầu tiên).
+- Kiểm tra: `npm test` 151/151; `npx tsc --noEmit`, `npm run lint`, `npm run build` không lỗi. Chạy trên DB thật rồi dọn (bảng `questions` về lại 0 dòng như trước): tạo 8.2, 8.3, 8.4; sửa; từ chưa có hình → báo; cấp 8 thiếu giải thích → báo; id không tồn tại → báo.
+- Chưa tự kiểm được (cần đăng nhập): giao diện bảng, ngăn kéo, và lớp phủ "Xem như học sinh" (nhất là ở màn nhỏ 1366×768).
+- Việc bạn cần làm thủ công: Quản trị › Ngân hàng câu hỏi › Thêm câu hỏi: tạo mỗi dạng một câu, bấm "Xem như học sinh" và chọn thử đáp án đúng/sai; thử cấp 6+ không giải thích.
+
 ## Bước tiếp theo
 
-Bước 3 — Ngân hàng câu hỏi (Adult11)
+Bước 4 — Soạn bài học (Adult12)

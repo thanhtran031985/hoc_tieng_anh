@@ -27,3 +27,10 @@
 - Hình và âm thanh chỉ xem trong ngăn kéo; tải hình, gán hình ở Bước 5. "Tạo giọng đọc tự động" để mờ "Sắp có" (GĐ2). Không có chọn hàng nhiều dòng (không có thao tác hàng loạt ở GĐ1).
 - Luật "câu ví dụ chứa từ" khớp theo phần gốc (get → gets, play → playing) và có bảng dạng bất quy tắc (teach → taught, foot → feet) vì 30 câu ví dụ trong seed dùng quá khứ bất quy tắc; từ hoặc câu trống thì chưa kiểm.
 - Trùng từ tính trên toàn ngân hàng, không phân biệt hoa thường (hiện không có từ trùng nào trong 900 từ).
+
+### 03/10/2026 — Ngân hàng câu hỏi: dạng 8.1–8.4 và khác thiết kế
+- "4 dạng 8.1–8.4" của task.md gồm 8.1 Thẻ từ và 3 dạng câu hỏi 8.2–8.4. Thẻ từ không phải câu hỏi (là bước gắn với một từ, không có hàng trong bảng `questions`) nên ngân hàng câu hỏi tạo/sửa 3 dạng 8.2 (`listen_choose_picture`), 8.3 (`match_pairs`), 8.4 (`choose_word_for_picture`) — đúng bộ `QUESTION_TYPES` mà trình học của task 07 chơi được; thẻ từ thêm ở Bước 4 (Soạn bài học). Thiết kế Adult11 vẽ A/B/C/D và Điền chỗ trống (8.13, 8.10 — GĐ2–3) nên không làm.
+- Câu hỏi dựng từ các từ trong ngân hàng từ vựng (nhập chữ, có gợi ý): 8.2 cần mọi lựa chọn có hình; 8.4 cần từ đúng có hình; 8.3 cần các từ có hình và khác nhau. Server tra từ, dựng JSON và kiểm lại bằng Zod có sẵn.
+- Không có cột Chủ điểm ngữ pháp, Unit SGK (GĐ3 / chưa có trong schema). Bỏ chọn nhiều hàng. Độ khó lưu ở `questions.difficulty` (1–5), kỹ năng ở `questions.skill`.
+- Trình học hiện dựng bước từ từ vựng của bước (`buildPlaySteps`) và chưa đọc bảng `questions`; câu hỏi ở đây dùng để soạn bài ở Bước 4 và chuẩn bị cho giai đoạn sau. "Xem như học sinh" dựng bước đúng kiểu mà `StepView` nhận.
+- Giải thích tối đa 300 ký tự; bắt buộc với cấp ≥ 6 (kiểm cả client và server).

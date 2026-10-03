@@ -1,4 +1,5 @@
 export * from "./admin-tree";
+export * from "./admin-questions";
 export * from "./admin-vocab";
 export * from "./answer-log";
 export * from "./auth";
