@@ -466,7 +466,7 @@ function EditorPanel({ found, levels, onDeleted }: { found: Found; levels: TreeL
               <span>
                 {found.node.steps} bước · {found.node.words} từ · {found.node.questions} câu hỏi
               </span>
-              {builderHref && <AdultButtonLink href={builderHref} label="Mở trong Soạn bài học →" variant="ghost" size="s" />}
+              {builderHref && <AdultButtonLink href={`${builderHref}/${found.node.id}`} label="Mở trong Soạn bài học →" variant="ghost" size="s" />}
             </div>
           </>
         )}

@@ -23,9 +23,11 @@ describe("slugify và uniqueSlug", () => {
 });
 
 describe("điều kiện xuất bản", () => {
-  it("bài 0 bước và chủ đề trống bị chặn", () => {
-    assert.ok(lessonPublishBlock(0));
-    assert.equal(lessonPublishBlock(1), null);
+  it("bài thiếu bước, thiếu câu hỏi và chủ đề trống bị chặn", () => {
+    assert.ok(lessonPublishBlock(0, 0));
+    assert.ok(lessonPublishBlock(2, 1));
+    assert.match(lessonPublishBlock(5, 0) ?? "", /câu hỏi hoặc trò chơi/);
+    assert.equal(lessonPublishBlock(3, 1), null);
     assert.ok(unitPublishBlock(0));
     assert.equal(unitPublishBlock(2), null);
   });

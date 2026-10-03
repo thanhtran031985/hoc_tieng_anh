@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 | 1 | Cây lộ trình (Adult09) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 2 | Ngân hàng từ vựng (Adult10) | ✅ | |
 | 3 | Ngân hàng câu hỏi (Adult11) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
-| 4 | Soạn bài học (Adult12) | ⬜ | |
+| 4 | Soạn bài học (Adult12) | ✅ | Chờ bạn xem thủ công trên trình duyệt |
 | 5 | Thư viện hình và âm thanh (Adult13) | ⬜ | |
 | 6 | Nhập và xuất Excel từ vựng, câu hỏi (Adult14) | ⬜ | |
 | 7 | Nhập chủ đề mới và xuất từ mục tiêu (Adult14, Adult09) | ⬜ | |
@@ -40,6 +40,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 03/10/2026
 - Chưa tự kiểm được (cần đăng nhập): giao diện bảng, ngăn kéo, và lớp phủ "Xem như học sinh" (nhất là ở màn nhỏ 1366×768).
 - Việc bạn cần làm thủ công: Quản trị › Ngân hàng câu hỏi › Thêm câu hỏi: tạo mỗi dạng một câu, bấm "Xem như học sinh" và chọn thử đáp án đúng/sai; thử cấp 6+ không giải thích.
 
+### Bước 4 — Soạn bài học (03/10/2026)
+- Đã làm: `/admin/builder` (danh sách 122 bài để chọn: tìm, lọc cấp / trạng thái) và `/admin/builder/[lessonId]` (`BuilderView`) ba cột: gợi ý từ và câu hỏi theo chủ đề (đổi chủ đề của cấp, thêm thẻ từ / bước nghe–chọn hình / chọn từ cho hình, thêm câu hỏi từ ngân hàng, thêm nối cặp / lật thẻ); các bước kéo thả hoặc ↑/↓ (`AdultSortable` dùng lại từ Bước 1), bỏ bước; thời lượng, số từ mới, số hoạt động tự tính; thông tin bài (tên, Nháp / Xuất bản); Lưu bài; Xem trước chạy từng bước bằng chính `LessonFrame` + `StepView` của trình học (có "Bước trước / Bước sau"). Luật thuần ở `src/lib/rules/admin-builder.ts`; luật xuất bản đầy đủ `lessonPublishBlock` (≥ 3 bước và ≥ 1 câu hỏi hoặc trò chơi) ở `admin-tree.ts`, dùng cả ở cây lộ trình; Zod ở `src/lib/schemas/admin-builder.ts`; ghi DB ở `src/server/admin/builder.ts` (bước đã lưu giữ nguyên id, bước bỏ thì xóa, bước mới thì tạo, trong một giao dịch); server action `builder-actions.ts` (gọi `requireAdmin()` đầu tiên). Nút "Mở trong Soạn bài học →" ở cây lộ trình đã trỏ tới bài.
+- Kiểm tra: `npm test` 154/154; `npx tsc --noEmit`, `npm run lint`, `npm run build` không lỗi. Chạy trên DB thật rồi dọn: lưu lại một bài đã xuất bản nguyên trạng (id 22 bước giữ nguyên, vẫn xuất bản được); bài mới: 0 bước, 2 bước, 3 bước toàn thẻ từ đều bị chặn xuất bản với lời báo đúng; bước thiếu từ, từ không tồn tại, tên trống, bước của bài khác đều bị từ chối; 4 bước hợp lệ xuất bản được, thời lượng tự tính; đổi thứ tự + bỏ bước lưu đúng.
+- Chưa tự kiểm được (cần đăng nhập): giao diện ba cột, kéo thả bằng chuột, lớp phủ xem trước.
+- Việc bạn cần làm thủ công: Quản trị › Soạn bài học › chọn một bài: thêm từ và câu hỏi, kéo thả bước, bấm Xem trước và bước qua từng bước; thử Xuất bản khi bài dưới 3 bước hoặc chưa có hoạt động. Lưu ý lưu lại một bài cũ sẽ tính lại thời lượng (vd 10 → 9 phút).
+
 ## Bước tiếp theo
 
-Bước 4 — Soạn bài học (Adult12)
+Bước 5 — Thư viện hình và âm thanh (Adult13)

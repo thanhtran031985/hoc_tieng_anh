@@ -156,10 +156,10 @@ export async function updateLesson(input: unknown): Promise<TreeResult> {
   const parsed = updateLessonSchema.safeParse(input);
   if (!parsed.success) return firstIssue(parsed.error);
   const { id, ...data } = parsed.data;
-  const lesson = await db.lesson.findUnique({ where: { id }, select: { id: true, _count: { select: { steps: true } } } });
+  const lesson = await db.lesson.findUnique({ where: { id }, select: { id: true, steps: { select: { activityType: true } } } });
   if (!lesson) return fail("Không tìm thấy bài học này nữa.");
   if (data.status === "published") {
-    const block = lessonPublishBlock(lesson._count.steps);
+    const block = lessonPublishBlock(lesson.steps.length, lesson.steps.filter((s) => s.activityType !== "word_card").length);
     if (block) return fail(block, "status");
   }
   await db.lesson.update({ where: { id }, data });

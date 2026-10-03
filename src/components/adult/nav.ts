@@ -18,7 +18,7 @@ export const ADMIN_NAV: readonly AdultNavItem[] = [
   { key: "tree", label: "Cấu trúc lộ trình", icon: "tree", href: "/admin/tree", ready: true },
   { key: "vocab", label: "Ngân hàng từ vựng", icon: "notebook", href: "/admin/vocab", ready: true },
   { key: "questions", label: "Ngân hàng câu hỏi", icon: "exam", href: "/admin/questions", ready: true },
-  { key: "builder", label: "Soạn bài học", icon: "cards", href: "/admin/builder", ready: false },
+  { key: "builder", label: "Soạn bài học", icon: "cards", href: "/admin/builder", ready: true },
   { key: "media", label: "Hình ảnh & âm thanh", icon: "image", href: "/admin/media", ready: false },
   { key: "excel", label: "Nhập & xuất Excel", icon: "sheet", href: "/admin/excel", ready: false },
   { key: "grammar", label: "Chủ điểm ngữ pháp", icon: "grammar", href: "/admin/grammar", ready: false },

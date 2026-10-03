@@ -34,3 +34,10 @@
 - Không có cột Chủ điểm ngữ pháp, Unit SGK (GĐ3 / chưa có trong schema). Bỏ chọn nhiều hàng. Độ khó lưu ở `questions.difficulty` (1–5), kỹ năng ở `questions.skill`.
 - Trình học hiện dựng bước từ từ vựng của bước (`buildPlaySteps`) và chưa đọc bảng `questions`; câu hỏi ở đây dùng để soạn bài ở Bước 4 và chuẩn bị cho giai đoạn sau. "Xem như học sinh" dựng bước đúng kiểu mà `StepView` nhận.
 - Giải thích tối đa 300 ký tự; bắt buộc với cấp ≥ 6 (kiểm cả client và server).
+
+### 03/10/2026 — Soạn bài học: bước theo từ, "câu hỏi" là bước không phải thẻ từ
+- Trình học dựng bước từ từ vựng (`buildPlaySteps`) và chưa đọc bảng `questions`, nên mỗi bước lưu `activityType` + `wordId` (+ `questionId` khi thêm từ ngân hàng câu hỏi). "Thêm từ" tạo thẻ từ (`word_card`) như thiết kế "Giới thiệu từ"; mỗi từ có thêm hai nút thêm bước nghe–chọn hình và chọn từ cho hình (từ cần có hình). Thêm nối cặp / lật thẻ ở đầu danh sách bước (thay "Thêm bước trống" — dạng bài không từ).
+- Luật xuất bản: ≥ 3 bước và ≥ 1 "câu hỏi hoặc trò chơi" = bước không phải thẻ từ (nghe–chọn hình, chọn từ, nối cặp, lật thẻ). Không đếm theo `questionId` vì 154 bài seed chưa có bài nào gắn câu hỏi. Luật này kiểm cả ở màn soạn lẫn khi đổi trạng thái ở cây lộ trình.
+- Không có bước "Trùm Khỉ Lém" (chưa có ở GĐ1): bước mới chèn cuối bài, trước trò chơi lật thẻ nếu nó đang kết thúc bài. Không có ô "Mục tiêu bài" (không có cột trong `lessons`); số thứ tự "Bài n" hiện qua vị trí trong chủ đề ở cây lộ trình.
+- Thời lượng tự tính từ thời gian ước mỗi dạng bài (thẻ từ 20 giây, nghe–chọn / chọn từ 25 giây, nối cặp 60 giây, lật thẻ 90 giây; giới hạn 5–30 phút) và lưu vào `lessons.minutes` khi Lưu bài.
+- Xem trước dựng bước bằng `buildPlaySteps` ở client từ danh sách bước chưa lưu, nên cần từ có hình cho các dạng chọn hình; bước không dựng được bị bỏ qua và báo nếu không còn bước nào.

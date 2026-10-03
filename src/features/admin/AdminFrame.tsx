@@ -16,7 +16,7 @@ export function AdminFrame({ user, onLock, logout, children }: Props) {
   const pathname = usePathname();
   const current = ADMIN_NAV.find((item) => item.href !== "/admin" && (pathname === item.href || pathname.startsWith(`${item.href}/`))) ?? ADMIN_NAV[0];
   return (
-    <AdultShell area="admin" active={current.key} title={current.key === "dash" ? "Bảng điều khiển nội dung" : current.label} crumb="Quản trị nội dung" user={user} onLock={onLock} logout={logout}>
+    <AdultShell area="admin" active={current.key} title={current.key === "dash" ? "Bảng điều khiển nội dung" : current.key === "builder" ? "Soạn bài học" : current.label} crumb="Quản trị nội dung" user={user} onLock={onLock} logout={logout}>
       {children}
     </AdultShell>
   );

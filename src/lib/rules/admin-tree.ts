@@ -30,9 +30,18 @@ export function uniqueSlug(base: string, taken: ReadonlySet<string>): string {
   }
 }
 
-/** Bài chưa có bước nào thì chưa xuất bản được. (Luật đầy đủ ≥ 3 bước và ≥ 1 câu hỏi thêm ở bước Soạn bài học.) */
-export function lessonPublishBlock(stepCount: number): string | null {
-  return stepCount > 0 ? null : "Bài chưa có bước nào nên chưa xuất bản được. Mở Soạn bài học để thêm bước.";
+/** Số bước tối thiểu của một bài đã xuất bản. */
+export const MIN_LESSON_STEPS = 3;
+
+/**
+ * Bài cần ≥ 3 bước và ≥ 1 câu hỏi hoặc trò chơi (bước không phải thẻ từ) mới xuất bản được; trả thông báo lỗi hoặc null.
+ * `activityCount`: số bước không phải thẻ từ.
+ */
+export function lessonPublishBlock(stepCount: number, activityCount: number): string | null {
+  if (stepCount === 0) return "Bài chưa có bước nào nên chưa xuất bản được. Mở Soạn bài học để thêm bước.";
+  if (stepCount < MIN_LESSON_STEPS) return `Bài cần ít nhất ${MIN_LESSON_STEPS} bước để xuất bản. Mở Soạn bài học để thêm bước.`;
+  if (activityCount < 1) return "Bài cần ít nhất 1 câu hỏi hoặc trò chơi để xuất bản. Mở Soạn bài học để thêm.";
+  return null;
 }
 
 /** Chủ đề trống thì chưa xuất bản được. */
