@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Task 12: chủ đề mới đi từ tệp Excel vào database thế nào",
+    "locale": "vi",
+    "quality_profile": "showcase",
+    "output": "docs/so-do/12-admin-content/dataflow-nhap-chu-de-excel.html",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "19da596766a7d60fa1ea85de2ccbc8c26a701c53"
+    },
+    "viewBox": [
+      880,
+      520
+    ]
+  },
+  "stages": [
+    {
+      "label": "Tệp Excel"
+    },
+    {
+      "label": "Đọc và xem trước"
+    },
+    {
+      "label": "Lưu (một giao dịch)"
+    },
+    {
+      "label": "Kết quả (Nháp)"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "xlsx",
+      "type": "external",
+      "label": "Tệp .xlsx",
+      "sublabel": "2 trang",
+      "stage": 0,
+      "row": 1,
+      "tag": "bố mẹ điền",
+      "width": 110
+    },
+    {
+      "id": "tpl",
+      "type": "backend",
+      "label": "Tệp mẫu",
+      "sublabel": "từ mục tiêu",
+      "stage": 0,
+      "row": 0,
+      "tag": "điền sẵn",
+      "sources": [
+        {
+          "path": "src/app/(admin)/admin/excel/template/route.ts",
+          "line": 10,
+          "end_line": 30,
+          "label": "kind=topic&unitId"
+        },
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 75,
+          "end_line": 118,
+          "label": "điền sẵn từ mục tiêu và từ đã có"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "preview",
+      "type": "frontend",
+      "label": "Đọc, xem trước",
+      "sublabel": "parse + sửa ô",
+      "stage": 1,
+      "row": 1,
+      "tag": "lỗi từng dòng",
+      "sources": [
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 121,
+          "end_line": 151,
+          "label": "parseTopicImport: thiếu trang thì báo lỗi"
+        },
+        {
+          "path": "src/features/admin/ExcelTopic.tsx",
+          "line": 116,
+          "end_line": 134,
+          "label": "kiểm từng dòng trong trình duyệt"
+        },
+        {
+          "path": "src/lib/rules/admin-excel-topic.ts",
+          "line": 35,
+          "end_line": 75,
+          "label": "validateTopic, validateTopicWordRow, cảnh báo"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "save",
+      "type": "security",
+      "label": "importTopic",
+      "sublabel": "kiểm lại hết",
+      "stage": 2,
+      "row": 1,
+      "tag": "requireAdmin",
+      "sources": [
+        {
+          "path": "src/features/admin/excel-actions.ts",
+          "line": 43,
+          "end_line": 52,
+          "label": "importTopicAction: requireAdmin đầu tiên"
+        },
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 176,
+          "end_line": 196,
+          "label": "Zod + validateTopic + dòng lỗi thì không lưu gì"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "build",
+      "type": "backend",
+      "label": "Dựng bài",
+      "sublabel": "buildLessons",
+      "stage": 2,
+      "row": 2,
+      "tag": "5–8 từ/bài",
+      "sources": [
+        {
+          "path": "src/lib/rules/admin-excel-topic.ts",
+          "line": 79,
+          "end_line": 89,
+          "label": "planLessonSizes"
+        },
+        {
+          "path": "src/lib/rules/lesson-builder.ts",
+          "line": 82,
+          "end_line": 83,
+          "label": "lessonSizes theo số từ đã chọn"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "unit",
+      "type": "database",
+      "label": "units",
+      "sublabel": "gắn khung / mới",
+      "stage": 2,
+      "row": 0,
+      "tag": "Nháp",
+      "sources": [
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 198,
+          "end_line": 218,
+          "label": "chủ đề khung → Nháp; chủ đề mới ở cuối cấp"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "words",
+      "type": "database",
+      "label": "words",
+      "sublabel": "+ word_topic",
+      "stage": 3,
+      "row": 1,
+      "tag": "không trùng",
+      "sources": [
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 219,
+          "end_line": 249,
+          "label": "từ đã có dùng lại, từ mới lấy hình có sẵn"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "lessons",
+      "type": "database",
+      "label": "lessons",
+      "sublabel": "+ lesson_steps",
+      "stage": 3,
+      "row": 2,
+      "tag": "Nháp",
+      "sources": [
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 251,
+          "end_line": 280,
+          "label": "tạo bài status draft, estimateMinutes"
+        }
+      ],
+      "width": 110
+    }
+  ],
+  "flows": [
+    {
+      "id": "f-tpl-xlsx",
+      "from": "tpl",
+      "to": "xlsx",
+      "label": "điền",
+      "variant": "dashed",
+      "route": "straight",
+      "labelAt": [
+        100,
+        214
+      ]
+    },
+    {
+      "id": "f-xlsx-preview",
+      "from": "xlsx",
+      "to": "preview",
+      "label": "tải lên",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "f-preview-save",
+      "from": "preview",
+      "to": "save",
+      "label": "Nhập",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "f-save-words",
+      "from": "save",
+      "to": "words",
+      "label": "từ",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "f-save-build",
+      "from": "save",
+      "to": "build",
+      "label": "từ",
+      "route": "straight",
+      "labelAt": [
+        530,
+        328
+      ]
+    },
+    {
+      "id": "f-build-lessons",
+      "from": "build",
+      "to": "lessons",
+      "label": "bài",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "f-save-unit",
+      "from": "save",
+      "to": "unit",
+      "label": "chủ đề",
+      "route": "straight",
+      "labelAt": [
+        530,
+        214
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Đường chính (đã làm)",
+      "items": [
+        "Tệp đọc ở server, xem trước báo lỗi từng dòng và sửa trong ô; nút Nhập chỉ bật khi hết lỗi",
+        "Khi Nhập, server kiểm lại tất cả dòng; còn một dòng lỗi thì không lưu gì (một giao dịch)"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Cảnh báo không chặn, quy tắc ghép",
+      "items": [
+        "Từ đã có dùng lại (không tạo trùng); Chưa có hình chỉ là cảnh báo",
+        "Tên chủ đề trùng chủ đề khung thì gắn vào khung; trùng chủ đề đã có bài thì báo lỗi"
+      ]
+    }
+  ]
+}

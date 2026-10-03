@@ -2,14 +2,14 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Kiến trúc hệ thống đã có trong code (sau task 11)",
+    "title": "Kiến trúc hệ thống đã có trong code (sau task 12)",
     "locale": "vi",
     "quality_profile": "showcase",
     "output": "docs/so-do/tong-quan/architecture-he-thong.html",
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "2f50a51426fa6e696530f94e99a3bb01e81c02db"
+      "revision": "19da596766a7d60fa1ea85de2ccbc8c26a701c53"
     }
   },
   "components": [
@@ -127,7 +127,7 @@
       "id": "adult",
       "type": "frontend",
       "label": "Màn bố mẹ, quản trị",
-      "sublabel": "/parent đã làm · /admin chờ",
+      "sublabel": "/parent · /admin (7 màn)",
       "pos": [
         700,
         300
@@ -149,9 +149,10 @@
           "label": "cổng PIN"
         },
         {
-          "path": "src/app/(admin)/admin/page.tsx",
-          "line": 10,
-          "label": "requireRole admin"
+          "path": "src/app/(admin)/layout.tsx",
+          "line": 11,
+          "end_line": 21,
+          "label": "khung quản trị, requireAdmin"
         }
       ]
     },
@@ -159,7 +160,7 @@
       "id": "uploads",
       "type": "database",
       "label": "Kho tệp tải lên",
-      "sublabel": "chưa làm · task 12",
+      "sublabel": "storage/uploads (ngoài public/)",
       "pos": [
         940,
         300
@@ -170,9 +171,15 @@
       ],
       "sources": [
         {
-          "path": "docs/PRD.md",
-          "line": 496,
-          "label": "PRD H1: lưu ngoài public/"
+          "path": "src/server/admin/media.ts",
+          "line": 12,
+          "label": "UPLOAD_DIR"
+        },
+        {
+          "path": "src/app/uploads/[name]/route.ts",
+          "line": 1,
+          "end_line": 12,
+          "label": "phục vụ hình, cần đăng nhập"
         }
       ]
     },
@@ -412,6 +419,39 @@
           "label": "npx prisma db seed"
         }
       ]
+    },
+    {
+      "id": "cms",
+      "type": "backend",
+      "label": "Server action quản trị",
+      "sublabel": "requireAdmin · cây, từ, bài, Excel",
+      "pos": [
+        700,
+        430
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/features/admin/tree-actions.ts",
+          "line": 12,
+          "end_line": 15,
+          "label": "requireAdmin đầu mỗi action"
+        },
+        {
+          "path": "src/server/admin/excel-topic.ts",
+          "line": 176,
+          "label": "importTopic (giao dịch)"
+        },
+        {
+          "path": "src/app/(admin)/admin/media/upload/route.ts",
+          "line": 8,
+          "end_line": 23,
+          "label": "tải hình lên"
+        }
+      ]
     }
   ],
   "boundaries": [
@@ -429,7 +469,8 @@
         "schemas",
         "modules",
         "rules",
-        "prisma"
+        "prisma",
+        "cms"
       ]
     },
     {
@@ -547,11 +588,36 @@
       "to": "mysql"
     },
     {
-      "id": "c-adult-uploads",
+      "id": "c-adult-cms",
       "from": "adult",
+      "to": "cms",
+      "label": "form, tải tệp",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c-cms-guards",
+      "from": "cms",
+      "to": "guards",
+      "label": "requireAdmin",
+      "variant": "security"
+    },
+    {
+      "id": "c-cms-rules",
+      "from": "cms",
+      "to": "rules",
+      "label": "luật xuất bản"
+    },
+    {
+      "id": "c-cms-uploads",
+      "from": "cms",
       "to": "uploads",
-      "label": "chưa có",
-      "variant": "dashed"
+      "label": "ghi hình"
+    },
+    {
+      "id": "c-cms-prisma",
+      "from": "cms",
+      "to": "prisma",
+      "label": "ghi nội dung"
     }
   ],
   "cards": [
@@ -560,7 +626,7 @@
       "title": "Quyền truy cập",
       "items": [
         "Mọi hàm đọc dữ liệu bé đi qua requireLearner(userId)",
-        "Hồ sơ lạ hoặc của tài khoản khác: về /profiles"
+        "Quản trị: requireAdmin ở layout, server action và route handler (role admin + cổng bố mẹ mở)"
       ]
     },
     {
@@ -568,7 +634,7 @@
       "title": "Chưa có trong code",
       "items": [
         "Bộ sưu tập, khung giờ học (GĐ2 trở đi)",
-        "Kho tệp tải lên và quản trị nội dung (task 12)"
+        "Chủ điểm ngữ pháp, tạo đề thi, giọng đọc mp3 (GĐ2–3)"
       ]
     }
   ]

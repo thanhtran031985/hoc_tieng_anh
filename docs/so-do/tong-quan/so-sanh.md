@@ -1,12 +1,12 @@
-# So sánh code với PRD và task.md — tổng quan (sau task 11)
+# So sánh code với PRD và task.md — tổng quan (sau task 12)
 
-Cập nhật: 03/10/2026 · Bản chốt code: `2f50a51` · Phạm vi: các task 01–11 (đã ✅). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
+Cập nhật: 03/10/2026 · Bản chốt code: `19da596` · Phạm vi: các task 01–12 (đã ✅; phần test thủ công của task 12 chờ bạn). Nguồn sự thật là code; PRD (Phần A–F) và `task.md` chỉ để đối chiếu.
 
 Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý chính của PRD; **nhỏ** = lệch nhẹ, hoặc đã nằm trong kế hoạch của task sau.
 
 | # | Mức | Điểm khác | Code (file:dòng) | PRD / task.md |
 |---|---|---|---|---|
-| 1 | **quan trọng** | Trang `/admin` chỉ cần role `admin`, **không cần mở cổng bố mẹ**. Tài khoản đăng ký đầu tiên tự thành `admin`, nên tài khoản gia đình thường là admin: máy đang đăng nhập thì bé gõ `/admin` là vào được, không cần PIN. Hiện trang chỉ là giữ chỗ nên chưa lộ dữ liệu, nhưng task 12 phải chặn trước khi có nội dung (bạn đã quyết định làm ở task 12; việc cần làm ghi ở `docs/tasks/12-admin-content/decisions.md`). | `src/app/(admin)/admin/page.tsx:11`, `src/server/session.ts:31-35`, `src/server/users.ts:8-10` | PRD dòng 126: Cổng bố mẹ → Khu vực bố mẹ → Quản trị nội dung |
+| 1 | ~~quan trọng~~ **đã sửa ở task 12** | Trang `/admin` từng chỉ cần role `admin`. Nay nhóm `(admin)` yêu cầu cả cổng bố mẹ đang mở và role `admin`: kiểm ở layout, mọi server action và 4 route handler (`requireAdmin()` / `getAdminOrNull()`); tài khoản `parent` luôn thấy 404, admin chưa mở cổng bị chuyển về `/profiles`. Đã thử trên trình duyệt thật. | `src/server/admin-gate.ts:10-23`, `src/app/(admin)/layout.tsx:11` | PRD dòng 126; `docs/tasks/12-admin-content/decisions.md` |
 | 2 | nhỏ | Cổng bố mẹ đã có màn riêng `/parent/unlock` (task 11), nút "Bố mẹ" nằm ở màn chọn hồ sơ; trang chủ của bé vẫn chỉ có hộp Cài đặt (Đổi bé, Đăng xuất), không có nút vào khu bố mẹ. | `src/app/(kid)/profiles/page.tsx:23`, `src/features/kid/KidTopbar.tsx:39-42` | PRD dòng 112 |
 | 3 | nhỏ | Tạo hồ sơ xong chuyển tới `/placement` (bài xếp lớp Tiểu học, task 09); THCS (lớp ≥ 6) chưa có bài xếp lớp nên thấy màn "Chưa có bài xếp lớp" rồi bắt đầu theo lớp (kẹp ở cấp 4). | `src/features/profiles/create/CreateProfileFlow.tsx:38`, `src/server/placement.ts:63` | PRD dòng 114, 146–152 (C4) |
 | 4 | nhỏ | Tạo hồ sơ chỉ hỏi tên, lớp, bạn rồng; chưa hỏi năm sinh và sách tiếng Anh ở trường (cột `birth_year`, `textbook` đã có trong database nhưng không có ô nhập). | `src/features/profiles/create/CreateProfileFlow.tsx:36`, `prisma/schema.prisma:54-57` | PRD dòng 142 (C3) |
@@ -21,7 +21,7 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 13 | nhỏ | Mở khóa khớp PRD (bài đầu luôn mở; từ 1 sao mở bài sau; trùm mở khi xong mọi bài). Thêm một quyết định PRD không nói: trùm **không chặn** chủ đề kế. Chưa có bố mẹ mở khóa tay (task 11) và bài thi lên cấp (GĐ2). | `src/lib/rules/unlock.ts:1-6,40-71` | PRD dòng 402–405; `docs/tasks/06-home-map/decisions.md` |
 | 14 | nhỏ | `proxy.ts` chỉ chuyển hướng `/profiles`, `/home`, `/parent`, `/admin`; các màn khác của bé (`/levels`, `/map`…) dựa vào `requireUser` ở layout. Không phải lỗ hổng (server vẫn chặn), chỉ không nhất quán. | `src/proxy.ts:9`, `src/app/(kid)/layout.tsx:5` | — |
 | 15 | nhỏ (GĐ3) | Bé lớp 6 trở lên vẫn dùng giao diện Tiểu học (chưa có bộ THCS). | `src/lib/learner-rules.ts:13` | PRD dòng 417 |
-| 16 | nhỏ (task 12) | `/admin` vẫn là trang giữ chỗ (khu bố mẹ đã làm ở task 11; menu bố mẹ còn các mục Kỹ năng, Kết quả thi, Bài viết, Lịch kiểm tra hiện mờ "Sắp có"). | `src/app/(admin)/admin/page.tsx:9`, `src/components/adult/nav.ts` | `docs/tasks/README.md` |
+| 16 | ~~nhỏ (task 12)~~ **đã làm** | Quản trị nội dung có Bảng điều khiển + 6 màn (cây lộ trình, từ vựng, câu hỏi, soạn bài, hình ảnh, Excel). Menu bố mẹ vẫn còn các mục Kỹ năng, Kết quả thi, Bài viết, Lịch kiểm tra hiện mờ "Sắp có" (GĐ2–3). | `src/components/adult/nav.ts:6-26` | `docs/tasks/README.md` |
 | 17 | nhỏ | Bài học chưa có: khởi động ôn lại từ cũ, 3 câu thử thách cuối bài, âm thanh hiệu ứng và nút tắt nhạc nền, chế độ toàn màn hình. Có trò chơi lật thẻ (trong bài có từ 4 từ có hình). | `src/features/lesson/` | PRD dòng 90–99, 193–203 |
 | 18 | nhỏ | Sao, xu do server tính nhưng đúng/sai từng mục do client báo (đáp án nằm ở client để phản hồi tức thì). Chấp nhận cho ứng dụng học của bé; chưa có kiểm tra chống gian lận. | `src/server/lesson-complete.ts:58-62` | — |
 | 19 | nhỏ | Bài đã seed trước task 07 chưa có bước lật thẻ cho tới khi chạy lại `npx prisma db seed`. | `src/lib/rules/lesson-builder.ts:92` | — |
@@ -38,6 +38,13 @@ Mức độ: **quan trọng** = ảnh hưởng bảo mật hoặc làm sai ý ch
 | 30 | **quan trọng (bạn quyết)** | Xóa hồ sơ là xóa vĩnh viễn và đặt lại tiến độ không hoàn tác; bản xem trước hứa "khôi phục trong 30 ngày" nhưng chưa có cơ chế thùng rác. Có hộp thoại xác nhận, xóa phải gõ đúng tên. | `src/server/parent-settings.ts:96-118` | Adult07 |
 | 31 | nhỏ | Tổng quan bố mẹ: không có "kỷ lục chuỗi ngày" (chưa lưu) và "học nhiều nhất vào giờ…"; trình độ CEFR chỉ ước lượng theo cấp (PRD A1), chưa đo bằng bài thi; chọn con bằng `?kid=`. | `src/server/reports/overview.ts`, `src/lib/rules/report.ts:68-88` | Adult02 |
 | 32 | nhỏ | Cổng bố mẹ không có "Quên mật khẩu?" (chưa có luồng đặt lại mật khẩu); bộ đếm sai 5 lần/5 phút nằm trong bộ nhớ một tiến trình (đủ cho một máy). | `src/server/rate-limit.ts:48`, `src/features/parent/GateForm.tsx` | Adult01 |
+| 33 | **quan trọng (bạn quyết)** | Ngân hàng câu hỏi (bảng `questions`) chưa ảnh hưởng tới bài bé học: trình học dựng bước từ từ vựng của bước (`buildPlaySteps`) và chưa đọc `questions`. Câu hỏi soạn ở màn quản trị chỉ xem được bằng "Xem như học sinh" hoặc gắn thành bước ở Soạn bài học (lưu `questionId` nhưng bé chưa chơi bằng nội dung đó). Dễ hiểu nhầm là câu hỏi đã vào bài. | `src/lib/rules/lesson-play.ts:51`, `src/server/admin/questions.ts` | task.md bước 3, 4; decisions.md (Ngân hàng câu hỏi) |
+| 34 | nhỏ | Ngân hàng từ vựng không có trạng thái Nháp / Đã xuất bản, lớp SGK, Unit SGK (schema không có các cột này); từ dùng được ngay khi lưu. Luật "không xuất bản khi chưa có âm thanh" không áp dụng ở GĐ1. | `src/server/admin/vocab.ts:76` | thiết kế Adult10 |
+| 35 | nhỏ | Ngân hàng câu hỏi chỉ có 3 dạng của trình học (8.2 nghe chọn hình, 8.3 nối cặp, 8.4 chọn từ cho hình); thẻ từ 8.1 thêm ở Soạn bài học. Thiết kế vẽ cả A/B/C/D và điền chỗ trống (GĐ2–3). | `src/lib/rules/admin-questions.ts:9` | thiết kế Adult11 |
+| 36 | nhỏ | Xóa chủ đề, bài là xóa hẳn (từ chối khi đã có học sinh học); chưa có Thùng rác 30 ngày. | `src/server/admin/tree.ts:216` | thiết kế Adult09 |
+| 37 | nhỏ (GĐ2) | "Tạo giọng đọc tự động / hàng loạt" ra tệp mp3 để mờ "Sắp có"; GĐ1 dùng giọng trình duyệt. Thư viện chỉ tải hình (≤ 2 MB), chưa tải tệp âm thanh. | `src/features/admin/MediaView.tsx:312-314` | task.md (Ngoài phạm vi) |
+| 38 | nhỏ | Hình tải lên (`/uploads/<tên>`) mọi tài khoản đăng nhập đều xem được, không kiểm hồ sơ: đó là hình minh họa từ, không phải dữ liệu riêng của học sinh. Lưu ở `storage/uploads/` ngoài `public/`. | `src/app/uploads/[name]/route.ts:7` | CLAUDE.md (file tải lên) |
+| 39 | nhỏ | Bài tự tạo từ Excel với từ chưa có hình chỉ toàn thẻ từ nên chưa xuất bản được (luật ≥ 3 bước và ≥ 1 hoạt động) cho tới khi có hình; Nhập Excel chủ đề trùng chủ đề đã có bài bị chặn, không trộn vào chủ đề đó. | `src/lib/rules/admin-tree.ts:40-46`, `src/lib/rules/admin-excel-topic.ts:35-53` | task.md bước 7 |
 
 ## Khớp với PRD (đã kiểm)
 

@@ -9,7 +9,7 @@
     "repository": {
       "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
       "link_mode": "local-only",
-      "revision": "2f50a51426fa6e696530f94e99a3bb01e81c02db"
+      "revision": "19da596766a7d60fa1ea85de2ccbc8c26a701c53"
     },
     "legend": {
       "mode": "auto",
@@ -17,8 +17,8 @@
         "frontend": {
           "label": "Màn hình đã có trong code"
         },
-        "messagebus": {
-          "label": "Chưa làm (task sau)"
+        "security": {
+          "label": "Cổng, kiểm tra quyền"
         }
       }
     }
@@ -33,18 +33,8 @@
       "label": "Máy chủ kiểm tra"
     },
     {
-      "id": "chualam",
-      "label": "Màn chưa làm"
-    }
-  ],
-  "groups": [
-    {
-      "id": "g_quantri",
-      "label": "Chưa làm · task 12",
-      "lane": "chualam",
-      "fromCol": 5,
-      "toCol": 5,
-      "variant": "dashed"
+      "id": "quantri",
+      "label": "Khu quản trị nội dung (task 12)"
     }
   ],
   "mainPath": [
@@ -53,7 +43,10 @@
     "action",
     "gate",
     "guard",
-    "parent"
+    "parent",
+    "qt",
+    "ra",
+    "admin"
   ],
   "nodes": [
     {
@@ -120,10 +113,10 @@
     {
       "id": "url",
       "lane": "trinhduyet",
-      "col": 5,
+      "col": 3,
       "type": "external",
       "label": "Gõ thẳng /admin",
-      "sublabel": "không có nút dẫn tới",
+      "sublabel": "không qua nút Quản trị",
       "width": 126
     },
     {
@@ -193,37 +186,84 @@
       ]
     },
     {
-      "id": "role",
-      "lane": "maychu",
-      "col": 5,
-      "type": "security",
-      "label": "requireRole(admin)",
-      "sublabel": "người khác thấy 404",
       "width": 126,
+      "id": "qt",
+      "lane": "trinhduyet",
+      "col": 5,
+      "type": "frontend",
+      "label": "Nút Quản trị",
+      "sublabel": "chỉ hiện với admin",
       "sources": [
         {
-          "path": "src/server/session.ts",
-          "line": 31,
-          "end_line": 35,
-          "label": "chỉ role admin"
+          "path": "src/components/adult/AdultShell.tsx",
+          "line": 52,
+          "end_line": 54,
+          "label": "liên kết tới /admin"
         }
       ]
     },
     {
-      "id": "admin",
-      "lane": "chualam",
-      "col": 5,
-      "type": "messagebus",
-      "label": "Quản trị nội dung",
-      "sublabel": "/admin (giữ chỗ)",
-      "tag": "task 12",
       "width": 126,
+      "id": "ra",
+      "lane": "maychu",
+      "col": 5,
+      "type": "security",
+      "label": "requireAdmin",
+      "sublabel": "role admin + cổng mở",
+      "tag": "cả server action",
       "sources": [
         {
-          "path": "src/app/(admin)/admin/page.tsx",
+          "path": "src/server/admin-gate.ts",
           "line": 10,
+          "end_line": 16,
+          "label": "đăng nhập → role admin → cổng bố mẹ"
+        },
+        {
+          "path": "src/app/(admin)/layout.tsx",
+          "line": 11,
+          "label": "layout của /admin"
+        }
+      ]
+    },
+    {
+      "width": 126,
+      "id": "deny",
+      "lane": "quantri",
+      "col": 4,
+      "type": "security",
+      "label": "Bị chặn",
+      "sublabel": "404 · về /profiles",
+      "sources": [
+        {
+          "path": "src/server/admin-gate.ts",
+          "line": 11,
+          "end_line": 15,
+          "label": "notFound / redirect"
+        }
+      ],
+      "tag": "parent / chưa mở cổng"
+    },
+    {
+      "width": 126,
+      "id": "admin",
+      "lane": "quantri",
+      "col": 5,
+      "type": "frontend",
+      "label": "Quản trị nội dung",
+      "sublabel": "Bảng điều khiển + 7 màn",
+      "tag": "task 12",
+      "sources": [
+        {
+          "path": "src/app/(admin)/layout.tsx",
+          "line": 11,
           "end_line": 21,
-          "label": "trang giữ chỗ"
+          "label": "khung quản trị"
+        },
+        {
+          "path": "src/components/adult/nav.ts",
+          "line": 17,
+          "end_line": 25,
+          "label": "menu ADMIN_NAV"
         }
       ]
     }
@@ -272,35 +312,65 @@
       "variant": "emphasis"
     },
     {
-      "id": "e-url-role",
+      "id": "e-parent-qt",
+      "from": "parent",
+      "to": "qt",
+      "label": "bấm Quản trị",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-qt-ra",
+      "from": "qt",
+      "to": "ra",
+      "label": "vào /admin",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-url-ra",
       "from": "url",
-      "to": "role",
-      "label": "không qua cổng",
+      "to": "ra",
+      "label": "gõ thẳng",
       "variant": "security"
     },
     {
-      "id": "e-role-admin",
-      "from": "role",
+      "id": "e-ra-admin",
+      "from": "ra",
       "to": "admin",
-      "label": "đúng role",
-      "variant": "dashed"
+      "label": "đủ quyền",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-ra-deny",
+      "from": "ra",
+      "to": "deny",
+      "label": "thiếu quyền",
+      "variant": "security",
+      "role": "error"
     }
   ],
   "cards": [
     {
       "dot": "emerald",
-      "title": "Khu bố mẹ (đã làm, task 04 và 11)",
+      "title": "Khu bố mẹ (task 04 và 11)",
       "items": [
         "Cổng riêng /parent/unlock: PIN 4–6 số hoặc mật khẩu; sai 5 lần khóa 5 phút ở server",
         "Tổng quan theo từng con và Cài đặt (giờ học, giao diện, hồ sơ, mật khẩu, PIN)"
       ]
     },
     {
-      "dot": "rose",
-      "title": "Khác với PRD",
+      "dot": "emerald",
+      "title": "Quản trị nội dung (task 12, đã làm)",
       "items": [
-        "PRD: quản trị nằm sau khu bố mẹ; code: /admin chỉ cần role admin, không cần mở cổng (làm đúng ở task 12)",
-        "Chưa có: Kỹ năng, Kết quả thi, Bài viết, Lịch kiểm tra (GĐ2–3)"
+        "Vào bằng nút Quản trị sau khi mở cổng bố mẹ; gõ thẳng /admin cũng phải qua cổng và role admin",
+        "7 màn: Bảng điều khiển, Cấu trúc lộ trình, Từ vựng, Câu hỏi, Soạn bài học, Hình ảnh, Nhập & xuất Excel"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa có trong code",
+      "items": [
+        "Kỹ năng, Kết quả thi, Bài viết, Lịch kiểm tra của khu bố mẹ (GĐ2–3)",
+        "Chủ điểm ngữ pháp, Tạo đề thi của quản trị (GĐ3)"
       ]
     }
   ]
