@@ -34,3 +34,8 @@ Dùng lại (không viết lại): `AdultShell/AdultCard/AdultGrid/Kpi/VBars/Adu
 - 4 trạng thái: bình thường, đang tải (loading.tsx), trống (DB không có nội dung — kiểm bằng dữ liệu giả/đọc `isEmpty`), lỗi (nút Thử lại).
 - Biểu đồ 10 cột đúng màu cấp; cảnh báo thiếu hình/âm thanh hiện đúng số; thẻ "Chủ đề chưa có bài" đếm đúng theo cấp so với DB seed.
 - Mở trang bằng trình duyệt ở 1440×900 và 1366×768, so với preview Adult08.
+
+
+---
+## Bước 1 — Cây lộ trình (Adult09)
+Kế hoạch thực hiện: luật thuần + Zod (`admin-tree`), `server/admin/tree.ts` (đọc cây, sửa, thêm, xóa, sắp xếp), server action gọi `requireAdmin()`, hook kéo thả `useSortable`/`AdultSortable` dùng chung, `TreeView` (cây, khung sửa, khung chủ đề khung, ngăn kéo từ mục tiêu, hộp thoại thêm/xóa), trang `/admin/tree` + loading + error, bật mục menu. Chi tiết và chỗ khác thiết kế ở `decisions.md`.

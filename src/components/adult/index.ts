@@ -9,6 +9,7 @@ export { AdultPinInput } from "./AdultPinInput";
 export { AdultSegmented } from "./AdultSegmented";
 export { AdultShell, type ShellKid } from "./AdultShell";
 export { AdultTable, type AdultColumn, type AdultFilter } from "./AdultTable";
+export { AdultSortable, type SortableApi } from "./useSortable";
 export { AdultToggle } from "./AdultToggle";
 export { Kpi } from "./Kpi";
 export { AdultEmpty, AdultError, AdultSkeleton } from "./States";

@@ -15,7 +15,7 @@ export const PARENT_NAV: readonly AdultNavItem[] = [
 
 export const ADMIN_NAV: readonly AdultNavItem[] = [
   { key: "dash", label: "Bảng điều khiển", icon: "grid", href: "/admin", ready: true },
-  { key: "tree", label: "Cấu trúc lộ trình", icon: "tree", href: "/admin/tree", ready: false },
+  { key: "tree", label: "Cấu trúc lộ trình", icon: "tree", href: "/admin/tree", ready: true },
   { key: "vocab", label: "Ngân hàng từ vựng", icon: "notebook", href: "/admin/vocab", ready: false },
   { key: "questions", label: "Ngân hàng câu hỏi", icon: "exam", href: "/admin/questions", ready: false },
   { key: "builder", label: "Soạn bài học", icon: "cards", href: "/admin/builder", ready: false },
