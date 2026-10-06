@@ -1,0 +1,267 @@
+/* Màn tổng kết ôn tập (Screen20): bên trái rồng + lời chúc, bên phải thẻ kết quả (sao, xu, từ lên hộp). */
+.end {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-12) var(--space-6);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr var(--size-end-card);
+  align-items: center;
+  gap: var(--space-10);
+}
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  min-width: 0;
+}
+.dragon {
+  width: min(var(--size-end-dragon), 30vh);
+  height: auto;
+}
+.title {
+  margin: 0;
+  max-width: calc(var(--size-end-card) - var(--space-10));
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.sub {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+  max-height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-6);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+.tile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-tile-h);
+  padding: var(--space-3) var(--space-4);
+  box-sizing: border-box;
+  background: var(--surface-soft);
+  border-radius: var(--radius-lg);
+  color: var(--star);
+}
+.tile b {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: var(--text-stat--font-weight);
+}
+.tile span {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.tileCoin {
+  background: var(--level-1-soft);
+  color: var(--coin);
+}
+.note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--retry-soft);
+  border-radius: var(--radius-lg);
+  color: var(--retry-shade);
+}
+.note div {
+  display: flex;
+  flex-direction: column;
+}
+.note span {
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+
+.moves {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+}
+.movesTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: var(--text-title--font-weight);
+}
+.moveList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+}
+.mv {
+  display: grid;
+  grid-template-columns: var(--size-move-pic) 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--mastery-2-soft);
+  border-radius: var(--radius-lg);
+}
+.mvText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.mvEn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.mvEn b {
+  font-family: var(--font-display);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: 700;
+}
+.mvVi {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.hop {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--ink-soft);
+}
+.hop i {
+  width: var(--size-hop);
+  height: var(--size-hop);
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  border: var(--border-thin) solid var(--m);
+  background: var(--ms);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
+  line-height: 1;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.rest {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+}
+.rest li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.restOk {
+  color: var(--success);
+  display: inline-flex;
+}
+.restBack {
+  color: var(--brand);
+  display: inline-flex;
+}
+.acts {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+/* Giấy hoa rơi (trang trí). */
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.confetti i {
+  position: absolute;
+  top: calc(-1 * var(--space-6));
+  left: var(--x);
+  width: var(--space-3);
+  height: var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--level-1);
+  animation: fall var(--confetti-fall) linear infinite;
+  animation-delay: var(--d);
+}
+.confetti i:nth-child(5n + 2) {
+  background: var(--level-4);
+}
+.confetti i:nth-child(5n + 3) {
+  background: var(--level-6);
+}
+.confetti i:nth-child(5n + 4) {
+  background: var(--star);
+}
+.confetti i:nth-child(5n) {
+  background: var(--level-5);
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(540deg);
+  }
+}
+
+@media (max-width: 1400px) {
+  .end {
+    grid-template-columns: 1fr var(--size-end-card-s);
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}
+@media (max-height: 800px) {
+  .card {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+}

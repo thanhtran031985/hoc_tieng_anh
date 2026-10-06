@@ -1,0 +1,41 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="17. Màn “Sắp có” cho nút chưa làm (Bộ sưu tập, Phòng của tớ): rồng Bông đang xây, lời nhắn ngắn, Về trang chủ" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Sắp có — preview</title>
+<style>
+  .cs { flex: 1; min-height: 0; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-4) var(--space-12) var(--space-8); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: min(var(--space-4), 2cqh); text-align: center; }
+  .site { position: relative; display: flex; align-items: flex-end; gap: var(--space-6); }
+  .site .b-dragon { width: min(280px, 34cqh); height: auto; }
+  .blocks { display: grid; grid-template-columns: repeat(3, min(64px, 8cqh)); gap: 6px; align-items: end; margin-bottom: 10px; }
+  .blocks i { aspect-ratio: 1; border-radius: 12px; background: var(--lv); box-shadow: inset 0 -6px 0 var(--lv-shade); display: grid; place-items: center; font: 800 26px/1 var(--font-display); color: var(--on-lv); font-style: normal; }
+  .blocks i:not(.top) { grid-row: 2; }
+  .blocks i.top { grid-row: 1; grid-column: 2; animation: drop 2.4s ease-in-out infinite; }
+  @keyframes drop { 0%, 30% { transform: translateY(-40px); opacity: 0; } 55%, 100% { transform: none; opacity: 1; } }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: var(--level-1-soft); color: var(--level-1-ink); border-radius: var(--radius-pill); padding: 6px 16px; font: 800 16px/20px var(--font-body); }
+  .cs p { max-width: 560px; margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .blocks i.top { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = B.kids[0];
+  var V = { normal: ['Bộ sưu tập', 'Bông đang xây <b>Bộ sưu tập</b> để An cất thẻ từ, huy hiệu và quà nhận được. Sắp xong rồi, An chờ Bông một chút nhé!', ['A', 'B', 'C']], room: ['Phòng của tớ', 'Bông đang xây <b>Phòng của tớ</b> để An trang trí bằng xu kiếm được. Sắp xong rồi, An chờ Bông một chút nhé!', ['1', '2', '3']] };
+  function view(k) {
+    var v = V[k];
+    return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid }) + '<div class="cs"><div class="site">' + B.dragon('xaydung', 280) + '<div class="blocks" aria-hidden="true"><i class="top" data-level="4">' + v[2][1] + '</i><i data-level="1">' + v[2][0] + '</i><i data-level="2">★</i><i data-level="5">' + v[2][2] + '</i></div></div>' +
+      '<span class="pill">' + B.icon('clock', 18) + 'Sắp có</span><h1 class="display-l">' + v[0] + ' đang được xây</h1><p class="body-l b-muted">' + v[1] + '</p>' +
+      B.btn({ label: 'Về trang chủ', size: 'l', icon: 'house', key: 'Enter', attrs: 'data-home' }) + '</div>';
+  }
+  B.screen({
+    fit: true, level: 1,
+    order: ['normal', 'room'],
+    labels: { normal: 'Bộ sưu tập', room: 'Phòng của tớ' },
+    notes: { normal: 'Một mẫu dùng cho mọi nút chưa làm: tên tính năng thay đổi, còn lại giữ nguyên. Không có ngày hứa hẹn cụ thể. Enter hoặc nút quay lại = Về trang chủ.', room: 'Cùng mẫu, cho nút Phòng của tớ.' },
+    states: { normal: function () { return view('normal'); }, room: function () { return view('room'); } },
+    mount: { all: function (scr, ctx) { var h = scr.querySelector('[data-home]'); h.focus({ preventScroll: true }); ctx.onKey(function (e) { if (e.key === 'Enter' && document.activeElement !== h) { e.preventDefault(); h.click(); } }); } }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="15b. Ôn tập hôm nay · tổng kết: “Hôm nay cậu đã ôn 12 từ, 3 từ được chuyển lên hộp vàng!”, sao và xu, Về trang chủ" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Ôn tập · tổng kết — preview</title>
+<style>
+  .end { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; gap: var(--space-10); align-items: center; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-6) var(--space-12); box-sizing: border-box; position: relative; }
+  .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); }
+  .hero .b-dragon { width: min(250px, 30cqh); height: auto; }
+  .hero h1 { max-width: 560px; }
+  .res { padding: var(--space-6) var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .tile { border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; align-items: center; gap: var(--space-3); background: var(--surface-soft); }
+  .tile .v { font: 800 30px/34px var(--font-display); } .tile .l { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .up { display: flex; flex-direction: column; gap: var(--space-2); }
+  .mv { display: grid; grid-template-columns: 52px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--mastery-2-soft); }
+  .mv .b-pic { width: 48px; height: 48px; }
+  .mv .en { font: 700 24px/28px var(--font-display); } .mv .vi { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .hop { display: inline-flex; align-items: center; gap: 6px; font: 800 14px/18px var(--font-body); }
+  .hop i { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; font-style: normal; color: var(--ink); border: 3px solid; background: var(--surface); }
+  .rest { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+  .rest span { display: inline-flex; align-items: center; gap: 6px; }
+  .acts { display: flex; justify-content: flex-end; }
+  .conf { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .conf i { position: absolute; width: 14px; height: 8px; border-radius: 2px; animation: fall 3.2s linear infinite; }
+  @keyframes fall { from { transform: translateY(-40px) rotate(0); } to { transform: translateY(980px) rotate(540deg); } }
+  @media (prefers-reduced-motion: reduce) { .conf { display: none; } }
+  @container (max-height: 800px) { .res { padding: var(--space-5) var(--space-6); gap: var(--space-3); } .mv .b-pic { width: 40px; height: 40px; } .hero .display-l { font-size: 34px; line-height: 40px; } }
+  @container (max-width: 1400px) { .end { grid-template-columns: 1fr 560px; gap: var(--space-8); padding-left: var(--space-10); padding-right: var(--space-10); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = B.kids[0];
+  var UP = ['pear', 'strawberry', 'teddy'];
+  var colors = ['var(--mastery-2)', 'var(--level-4)', 'var(--star)', 'var(--level-2)', 'var(--mastery-4)'];
+  var conf = '<div class="conf" aria-hidden="true">' + Array.apply(null, { length: 22 }).map(function (_, i) { return '<i style="left:' + ((i * 41) % 100) + '%;top:-20px;background:' + colors[i % 5] + ';animation-delay:' + (i * 0.27 % 3).toFixed(2) + 's;animation-duration:' + (2.6 + (i % 5) * 0.4) + 's"></i>'; }).join('') + '</div>';
+  function hop(n) { return '<i style="border-color:var(--mastery-' + n + ');background:var(--mastery-' + n + '-soft)">' + n + '</i>'; }
+  function hero(expr, t, s) { return '<section class="hero">' + B.dragon(expr, 250) + '<h1 class="display-l">' + t + '</h1>' + (s ? '<p class="body-l b-muted" style="margin:0">' + s + '</p>' : '') + '</section>'; }
+  function tiles() { return '<div class="tiles"><div class="tile">' + B.icon('star', 36) + '<div><div class="v">+12</div><div class="l">sao · mỗi từ ôn 1 sao</div></div></div><div class="tile">' + B.icon('coin', 36) + '<div><div class="v">+20</div><div class="l">xu · thưởng ôn đủ</div></div></div></div>'; }
+  function ups() { return '<div class="up"><h2 class="title" style="margin:0">Lên hộp vàng</h2>' + UP.map(function (w) { return '<div class="mv">' + B.pic(w, 48) + '<div style="display:flex;align-items:center;gap:10px">' + B.speak(w, 's') + '<div><div class="en">' + w + '</div><div class="vi">' + B.words[w].vi + '</div></div></div><span class="hop" aria-label="Từ hộp 1 lên hộp 2">' + hop(1) + B.icon('next', 18) + hop(2) + '</span></div>'; }).join('') + '</div>'; }
+  function rest() { return '<div class="rest body b-muted"><span>' + B.icon('check', 18) + ' 8 từ khác lên hộp tiếp theo</span><span>' + B.icon('replay', 18) + ' 1 từ về hộp 1 để ôn sớm hơn</span></div>'; }
+  function acts(off) { return '<div class="acts">' + B.btn({ label: 'Về trang chủ', size: 'l', icon: 'house', key: 'Enter', attrs: 'data-home', disabled: off }) + '</div>'; }
+  var tb = function () { return B.topbar({ kid: kid }); };
+  B.screen({
+    fit: true, level: 1,
+    labels: { empty: 'Trống (dừng sớm)' },
+    notes: { normal: 'Sao và xu bay vào thanh trên khi màn mở. 3 từ từ hộp 1 lên hộp 2 (vàng) có nút nghe. Từ chưa nhớ chỉ “về hộp 1 để ôn sớm hơn” — không gọi là sai, không trừ gì. Enter = Về trang chủ.', loading: 'Đang lưu kết quả ôn: phần chúc mừng hiện ngay, thẻ kết quả là khung xương.', empty: 'Bé dừng trước khi ôn từ nào.', error: 'Chưa lưu được lên máy chủ: sao và xu vẫn giữ trên máy.' },
+    states: {
+      normal: function () { return tb() + conf + '<div class="end">' + hero('chucmung', 'Hôm nay cậu đã ôn 12 từ, 3 từ được chuyển lên hộp vàng!') + '<section class="b-card res">' + tiles() + ups() + rest() + acts() + '</section></div>'; },
+      loading: function () { return tb() + '<div class="end">' + hero('suynghi', 'Ôn xong rồi!', 'Bông đang cất từ vào đúng hộp…') + '<section class="b-card res"><div class="tiles">' + B.sk('100%', '68px') + B.sk('100%', '68px') + '</div>' + B.sk('160px', '30px', 'var(--radius-pill)') + B.sk('100%', '64px') + B.sk('100%', '64px') + B.sk('100%', '64px') + acts(true) + '</section></div>'; },
+      empty: function () { return tb() + '<div class="end">' + hero('vui', 'Hẹn cậu lần sau nhé!', '12 từ vẫn đang chờ trong hộp. Lúc nào rảnh mình ôn tiếp.') + '<section class="b-card res">' + B.stateBlock({ kind: 'empty', size: 110, expr: 'suynghi', title: 'Chưa ôn từ nào hôm nay', text: 'Không sao cả! Chuỗi ngày học vẫn được giữ nếu An học một bài khác.', action: B.btn({ label: 'Ôn tiếp', size: 'l', icon: 'replay' }) + B.btn({ label: 'Về trang chủ', variant: 'secondary', size: 'l', icon: 'house' }) }) + '</section></div>'; },
+      error: function () { return tb() + '<div class="end">' + hero('dongvien', 'Hôm nay cậu đã ôn 12 từ!', '') + '<section class="b-card res">' + tiles() + B.stateBlock({ kind: 'error', size: 100, title: 'Chưa lưu được kết quả', text: 'Đừng lo, sao, xu và hộp của từng từ vẫn được giữ trên máy.' }) + '</section></div>'; }
+    },
+    mount: { normal: function (scr, ctx) {
+      var h = scr.querySelector('[data-home]');
+      ctx.later(function () { ctx.burst(scr.querySelector('.tile'), scr.querySelector('[data-stat="stars"]'), 12); }, 600);
+      ctx.later(function () { ctx.burst(scr.querySelectorAll('.tile')[1], scr.querySelector('[data-stat="coins"]'), 8, 'coin'); }, 1300);
+      ctx.later(function () { var s = scr.querySelector('[data-stat="stars"] .stat'), c = scr.querySelector('[data-stat="coins"] .stat'); if (s) s.textContent = 140; if (c) c.textContent = 360; }, 2000);
+      ctx.onKey(function (e) { if (e.key === 'Enter' && (!document.activeElement || document.activeElement.tagName !== 'BUTTON')) { e.preventDefault(); h.click(); } });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

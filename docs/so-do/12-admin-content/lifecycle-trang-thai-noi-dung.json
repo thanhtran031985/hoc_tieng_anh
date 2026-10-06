@@ -1,0 +1,126 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Task 12: chủ đề và bài học đi qua các trạng thái nào, bé thấy khi nào",
+    "locale": "vi",
+    "quality_profile": "showcase",
+    "output": "docs/so-do/12-admin-content/lifecycle-trang-thai-noi-dung.html",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "19da596766a7d60fa1ea85de2ccbc8c26a701c53"
+    }
+  },
+  "lanes": [
+    { "id": "main", "label": "Chủ đề (units.status)" },
+    { "id": "bai", "label": "Bài học (lessons.status)" }
+  ],
+  "states": [
+    {
+      "id": "planned",
+      "type": "start",
+      "label": "Chưa có bài",
+      "sublabel": "chủ đề khung · planned",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "sources": [
+        { "path": "prisma/schema.prisma", "line": 98, "end_line": 102, "label": "enum ContentStatus" },
+        { "path": "src/server/admin/tree.ts", "line": 135, "label": "chủ đề khung chưa sửa được ở cây" }
+      ]
+    },
+    {
+      "id": "draft",
+      "type": "active",
+      "label": "Nháp",
+      "sublabel": "có bài, bé chưa thấy",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "sources": [
+        { "path": "src/server/admin/tree.ts", "line": 193, "label": "thêm bài vào chủ đề khung → Nháp" },
+        { "path": "src/server/admin/excel-topic.ts", "line": 207, "label": "nhập Excel + tự tạo bài → Nháp" }
+      ]
+    },
+    {
+      "id": "published",
+      "type": "success",
+      "label": "Đã xuất bản",
+      "sublabel": "published",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "sources": [
+        { "path": "src/lib/rules/admin-tree.ts", "line": 48, "end_line": 50, "label": "unitPublishBlock: cần ≥ 1 bài" },
+        { "path": "src/server/admin/tree.ts", "line": 137, "label": "chặn xuất bản chủ đề trống" }
+      ]
+    },
+    {
+      "id": "kid",
+      "type": "external",
+      "label": "Bé thấy và học",
+      "sublabel": "/map · /lesson",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "sources": [
+        { "path": "src/server/lesson-play.ts", "line": 39, "label": "chỉ bài published của chủ đề published" },
+        { "path": "src/server/map.ts", "line": 101, "label": "bản đồ chỉ lấy chủ đề published" }
+      ]
+    },
+    {
+      "id": "l_draft",
+      "type": "active",
+      "label": "Bài Nháp",
+      "sublabel": "bài mới tạo luôn là Nháp",
+      "lane": "bai",
+      "col": 1,
+      "step": "01",
+      "sources": [
+        { "path": "src/server/admin/excel-topic.ts", "line": 269, "label": "bài tự tạo từ Excel: status draft" },
+        { "path": "src/server/admin/tree.ts", "line": 194, "label": "thêm bài ở cây: Nháp" }
+      ]
+    },
+    {
+      "id": "l_pub",
+      "type": "success",
+      "label": "Bài xuất bản",
+      "sublabel": "published",
+      "lane": "bai",
+      "col": 2,
+      "step": "02",
+      "sources": [
+        { "path": "src/lib/rules/admin-tree.ts", "line": 40, "end_line": 46, "label": "lessonPublishBlock" },
+        { "path": "src/server/admin/builder.ts", "line": 121, "label": "luật xuất bản khi Lưu bài" },
+        { "path": "src/server/admin/tree.ts", "line": 162, "label": "luật xuất bản khi đổi trạng thái ở cây" }
+      ]
+    }
+  ],
+  "transitions": [
+    { "from": "planned", "to": "draft", "label": "thêm bài / nhập Excel", "variant": "emphasis" },
+    { "from": "draft", "to": "published", "label": "xuất bản (≥ 1 bài)", "variant": "emphasis" },
+    { "from": "published", "to": "kid", "label": "học sinh thấy", "variant": "emphasis" },
+    { "from": "published", "to": "draft", "label": "về Nháp", "variant": "dashed" },
+    { "from": "l_draft", "to": "l_pub", "label": "≥ 3 bước, ≥ 1 hoạt động", "variant": "emphasis" },
+    { "from": "l_pub", "to": "l_draft", "label": "về Nháp", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Luật xuất bản (đã làm)",
+      "items": [
+        "Bài: ít nhất 3 bước và 1 câu hỏi hoặc trò chơi (bước không phải thẻ từ), nếu không thì báo lỗi dưới ô Trạng thái",
+        "Chủ đề: ít nhất 1 bài; bé chỉ thấy bài published của chủ đề published"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Điều cần nhớ",
+      "items": [
+        "Nhập Excel mà tắt Tự tạo bài học: chủ đề khung giữ nguyên Chưa có bài",
+        "Bài chỉ toàn thẻ từ (từ chưa có hình) chưa xuất bản được cho tới khi có hình"
+      ]
+    }
+  ]
+}

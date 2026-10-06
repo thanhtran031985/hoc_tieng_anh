@@ -1,0 +1,18 @@
+[
+  { "slug": "daily-routines", "title": "Daily routines", "title_vi": "Việc hằng ngày", "source": "Cambridge Movers",
+    "target_words": ["wake up", "get up", "breakfast", "lunch", "dinner", "morning", "afternoon", "evening", "night", "o'clock", "half", "quarter", "time", "hour", "minute", "early", "late", "always", "usually", "often", "sometimes", "never", "every", "today", "tomorrow", "yesterday", "now", "after", "before", "brush", "tidy", "bedtime"] },
+  { "slug": "days-months-seasons", "title": "Days, months, seasons", "title_vi": "Thứ, tháng, mùa", "source": "Cambridge Movers",
+    "target_words": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "spring", "summer", "autumn", "winter", "week", "month", "year", "weekend", "date"] },
+  { "slug": "weather-nature", "title": "Weather and nature", "title_vi": "Thời tiết, thiên nhiên", "source": "Cambridge Movers",
+    "target_words": ["weather", "sunny", "cloudy", "rainy", "windy", "snowy", "rain", "snow", "wind", "sun", "cloud", "storm", "fog", "ice", "thunder", "lightning", "temperature", "sky", "moon", "star", "tree", "flower", "grass", "leaf"] },
+  { "slug": "sports", "title": "Sports", "title_vi": "Thể thao", "source": "Cambridge Movers",
+    "target_words": ["sport", "football", "basketball", "tennis", "volleyball", "badminton", "baseball", "golf", "hockey", "rugby", "skateboard", "ski", "skate", "team", "player", "match", "win", "lose", "race", "goal", "score", "coach", "racket", "net", "gym", "pool", "field", "court", "champion", "medal", "judo", "karate"] },
+  { "slug": "hobbies-music", "title": "Hobbies and music", "title_vi": "Sở thích và âm nhạc", "source": "Cambridge Movers",
+    "target_words": ["hobby", "music", "song", "guitar", "piano", "violin", "band", "singer", "concert", "photo", "camera", "collect", "stamp", "chess", "cards", "cook", "film", "cartoon", "magazine", "comic", "story", "poem", "party", "present", "fun", "interesting", "boring", "favourite", "love", "enjoy"] },
+  { "slug": "meals-food", "title": "Meals and food", "title_vi": "Bữa ăn", "source": "Cambridge Movers",
+    "target_words": ["noodle", "spaghetti", "pasta", "cereal", "toast", "yoghurt", "honey", "sugar", "salt", "pepper", "oil", "flour", "vegetable", "mushroom", "cabbage", "cucumber", "corn", "lettuce", "beef", "pork", "fork", "spoon", "knife", "pancake", "cookie", "meal", "snack", "picnic", "menu", "restaurant", "hungry", "thirsty", "delicious", "plate"] },
+  { "slug": "describing-people", "title": "Describing people", "title_vi": "Miêu tả người", "source": "Cambridge Movers",
+    "target_words": ["young", "thin", "fat", "slim", "strong", "weak", "handsome", "pretty", "beautiful", "curly", "straight", "blond", "bald", "beard", "moustache", "kind", "friendly", "funny", "clever", "lazy", "shy", "polite", "naughty", "brave", "quiet", "noisy", "tired", "angry", "excited", "worried"] },
+  { "slug": "holidays-transport", "title": "Holidays and transport", "title_vi": "Kỳ nghỉ và phương tiện", "source": "Cambridge Movers",
+    "target_words": ["holiday", "trip", "beach", "island", "sand", "sea", "lake", "hotel", "tent", "camping", "suitcase", "ticket", "passport", "map", "tourist", "bus", "taxi", "lorry", "van", "station", "airport", "ship", "helicopter", "motorbike", "underground", "tram", "ferry", "road", "street", "bridge", "driver", "pilot", "captain", "sailor", "cave", "journey", "hill", "forest", "village", "farm"] }
+]

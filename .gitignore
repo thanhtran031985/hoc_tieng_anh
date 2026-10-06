@@ -26,3 +26,11 @@ npm-debug.log*
 
 # Bản giải nén của gói dự án (goi-du-an.zip), không đưa vào kho
 goi-du-an/
+
+# archify: biên nhận sinh ra khi vẽ sơ đồ (chỉ giữ .html, .json nguồn và .md)
+.archify/
+docs/so-do/**/*.browser-check.json
+docs/so-do/**/*.delivery.json
+docs/so-do/**/*.delivery-pending.json
+docs/so-do/**/*.finalize.json
+docs/so-do/**/*.finalize-summary.json

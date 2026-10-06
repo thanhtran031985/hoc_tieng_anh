@@ -1,0 +1,48 @@
+<!-- @dsCard group="Người lớn · Thành phần" height=720 subtitle="Toàn bộ token mới của khu người lớn: màu menu, biểu đồ, lỗi biểu mẫu, nút không hoàn tác; thang chữ adm-*; bo góc, bóng đổ, kích thước" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Token khu người lớn — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); } .pane { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  h2 { margin: 0 0 10px; }
+  .cg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .sw { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .sw i { width: 32px; height: 32px; border-radius: 6px; flex: none; box-shadow: inset 0 0 0 1px rgba(16, 24, 40, .12); }
+  .sw span { display: flex; flex-direction: column; min-width: 0; }
+  .sw code, .tk code { font: 600 12px/16px var(--font-thcs); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sw small, .tk small { font: 400 11px/14px var(--font-thcs); color: var(--ink-soft); }
+  .ty { display: flex; flex-direction: column; gap: 8px; }
+  .ty div { display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: baseline; }
+  .shp { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .shp > div { height: 56px; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; }
+  .tk { display: flex; flex-direction: column; gap: 2px; }
+  .sz { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+  .side { background: var(--adm-side-bg); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+  .side span { color: var(--adm-side-ink); font: 500 13px/18px var(--font-thcs); padding: 4px 8px; border-radius: 4px; }
+  .side .on { background: var(--adm-side-active); color: var(--adm-side-ink-active); box-shadow: inset 3px 0 0 var(--adm-side-accent); }
+  .side .fo { outline: 3px solid var(--adm-side-focus); outline-offset: -3px; }
+</style></head>
+<body>
+<div class="pane thcs adm" data-theme="thcs" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A; B.suite('adult');
+  function v(n) { return getComputedStyle(document.getElementById('p')).getPropertyValue('--' + n).trim(); }
+  var C = [['adm-side-bg', 'Nền menu'], ['adm-side-hover', 'Rê chuột menu'], ['adm-side-active', 'Mục đang mở'], ['adm-side-ink', 'Chữ menu'], ['adm-side-ink-active', 'Chữ mục mở'], ['adm-side-accent', 'Vạch mục mở'], ['adm-side-focus', 'Focus trong menu'],
+    ['chart-1', 'Chuỗi chính'], ['chart-1-soft', 'Vùng dưới đường'], ['chart-2', 'Chuỗi 2'], ['chart-3', 'Chuỗi 3'], ['chart-ref', 'Tham chiếu'], ['chart-grid', 'Lưới'],
+    ['field-error', 'Lỗi ô nhập'], ['field-error-bg', 'Nền ô lỗi'], ['adm-danger', 'Không hoàn tác'], ['adm-on-danger', 'Chữ trên nút xoá'], ['adm-status-none-ink', 'Chữ “Chưa có bài”'], ['adm-status-none-line', 'Viền nét đứt “Chưa có bài”']];
+  var T = [['adm-h1', 'Tổng quan · Minh'], ['adm-h2', 'Phút học 7 ngày'], ['adm-h3', 'Chủ điểm cần ôn'], ['adm-body', 'Minh học 150 phút trong tuần này.'], ['adm-small', 'Cập nhật 21:10 hôm nay'], ['adm-label', 'TỪ VỰNG'], ['adm-kpi', '2.926'], ['adm-button', 'Lưu thay đổi'], ['adm-en', 'I have lived in Hanoi since 2015.']];
+  var R = ['adm-radius-sm', 'adm-radius-md', 'adm-radius-lg', 'adm-radius-xl'], SH = ['adm-shadow-card', 'adm-shadow-pop', 'adm-shadow-drag'];
+  var SZ = ['adm-sidebar', 'adm-topbar', 'adm-control', 'adm-control-l', 'adm-row', 'adm-drawer', 'adm-drawer-wide', 'adm-content-max'];
+  var p = document.getElementById('p');
+  p.innerHTML = '<section class="a-card"><h2 class="adm-h2">Màu</h2><div class="cg">' + C.map(function (c) { return '<div class="sw"><i style="background:var(--' + c[0] + ')"></i><span><code>' + c[0] + '</code><small>' + c[1] + ' · ' + v(c[0]) + '</small></span></div>'; }).join('') + '</div>' +
+      '<div class="side" aria-hidden="true"><span>Tổng quan</span><span class="on">Kỹ năng · mục đang mở</span><span class="fo">Kết quả thi · focus</span></div>' +
+      '<p class="adm-small b-muted" style="margin:10px 0 0">Số liệu chia theo cấp dùng lại <code>level-1…level-10</code>; lõi chung (phản hồi, bề mặt, chữ) giữ nguyên tên token.</p></section>' +
+    '<section class="a-card"><h2 class="adm-h2">Chữ · Be Vietnam Pro</h2><div class="ty">' + T.map(function (t) { return '<div><code class="adm-label">' + t[0] + '</code><span class="' + t[0] + '"' + (t[0] === 'adm-en' ? ' lang="en"' : '') + '>' + t[1] + '</span></div>'; }).join('') + '</div>' +
+      '<h2 class="adm-h2" style="margin-top:16px">Bo góc</h2><div class="shp">' + R.map(function (r) { return '<div style="border-radius:var(--' + r + ')"><span class="tk" style="text-align:center"><code>' + r.replace('adm-radius-', '') + '</code><small>' + v(r) + '</small></span></div>'; }).join('') + '</div>' +
+      '<h2 class="adm-h2" style="margin-top:16px">Bóng đổ</h2><div class="shp" style="grid-template-columns:repeat(3,1fr)">' + SH.map(function (s) { return '<div style="box-shadow:var(--' + s + ');border:0;border-radius:var(--adm-radius-lg)"><code class="adm-small">' + s + '</code></div>'; }).join('') + '</div>' +
+      '<h2 class="adm-h2" style="margin-top:16px">Kích thước</h2><div class="sz">' + SZ.map(function (s) { return '<span class="tk"><code>' + s + '</code><small>' + v(s) + '</small></span>'; }).join('') + '</div></section>';
+})();
+</script>
+</body>
+</html>

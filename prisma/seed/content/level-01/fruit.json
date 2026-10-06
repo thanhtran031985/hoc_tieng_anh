@@ -1,0 +1,20 @@
+[
+  { "word": "apple", "ipa": "/ˈæpl/", "part_of_speech": "noun", "meaning_vi": "quả táo", "example_en": "I eat an apple.", "example_vi": "Mình ăn một quả táo." },
+  { "word": "banana", "ipa": "/bəˈnɑːnə/", "part_of_speech": "noun", "meaning_vi": "quả chuối", "example_en": "The banana is yellow.", "example_vi": "Quả chuối màu vàng." },
+  { "word": "grapes", "ipa": "/ɡreɪps/", "part_of_speech": "noun", "meaning_vi": "chùm nho", "example_en": "I like grapes.", "example_vi": "Mình thích nho." },
+  { "word": "orange", "ipa": "/ˈɒrɪndʒ/", "part_of_speech": "noun", "meaning_vi": "quả cam", "example_en": "I eat an orange.", "example_vi": "Mình ăn một quả cam." },
+  { "word": "pear", "ipa": "/peə/", "part_of_speech": "noun", "meaning_vi": "quả lê", "example_en": "The pear is green.", "example_vi": "Quả lê màu xanh lá." },
+  { "word": "strawberry", "ipa": "/ˈstrɔːbəri/", "part_of_speech": "noun", "meaning_vi": "quả dâu tây", "example_en": "The strawberry is red.", "example_vi": "Quả dâu tây màu đỏ." },
+  { "word": "lemon", "ipa": "/ˈlemən/", "part_of_speech": "noun", "meaning_vi": "quả chanh vàng", "example_en": "The lemon is yellow.", "example_vi": "Quả chanh màu vàng." },
+  { "word": "mango", "ipa": "/ˈmæŋɡəʊ/", "part_of_speech": "noun", "meaning_vi": "quả xoài", "example_en": "I like mango.", "example_vi": "Mình thích xoài." },
+  { "word": "pineapple", "ipa": "/ˈpaɪnæpl/", "part_of_speech": "noun", "meaning_vi": "quả dứa", "example_en": "I like pineapple.", "example_vi": "Mình thích dứa." },
+  { "word": "watermelon", "ipa": "/ˈwɔːtəmelən/", "part_of_speech": "noun", "meaning_vi": "quả dưa hấu", "example_en": "The watermelon is green.", "example_vi": "Quả dưa hấu màu xanh lá." },
+  { "word": "peach", "ipa": "/piːtʃ/", "part_of_speech": "noun", "meaning_vi": "quả đào", "example_en": "The peach is pink.", "example_vi": "Quả đào màu hồng." },
+  { "word": "cherry", "ipa": "/ˈtʃeri/", "part_of_speech": "noun", "meaning_vi": "quả anh đào", "example_en": "The cherry is red.", "example_vi": "Quả anh đào màu đỏ." },
+  { "word": "coconut", "ipa": "/ˈkəʊkənʌt/", "part_of_speech": "noun", "meaning_vi": "quả dừa", "example_en": "The coconut is brown.", "example_vi": "Quả dừa màu nâu." },
+  { "word": "plum", "ipa": "/plʌm/", "part_of_speech": "noun", "meaning_vi": "quả mận", "example_en": "The plum is purple.", "example_vi": "Quả mận màu tím." },
+  { "word": "melon", "ipa": "/ˈmelən/", "part_of_speech": "noun", "meaning_vi": "quả dưa", "example_en": "I like melon.", "example_vi": "Mình thích dưa." },
+  { "word": "lime", "ipa": "/laɪm/", "part_of_speech": "noun", "meaning_vi": "quả chanh xanh", "example_en": "The lime is green.", "example_vi": "Quả chanh xanh màu xanh lá." },
+  { "word": "fruit", "ipa": "/fruːt/", "part_of_speech": "noun", "meaning_vi": "trái cây", "example_en": "I like fruit.", "example_vi": "Mình thích trái cây." },
+  { "word": "berry", "ipa": "/ˈberi/", "part_of_speech": "noun", "meaning_vi": "quả mọng", "example_en": "The berry is red.", "example_vi": "Quả mọng màu đỏ." }
+]

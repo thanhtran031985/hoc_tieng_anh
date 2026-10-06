@@ -1,0 +1,162 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=760 subtitle="7. Cài đặt: thời gian học, giao diện, giọng đọc, âm thanh, quản lý hồ sơ con (hộp thoại xác nhận), đổi mật khẩu và mã PIN" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Cài đặt — preview</title>
+<style>
+  .set { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-5); align-items: start; }
+  .stabs { display: flex; flex-direction: column; gap: 2px; background: var(--surface); border-radius: var(--adm-radius-lg); box-shadow: var(--adm-shadow-card); padding: var(--space-2); }
+  .stabs button { display: flex; align-items: center; gap: var(--space-2); text-align: left; border: 0; background: none; min-height: 40px; padding: 0 var(--space-3); border-radius: var(--adm-radius-md); font: 500 14px/20px var(--font-thcs); color: var(--ink-soft); cursor: pointer; }
+  .stabs button:hover { background: var(--surface-soft); color: var(--ink); }
+  .stabs button[aria-selected="true"] { background: var(--brand-soft); color: var(--brand-shade); font-weight: 600; }
+  .sec { display: flex; flex-direction: column; gap: var(--space-4); }
+  .sec h2 { margin: 0; }
+  .row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+  .days { display: flex; gap: 6px; }
+  .days button { width: 40px; height: 36px; border-radius: var(--adm-radius-md); border: 1px solid var(--line-strong); background: var(--surface); font: 600 13px/1 var(--font-thcs); color: var(--ink); cursor: pointer; }
+  .days button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+  .uis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+  .ui { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-lg); padding: var(--space-3); background: var(--surface); text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 6px; font: inherit; color: var(--ink); }
+  .ui[aria-checked="true"] { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); background: var(--brand-soft); }
+  .ui .mock { height: 78px; border-radius: 6px; position: relative; overflow: hidden; }
+  .mock--th { background: #fff8ec; }
+  .mock--th i { position: absolute; border-radius: 10px; }
+  .mock--thcs { background: #f6f7fb; }
+  .mock--thcs i { position: absolute; border-radius: 3px; }
+  .mock--auto { background: linear-gradient(90deg, #fff8ec 50%, #f6f7fb 50%); }
+  .kidrow { display: grid; grid-template-columns: 44px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3) 0; border-top: 1px solid var(--line); }
+  .kidrow:first-of-type { border-top: 0; }
+  .kidrow .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .lvsel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .lvsel button { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); background: var(--surface); padding: 6px 4px; cursor: pointer; font: 600 12px/16px var(--font-thcs); color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .lvsel button i { width: 18px; height: 18px; border-radius: 50%; background: var(--lv); }
+  .lvsel button[aria-checked="true"] { border-color: var(--brand); box-shadow: inset 0 0 0 2px var(--brand); }
+  .warnbox { display: flex; gap: var(--space-2); background: var(--field-error-bg); color: var(--ink); border-radius: var(--adm-radius-md); padding: var(--space-2) var(--space-3); }
+  .warnbox .b-ico { color: var(--field-error); flex: none; margin-top: 3px; }
+  .chk { display: flex; gap: var(--space-2); align-items: center; color: var(--ink); }
+  .chk input { width: 18px; height: 18px; accent-color: var(--brand); }
+  .savebar { display: flex; justify-content: flex-end; gap: var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--line); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var CFG = { minh: { limit: '30', from: '17:00', to: '20:30', days: [1, 1, 1, 1, 1, 1, 0], warn: true, extra: false, ui: 'auto', voice: 'uk', speed: 'slow', sfx: true, music: true, vi: true },
+              linh: { limit: '45', from: '19:00', to: '21:30', days: [1, 1, 1, 1, 1, 1, 1], warn: true, extra: true, ui: 'auto', voice: 'us', speed: 'normal', sfx: true, music: false, vi: false } };
+  var TABS = [['time', 'clock', 'Thời gian học'], ['ui', 'eye', 'Giao diện & âm thanh'], ['profiles', 'users', 'Hồ sơ của con'], ['security', 'key', 'Mật khẩu & mã PIN']];
+  var S = { tab: 'time' };
+  function kid() { return A.kids.filter(function (x) { return x.id === A.state.kid; })[0] || A.kids[0]; }
+  function seg(id, label, opts, v) { return '<div class="a-field"><span class="adm-h3" id="' + id + '-l">' + label + '</span><div class="t-seg a-seg" role="radiogroup" aria-labelledby="' + id + '-l" data-key="' + id + '">' + opts.map(function (o) { return '<button type="button" role="radio" data-v="' + o[0] + '" aria-checked="' + (o[0] === v) + '" aria-pressed="' + (o[0] === v) + '">' + o[1] + '</button>'; }).join('') + '</div></div>'; }
+  function tTime() {
+    var c = CFG[A.state.kid];
+    return '<section class="a-card sec"><div><h2 class="adm-h2">Thời gian học của ' + kid().name + '</h2><span class="adm-small b-muted">Khi hết giờ, Bông chào tạm biệt và con không mở được bài mới (bài đang làm vẫn hoàn thành được).</span></div>' +
+      seg('limit', 'Giới hạn mỗi ngày', [['15', '15 phút'], ['20', '20 phút'], ['30', '30 phút'], ['45', '45 phút'], ['60', '60 phút'], ['none', 'Không giới hạn']], c.limit) +
+      '<div class="row2">' + A.field({ id: 'from', label: 'Được học từ', value: c.from, hint: 'Giờ:phút, ví dụ 17:00', required: true }) + A.field({ id: 'to', label: 'Đến', value: c.to, hint: 'Sau giờ này app tự khoá', required: true }) + '</div>' +
+      '<div class="a-field"><span class="adm-h3" id="days-l">Ngày được học</span><div class="days" role="group" aria-labelledby="days-l">' + ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(function (d, i) { return '<button type="button" data-day="' + i + '" aria-pressed="' + !!c.days[i] + '">' + d + '</button>'; }).join('') + '</div></div>' +
+      '<div>' + A.toggle('warn', 'Nhắc con khi còn 5 phút', c.warn, 'Bông hiện lời nhắc nhẹ, không làm gián đoạn câu đang làm') + A.toggle('extra', 'Cho thêm 10 phút khi đang làm bài thi', c.extra, 'Tránh bị khoá giữa chừng đề thử') + '</div>' +
+      '<div class="savebar">' + A.btn({ label: 'Huỷ thay đổi', variant: 'ghost' }) + A.btn({ label: 'Lưu thay đổi', icon: 'check', attrs: 'data-save-time' }) + '</div></section>';
+  }
+  function tUi() {
+    var c = CFG[A.state.kid], k = kid();
+    var mocks = { tieu: '<div class="mock mock--th"><i style="left:10px;top:10px;width:46px;height:46px;background:#ffd36e"></i><i style="left:66px;top:16px;width:70px;height:14px;background:#ff8a5c"></i><i style="left:66px;top:38px;width:50px;height:14px;background:#5bc8a8"></i></div>',
+      thcs: '<div class="mock mock--thcs"><i style="left:0;top:0;bottom:0;width:26px;background:#1f2540"></i><i style="left:34px;top:10px;width:90px;height:10px;background:#3355e0"></i><i style="left:34px;top:28px;width:110px;height:8px;background:#c9cfe0"></i><i style="left:34px;top:44px;width:80px;height:8px;background:#c9cfe0"></i></div>',
+      auto: '<div class="mock mock--auto"></div>' };
+    var uis = [['tieu', 'Tiểu học', 'Rồng Bông lớn, chữ to, nhiều hình'], ['thcs', 'THCS', 'Gọn, nhiều chữ, có chế độ tối'], ['auto', 'Tự động theo lớp', 'Lớp 1–5: Tiểu học · Lớp 6–9: THCS · Hiện tại: ' + (k.grade <= 5 ? 'Tiểu học' : 'THCS')]];
+    return '<section class="a-card sec"><div><h2 class="adm-h2">Giao diện của ' + k.name + '</h2><span class="adm-small b-muted">Đổi giao diện không ảnh hưởng tiến độ học.</span></div>' +
+      '<div class="uis" role="radiogroup" aria-label="Giao diện">' + uis.map(function (u) { return '<button type="button" class="ui" role="radio" data-ui="' + u[0] + '" aria-checked="' + (c.ui === u[0]) + '">' + mocks[u[0]] + '<b class="adm-h3">' + u[1] + '</b><span class="adm-small b-muted">' + u[2] + '</span></button>'; }).join('') + '</div>' +
+      '<div class="row2">' + seg('voice', 'Giọng đọc tiếng Anh', [['uk', 'Anh – Anh (UK)'], ['us', 'Anh – Mỹ (US)']], c.voice) + seg('speed', 'Tốc độ đọc', [['normal', 'Bình thường'], ['slow', 'Chậm']], c.speed) + '</div>' +
+      '<div class="a-note adm-small b-muted">' + B.speak('Hello! I am Bông. Let’s learn English together.', 's', 'Nghe thử giọng đã chọn') + '<span>Nghe thử: “<span lang="en">Hello! I am Bông. Let’s learn English together.</span>”</span></div>' +
+      '<div><h3 class="adm-h3" style="margin:0">Âm thanh</h3>' + A.toggle('sfx', 'Hiệu ứng âm thanh', c.sfx, 'Tiếng “ting” khi đúng, tiếng pháo sao khi hoàn thành bài') + A.toggle('music', 'Nhạc nền', c.music, 'Nhạc nhẹ ở bản đồ và màn chính, tự tắt trong bài nghe') + A.toggle('vi', 'Đọc hướng dẫn tiếng Việt', c.vi, 'Phù hợp với bé chưa đọc thạo') + '</div>' +
+      '<div class="savebar">' + A.btn({ label: 'Lưu thay đổi', icon: 'check', attrs: 'data-save-ui' }) + '</div></section>';
+  }
+  function tProfiles() {
+    return '<section class="a-card sec"><div class="a-card__h" style="margin:0"><div><h2 class="adm-h2">Hồ sơ của con</h2><span class="adm-small b-muted">' + A.kids.length + ' hồ sơ · tối đa 4 hồ sơ mỗi tài khoản gia đình</span></div>' + A.btn({ label: 'Thêm hồ sơ', icon: 'plus', variant: 'secondary' }) + '</div>' +
+      (A.kids.length ? A.kids.map(function (k) { var lv = B.levels[k.level - 1]; return '<div class="kidrow" data-level="' + k.level + '">' + B.avatar(k, 44) + '<div><b class="adm-h3">' + k.name + '</b><br><span class="adm-small b-muted">Lớp ' + k.grade + ' · </span>' + B.levelChip(k.level) + '<span class="adm-small b-muted"> · Giao diện ' + (CFG[k.id].ui === 'auto' ? 'tự động' : CFG[k.id].ui === 'tieu' ? 'Tiểu học' : 'THCS') + '</span></div>' +
+        '<div class="acts">' + A.btn({ label: 'Đổi tên', variant: 'secondary', size: 's', attrs: 'data-act="rename" data-k="' + k.id + '"' }) + A.btn({ label: 'Đổi lớp', variant: 'secondary', size: 's', attrs: 'data-act="grade" data-k="' + k.id + '"' }) + A.btn({ label: 'Đổi cấp', variant: 'secondary', size: 's', attrs: 'data-act="level" data-k="' + k.id + '"' }) +
+        A.btn({ label: 'Đặt lại tiến độ', variant: 'secondary', size: 's', cls: 'a-btn--danger-o', attrs: 'data-act="reset" data-k="' + k.id + '"' }) + '<button type="button" class="a-iconbtn" data-act="delete" data-k="' + k.id + '" aria-label="Xoá hồ sơ ' + k.name + '" title="Xoá hồ sơ">' + B.icon('trash', 16) + '</button></div></div>'; }).join('')
+        : A.empty({ title: 'Chưa có hồ sơ nào', text: 'Thêm hồ sơ để con bắt đầu học.', action: A.btn({ label: 'Thêm hồ sơ', icon: 'plus' }) })) + '</section>';
+  }
+  function tSecurity() {
+    return '<section class="a-card sec" id="pw"><div><h2 class="adm-h2">Đổi mật khẩu tài khoản</h2><span class="adm-small b-muted">Tài khoản gia đình · huong.nguyen@gmail.com</span></div><div class="row2">' +
+      A.field({ id: 'pw0', label: 'Mật khẩu hiện tại', type: 'password', required: true, cls: 'a-full' }) + '<span></span>' +
+      A.field({ id: 'pw1', label: 'Mật khẩu mới', type: 'password', required: true, hint: 'Ít nhất 8 ký tự, có cả chữ và số' }) + A.field({ id: 'pw2', label: 'Nhập lại mật khẩu mới', type: 'password', required: true }) + '</div>' +
+      '<div class="savebar">' + A.btn({ label: 'Đổi mật khẩu', icon: 'lock', attrs: 'data-save-pw' }) + '</div></section>' +
+      '<section class="a-card sec" id="pin" style="margin-top:var(--space-4)"><div><h2 class="adm-h2">Đổi mã PIN vào khu bố mẹ</h2><span class="adm-small b-muted">PIN 4–6 chữ số, dùng thay mật khẩu trên máy của con</span></div><div class="row2" style="grid-template-columns:repeat(3,minmax(0,1fr))">' +
+      A.field({ id: 'pin0', label: 'PIN hiện tại', type: 'password', required: true, attrs: 'inputmode="numeric" maxlength="6"' }) + A.field({ id: 'pin1', label: 'PIN mới', type: 'password', required: true, attrs: 'inputmode="numeric" maxlength="6"' }) + A.field({ id: 'pin2', label: 'Nhập lại PIN mới', type: 'password', required: true, attrs: 'inputmode="numeric" maxlength="6"' }) + '</div>' +
+      '<div class="savebar">' + A.btn({ label: 'Đổi mã PIN', icon: 'key', attrs: 'data-save-pin' }) + '</div></section>';
+  }
+  function main() {
+    if (!A.kids.length) S.tab = S.tab === 'security' ? 'security' : 'profiles';
+    var body = { time: tTime, ui: tUi, profiles: tProfiles, security: tSecurity }[S.tab]();
+    return '<div class="set"><div class="stabs" role="tablist" aria-orientation="vertical" aria-label="Nhóm cài đặt">' + TABS.map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + (S.tab === t[0]) + '" tabindex="' + (S.tab === t[0] ? 0 : -1) + '">' + B.icon(t[1], 18) + t[2] + '</button>'; }).join('') + '</div><div role="tabpanel">' + body + '</div></div>';
+  }
+  function page(m) { var per = S.tab === 'time' || S.tab === 'ui'; return A.shell({ area: 'parent', active: 'settings', title: 'Cài đặt', crumb: per ? 'Áp dụng cho ' + kid().name + ' · lớp ' + kid().grade : 'Áp dụng cho cả gia đình', kids: per, main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa có hồ sơ con)' },
+    notes: { normal: 'Dùng ↑/↓ trong danh sách nhóm. “Hồ sơ của con”: mỗi thao tác mở hộp thoại xác nhận; xoá phải gõ đúng tên con. “Mật khẩu & mã PIN”: mật khẩu hiện tại thử là matkhau123, PIN hiện tại là 2580 — sai sẽ báo lỗi dưới ô.', loading: 'Khung xương nhóm cài đặt và biểu mẫu.', empty: 'Tài khoản chưa có hồ sơ con nào.', error: 'Không tải được cài đặt.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="set">' + A.skel('180px') + A.skel('420px') + '</div>'); },
+      empty: function () { return A.shell({ area: 'parent', active: 'settings', title: 'Cài đặt', crumb: 'Tài khoản gia đình', main: '<section class="a-card">' + A.empty({ title: 'Chưa có hồ sơ con nào', text: 'Thời gian học, giao diện và giọng đọc được đặt riêng cho từng con. Hãy thêm hồ sơ đầu tiên.', action: A.btn({ label: 'Thêm hồ sơ con', icon: 'plus' }), expr: 'chao' }) + '</section>' }); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'SET-500' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var c = CFG[A.state.kid];
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      var tabs = scr.querySelectorAll('[data-tab]');
+      tabs.forEach(function (b, i) {
+        b.addEventListener('click', function () { S.tab = b.dataset.tab; re('[data-tab="' + S.tab + '"]'); });
+        b.addEventListener('keydown', function (e) { if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return; e.preventDefault(); var n = tabs[(i + (e.key === 'ArrowDown' ? 1 : tabs.length - 1)) % tabs.length]; S.tab = n.dataset.tab; re('[data-tab="' + S.tab + '"]'); });
+      });
+      scr.querySelectorAll('[data-key]').forEach(function (g) { g.addEventListener('segchange', function (e) { c[g.dataset.key] = e.detail; }); });
+      scr.querySelectorAll('[data-day]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.day; c.days[i] = c.days[i] ? 0 : 1; b.setAttribute('aria-pressed', !!c.days[i]); }); });
+      scr.querySelectorAll('[data-ui]').forEach(function (b) { b.addEventListener('click', function () { c.ui = b.dataset.ui; scr.querySelectorAll('[data-ui]').forEach(function (x) { x.setAttribute('aria-checked', x === b); }); }); });
+      function hm(v) { var m = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(v.trim()); return m ? +m[1] * 60 + +m[2] : null; }
+      var tr = {
+        from: function (v) { return hm(v) == null ? 'Giờ chưa đúng dạng giờ:phút, ví dụ 17:00.' : ''; },
+        to: function (v, r) { var t = hm(v), f = hm(r.querySelector('#from').value); if (t == null) return 'Giờ chưa đúng dạng giờ:phút, ví dụ 20:30.'; if (f != null && t <= f) return 'Giờ kết thúc phải sau giờ bắt đầu.'; if (f != null && t - f < 30) return 'Khung giờ cần dài ít nhất 30 phút.'; return ''; }
+      };
+      if (scr.querySelector('#from')) { A.wireValidate(scr, tr); scr.querySelector('[data-save-time]').addEventListener('click', function () { if (A.validate(scr, tr)) return; c.from = scr.querySelector('#from').value.trim(); c.to = scr.querySelector('#to').value.trim(); A.toast(scr, 'Đã lưu thời gian học của ' + kid().name + '.'); }); }
+      var su = scr.querySelector('[data-save-ui]'); su && su.addEventListener('click', function () { A.toast(scr, 'Đã lưu. ' + kid().name + ' sẽ thấy thay đổi ở lần mở app tiếp theo.'); });
+      // Bảo mật
+      var pr = {
+        pw0: function (v) { return !v ? 'Nhập mật khẩu hiện tại.' : ''; },
+        pw1: function (v) { return !v ? 'Nhập mật khẩu mới.' : v.length < 8 ? 'Mật khẩu cần ít nhất 8 ký tự.' : !(/\d/.test(v) && /[a-zA-Z]/.test(v)) ? 'Mật khẩu cần có cả chữ và số.' : ''; },
+        pw2: function (v, r) { return !v ? 'Nhập lại mật khẩu mới.' : v !== r.querySelector('#pw1').value ? 'Hai mật khẩu mới chưa khớp nhau.' : ''; }
+      };
+      var pinr = {
+        pin0: function (v) { return !v ? 'Nhập PIN hiện tại.' : ''; },
+        pin1: function (v) { return !/^\d{4,6}$/.test(v) ? 'PIN gồm 4–6 chữ số.' : /^(\d)\1+$/.test(v) || '0123456789'.indexOf(v) > -1 ? 'PIN quá dễ đoán (lặp số hoặc số liền nhau). Chọn PIN khác.' : ''; },
+        pin2: function (v, r) { return v !== r.querySelector('#pin1').value ? 'Hai mã PIN chưa khớp nhau.' : ''; }
+      };
+      if (scr.querySelector('#pw0')) {
+        A.wireValidate(scr, pr); A.wireValidate(scr, pinr);
+        scr.querySelector('[data-save-pw]').addEventListener('click', function () { var box = scr.querySelector('#pw'); if (A.validate(box, pr)) return; if (box.querySelector('#pw0').value !== 'matkhau123') { A.setErr(box, 'pw0', 'Mật khẩu hiện tại chưa đúng. Bấm “Quên mật khẩu” ở cổng vào nếu cần.'); box.querySelector('#pw0').focus(); return; } box.querySelectorAll('input').forEach(function (i) { i.value = ''; }); A.toast(scr, 'Đã đổi mật khẩu. Các thiết bị khác cần đăng nhập lại.'); });
+        scr.querySelector('[data-save-pin]').addEventListener('click', function () { var box = scr.querySelector('#pin'); if (A.validate(box, pinr)) return; if (box.querySelector('#pin0').value !== '2580') { A.setErr(box, 'pin0', 'PIN hiện tại chưa đúng.'); box.querySelector('#pin0').focus(); return; } box.querySelectorAll('input').forEach(function (i) { i.value = ''; }); A.toast(scr, 'Đã đổi mã PIN vào khu bố mẹ.'); });
+      }
+      // Hồ sơ: hộp thoại
+      scr.querySelectorAll('[data-act]').forEach(function (b) { b.addEventListener('click', function () {
+        var k = A.kids.filter(function (x) { return x.id === b.dataset.k; })[0], act = b.dataset.act, ret = '[data-act="' + act + '"][data-k="' + k.id + '"]';
+        function done(msg) { ctx.setState('normal'); var f = ctx.scr.querySelector(ret) || ctx.scr.querySelector('[data-tab="profiles"]'); f && f.focus(); A.toast(ctx.scr, msg); }
+        if (act === 'rename') A.dialog(scr, { title: 'Đổi tên hồ sơ', body: A.field({ id: 'nm', label: 'Tên hiển thị', value: k.name, required: true, hint: 'Bông sẽ gọi con bằng tên này. Tối đa 20 ký tự.' }),
+          actions: [{ label: 'Huỷ' }, { label: 'Lưu tên', variant: 'primary', onClick: function (w) { var v = w.querySelector('#nm').value.trim(), m = !v ? 'Nhập tên cho con.' : v.length > 20 ? 'Tên tối đa 20 ký tự.' : /[0-9@#$%^&*<>]/.test(v) ? 'Tên chỉ gồm chữ cái và khoảng trắng.' : ''; A.setErr(w, 'nm', m); if (m) { w.querySelector('#nm').focus(); return false; } k.name = v; setTimeout(function () { done('Đã đổi tên thành ' + v + '.'); }, 0); } }] });
+        if (act === 'grade') A.dialog(scr, { title: 'Đổi lớp cho ' + k.name, body: A.field({ id: 'gr', label: 'Lớp ở trường', type: 'select', value: k.grade, options: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (g) { return [g, 'Lớp ' + g]; }), hint: 'Dùng để gợi ý bài theo Unit SGK. Giao diện “Tự động” sẽ đổi theo lớp.' }),
+          actions: [{ label: 'Huỷ' }, { label: 'Lưu lớp', variant: 'primary', onClick: function (w) { var g = +w.querySelector('#gr').value; k.grade = g; setTimeout(function () { done(k.name + ' giờ học lớp ' + g + '.'); }, 0); } }] });
+        if (act === 'level') {
+          var pick = k.level;
+          A.dialog(scr, { title: 'Đổi cấp cho ' + k.name, wide: true, body: '<div class="lvsel" role="radiogroup" aria-label="Cấp">' + B.levels.map(function (l) { return '<button type="button" role="radio" data-level="' + l.n + '" data-lv="' + l.n + '" aria-checked="' + (l.n === k.level) + '"><i></i>Cấp ' + l.n + '<span class="adm-small b-muted" style="font-weight:400">' + l.name + '</span></button>'; }).join('') + '</div>' +
+            '<div class="warnbox adm-small">' + B.icon('info', 16) + '<span>Lên cấp: các bài ở cấp thấp hơn được tính là đã qua. Xuống cấp: tiến độ cũ vẫn giữ, con học lại từ đầu cấp mới.</span></div>',
+            onOpen: function (w) { w.querySelectorAll('[data-lv]').forEach(function (x) { x.addEventListener('click', function () { pick = +x.dataset.lv; w.querySelectorAll('[data-lv]').forEach(function (y) { y.setAttribute('aria-checked', y === x); }); }); }); },
+            actions: [{ label: 'Huỷ' }, { label: 'Đổi cấp', variant: 'primary', onClick: function () { k.level = pick; setTimeout(function () { done(k.name + ' chuyển sang cấp ' + pick + ' · ' + B.levels[pick - 1].name + '.'); }, 0); } }] });
+        }
+        if (act === 'reset') A.dialog(scr, { title: 'Đặt lại tiến độ của ' + k.name + '?', body: '<p style="margin:0">Toàn bộ sao, XP, chuỗi ngày, từ đã thuộc và bài đã qua sẽ về 0. <b>Không hoàn tác được.</b></p><label class="chk adm-body"><input type="checkbox" checked> Giữ lại bài viết, ghi âm và kết quả thi</label>',
+          actions: [{ label: 'Huỷ' }, { label: 'Đặt lại tiến độ', variant: 'danger', onClick: function () { setTimeout(function () { done('Đã đặt lại tiến độ của ' + k.name + '.'); }, 0); } }] });
+        if (act === 'delete') A.dialog(scr, { title: 'Xoá hồ sơ ' + k.name + '?', body: '<p style="margin:0">Hồ sơ, tiến độ, bài viết và ghi âm của ' + k.name + ' sẽ bị xoá vĩnh viễn sau 30 ngày. Trong 30 ngày có thể khôi phục.</p>' + A.field({ id: 'cf', label: 'Gõ “' + k.name + '” để xác nhận', required: true }),
+          actions: [{ label: 'Huỷ' }, { label: 'Xoá hồ sơ', variant: 'danger', icon: 'trash', onClick: function (w) { var v = w.querySelector('#cf').value.trim(), m = v === k.name ? '' : !v ? 'Gõ tên con để xác nhận.' : 'Tên chưa khớp. Gõ đúng “' + k.name + '” (có dấu).'; A.setErr(w, 'cf', m); if (m) { w.querySelector('#cf').focus(); return false; } var i = A.kids.indexOf(k); A.kids.splice(i, 1); if (A.state.kid === k.id && A.kids[0]) A.state.kid = A.kids[0].id; setTimeout(function () { ctx.setState('normal'); A.toast(ctx.scr, 'Đã xoá hồ sơ ' + k.name + '. Khôi phục được trong 30 ngày.'); var f = ctx.scr.querySelector('[data-tab="profiles"]'); f && f.focus(); }, 0); } }] });
+      }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

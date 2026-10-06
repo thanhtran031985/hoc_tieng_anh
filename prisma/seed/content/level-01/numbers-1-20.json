@@ -1,0 +1,22 @@
+[
+  { "word": "one", "ipa": "/wʌn/", "part_of_speech": "determiner", "meaning_vi": "một", "example_en": "I have one ball.", "example_vi": "Mình có một quả bóng." },
+  { "word": "two", "ipa": "/tuː/", "part_of_speech": "determiner", "meaning_vi": "hai", "example_en": "I have two cats.", "example_vi": "Mình có hai con mèo." },
+  { "word": "three", "ipa": "/θriː/", "part_of_speech": "determiner", "meaning_vi": "ba", "example_en": "I see three birds.", "example_vi": "Mình thấy ba con chim." },
+  { "word": "four", "ipa": "/fɔː/", "part_of_speech": "determiner", "meaning_vi": "bốn", "example_en": "I have four apples.", "example_vi": "Mình có bốn quả táo." },
+  { "word": "five", "ipa": "/faɪv/", "part_of_speech": "determiner", "meaning_vi": "năm", "example_en": "I have five fish.", "example_vi": "Mình có năm con cá." },
+  { "word": "six", "ipa": "/sɪks/", "part_of_speech": "determiner", "meaning_vi": "sáu", "example_en": "I see six ducks.", "example_vi": "Mình thấy sáu con vịt." },
+  { "word": "seven", "ipa": "/ˈsevn/", "part_of_speech": "determiner", "meaning_vi": "bảy", "example_en": "There are seven bananas.", "example_vi": "Có bảy quả chuối." },
+  { "word": "eight", "ipa": "/eɪt/", "part_of_speech": "determiner", "meaning_vi": "tám", "example_en": "I have eight dolls.", "example_vi": "Mình có tám con búp bê." },
+  { "word": "nine", "ipa": "/naɪn/", "part_of_speech": "determiner", "meaning_vi": "chín", "example_en": "I see nine kites.", "example_vi": "Mình thấy chín cái diều." },
+  { "word": "ten", "ipa": "/ten/", "part_of_speech": "determiner", "meaning_vi": "mười", "example_en": "I have ten cars.", "example_vi": "Mình có mười chiếc ô tô." },
+  { "word": "eleven", "ipa": "/ɪˈlevn/", "part_of_speech": "determiner", "meaning_vi": "mười một", "example_en": "There are eleven rabbits.", "example_vi": "Có mười một con thỏ." },
+  { "word": "twelve", "ipa": "/twelv/", "part_of_speech": "determiner", "meaning_vi": "mười hai", "example_en": "I have twelve pears.", "example_vi": "Mình có mười hai quả lê." },
+  { "word": "thirteen", "ipa": "/ˌθɜːˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười ba", "example_en": "I see thirteen fish.", "example_vi": "Mình thấy mười ba con cá." },
+  { "word": "fourteen", "ipa": "/ˌfɔːˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười bốn", "example_en": "There are fourteen robots.", "example_vi": "Có mười bốn con rô-bốt." },
+  { "word": "fifteen", "ipa": "/ˌfɪfˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười lăm", "example_en": "I have fifteen balloons.", "example_vi": "Mình có mười lăm quả bóng bay." },
+  { "word": "sixteen", "ipa": "/ˌsɪksˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười sáu", "example_en": "I see sixteen trains.", "example_vi": "Mình thấy mười sáu đoàn tàu." },
+  { "word": "seventeen", "ipa": "/ˌsevnˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười bảy", "example_en": "I have seventeen bikes.", "example_vi": "Mình có mười bảy chiếc xe đạp." },
+  { "word": "eighteen", "ipa": "/ˌeɪˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười tám", "example_en": "There are eighteen puzzles.", "example_vi": "Có mười tám bộ xếp hình." },
+  { "word": "nineteen", "ipa": "/ˌnaɪnˈtiːn/", "part_of_speech": "determiner", "meaning_vi": "mười chín", "example_en": "I see nineteen drums.", "example_vi": "Mình thấy mười chín cái trống." },
+  { "word": "twenty", "ipa": "/ˈtwenti/", "part_of_speech": "determiner", "meaning_vi": "hai mươi", "example_en": "I have twenty toys.", "example_vi": "Mình có hai mươi món đồ chơi." }
+]

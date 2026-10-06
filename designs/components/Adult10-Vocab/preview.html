@@ -1,0 +1,117 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="10. Ngân hàng từ vựng: bảng có tìm, lọc theo cấp / chủ đề / lớp / Unit SGK; biểu mẫu từ với hình, âm thanh và nút tạo giọng đọc tự động" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Ngân hàng từ vựng — preview</title>
+<style>
+  .ipa { font: 400 14px/20px var(--font-thcs); color: var(--ink-soft); white-space: nowrap; }
+  .has { display: inline-flex; gap: 6px; }
+  .has span { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; background: var(--success-soft); color: var(--success-shade); }
+  .has span.no { background: var(--field-error-bg); color: var(--field-error); }
+  .media2 { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-3); align-items: start; }
+  .imgbox { width: 120px; height: 120px; border-radius: var(--adm-radius-lg); background: var(--surface-soft); display: grid; place-items: center; border: 1px dashed var(--line-strong); color: var(--ink-soft); text-align: center; font: 500 12px/16px var(--font-thcs); }
+  .imgbox.has-img { border-style: solid; border-color: var(--line); }
+  .aud { display: flex; align-items: center; gap: var(--space-2); background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 6px 10px; }
+  .aud .bar { flex: 1; height: 6px; border-radius: 3px; background: var(--surface-sunk); overflow: hidden; }
+  .aud .bar i { display: block; height: 100%; width: 0; background: var(--chart-1); transition: width .2s; }
+  .grp { display: flex; flex-direction: column; gap: var(--space-2); }
+  .grp > .adm-h3 { margin: 0; }
+  .dsec { border-top: 1px solid var(--line); padding-top: var(--space-3); }
+  .sel-bar { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, D = A.data;
+  var POS = ['danh từ', 'động từ', 'tính từ', 'trạng từ', 'số từ', 'giới từ', 'cụm từ'];
+  var ALLT = []; Object.keys(D.topics).forEach(function (l) { D.topics[l].forEach(function (t) { ALLT.push([t, 'Cấp ' + l + ' · ' + t]); }); });
+  function lvchip(n) { return '<span data-level="' + n + '">' + B.levelChip(n) + '</span>'; }
+  var table = A.table({ id: 'voc', rows: D.vocab, total: 2926, pageSize: 10, select: true, searchKeys: ['word', 'vi', 'ipa'], placeholder: 'Tìm từ, nghĩa hoặc phiên âm…', sort: { key: 'level', dir: 'asc' },
+    filters: [
+      { key: 'level', label: 'Cấp', options: B.levels.map(function (l) { return [String(l.n), 'Cấp ' + l.n + ' · ' + l.name]; }) },
+      { key: 'topic', label: 'Chủ đề', options: ALLT },
+      { key: 'grade', label: 'Lớp', options: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (g) { return [String(g), 'Lớp ' + g]; }) },
+      { key: 'unit', label: 'Unit SGK', options: ['Unit 1', 'Unit 2', 'Unit 3', 'Unit 4', 'Unit 5', 'Unit 6', 'Unit 7', 'Unit 10', ['—', 'Không thuộc Unit']] },
+      { key: 'miss', label: 'Thiếu', options: [['img', 'Chưa có hình'], ['audio', 'Chưa có âm thanh']], match: function (r, v) { return !r[v]; } }
+    ],
+    rowAttrs: function (r) { return 'data-row="' + r.id + '"'; },
+    onRow: function (id) { open(id); },
+    columns: [
+      { key: 'word', label: 'Từ', sort: true, render: function (r) { return '<span class="a-word"><span class="a-thumb' + (r.img ? '' : ' a-thumb--miss') + '">' + (r.img && B.words[r.word] ? B.pic(r.word, 30) : r.img ? B.icon('image', 16) : B.icon('image', 16)) + '</span>' + (r.audio ? B.speak(r.word, 's') : '') + '<b lang="en">' + r.word + '</b></span>'; } },
+      { key: 'ipa', label: 'Phiên âm', render: function (r) { return '<span class="ipa">' + r.ipa + '</span>'; } },
+      { key: 'pos', label: 'Loại từ', sort: true },
+      { key: 'vi', label: 'Nghĩa', sort: true },
+      { key: 'level', label: 'Cấp', sort: true, render: function (r) { return lvchip(r.level); } },
+      { key: 'topic', label: 'Chủ đề', sort: true },
+      { key: 'unit', label: 'Lớp · Unit', sort: true, render: function (r) { return '<span style="white-space:nowrap">Lớp ' + r.grade + ' · ' + r.unit + '</span>'; } },
+      { key: 'img', label: 'Hình · Âm', render: function (r) { return '<span class="has"><span class="' + (r.img ? '' : 'no') + '" title="' + (r.img ? 'Có hình' : 'Chưa có hình') + '" aria-label="' + (r.img ? 'Có hình' : 'Chưa có hình') + '">' + B.icon('image', 14) + '</span><span class="' + (r.audio ? '' : 'no') + '" title="' + (r.audio ? 'Có âm thanh' : 'Chưa có âm thanh') + '" aria-label="' + (r.audio ? 'Có âm thanh' : 'Chưa có âm thanh') + '">' + B.icon('music', 14) + '</span></span>'; } },
+      { key: 'status', label: 'Trạng thái', sort: true, render: function (r) { return r.status === 'live' ? A.status('live', 'Đã xuất bản') : A.status('draft', 'Nháp'); } }
+    ],
+    actions: function (r) { return '<button type="button" class="a-iconbtn" data-edit="' + r.id + '" aria-label="Sửa từ ' + r.word + '" title="Sửa">' + B.icon('pen', 16) + '</button>'; } });
+  var SCR, CTX;
+  function form(r) {
+    r = r || { word: '', ipa: '', pos: 'danh từ', vi: '', ex: '', exVi: '', level: 8, topic: 'Getting around', grade: 8, unit: '—', img: false, audio: false, status: 'draft' };
+    var lv = r.level;
+    return '<div class="a-form">' + A.field({ id: 'f-word', label: 'Từ tiếng Anh', value: r.word, required: true, en: true }) + A.field({ id: 'f-ipa', label: 'Phiên âm IPA', value: r.ipa, required: true, placeholder: '/ˈæp.əl/', en: true }) +
+      A.field({ id: 'f-pos', label: 'Loại từ', type: 'select', value: r.pos, options: POS }) + A.field({ id: 'f-vi', label: 'Nghĩa tiếng Việt', value: r.vi, required: true }) +
+      A.field({ id: 'f-ex', label: 'Câu ví dụ (tiếng Anh)', type: 'textarea', rows: 2, value: r.ex, required: true, en: true, cls: 'a-full', hint: 'Câu phải chứa từ đang soạn.' }) + A.field({ id: 'f-exvi', label: 'Dịch câu ví dụ', type: 'textarea', rows: 2, value: r.exVi, cls: 'a-full' }) + '</div>' +
+      '<div class="grp dsec"><h3 class="adm-h3">Hình ảnh</h3><div class="media2"><div class="imgbox' + (r.img ? ' has-img' : '') + '" data-imgbox>' + (r.img && B.words[r.word] ? B.pic(r.word, 100) : r.img ? B.icon('image', 32) : B.icon('image', 24) + '<span>Chưa có hình</span>') + '</div><div class="grp"><span class="adm-small b-muted">PNG, SVG hoặc WebP · nền trong · tối thiểu 512×512</span>' + A.btn({ label: 'Tải hình lên', icon: 'upload', variant: 'secondary', size: 's' }) + A.btn({ label: 'Chọn từ thư viện', icon: 'image', variant: 'ghost', size: 's' }) + '</div></div></div>' +
+      '<div class="grp dsec"><h3 class="adm-h3">Âm thanh</h3><div class="aud" data-aud>' + (r.audio ? B.speak(r.word || 'apple', 's', 'Nghe âm thanh') + '<span class="adm-small">' + r.word + '.mp3 · giọng UK · 0:01</span>' : '<span class="adm-small b-muted" data-audtxt>Chưa có âm thanh</span><span class="bar" hidden><i></i></span>') + '</div>' +
+      '<div class="sel-bar">' + A.btn({ label: r.audio ? 'Tạo lại giọng đọc' : 'Tạo giọng đọc tự động', icon: 'wand', variant: 'secondary', size: 's', attrs: 'data-tts' }) + '<label class="b-sr" for="f-voice">Giọng</label><select class="t-input a-input" id="f-voice" style="width:auto"><option>Giọng UK · nữ</option><option>Giọng UK · nam</option><option>Giọng US · nữ</option><option>Giọng US · nam</option></select>' + A.btn({ label: 'Tải tệp', icon: 'upload', variant: 'ghost', size: 's' }) + '</div></div>' +
+      '<div class="a-form dsec">' + A.field({ id: 'f-lv', label: 'Cấp', type: 'select', value: lv, options: B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n + ' · ' + l.name]; }) }) + A.field({ id: 'f-topic', label: 'Chủ đề', type: 'select', value: r.topic, options: D.topics[lv] }) +
+      A.field({ id: 'f-grade', label: 'Lớp (SGK)', type: 'select', value: r.grade, options: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (g) { return [g, 'Lớp ' + g]; }) }) + A.field({ id: 'f-unit', label: 'Unit SGK', type: 'select', value: r.unit, options: [['—', 'Không thuộc Unit'], 'Unit 1', 'Unit 2', 'Unit 3', 'Unit 4', 'Unit 5', 'Unit 6', 'Unit 7', 'Unit 8', 'Unit 9', 'Unit 10'] }) +
+      A.field({ id: 'f-st', label: 'Trạng thái', type: 'seg', value: r.status, options: [['draft', 'Nháp'], ['live', 'Đã xuất bản']], cls: 'a-full' }) + '</div>';
+  }
+  function open(id) {
+    var r = id ? D.vocab.filter(function (x) { return x.id === id; })[0] : null;
+    var dr = A.drawer(SCR, { title: r ? 'Sửa từ “' + r.word + '”' : 'Thêm từ mới', body: form(r), foot: A.btn({ label: 'Huỷ', variant: 'ghost', attrs: 'data-dclose2' }) + A.btn({ label: r ? 'Lưu thay đổi' : 'Thêm từ', icon: 'check', attrs: 'data-dsave' }) });
+    var w = dr.el, st = r ? r.status : 'draft', hasAudio = r ? r.audio : false;
+    w.querySelector('[data-dclose2]').addEventListener('click', dr.close);
+    w.querySelector('#f-st').addEventListener('segchange', function (e) { st = e.detail; });
+    w.querySelectorAll('.a-seg').forEach(function (g) { g.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { g.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); g.dispatchEvent(new CustomEvent('segchange', { detail: b.dataset.v })); }); }); });
+    w.querySelector('#f-lv').addEventListener('change', function (e) { var t = w.querySelector('#f-topic'); t.innerHTML = D.topics[e.target.value].map(function (x) { return '<option>' + x + '</option>'; }).join(''); });
+    var rules = {
+      'f-word': function (v) { v = v.trim(); if (!v) return 'Nhập từ tiếng Anh.'; if (!/^[a-zA-Z][a-zA-Z' -]*$/.test(v)) return 'Chỉ dùng chữ cái tiếng Anh, dấu cách, dấu gạch nối.'; if (D.vocab.some(function (x) { return x.word.toLowerCase() === v.toLowerCase() && x !== r; })) return '“' + v + '” đã có trong ngân hàng. Mở từ cũ để sửa thay vì thêm mới.'; return ''; },
+      'f-ipa': function (v) { v = v.trim(); return !v ? 'Nhập phiên âm IPA.' : !/^\/.+\/$/.test(v) ? 'Phiên âm đặt trong hai dấu gạch chéo, ví dụ /ˈæp.əl/.' : ''; },
+      'f-vi': function (v) { return v.trim() ? '' : 'Nhập nghĩa tiếng Việt.'; },
+      'f-ex': function (v, root) { var wd = root.querySelector('#f-word').value.trim().toLowerCase(); v = v.trim(); return !v ? 'Nhập một câu ví dụ tiếng Anh.' : wd && v.toLowerCase().indexOf(wd.slice(0, Math.max(3, wd.length - 2))) < 0 ? 'Câu ví dụ chưa chứa từ “' + wd + '”.' : ''; }
+    };
+    A.wireValidate(w, rules);
+    w.querySelector('[data-tts]').addEventListener('click', function () {
+      var wd = w.querySelector('#f-word').value.trim(); if (!wd) { A.setErr(w, 'f-word', 'Nhập từ trước khi tạo giọng đọc.'); w.querySelector('#f-word').focus(); return; }
+      var box = w.querySelector('[data-aud]'), btn = this; btn.disabled = true;
+      box.innerHTML = '<span class="adm-small" role="status">Đang tạo giọng đọc…</span><span class="bar"><i></i></span>'; var i = box.querySelector('i'), p = 0;
+      var t = setInterval(function () { p += 25; i.style.width = p + '%'; if (p >= 100) { clearInterval(t); hasAudio = true; btn.disabled = false; box.innerHTML = B.speak(wd, 's', 'Nghe âm thanh vừa tạo') + '<span class="adm-small">' + wd + '.mp3 · ' + w.querySelector('#f-voice').value + ' · vừa tạo</span>'; } }, 250);
+    });
+    w.querySelector('[data-dsave]').addEventListener('click', function () {
+      if (A.validate(w, rules)) return;
+      if (st === 'live' && !hasAudio) { A.setErr(w, 'f-st', 'Từ chưa có âm thanh nên chưa xuất bản được. Bấm “Tạo giọng đọc tự động” hoặc lưu ở trạng thái Nháp.'); w.querySelector('#f-st [aria-checked="true"]').focus(); return; }
+      A.setErr(w, 'f-st', '');
+      var g = function (s) { return w.querySelector(s).value; }, o = r || {};
+      Object.assign(o, { word: g('#f-word').trim(), ipa: g('#f-ipa').trim(), pos: g('#f-pos'), vi: g('#f-vi').trim(), ex: g('#f-ex').trim(), exVi: g('#f-exvi').trim(), level: +g('#f-lv'), topic: g('#f-topic'), grade: +g('#f-grade'), unit: g('#f-unit'), audio: hasAudio, status: st });
+      if (!r) { o.id = o.word; o.img = false; D.vocab.unshift(o); }
+      dr.close(); CTX.setState('normal'); A.toast(CTX.scr, (r ? 'Đã lưu “' : 'Đã thêm “') + o.word + '”.');
+    });
+  }
+  function page(m) { return A.shell({ area: 'admin', active: 'vocab', title: 'Ngân hàng từ vựng', crumb: '2.926 từ · 37 chưa có hình · 52 chưa có âm thanh', actions: A.btn({ label: 'Nhập Excel', icon: 'upload', variant: 'secondary' }) + A.btn({ label: 'Thêm từ', icon: 'plus', attrs: 'data-new' }), main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa có từ)' },
+    notes: { normal: 'Gõ tìm, lọc theo cấp / chủ đề / lớp / Unit / thiếu hình–âm; bấm tiêu đề cột để sắp xếp. Bấm một dòng hoặc nút bút để mở biểu mẫu bên phải. Thử: xoá phiên âm, đổi câu ví dụ, hoặc chọn “Đã xuất bản” với từ chưa có âm thanh rồi Lưu.', loading: 'Khung xương bảng từ.', empty: 'Ngân hàng chưa có từ nào.', error: 'Không tải được ngân hàng từ.' },
+    states: {
+      normal: function () { return page(table.html()); },
+      loading: function () { return page('<section class="a-card">' + B.sk('100%', '36px') + '<div style="height:12px"></div>' + [1, 2, 3, 4, 5, 6, 7].map(function () { return B.sk('100%', '40px') + '<div style="height:8px"></div>'; }).join('') + '</section>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có từ nào', text: 'Thêm từng từ hoặc nhập nhiều từ một lúc bằng file Excel mẫu.', action: '<div class="a-actions" style="justify-content:center">' + A.btn({ label: 'Thêm từ đầu tiên', icon: 'plus', attrs: 'data-new' }) + A.btn({ label: 'Tải file Excel mẫu', icon: 'download', variant: 'secondary' }) + '</div>' }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'VOC-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx;
+      if (ctx.state === 'normal') table.mount(scr, function () { bindEdit(); });
+      function bindEdit() { scr.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function (e) { e.stopPropagation(); open(b.dataset.edit); }; }); }
+      bindEdit();
+      scr.querySelectorAll('[data-new]').forEach(function (b) { b.addEventListener('click', function () { open(null); }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

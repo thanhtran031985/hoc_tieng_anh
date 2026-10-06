@@ -1,0 +1,192 @@
+/* Soạn bài học (Adult12): ba cột gợi ý · các bước · thông tin bài. */
+.lb {
+  display: grid;
+  grid-template-columns: calc(var(--space-16) * 5) minmax(0, 1fr) calc(var(--space-16) * 4.75);
+  gap: var(--space-4);
+  align-items: start;
+}
+.lb > section {
+  min-width: 0;
+}
+.cardTitle {
+  margin: 0 0 var(--space-2);
+}
+.tabs {
+  margin-top: var(--space-3);
+}
+.sug {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sug li {
+  display: grid;
+  grid-template-columns: var(--space-8) minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-top: var(--border-thin) solid var(--line);
+}
+.sug li:first-child {
+  border-top: 0;
+}
+.sugActs {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.thumb {
+  width: var(--space-8);
+  height: var(--space-8);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--adm-radius-md);
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+}
+.in {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--success-shade);
+  font-size: var(--text-adm-label);
+  font-weight: 600;
+}
+
+.stepsHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.stepsHead > div {
+  flex: 1;
+}
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--space-6) var(--space-6) var(--space-8) minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-1);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface);
+}
+.step[data-dragging] {
+  opacity: 0.4;
+}
+.step[data-drop="before"]::before,
+.step[data-drop="after"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+}
+.step[data-drop="before"]::before {
+  top: calc(-1 * var(--space-2));
+}
+.step[data-drop="after"]::after {
+  bottom: calc(-1 * var(--space-2));
+}
+.grip {
+  width: var(--space-6);
+  height: var(--space-6);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--adm-radius-sm);
+  background: none;
+  color: var(--ink-soft);
+  cursor: grab;
+}
+.no {
+  width: var(--space-6);
+  height: var(--space-6);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-sunk);
+  color: var(--ink-soft);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+}
+.type {
+  width: var(--space-8);
+  height: var(--space-8);
+  display: grid;
+  place-items: center;
+  border-radius: var(--adm-radius-md);
+  background: var(--lv-soft);
+  color: var(--lv-ink);
+}
+.typeQ {
+  background: var(--brand-soft);
+  color: var(--brand-shade);
+}
+.stepText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.stepText b {
+  font-size: var(--text-adm-body);
+  line-height: var(--text-adm-body--line-height);
+}
+.stepText span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.total {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: var(--border-thin) solid var(--line);
+}
+.total b {
+  color: var(--ink);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.where {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface-soft);
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.foot {
+  margin: var(--space-3) 0 0;
+}
+.listPage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.listSum {
+  margin: 0;
+}

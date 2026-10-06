@@ -31,9 +31,9 @@ export async function isParentGateOpen(userId: number): Promise<boolean> {
   return Boolean(match) && Number(match![1]) === userId && Number(match![2]) > Date.now();
 }
 
-/** Dùng ở đầu mọi trang của bố mẹ: chưa mở khóa thì về màn chọn hồ sơ (nơi có nút "Bố mẹ"). */
+/** Dùng ở đầu mọi trang của bố mẹ: chưa mở khóa thì về cổng vào khu bố mẹ (/parent/unlock). */
 export async function requireParentGate(): Promise<SessionUser> {
   const user = await requireUser();
-  if (!(await isParentGateOpen(user.id))) redirect("/profiles");
+  if (!(await isParentGateOpen(user.id))) redirect("/parent/unlock");
   return user;
 }

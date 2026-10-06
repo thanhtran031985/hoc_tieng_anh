@@ -1,0 +1,54 @@
+/* Trang Tổng quan của bố mẹ (Adult02). */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.contents {
+  display: contents;
+}
+.levelBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sum {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+}
+.sum b {
+  color: var(--ink);
+}
+.act {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.act li {
+  display: grid;
+  grid-template-columns: var(--space-12) var(--adm-kpi-icon) 1fr;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-top: var(--border-thin) solid var(--line);
+}
+.act li:first-child {
+  border-top: 0;
+}
+.icon {
+  width: var(--adm-kpi-icon);
+  height: var(--adm-kpi-icon);
+  border-radius: var(--adm-radius-lg);
+  display: grid;
+  place-items: center;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+}

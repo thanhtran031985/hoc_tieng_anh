@@ -1,0 +1,85 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=760 subtitle="3. Kỹ năng: 7 kỹ năng so với tháng trước, từ hay sai, bảng chủ điểm ngữ pháp mạnh / yếu (tìm, lọc, sắp xếp, phân trang)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Kỹ năng — preview</title>
+<style>
+  .sum3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--line); }
+  .sum3 b { display: block; font: 600 15px/22px var(--font-thcs); }
+  .miss { list-style: none; margin: 0; padding: 0; }
+  .miss li { display: grid; grid-template-columns: 30px 1fr auto; gap: var(--space-3); align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+  .miss li:first-child { border-top: 0; }
+  .miss .w { font: 600 15px/20px var(--font-thcs); }
+  .miss .n { text-align: right; }
+  .rate { display: flex; align-items: center; gap: var(--space-2); }
+  .rate .trk { width: 90px; height: 8px; border-radius: 3px; background: var(--surface-sunk); position: relative; overflow: hidden; }
+  .rate .trk i { position: absolute; inset: 0 auto 0 0; background: var(--chart-1); border-radius: 3px; }
+  .trend { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; }
+  .trend.up { color: var(--success-shade); } .trend.dn { color: var(--ink-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var SK = ['Nghe', 'Nói', 'Đọc', 'Viết', 'Từ vựng', 'Ngữ pháp', 'Phát âm'];
+  var KD = {
+    minh: { now: [82, 64, 70, 48, 88, 60, 66], prev: [76, 60, 68, 45, 80, 58, 59], period: 'Tháng 9/2026', prevT: 'Tháng 8',
+      miss: [['strawberry', 6, 'hay đọc thành “stro-be-ri”'], ['rabbit', 4, 'nhầm với “ribbon”'], ['grapes', 4, 'quên âm /s/ cuối'], ['orange', 3, 'viết sai “oragne”'], ['yellow', 3, 'nhầm “yelow”'], ['three', 2, 'phát âm /tri/']],
+      gram: [['This is / That is', 'Unit 2', 46, 91], ['I like + danh từ', 'Unit 4', 38, 87], ['a / an', 'Unit 3', 52, 58], ['Số nhiều thêm -s', 'Unit 5', 40, 55], ['How many …?', 'Unit 6', 24, 71], ['Can / can’t', 'Unit 7', 30, 83], ['Màu sắc + danh từ', 'Unit 3', 28, 64], ['What’s this? – It’s a …', 'Unit 2', 44, 89]] },
+    linh: { now: [78, 61, 72, 55, 84, 66, 58], prev: [74, 57, 73, 49, 79, 62, 55], period: 'Tháng 9/2026', prevT: 'Tháng 8',
+      miss: [['pedestrian', 5, 'sai trọng âm /pəˈdes.tri.ən/'], ['congestion', 4, 'viết thiếu chữ “s”'], ['commute', 4, 'nhầm nghĩa với “compute”'], ['vehicle', 3, 'đọc âm /h/'], ['environment', 3, 'thiếu “n” giữa từ'], ['although', 2, 'nhầm với “though”']],
+      gram: [['Hiện tại hoàn thành (since / for)', 'Unit 3', 64, 83], ['Quá khứ tiếp diễn', 'Unit 4', 42, 76], ['So sánh trạng từ', 'Unit 2', 36, 88], ['Câu điều kiện loại 1', 'Unit 5', 30, 57], ['Câu bị động', 'Unit 6', 28, 52], ['Câu tường thuật', 'Unit 7', 18, 61], ['Like / love / hate + V-ing', 'Unit 1', 40, 93], ['Từ để hỏi (Wh-)', 'Unit 1', 34, 90], ['Mạo từ a / an / the', 'Unit 2', 26, 68]] }
+  };
+  function judge(r) { return r >= 80 ? 'strong' : r >= 65 ? 'mid' : 'weak'; }
+  var JL = { strong: ['ok', 'Mạnh'], mid: ['info', 'Đang tiến bộ'], weak: ['warn', 'Cần ôn'] };
+  var tables = {};
+  function tbl(k) {
+    if (tables[k]) return tables[k];
+    var rows = KD[k].gram.map(function (g, i) { var tr = [6, -3, 4, 8, -2, 5, 1, 0, 3][i] || 0; return { id: 'g' + i, name: g[0], unit: g[1], n: g[2], rate: g[3], trend: tr, j: judge(g[3]) }; });
+    return tables[k] = A.table({ id: 'gram-' + k, rows: rows, searchKeys: ['name', 'unit'], placeholder: 'Tìm chủ điểm ngữ pháp…', pageSize: 5, sort: { key: 'rate', dir: 'asc' },
+      filters: [{ key: 'j', label: 'Đánh giá', options: [['weak', 'Cần ôn'], ['mid', 'Đang tiến bộ'], ['strong', 'Mạnh']] }, { key: 'unit', label: 'Unit', options: ['Unit 1', 'Unit 2', 'Unit 3', 'Unit 4', 'Unit 5', 'Unit 6', 'Unit 7'] }],
+      right: A.btn({ label: 'Giao bài ôn cho con', icon: 'cards', variant: 'secondary', size: 's', attrs: 'data-assign' }),
+      columns: [
+        { key: 'name', label: 'Chủ điểm', sort: true, render: function (r) { return '<b>' + r.name + '</b>'; } },
+        { key: 'unit', label: 'Unit SGK', sort: true, w: '110px' },
+        { key: 'n', label: 'Số câu đã làm', sort: true, align: 'right', w: '130px' },
+        { key: 'rate', label: 'Tỉ lệ đúng', sort: true, w: '170px', render: function (r) { return '<span class="rate"><span class="trk"><i style="width:' + r.rate + '%"></i></span><b>' + r.rate + '%</b></span>'; } },
+        { key: 'trend', label: 'So với tháng trước', sort: true, w: '150px', render: function (r) { return r.trend ? '<span class="trend ' + (r.trend > 0 ? 'up' : 'dn') + '">' + (r.trend > 0 ? '▲ +' : '▼ −') + Math.abs(r.trend) + ' điểm</span>' : '<span class="b-muted">Không đổi</span>'; } },
+        { key: 'j', label: 'Đánh giá', w: '130px', render: function (r) { return A.status(JL[r.j][0], JL[r.j][1]); } }
+      ] });
+  }
+  function main(empty) {
+    var k = A.state.kid, d = KD[k];
+    var rows = SK.map(function (s, i) { return { k: s, v: empty ? 0 : d.now[i], prev: empty ? null : d.prev[i] }; });
+    var hi = 0, lo = 0; d.now.forEach(function (v, i) { if (v > d.now[hi]) hi = i; if (v < d.now[lo]) lo = i; });
+    var up = 0; d.now.forEach(function (v, i) { if (v - d.prev[i] > d.now[up] - d.prev[up]) up = i; });
+    var skills = '<section class="a-card a-s7" aria-labelledby="sk"><div class="a-card__h"><div><h2 class="adm-h2" id="sk">Điểm kỹ năng · ' + d.period + '</h2><span class="adm-small b-muted">Thang 100 · tính từ bài học, ôn tập và bài thi</span></div></div>' +
+      (empty ? A.empty({ title: 'Chưa đủ dữ liệu để chấm kỹ năng', text: 'Cần ít nhất 5 bài học có đủ các dạng câu hỏi. Biểu đồ sẽ tự hiện.' }) :
+      A.hbars(rows, { max: 100, legend: [d.period, d.prevT + ' (vạch dọc)'] }) +
+      '<div class="sum3"><span class="adm-small b-muted">Mạnh nhất<b style="color:var(--ink)">' + SK[hi] + ' · ' + d.now[hi] + '</b></span><span class="adm-small b-muted">Cần chú ý<b style="color:var(--ink)">' + SK[lo] + ' · ' + d.now[lo] + '</b></span><span class="adm-small b-muted">Tiến bộ nhiều nhất<b style="color:var(--success-shade)">' + SK[up] + ' +' + (d.now[up] - d.prev[up]) + '</b></span></div>') + '</section>';
+    var miss = '<section class="a-card a-s5" aria-labelledby="ms"><div class="a-card__h"><div><h2 class="adm-h2" id="ms">Từ hay sai</h2><span class="adm-small b-muted">30 ngày gần nhất</span></div>' + (empty ? '' : A.btn({ label: 'Ôn 6 từ này', icon: 'cards', size: 's', variant: 'secondary' })) + '</div>' +
+      (empty ? A.empty({ title: 'Chưa có từ nào bị sai', text: 'Những từ con trả lời sai từ 2 lần sẽ hiện ở đây.' }) :
+      '<ul class="miss">' + d.miss.map(function (m) { return '<li>' + B.speak(m[0], 's') + '<span><span class="w" lang="en">' + m[0] + '</span><br><span class="adm-small b-muted">' + m[2] + '</span></span><span class="n adm-small"><b class="adm-body">' + m[1] + '</b> lần sai</span></li>'; }).join('') + '</ul>') + '</section>';
+    var gram = '<div class="a-s12"><div class="a-card__h" style="margin:var(--space-2) 0 var(--space-3)"><div><h2 class="adm-h2">Chủ điểm ngữ pháp</h2><span class="adm-small b-muted">Mạnh ≥ 80% · Đang tiến bộ 65–79% · Cần ôn &lt; 65%</span></div></div>' +
+      (empty ? '<section class="a-card">' + A.empty({ title: 'Con chưa làm câu ngữ pháp nào', text: 'Bảng sẽ có dữ liệu sau bài ngữ pháp đầu tiên.' }) + '</section>' : tbl(k).html()) + '</div>';
+    return '<div class="a-grid">' + skills + miss + gram + '</div>';
+  }
+  function page(m) { var kid = A.kids.filter(function (x) { return x.id === A.state.kid; })[0]; return A.shell({ area: 'parent', active: 'skills', title: 'Kỹ năng · ' + kid.name, crumb: 'Lớp ' + kid.grade + ' · Cấp ' + kid.level + ' ' + B.levels[kid.level - 1].name, kids: true, main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa đủ dữ liệu)' },
+    notes: { normal: 'Thanh = điểm tháng này, vạch dọc = tháng trước (rê chuột hoặc Tab để xem số). Bảng ngữ pháp: gõ tìm, lọc theo đánh giá / Unit, bấm tiêu đề cột để sắp xếp, đổi trang.', loading: 'Khung xương biểu đồ và bảng.', empty: 'Con mới bắt đầu, chưa đủ dữ liệu.', error: 'Không tải được số liệu kỹ năng.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s7">' + A.skel('260px') + '</div><div class="a-s5">' + A.skel('260px') + '</div><div class="a-s12">' + A.skel('200px') + '</div></div>'); },
+      empty: function () { return page(main(true)); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'SKL-504' }) + '</section>'); }
+    },
+    mount: { normal: function (scr) {
+      tbl(A.state.kid).mount(scr);
+      var as = scr.querySelector('[data-assign]'); as && as.addEventListener('click', function () { A.toast(scr, 'Đã giao 3 bài ôn chủ điểm “Cần ôn” cho ' + A.kids.filter(function (x) { return x.id === A.state.kid; })[0].name); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

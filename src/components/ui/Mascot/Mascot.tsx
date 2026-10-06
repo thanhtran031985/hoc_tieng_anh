@@ -13,10 +13,12 @@ const EXPR_LABEL: Record<Expr, string> = {
   suynghi: "suy nghĩ",
   ngu: "đang ngủ",
   chucmung: "chúc mừng",
+  tiec: "hơi tiếc",
+  xaydung: "đang xây dựng",
 };
 
 export type MascotProps = Omit<ComponentProps<"svg">, "children" | "role"> & {
-  /** chao: chào · vui: đúng · dongvien: chưa đúng/lỗi · suynghi: tải/trống/gợi ý · ngu: hết giờ · chucmung: kết thúc bài */
+  /** chao: chào · vui: đúng · dongvien: chưa đúng/lỗi · suynghi: tải/trống/gợi ý · ngu: hết giờ · chucmung: kết thúc bài · tiec: hộp thoại dừng bài · xaydung: màn "Sắp có" */
   expr: Expr;
   /** Cỡ (px): 280–340 ở màn chào/chúc mừng, 120–220 ở trạng thái trống/lỗi, 76–112 trong dải phản hồi. */
   size?: number;

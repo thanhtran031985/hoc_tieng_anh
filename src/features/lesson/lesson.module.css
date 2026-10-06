@@ -1,0 +1,131 @@
+/* Khung bài học (Screen07/08/09/18/21): thanh đầu có nút thoát + tiến độ, vùng hoạt động ở giữa, chân bài có nút.
+   Cao đúng bằng cửa sổ và không cuộn (vừa 1366×768). */
+.screen {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  overflow: hidden;
+}
+.head {
+  flex: none;
+  height: var(--size-lesson-head);
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+.count {
+  min-width: var(--size-count-min);
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 800;
+}
+.main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+.foot {
+  flex: none;
+  border-top: var(--border-thin) solid var(--line);
+  background: var(--bg);
+}
+.footIn {
+  height: var(--size-lesson-foot);
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.grp {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.instr {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: var(--text-title--font-weight);
+}
+
+/* Dòng phụ trong dải phản hồi: loa + từ + phiên âm · nghĩa. */
+.answer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.answerWord {
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: var(--text-word--line-height);
+  font-weight: var(--text-word--font-weight);
+}
+.note {
+  display: block;
+  margin-top: var(--space-1);
+}
+
+/* Màn "Hẹn gặp lại nhé!" sau khi bé dừng bài, và màn tạm khi chưa có màn kết thúc. */
+.bye {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+.byeTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.byeText {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+}
+
+@media (max-width: 1400px) {
+  .head,
+  .main,
+  .footIn {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}
+@media (max-height: 800px) {
+  .head {
+    height: var(--size-lesson-head-s);
+  }
+  .footIn {
+    height: var(--size-lesson-foot-s);
+  }
+}

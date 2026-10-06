@@ -1,0 +1,440 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Hành trình của bé trong app (đã làm và chưa làm)",
+    "locale": "vi",
+    "quality_profile": "showcase",
+    "output": "docs/so-do/tong-quan/workflow-hanh-trinh-cua-be.html",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "b8ab74e5831796745aadce981cf10af9fff78f4c"
+    },
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "Màn hình đã có trong code"
+        },
+        "messagebus": {
+          "label": "Chưa làm (task sau)"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "vao",
+      "label": "Vào ứng dụng (bố mẹ làm cùng bé)"
+    },
+    {
+      "id": "hoc",
+      "label": "Học (bé)"
+    },
+    {
+      "id": "khac",
+      "label": "Tổng quan cấp và các nút phụ"
+    }
+  ],
+  "groups": [],
+  "mainPath": [
+    "login",
+    "profiles",
+    "home",
+    "map",
+    "lesson",
+    "end"
+  ],
+  "nodes": [
+    {
+      "id": "login",
+      "lane": "vao",
+      "col": 0,
+      "type": "frontend",
+      "label": "Đăng nhập",
+      "sublabel": "/login, /register",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/auth/actions.ts",
+          "line": 36,
+          "end_line": 49,
+          "label": "loginAction → /profiles"
+        },
+        {
+          "path": "src/proxy.ts",
+          "line": 12,
+          "end_line": 19,
+          "label": "chưa đăng nhập về /login"
+        }
+      ]
+    },
+    {
+      "id": "profiles",
+      "lane": "vao",
+      "col": 1,
+      "type": "frontend",
+      "label": "Chọn hồ sơ",
+      "sublabel": "/profiles",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/profiles/page.tsx",
+          "line": 17,
+          "end_line": 24,
+          "label": "danh sách hồ sơ của tài khoản"
+        },
+        {
+          "path": "src/features/profiles/actions.ts",
+          "line": 12,
+          "end_line": 19,
+          "label": "selectLearnerAction → /home"
+        }
+      ]
+    },
+    {
+      "id": "create",
+      "lane": "vao",
+      "col": 2,
+      "type": "frontend",
+      "label": "Tạo hồ sơ",
+      "sublabel": "tên·lớp, rồng, loa·mic",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/profiles/create/CreateProfileFlow.tsx",
+          "line": 36,
+          "end_line": 39,
+          "label": "lưu xong → /placement"
+        },
+        {
+          "path": "src/features/profiles/create/StepAudio.tsx",
+          "line": 18,
+          "label": "kiểm tra loa và micro"
+        }
+      ]
+    },
+    {
+      "id": "placement",
+      "lane": "vao",
+      "col": 3,
+      "type": "frontend",
+      "label": "Bài xếp lớp",
+      "sublabel": "/placement · 12 câu",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/placement/page.tsx",
+          "line": 12,
+          "end_line": 18,
+          "label": "đã học thì về /home"
+        },
+        {
+          "path": "src/features/placement/PlacementFlow.tsx",
+          "line": 23,
+          "label": "PlacementFlow"
+        },
+        {
+          "path": "src/server/placement.ts",
+          "line": 123,
+          "label": "completePlacement"
+        }
+      ]
+    },
+    {
+      "id": "home",
+      "lane": "hoc",
+      "col": 1,
+      "type": "frontend",
+      "label": "Trang chủ",
+      "sublabel": "/home",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/home/page.tsx",
+          "line": 37,
+          "end_line": 70,
+          "label": "nhiệm vụ, thẻ cấp, 4 nút lớn"
+        },
+        {
+          "path": "src/server/home.ts",
+          "line": 46,
+          "label": "getHomeData"
+        }
+      ]
+    },
+    {
+      "id": "map",
+      "lane": "hoc",
+      "col": 2,
+      "type": "frontend",
+      "label": "Bản đồ đảo",
+      "sublabel": "/map/[level]",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/map/[level]/page.tsx",
+          "line": 16,
+          "end_line": 30,
+          "label": "cấp khóa về /levels"
+        },
+        {
+          "path": "src/server/map.ts",
+          "line": 93,
+          "label": "getIslandMap"
+        }
+      ]
+    },
+    {
+      "id": "lesson",
+      "lane": "hoc",
+      "col": 3,
+      "type": "frontend",
+      "label": "Bài học",
+      "sublabel": "/lesson/[id] · 5 dạng bài",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/lesson/[lessonId]/page.tsx",
+          "line": 14,
+          "end_line": 33,
+          "label": "bài khóa về bản đồ"
+        },
+        {
+          "path": "src/features/lesson/LessonPlayer.tsx",
+          "line": 46,
+          "label": "LessonPlayer"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "lane": "hoc",
+      "col": 4,
+      "type": "frontend",
+      "label": "Kết thúc bài",
+      "sublabel": "sao, xu, mở bài sau",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/lesson/LessonEnd.tsx",
+          "line": 35,
+          "label": "LessonEnd"
+        },
+        {
+          "path": "src/server/lesson-complete.ts",
+          "line": 23,
+          "label": "completeLesson"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "lane": "khac",
+      "col": 0,
+      "type": "frontend",
+      "label": "Ôn tập hôm nay",
+      "sublabel": "/review · 5 hộp",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/review/page.tsx",
+          "line": 11,
+          "end_line": 26,
+          "label": "tổng quan hộp + bộ câu hỏi"
+        },
+        {
+          "path": "src/features/review/ReviewFlow.tsx",
+          "line": 20,
+          "label": "ReviewFlow"
+        },
+        {
+          "path": "src/server/review.ts",
+          "line": 112,
+          "label": "completeReview"
+        }
+      ]
+    },
+    {
+      "id": "notebook",
+      "lane": "khac",
+      "col": 1,
+      "type": "frontend",
+      "label": "Sổ từ",
+      "sublabel": "/notebook · lọc chủ đề",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/notebook/page.tsx",
+          "line": 11,
+          "end_line": 15,
+          "label": "getNotebook"
+        },
+        {
+          "path": "src/features/notebook/NotebookView.tsx",
+          "line": 23,
+          "label": "NotebookView"
+        }
+      ]
+    },
+    {
+      "id": "timeup",
+      "lane": "hoc",
+      "col": 5,
+      "type": "frontend",
+      "label": "Hết giờ học",
+      "sublabel": "/time-up · thêm giờ",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/server/active-learner.ts",
+          "line": 44,
+          "end_line": 49,
+          "label": "hết giờ thì về /time-up"
+        },
+        {
+          "path": "src/features/time-up/TimeUpView.tsx",
+          "line": 24,
+          "label": "TimeUpView"
+        }
+      ]
+    },
+    {
+      "id": "levels",
+      "lane": "khac",
+      "col": 2,
+      "type": "frontend",
+      "label": "10 cấp",
+      "sublabel": "/levels · tổng quan",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/levels/page.tsx",
+          "line": 13,
+          "end_line": 20,
+          "label": "10 cấp, đã qua · đang học · khóa"
+        },
+        {
+          "path": "src/server/map.ts",
+          "line": 32,
+          "label": "getLevelsOverview"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-login-profiles",
+      "from": "login",
+      "to": "profiles",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "e-profiles-create",
+      "from": "profiles",
+      "to": "create",
+      "label": "Thêm hồ sơ"
+    },
+    {
+      "id": "e-profiles-home",
+      "from": "profiles",
+      "to": "home",
+      "label": "chọn bé",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "left"
+    },
+    {
+      "id": "e-create-home",
+      "from": "create",
+      "to": "home",
+      "label": "Bắt đầu học"
+    },
+    {
+      "id": "e-create-placement",
+      "from": "create",
+      "to": "placement",
+      "label": "tạo xong"
+    },
+    {
+      "id": "e-home-map",
+      "from": "home",
+      "to": "map",
+      "label": "Bản đồ",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-map-lesson",
+      "from": "map",
+      "to": "lesson",
+      "label": "Bắt đầu",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-lesson-end",
+      "from": "lesson",
+      "to": "end",
+      "label": "xong bài",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-home-levels",
+      "from": "home",
+      "to": "levels",
+      "label": "Xem các cấp"
+    },
+    {
+      "id": "e-levels-map",
+      "from": "levels",
+      "to": "map",
+      "label": "chọn cấp"
+    },
+    {
+      "id": "e-home-review",
+      "from": "home",
+      "to": "review",
+      "label": "Ôn ngay"
+    },
+    {
+      "id": "e-home-notebook",
+      "from": "home",
+      "to": "notebook",
+      "label": "Sổ từ"
+    },
+    {
+      "id": "e-placement-home",
+      "from": "placement",
+      "to": "home",
+      "label": "Bắt đầu học",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-end-timeup",
+      "from": "end",
+      "to": "timeup",
+      "label": "hết giờ"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Đã làm (task 01–10)",
+      "items": [
+        "Đăng nhập, chọn hồ sơ, tạo hồ sơ 3 bước, bài xếp lớp 12 câu",
+        "Trang chủ, tổng quan 10 cấp, bản đồ đảo",
+        "Học trọn bài (5 dạng), nhận sao và xu, mở bài sau",
+        "Ôn tập hôm nay theo 5 hộp; Sổ từ; hết giờ học thì rồng đi ngủ"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa làm",
+      "items": [
+        "Bộ sưu tập, Phòng của tớ (GĐ2): hai nút lớn còn là Sắp có"
+      ]
+    }
+  ]
+}

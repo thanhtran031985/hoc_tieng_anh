@@ -1,0 +1,44 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="16. Hộp thoại “Dừng bài học?” khi bấm × giữa bài: rồng Bông hơi tiếc, “Học tiếp” (nút chính, Enter) và “Dừng lại” (Esc)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Dừng bài học — preview</title>
+<style>
+  .stage { display: flex; align-items: center; gap: var(--space-12); }
+  .pic { width: min(340px, 42cqh); aspect-ratio: 1; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-card); display: grid; place-items: center; }
+  .pic .b-pic { width: 76%; height: auto; }
+  .words { display: flex; flex-direction: column; gap: min(var(--space-5), 2.4cqh); width: 420px; }
+  .words .b-choice { flex-direction: row; justify-content: flex-start; padding: 0 var(--space-6) 0 var(--space-12); height: min(104px, 12.6cqh); width: 100%; }
+  .words .b-choice .w { font: 800 40px/44px var(--font-display); color: var(--ink); }
+  .words .b-key--corner { top: 50%; transform: translateY(-50%); left: var(--space-4); }
+  .bye { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); text-align: center; }
+  .bye .b-dragon { width: min(220px, 26cqh); height: auto; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, S = { left: 6 };
+  function scene() {
+    return '<header class="lesson-head"><button type="button" class="b-iconbtn" aria-label="Thoát bài học" data-exit>' + B.icon('close', 26) + '</button>' + B.ProgressBar(4, 10) + '<span class="count">4/10</span></header>' +
+      '<main class="lesson-main"><div class="instr"><h1 class="title">Chọn từ đúng cho hình</h1></div><div class="stage"><div class="pic">' + B.pic('apple', 260) + '</div><div class="words">' + ['apple', 'orange', 'grapes'].map(function (w, i) { return '<button type="button" class="b-choice" lang="en">' + B.key(String(i + 1), 'b-key--corner') + '<span class="w">' + w + '</span></button>'; }).join('') + '</div></div></main>' +
+      '<footer class="lesson-foot"><div><div class="grp">' + B.btn({ label: 'Gợi ý', variant: 'secondary', size: 'l', icon: 'bulb' }) + '</div>' + B.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter', disabled: true }) + '</div></footer>';
+  }
+  function open(ctx) {
+    ctx.dialog({ expr: 'tiec', title: 'Dừng bài học?', body: 'Còn ' + S.left + ' câu nữa là xong bài <b class="en">Fruits</b> rồi. Nếu dừng, lần sau mình học tiếp từ câu này nhé.',
+      actions: [{ label: 'Học tiếp', variant: 'primary', key: 'Enter' }, { label: 'Dừng lại', variant: 'secondary', key: 'Esc', onClick: function () { ctx.setState('stopped'); } }] });
+  }
+  B.screen({
+    fit: true, level: 2,
+    order: ['normal', 'stopped'],
+    labels: { normal: 'Hộp thoại mở', stopped: 'Sau khi Dừng lại' },
+    notes: { normal: 'Mở khi bé bấm × hoặc Esc giữa bài. “Học tiếp” là nút chính, có sẵn focus và nhận Enter; Esc hoặc bấm ra ngoài = Học tiếp (không mất gì). Tab chỉ vòng trong hộp. Bấm × trên đầu bài để mở lại.', stopped: 'Chọn “Dừng lại”: Bông vẫy tay, tiến độ được giữ, về bản đồ sau 2 giây.' },
+    states: {
+      normal: scene,
+      stopped: function () { return '<main class="lesson-main"><div class="bye">' + B.dragon('chao', 220) + '<h1 class="display-l">Hẹn gặp lại nhé!</h1><p class="body-l b-muted">Bông giữ chỗ ở câu 5 cho bé. Lần sau mình học tiếp.</p>' + B.btn({ label: 'Về bản đồ', size: 'l', icon: 'map', key: 'Enter' }) + '</div></main>'; }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelector('[data-exit]').addEventListener('click', function () { open(ctx); }); ctx.later(function () { open(ctx); }, 250); ctx.onKey(function (e) { if (e.key === 'Escape') { e.preventDefault(); open(ctx); } }); } }
+  });
+})();
+</script>
+</body>
+</html>

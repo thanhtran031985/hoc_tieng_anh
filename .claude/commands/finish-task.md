@@ -74,7 +74,11 @@ DỪNG. Tôi tự test và báo kết quả. Nếu tôi báo lỗi, quay lại G
 3. decisions.md: thêm mục tổng kết ngắn những gì khác với task.md gốc.
 4. Chạy npm run tasks:dashboard. Kết quả phải cho task này "x/x bước ✅ · README ✅"
    và "Cảnh báo: 0"; nếu không, sửa progress.md/README.md rồi chạy lại.
-5. Đề xuất commit "$ARGUMENTS: complete task" (gồm cả dashboard.html). Chỉ commit
-   và push khi tôi đồng ý.
-6. Soạn tiêu đề và mô tả Pull Request (tóm tắt tính năng, sửa đổi sau rà soát,
+5. Vẽ sơ đồ: làm theo .claude/commands/ve-so-do.md với đối số $ARGUMENTS (sơ đồ của
+   task, vẽ lại sơ đồ tổng quan, so-sanh.md, mục lục). Nếu chưa cài archify thì báo
+   một dòng và bỏ qua bước này, không chặn việc đóng task. Khác biệt quan trọng trong
+   so-sanh.md: báo tôi và DỪNG chờ quyết (sửa thì quay lại Giai đoạn B).
+6. Đề xuất commit "$ARGUMENTS: complete task" (gồm cả dashboard.html và docs/so-do/).
+   Chỉ commit và push khi tôi đồng ý.
+7. Soạn tiêu đề và mô tả Pull Request (tóm tắt tính năng, sửa đổi sau rà soát,
    cách test, biến môi trường cần thiết) để tôi dán lên GitHub. Không tự merge.

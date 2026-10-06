@@ -10,8 +10,7 @@ Bé học trọn một bài: thẻ từ, nghe chọn hình, nối từ với hì
 - Ngoài: Mưa từ vựng (GĐ2, đã có thiết kế Screen11), các dạng bài khác.
 
 ## Thiết kế
-`designs/components/Screen07-ListenChoose`, `Screen08-Flashcards`, `Screen09-Match`, `Screen10-MemoryGame`, `Screen12-LessonEnd`, `FeedbackBar`, `Dialog`.
-Dạng "Chọn từ đúng cho hình" chưa có màn riêng: dùng bố cục Screen07, đổi loa thành hình lớn và 3 thẻ chữ.
+`designs/components/Screen07-ListenChoose`, `Screen08-Flashcards`, `Screen09-Match`, `Screen10-MemoryGame`, `Screen12-LessonEnd`, `Screen18-PickWord` (Chọn từ đúng cho hình), `Screen21-ExitDialog` (hộp thoại "Dừng bài học?"), `FeedbackBar`, `Dialog`, `MascotMore`.
 
 ## Quyết định kiến trúc
 - Mỗi dạng bài là một component nhận `step` (từ `lesson_steps`) và báo kết quả qua một interface chung.
@@ -22,14 +21,14 @@ Dạng "Chọn từ đúng cho hình" chưa có màn riêng: dùng bố cục Sc
 
 ## Các bước
 ### Bước 0 — Khung bài học và luồng câu hỏi
-**Kiểm tra:** chạy bài với dữ liệu mẫu, thanh tiến độ, nút thoát, phím Enter/Space hoạt động.
+**Kiểm tra:** chạy bài với dữ liệu mẫu, thanh tiến độ, phím Enter/Space hoạt động; × hoặc Esc mở hộp thoại "Dừng bài học?" (Screen21), "Học tiếp" là nút chính.
 ### Bước 1 — Thẻ từ (Screen08)
 **Kiểm tra:** lật bằng Space hoặc bấm; ← → chuyển thẻ; loa đọc từ và câu ví dụ.
 ### Bước 2 — Nghe và chọn hình (Screen07)
 **Kiểm tra:** 1–4 chọn, Enter kiểm tra; dải đúng/chưa đúng; gợi ý bỏ bớt 1 đáp án.
 ### Bước 3 — Nối từ với hình (Screen09)
 **Kiểm tra:** kéo thả bằng chuột và cách dùng bàn phím đều làm được.
-### Bước 4 — Chọn từ đúng cho hình
+### Bước 4 — Chọn từ đúng cho hình (Screen18)
 **Kiểm tra:** hoạt động như bước 2 với 3 thẻ chữ.
 ### Bước 5 — Lật thẻ ghép cặp (Screen10)
 **Kiểm tra:** 12 thẻ, đếm lượt, không đếm giờ.

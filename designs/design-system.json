@@ -12,10 +12,10 @@
   },
   "groups": [],
   "lastChange": {
-    "at": "2026-10-02T05:44:29Z",
     "by": "Thanh",
-    "note": "Tạo hệ thống giao diện chung + bộ Tiểu học: token, 10 thành phần, 14 màn với 4 trạng thái",
-    "via": "Claude (Cowork)"
+    "at": "2026-10-02T12:52:27Z",
+    "via": "Claude (Cowork)",
+    "note": "Bổ sung giai đoạn 1: 8 màn Tiểu học (bài xếp lớp, Chọn từ đúng cho hình, Ôn tập hôm nay, Dừng bài học, Sắp có), 2 biểu cảm rồng Bông, nhập chủ đề mới bằng Excel, khung chương trình “Chưa có bài”, token mới"
   },
   "layout": "files",
   "libraries": [],

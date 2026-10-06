@@ -1,0 +1,27 @@
+<!-- @dsCard group="THCS · Thành phần" height=560 subtitle="Rồng Bông tuổi teen — 6 biểu cảm, xuất hiện nhỏ ở góc hoặc trong lời nhắc (sáng / tối)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Rồng Bông tuổi teen — preview</title>
+<style>
+  body { margin: 0; }
+  .pane { padding: 16px; }
+  .row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .cell { background: var(--surface); border-radius: var(--thcs-radius-lg); box-shadow: var(--thcs-shadow-1); padding: 14px 8px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+  .cell .t-dragon { width: 100%; max-width: 110px; height: auto; }
+  .uses { display: flex; gap: 16px; padding-top: 14px; flex-wrap: wrap; align-items: center; }
+  h3 { margin: 0 0 10px; }
+</style></head>
+<body>
+<div class="pane thcs" data-theme="thcs"><h3 class="thcs-label b-muted">CHẾ ĐỘ SÁNG</h3><div class="row" id="a"></div><div class="uses" id="u"></div></div>
+<div class="pane thcs" data-theme="thcs-toi"><h3 class="thcs-label b-muted">CHẾ ĐỘ TỐI</h3><div class="row" id="b"></div></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T; B.suite('thcs');
+  var L = [['chao', 'Chào', 'Trang chủ, lời nhắc'], ['vui', 'Vui', 'Trả lời đúng'], ['dongvien', 'Động viên', 'Chưa đúng, lỗi tải'], ['suynghi', 'Suy nghĩ', 'Đang tải, trống, gợi ý'], ['ngu', 'Ngủ', 'Hết giờ học'], ['chucmung', 'Chúc mừng', 'Xong bài, huy hiệu mới']];
+  var h = L.map(function (x) { return '<div class="cell">' + T.dragon(x[0], 110) + '<b class="thcs-label">' + x[1] + '</b><span class="thcs-caption b-muted">' + x[2] + '</span></div>'; }).join('');
+  document.getElementById('a').innerHTML = h; document.getElementById('b').innerHTML = h;
+  document.getElementById('u').innerHTML = '<span class="thcs-label b-muted">Cách dùng:</span>' + T.tip('Bạn còn <b>29 thẻ</b> đến hạn ôn. Làm 10 phút là xong!', 'chao') + T.tip('Gợi ý: “since” đi với mốc thời gian.', 'suynghi');
+})();
+</script>
+</body>
+</html>

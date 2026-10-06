@@ -1,0 +1,76 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Task 06: chặng và trận trùm trên bản đồ mở khóa thế nào",
+    "locale": "vi",
+    "output": "docs/so-do/tong-quan/lifecycle-chang-va-trum.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "31f40102f868403b85b0fdd14e6ff2f44df45ce5"
+    }
+  },
+  "lanes": [
+    { "id": "main", "label": "Chặng (bài thường)" },
+    { "id": "boss", "label": "Trận trùm của chủ đề" },
+    { "id": "terminal", "label": "Hết cấp" }
+  ],
+  "states": [
+    {
+      "id": "khoa", "type": "start", "label": "Còn khóa", "sublabel": "ổ khóa, không bấm vào bài", "lane": "main", "col": 0, "step": "01",
+      "sources": [{ "path": "src/lib/rules/unlock.ts", "line": 55, "label": "mặc định locked" }]
+    },
+    {
+      "id": "dang", "type": "active", "label": "Đang học", "sublabel": "nhịp sáng, rồng đứng trên", "lane": "main", "col": 1, "step": "02", "tag": "chỉ 1 chặng",
+      "sources": [{ "path": "src/lib/rules/unlock.ts", "line": 56, "end_line": 59, "label": "bài chưa xong đầu tiên" }]
+    },
+    {
+      "id": "xong", "type": "success", "label": "Đã xong", "sublabel": "1 đến 3 sao, học lại được", "lane": "main", "col": 2, "step": "03",
+      "sources": [{ "path": "src/lib/rules/unlock.ts", "line": 56, "label": "từ 1 sao là done" }]
+    },
+    {
+      "id": "trumkhoa", "type": "waiting", "label": "Trùm khóa", "sublabel": "chưa xong hết chặng", "lane": "boss", "col": 0,
+      "sources": [{ "path": "src/lib/rules/unlock.ts", "line": 65, "label": "locked" }]
+    },
+    {
+      "id": "trummo", "type": "decision", "label": "Trùm mở", "sublabel": "vương miện, bấm Đấu trùm", "lane": "boss", "col": 1,
+      "sources": [{ "path": "src/lib/rules/unlock.ts", "line": 64, "end_line": 65, "label": "xong mọi bài thường" }]
+    },
+    {
+      "id": "trumthang", "type": "success", "label": "Đã thắng", "sublabel": "đấu lại để nhận thêm xu", "lane": "boss", "col": 2,
+      "sources": [{ "path": "src/features/island-map/IslandMap.tsx", "line": 112, "label": "Đấu lại" }]
+    },
+    {
+      "id": "hetcap", "type": "external", "label": "Xong cả cấp", "sublabel": "báo bài thi lên cấp sắp có", "lane": "terminal", "col": 2, "tag": "task 09, 11",
+      "sources": [{ "path": "src/lib/rules/unlock.ts", "line": 101, "end_line": 107, "label": "findNextLesson trả null" }]
+    }
+  ],
+  "transitions": [
+    { "from": "khoa", "to": "dang", "label": "bài trước từ 1 sao", "variant": "emphasis" },
+    { "from": "dang", "to": "xong", "label": "xong bài, từ 1 sao", "variant": "emphasis" },
+    { "from": "trumkhoa", "to": "trummo", "label": "xong mọi chặng", "variant": "emphasis" },
+    { "from": "trummo", "to": "trumthang", "label": "từ 1 sao", "variant": "emphasis" },
+    { "from": "xong", "to": "trummo", "label": "chặng cuối của chủ đề", "variant": "dashed" },
+    { "from": "trumthang", "to": "hetcap", "label": "hết chủ đề", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Quy tắc đã làm",
+      "items": [
+        "Bài đầu của cấp luôn mở; 0 sao thì bài sau vẫn khóa",
+        "Trùm không chặn chủ đề kế, bé không bị kẹt"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa làm",
+      "items": [
+        "Ghi sao khi học xong bài (task 07)",
+        "Bố mẹ mở khóa tay (task 11), bài thi lên cấp (task 09)"
+      ]
+    }
+  ]
+}

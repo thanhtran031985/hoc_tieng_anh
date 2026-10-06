@@ -1,0 +1,290 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="14. Nhập & xuất Excel: tải file mẫu, chọn file, bảng xem trước báo lỗi từng dòng (sửa ngay trong bảng), chỉ lưu được khi hết lỗi; xuất ra Excel" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Nhập và xuất Excel — preview</title>
+<style>
+  .steps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); margin-bottom: var(--space-4); list-style: none; padding: 0; }
+  .steps4 li { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--adm-radius-md); background: var(--surface); box-shadow: var(--adm-shadow-card); font: 600 13px/18px var(--font-thcs); color: var(--ink-soft); }
+  .steps4 li i { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-sunk); font-style: normal; font-size: 12px; flex: none; }
+  .steps4 li.done i { background: var(--success); color: var(--surface); }
+  .steps4 li.on { color: var(--ink); box-shadow: inset 0 0 0 2px var(--brand); }
+  .steps4 li.on i { background: var(--brand); color: var(--on-brand); }
+  .tpl { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .tpl > div { border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: var(--space-3); display: flex; gap: var(--space-3); align-items: flex-start; }
+  .tpl .x { width: 40px; height: 40px; border-radius: 8px; background: var(--success-soft); color: var(--success-shade); display: grid; place-items: center; flex: none; }
+  .file { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--adm-radius-md); background: var(--surface-soft); }
+  .file .x { width: 40px; height: 40px; border-radius: 8px; background: var(--success-soft); color: var(--success-shade); display: grid; place-items: center; }
+  .sumr { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+  .a-tbl td.bad { background: var(--field-error-bg) !important; }
+  .a-tbl td.bad .t-input { border-color: var(--field-error); box-shadow: inset 0 0 0 1px var(--field-error); }
+  .cellin { min-height: 30px !important; height: 30px; font-size: 13px !important; width: 100%; min-width: 90px; }
+  .rerr { list-style: none; margin: 0; padding: 0; color: var(--field-error); font: 600 12px/16px var(--font-thcs); display: flex; flex-direction: column; gap: 2px; }
+  .rerr li { display: flex; gap: 4px; align-items: flex-start; }
+  .rerr .b-ico { flex: none; margin-top: 1px; }
+  .ex { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .savebar { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-4); }
+  .chk { display: inline-flex; gap: 6px; align-items: center; font: 500 14px/20px var(--font-thcs); }
+  .chk input { width: 16px; height: 16px; accent-color: var(--brand); }
+  .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px var(--space-4); }
+  .hist { list-style: none; margin: 0; padding: 0; }
+  .hist li { display: grid; grid-template-columns: 36px 1fr auto; gap: var(--space-3); align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .hist li:first-child { border-top: 0; }
+  .hist .x { width: 36px; height: 36px; border-radius: 8px; background: var(--success-soft); color: var(--success-shade); display: grid; place-items: center; }
+  .tcard { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); border-radius: var(--adm-radius-md); background: var(--lv-soft); }
+  .tcard .lvn { width: 44px; height: 44px; border-radius: 50%; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; font: 700 20px/1 var(--font-thcs); flex: none; }
+  .tcard .tmatch { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+  .tchk { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+  .twarn { display: flex; flex-wrap: wrap; gap: 4px; }
+  .exvi { display: block; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .perrow { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-3) 0; flex-wrap: wrap; }
+  .plan { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-4); }
+  .plan li { display: grid; grid-template-columns: 32px 1fr auto auto; gap: var(--space-3); align-items: center; padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--adm-radius-md); }
+  .plan .pn { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-sunk); display: grid; place-items: center; font: 700 13px/1 var(--font-thcs); }
+  .plan .pw { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .plan .pw span { background: var(--surface-soft); border-radius: var(--adm-radius-sm); padding: 0 6px; font: 500 13px/20px var(--font-thcs); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, D = A.data;
+  function R(n, word, ipa, pos, vi, ex, level, topic, unit) { return { id: 'r' + n, n: n, word: word, ipa: ipa, pos: pos, vi: vi, ex: ex, level: level, topic: topic, unit: unit }; }
+  var ROWS0 = [
+    R(2, 'ethnic', '/ˈeθ.nɪk/', 'tính từ', '(thuộc) dân tộc', 'There are 54 ethnic groups in Viet Nam.', '8', 'Ethnic groups', 'Unit 4'),
+    R(3, 'minority', '/maɪˈnɒr.ə.ti/', 'danh từ', 'dân tộc thiểu số', 'The Tày are an ethnic minority.', '8', 'Ethnic groups', 'Unit 4'),
+    R(4, 'stilt house', '/ˈstɪlt ˌhaʊs/', 'danh từ', 'nhà sàn', 'Many families live in stilt houses.', '8', 'Ethnic groups', 'Unit 4'),
+    R(5, 'terraced field', '', 'danh từ', 'ruộng bậc thang', 'Terraced fields are beautiful in autumn.', '8', 'Ethnic groups', 'Unit 4'),
+    R(6, 'costume', '/ˈkɒs.tjuːm/', 'danh từ', 'trang phục', 'The H’mông costume is very colourful.', '8', 'Ethnic groups', 'Unit 4'),
+    R(7, 'gong', '/ɡɒŋ/', 'danh từ', 'cồng, chiêng', 'They play the gong at festivals.', '8', 'Ethnic groups', 'Unit 4'),
+    R(8, 'heritage', '/ˈher.ɪ.tɪdʒ/', 'danh từ', 'di sản', 'Gong culture is a world heritage.', '11', 'Ethnic groups', 'Unit 4'),
+    R(9, 'leisure', '/ˈleʒ.ər/', 'danh từ', 'thời gian rảnh', 'I read books in my leisure time.', '8', 'Leisure time', 'Unit 1'),
+    R(10, 'diverse', '/daɪˈvɜːs/', 'tính từ', 'đa dạng', 'Viet Nam has a diverse culture.', '8', 'Ethnic groups', 'Unit 4'),
+    R(11, 'livestock', '/ˈlaɪv.stɒk/', 'danh từ', 'vật nuôi', 'They raise livestock on the hills.', '8', 'Ethnic groups', 'Unit 4'),
+    R(12, 'harvest', '/ˈhɑː.vɪst/', 'động từ', 'thu hoạch', 'They collect rice in autumn.', '8', 'Ethnic groups', 'Unit 4'),
+    R(13, 'custom', '/ˈkʌs.təm/', 'danh từ', 'phong tục', 'It is our custom to eat bánh chưng at Tết.', '8', 'Ethnic groups', 'Unit 4')
+  ];
+  var ROWS = ROWS0.map(function (r) { return Object.assign({}, r); });
+  var S = { tab: 'imp', file: true, kind: 'vocab' };
+  function errs(r) {
+    var e = {};
+    if (!r.word.trim()) e.word = 'Thiếu từ.'; else if (D.vocab.some(function (v) { return v.word === r.word.trim().toLowerCase(); })) e.word = 'Từ “' + r.word + '” đã có trong ngân hàng (Cấp 8 · Leisure time). Đổi từ hoặc xoá dòng.';
+    if (!r.ipa.trim()) e.ipa = 'Thiếu phiên âm IPA.'; else if (!/^\/.+\/$/.test(r.ipa.trim())) e.ipa = 'Phiên âm phải nằm trong /…/.';
+    if (!/^(10|[1-9])$/.test(String(r.level).trim())) e.level = 'Cấp phải là số từ 1 đến 10 (đang là “' + r.level + '”).';
+    else if (D.topics[+r.level].indexOf(r.topic) < 0) e.topic = 'Chủ đề “' + r.topic + '” không có ở cấp ' + r.level + '.';
+    var w = r.word.trim().toLowerCase().split(' ')[0];
+    if (!r.ex.trim()) e.ex = 'Thiếu câu ví dụ.'; else if (w && r.ex.toLowerCase().indexOf(w.slice(0, Math.max(3, w.length - 2))) < 0) e.ex = 'Câu ví dụ chưa chứa từ “' + r.word + '”.';
+    return e;
+  }
+  function nErr() { return ROWS.filter(function (r) { return Object.keys(errs(r)).length; }).length; }
+  function cell(key, w) { return function (r) { var e = errs(r)[key]; var touched = r['_' + key]; if (e || touched) return '<label class="b-sr" for="c-' + r.id + '-' + key + '">' + key + ' dòng ' + r.n + '</label><input class="t-input a-input cellin' + (key === 'word' || key === 'ipa' || key === 'ex' ? ' a-en' : '') + '" id="c-' + r.id + '-' + key + '" data-cell="' + r.id + '" data-key="' + key + '" value="' + B.esc(r[key]) + '"' + (e ? ' aria-invalid="true"' : '') + ' aria-describedby="st-' + r.id + '"' + (w ? ' style="min-width:' + w + '"' : '') + '>'; return key === 'ex' ? '<span class="ex" lang="en" title="' + B.esc(r.ex) + '">' + B.esc(r.ex) + '</span>' : key === 'word' ? '<b lang="en">' + B.esc(r.word) + '</b>' : B.esc(r[key]); }; }
+  function status(r) { var e = errs(r), k = Object.keys(e); return '<div id="st-' + r.id + '">' + (k.length ? '<ul class="rerr">' + k.map(function (x) { return '<li>' + B.icon('warn', 13) + '<span>' + e[x] + '</span></li>'; }).join('') + '</ul>' : A.status('ok', 'Hợp lệ')) + '</div>'; }
+  var table = A.table({ id: 'imp', rows: ROWS, pageSize: 8, searchKeys: ['word', 'vi'], placeholder: 'Tìm trong file…',
+    filters: [{ key: 'err', label: 'Dòng', options: [['bad', 'Chỉ dòng lỗi'], ['ok', 'Chỉ dòng hợp lệ']], match: function (r, v) { var b = Object.keys(errs(r)).length > 0; return v === 'bad' ? b : !b; } }],
+    rowAttrs: function (r) { return 'data-r="' + r.id + '"'; },
+    columns: [
+      { key: 'n', label: 'Dòng', sort: true, align: 'right', w: '64px' },
+      { key: 'word', label: 'Từ', sort: true, render: cell('word', '130px') },
+      { key: 'ipa', label: 'IPA', render: cell('ipa', '120px') },
+      { key: 'vi', label: 'Nghĩa', sort: true, w: '150px' },
+      { key: 'ex', label: 'Câu ví dụ', render: cell('ex', '220px') },
+      { key: 'level', label: 'Cấp', sort: true, w: '70px', render: cell('level', '56px') },
+      { key: 'unit', label: 'Unit', render: function (r) { return '<span style="white-space:nowrap">' + r.unit + '</span>'; } },
+      { key: 'st', label: 'Kiểm tra', w: '240px', render: status }
+    ],
+    actions: function (r) { return '<button type="button" class="a-iconbtn" data-del="' + r.id + '" aria-label="Xoá dòng ' + r.n + '" title="Xoá dòng">' + B.icon('trash', 16) + '</button>'; } });
+  function stepper(k) { var L = ['Tải file mẫu', 'Chọn file', 'Xem trước & sửa lỗi', 'Lưu vào ngân hàng']; return '<ol class="steps4">' + L.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'on' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '><i>' + (i < k ? B.icon('check', 14) : i + 1) + '</i>' + t + '</li>'; }).join('') + '</ol>'; }
+  function imp(empty) {
+    var tpl = '<section class="a-card" style="margin-bottom:var(--space-4)"><div class="a-card__h"><h2 class="adm-h2" style="margin:0">1. Tải file mẫu</h2><span class="adm-small b-muted">Giữ nguyên dòng tiêu đề; mỗi dòng là một từ hoặc một câu hỏi</span></div><div class="tpl">' +
+      '<div><span class="x">' + B.icon('sheet', 20) + '</span><span style="flex:1"><b class="adm-h3">Mẫu từ vựng</b><br><span class="adm-small b-muted">word · ipa · pos · meaning_vi · example_en · example_vi · level · topic · grade · unit</span></span>' + A.btn({ label: 'Tải .xlsx', icon: 'download', variant: 'secondary', size: 's' }) + '</div>' +
+      '<div><span class="x">' + B.icon('sheet', 20) + '</span><span style="flex:1"><b class="adm-h3">Mẫu câu hỏi</b><br><span class="adm-small b-muted">type · question · option_a…d · answer · explanation · level · skill · grammar · difficulty</span></span>' + A.btn({ label: 'Tải .xlsx', icon: 'download', variant: 'secondary', size: 's' }) + '</div></div></section>';
+    var pick = '<section class="a-card" style="margin-bottom:var(--space-4)"><div class="a-card__h"><h2 class="adm-h2" style="margin:0">2. Chọn file</h2>' + A.field({ id: 'kind', label: 'Loại dữ liệu', type: 'seg', value: S.kind, options: [['vocab', 'Từ vựng'], ['q', 'Câu hỏi']] }).replace('class="a-field"', 'class="a-field" style="flex-direction:row;align-items:center;gap:8px"') + '</div>' +
+      (S.file && !empty ? '<div class="file"><span class="x">' + B.icon('sheet', 20) + '</span><span style="flex:1"><b class="adm-h3">tu-vung-lop8-unit4.xlsx</b><br><span class="adm-small b-muted">18 KB · trang “Từ vựng” · ' + ROWS.length + ' dòng dữ liệu</span></span>' + A.btn({ label: 'Chọn file khác', icon: 'upload', variant: 'secondary', size: 's', attrs: 'data-pick' }) + '<button type="button" class="a-iconbtn" data-unpick aria-label="Bỏ file">' + B.icon('close', 16) + '</button></div>'
+        : '<div class="file" style="border:2px dashed var(--line-strong);background:var(--surface)"><span class="x" style="background:var(--surface-soft);color:var(--ink-soft)">' + B.icon('upload', 20) + '</span><span style="flex:1"><b class="adm-h3">Kéo thả file .xlsx vào đây</b><br><span class="adm-small b-muted">Tối đa 5.000 dòng · 10 MB</span></span>' + A.btn({ label: 'Chọn file', icon: 'upload', attrs: 'data-pick' }) + '</div>') + '</section>';
+    if (!S.file || empty) return stepper(1) + tpl + pick;
+    var n = nErr(), ok = ROWS.length - n;
+    var prev = '<div class="a-card__h" style="margin:0 0 var(--space-3)"><div><h2 class="adm-h2" style="margin:0">3. Xem trước & sửa lỗi</h2><span class="adm-small b-muted">Sửa ngay trong ô tô cam, hoặc xoá dòng không cần.</span></div><div class="sumr" aria-live="polite" data-sum>' + summary() + '</div></div>' + table.html() +
+      '<div class="savebar"><span class="adm-small b-muted" data-why>' + (n ? 'Còn ' + n + ' dòng lỗi — sửa hết để lưu.' : 'Tất cả ' + ROWS.length + ' dòng hợp lệ.') + '</span>' + A.btn({ label: 'Huỷ nhập', variant: 'ghost', attrs: 'data-unpick' }) + A.btn({ label: 'Lưu ' + ROWS.length + ' từ vào ngân hàng', icon: 'check', size: 'l', attrs: 'data-save' + (n ? ' disabled aria-disabled="true"' : '') }) + '</div>';
+    return stepper(n ? 2 : 3) + pick + prev;
+  }
+  function summary() { var n = nErr(); return '<span class="t-pill">' + ROWS.length + ' dòng</span><span class="t-pill t-pill--ok">' + (ROWS.length - n) + ' hợp lệ</span>' + (n ? '<span class="t-pill t-pill--retry">' + n + ' dòng lỗi</span>' : ''); }
+  function exp() {
+    var cols = ['Từ', 'Phiên âm IPA', 'Loại từ', 'Nghĩa', 'Câu ví dụ', 'Dịch câu ví dụ', 'Cấp', 'Chủ đề', 'Lớp', 'Unit SGK', 'Có hình', 'Có âm thanh'];
+    return '<div class="a-grid"><section class="a-card a-s7"><h2 class="adm-h2" style="margin:0 0 var(--space-3)">Xuất ra Excel</h2><div class="a-form">' +
+      A.field({ id: 'x-kind', label: 'Dữ liệu', type: 'select', value: 'vocab', options: [['vocab', 'Từ vựng (2.926)'], ['q', 'Câu hỏi (8.633)'], ['g', 'Chủ điểm ngữ pháp (64)']] }) + A.field({ id: 'x-lv', label: 'Cấp', type: 'select', value: 'all', options: [['all', 'Tất cả cấp']].concat(B.levels.map(function (l) { return [l.n, 'Cấp ' + l.n + ' · ' + l.name]; })) }) +
+      A.field({ id: 'x-st', label: 'Trạng thái', type: 'select', value: 'all', options: [['all', 'Tất cả'], ['live', 'Chỉ đã xuất bản'], ['draft', 'Chỉ nháp']] }) + A.field({ id: 'x-fmt', label: 'Định dạng', type: 'seg', value: 'xlsx', options: [['xlsx', '.xlsx'], ['csv', '.csv (UTF-8)']] }) +
+      '<div class="a-field a-full" id="x-cols-f"><span class="adm-h3" id="x-cols-l">Cột cần xuất</span><div class="cols" role="group" aria-labelledby="x-cols-l" aria-describedby="x-cols-e">' + cols.map(function (c, i) { return '<label class="chk"><input type="checkbox" data-col checked>' + c + '</label>'; }).join('') + '</div><p class="a-err adm-small" id="x-cols-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div></div>' +
+      '<div class="savebar">' + A.btn({ label: 'Xuất Excel', icon: 'download', size: 'l', attrs: 'data-export' }) + '</div></section>' +
+      '<section class="a-card a-s5"><h2 class="adm-h2" style="margin:0 0 var(--space-2)">Lần xuất gần đây</h2><ul class="hist">' + [['tu-vung-tat-ca-2026-09-30.xlsx', '2.904 dòng · Thầy Nam · 30/9'], ['cau-hoi-cap8-2026-09-28.xlsx', '1.104 dòng · Cô Mai · 28/9'], ['tu-vung-cap1-5-2026-09-15.csv', '1.161 dòng · Thầy Nam · 15/9']].map(function (h) { return '<li><span class="x">' + B.icon('sheet', 18) + '</span><span><b class="adm-body" style="font-weight:600">' + h[0] + '</b><br><span class="adm-small b-muted">' + h[1] + '</span></span><button type="button" class="a-iconbtn" aria-label="Tải lại ' + h[0] + '">' + B.icon('download', 16) + '</button></li>'; }).join('') + '</ul></section></div>';
+  }
+  function main(empty) { return '<div class="t-tabs" role="tablist" style="margin-bottom:var(--space-4)"><button type="button" class="t-tab" role="tab" data-tab="imp" aria-selected="' + (S.tab === 'imp') + '">' + B.icon('upload', 18) + 'Nhập từ Excel</button><button type="button" class="t-tab" role="tab" data-tab="topic" aria-selected="' + (S.tab === 'topic') + '">' + B.icon('plusbox', 18) + 'Nhập chủ đề mới</button><button type="button" class="t-tab" role="tab" data-tab="exp" aria-selected="' + (S.tab === 'exp') + '">' + B.icon('download', 18) + 'Xuất ra Excel</button></div><div role="tabpanel">' + (S.tab === 'imp' ? imp(empty) : S.tab === 'topic' ? topicView(empty) : exp()) + '</div>'; }
+  function tabsOnly(inner) { return main().replace(/<div role="tabpanel">[\s\S]*$/, '<div role="tabpanel">' + inner + '</div>'); }
+  function page(m) { return A.shell({ area: 'admin', active: 'excel', title: 'Nhập & xuất Excel', crumb: 'Nhập nhiều từ hoặc câu hỏi một lần', main: m }); }
+  /* ===== Thẻ “Nhập chủ đề mới”: tệp 2 trang (Chủ đề + Từ vựng), cảnh báo Từ đã có / Chưa có hình, tự tạo bài học ===== */
+  function TR(n, word, ipa, pos, vi, ex, exVi) { return { id: 't' + n, n: n, word: word, ipa: ipa, pos: pos, vi: vi, ex: ex, exVi: exVi }; }
+  var TROWS0 = [
+    TR(2, 'holiday', '/ˈhɒl.ə.deɪ/', 'noun', 'kỳ nghỉ', 'We went to Đà Nẵng for our summer holiday.', 'Chúng tớ đi Đà Nẵng nghỉ hè.'),
+    TR(3, 'beach', '/biːtʃ/', 'noun', 'bãi biển', 'The beach is very clean.', 'Bãi biển rất sạch.'),
+    TR(4, 'island', '/ˈaɪ.lənd/', 'noun', 'hòn đảo', 'Phú Quốc is a big island.', 'Phú Quốc là một hòn đảo lớn.'),
+    TR(5, 'mountain', '/ˈmaʊn.tɪn/', 'noun', 'núi', 'We climbed a mountain in Sa Pa.', 'Chúng tớ leo núi ở Sa Pa.'),
+    TR(6, 'suitcase', '/ˈsuːt.keɪs/', 'noun', 'va li', 'My suitcase is blue.', 'Va li của tớ màu xanh.'),
+    TR(7, 'passport', '', 'noun', 'hộ chiếu', 'Show me your passport, please.', 'Cho tôi xem hộ chiếu nhé.'),
+    TR(8, 'ticket', '/ˈtɪk.ɪt/', 'noun', 'vé', 'I have two train tickets.', 'Tớ có hai vé tàu.'),
+    TR(9, 'hotel', '/həʊˈtel/', 'noun', 'khách sạn', 'Our hotel is near the sea.', 'Khách sạn của chúng tớ gần biển.'),
+    TR(10, 'map', '/mæp/', 'noun', 'bản đồ', 'Let’s look at the map.', 'Cùng xem bản đồ nào.'),
+    TR(11, 'camera', '/ˈkæm.rə/', 'noun', 'máy ảnh', 'Dad takes photos with his camera.', 'Bố chụp ảnh bằng máy ảnh.'),
+    TR(12, 'beach', '/biːtʃ/', 'noun', 'bãi biển', 'We play on the beach.', 'Chúng tớ chơi trên bãi biển.'),
+    TR(13, 'souvenir', '/ˌsuː.vəˈnɪər/', 'noun', 'quà lưu niệm', 'I bought a souvenir for Mum.', 'Tớ mua quà lưu niệm cho mẹ.'),
+    TR(14, 'countryside', '/ˈkʌn.tri.saɪd/', 'noun', 'vùng nông thôn', 'My grandparents live in the countryside.', 'Ông bà tớ sống ở nông thôn.'),
+    TR(15, 'airport', '/ˈeə.pɔːt/', 'noun', 'sân bay', 'The airport is very busy.', 'Sân bay rất đông.'),
+    TR(16, 'towel', '/ˈtaʊ.əl/', 'noun', '', 'Don’t forget your towel.', 'Đừng quên khăn tắm nhé.'),
+    TR(17, 'sandcastle', '/ˈsænd.kɑː.səl/', 'noun', 'lâu đài cát', 'Let’s build a sandcastle!', 'Cùng xây lâu đài cát nào!'),
+    TR(18, 'trip', '/trɪp/', 'noun', 'chuyến đi', 'We had a great trip to Huế.', 'Chuyến đi Huế thật tuyệt.'),
+    TR(19, 'visit', '/ˈvɪz.ɪt/', 'verb', 'thăm', 'We visit Hội An every summer.', 'Mùa hè nào chúng tớ cũng thăm Hội An.'),
+    TR(20, 'seaside', '/ˈsiː.saɪd/', 'noun', 'bờ biển', 'We went to the beach at weekends.', 'Cuối tuần chúng tớ ra biển.'),
+    TR(21, 'postcard', '/ˈpəʊst.kɑːd/', 'noun', 'bưu thiếp', 'I sent a postcard to my friend.', 'Tớ gửi bưu thiếp cho bạn.'),
+    TR(22, 'swim', '/swɪm/', 'verb', 'bơi', 'I can swim in the sea.', 'Tớ biết bơi ở biển.')
+  ];
+  var TROWS = TROWS0.map(function (r) { return Object.assign({}, r); });
+  var HASIMG = { beach: 1, island: 1, mountain: 1, suitcase: 1, ticket: 1, hotel: 1, map: 1, camera: 1, countryside: 1, swim: 1 };
+  var EXIST = { countryside: 'Cấp 8 · Life in the countryside', swim: 'Cấp 4 · Thể thao' };
+  var POSOK = ['noun', 'verb', 'adjective', 'adverb', 'phrase', 'preposition', 'number'];
+  var T = { file: true, auto: true, per: 6 };
+  function terrs(r) {
+    var e = {}, w = r.word.trim().toLowerCase();
+    if (!w) e.word = 'Thiếu từ.'; else { var dup = TROWS.filter(function (x) { return x.word.trim().toLowerCase() === w; })[0]; if (dup && dup !== r) e.word = 'Trùng với dòng ' + dup.n + ' trong tệp. Xoá một dòng.'; }
+    if (!r.ipa.trim()) e.ipa = 'Thiếu phiên âm.'; else if (!/^\/.+\/$/.test(r.ipa.trim())) e.ipa = 'Phiên âm đặt trong /…/.';
+    if (POSOK.indexOf(r.pos.trim()) < 0) e.pos = 'Loại từ chưa đúng (noun, verb, adjective…).';
+    if (!r.vi.trim()) e.vi = 'Thiếu nghĩa tiếng Việt.';
+    var k = w.split(' ')[0];
+    if (!r.ex.trim()) e.ex = 'Thiếu câu ví dụ.'; else if (k && r.ex.toLowerCase().indexOf(k.slice(0, Math.max(3, k.length - 2))) < 0) e.ex = 'Câu ví dụ chưa chứa từ “' + r.word + '”.';
+    return e;
+  }
+  function twarn(r) { var w = r.word.trim().toLowerCase(), o = []; if (EXIST[w]) o.push(['exist', 'Từ đã có · ' + EXIST[w]]); if (!HASIMG[w]) o.push(['noimg', 'Chưa có hình']); return o; }
+  function tbad() { return TROWS.filter(function (r) { return Object.keys(terrs(r)).length; }); }
+  function tvalid() { return TROWS.filter(function (r) { return !Object.keys(terrs(r)).length; }); }
+  function tcell(key, w) { return function (r) { var e = terrs(r)[key]; if (e || r['_' + key]) return '<label class="b-sr" for="tc-' + r.id + '-' + key + '">' + key + ' dòng ' + r.n + '</label><input class="t-input a-input cellin' + (/word|ipa|ex|pos/.test(key) ? ' a-en' : '') + '" id="tc-' + r.id + '-' + key + '" data-tcell="' + r.id + '" data-key="' + key + '" value="' + B.esc(r[key]) + '"' + (e ? ' aria-invalid="true"' : '') + ' aria-describedby="tst-' + r.id + '" style="min-width:' + w + '">'; return key === 'ex' ? '<span class="ex" lang="en" title="' + B.esc(r.ex) + '">' + B.esc(r.ex) + '</span>' : key === 'word' ? '<b lang="en">' + B.esc(r.word) + '</b>' : B.esc(r[key]); }; }
+  function tstatus(r) { var e = terrs(r), k = Object.keys(e), wn = twarn(r); return '<div id="tst-' + r.id + '" class="tchk">' + (k.length ? '<ul class="rerr">' + k.map(function (x) { return '<li>' + B.icon('warn', 13) + '<span>' + e[x] + '</span></li>'; }).join('') + '</ul>' : A.status('ok', 'Hợp lệ')) + (wn.length ? '<span class="twarn">' + wn.map(function (x) { return x[0] === 'exist' ? '<span class="a-status a-status--info">' + B.icon('copy', 14) + x[1] + '</span>' : '<span class="a-status a-status--draft">' + B.icon('image', 14) + x[1] + '</span>'; }).join('') + '</span>' : '') + '</div>'; }
+  var ttable = A.table({ id: 'tp', rows: TROWS, pageSize: 8, searchKeys: ['word', 'vi'], placeholder: 'Tìm trong trang Từ vựng…',
+    filters: [{ key: 'chk', label: 'Dòng', options: [['bad', 'Có lỗi'], ['warn', 'Có cảnh báo'], ['ok', 'Hợp lệ, không cảnh báo']], match: function (r, v) { var b = Object.keys(terrs(r)).length > 0, w = twarn(r).length > 0; return v === 'bad' ? b : v === 'warn' ? !b && w : !b && !w; } }],
+    columns: [
+      { key: 'n', label: 'Dòng', sort: true, align: 'right', w: '56px' },
+      { key: 'word', label: 'Từ', sort: true, render: tcell('word', '110px') },
+      { key: 'ipa', label: 'Phiên âm', render: tcell('ipa', '110px') },
+      { key: 'pos', label: 'Loại từ', render: tcell('pos', '80px') },
+      { key: 'vi', label: 'Nghĩa', sort: true, render: tcell('vi', '110px') },
+      { key: 'ex', label: 'Câu ví dụ (EN / VI)', render: function (r) { return tcell('ex', '200px')(r) + '<span class="exvi adm-small b-muted">' + B.esc(r.exVi) + '</span>'; } },
+      { key: 'chk', label: 'Kiểm tra', w: '250px', render: tstatus }
+    ],
+    actions: function (r) { return '<button type="button" class="a-iconbtn" data-tdel="' + r.id + '" aria-label="Xoá dòng ' + r.n + '" title="Xoá dòng">' + B.icon('trash', 16) + '</button>'; } });
+  function lessonsPlan() {
+    var w = tvalid().map(function (r) { return r.word; }), n = w.length; if (!n) return [];
+    var L = Math.max(1, Math.ceil(n / T.per)); while (L > 1 && n / L < 5) L--; while (n / L > 8) L++;
+    var base = Math.floor(n / L), rem = n % L, out = [], k = 0;
+    for (var i = 0; i < L; i++) { var c = base + (i < rem ? 1 : 0); out.push(w.slice(k, k + c)); k += c; }
+    return out;
+  }
+  function tsum() { var b = tbad().length, wn = TROWS.filter(function (r) { return twarn(r).length; }).length; return '<span class="t-pill">' + TROWS.length + ' dòng</span><span class="t-pill t-pill--ok">' + (TROWS.length - b) + ' hợp lệ</span>' + (b ? '<span class="t-pill t-pill--retry">' + b + ' dòng lỗi</span>' : '') + '<span class="t-pill t-pill--brand">' + wn + ' dòng có cảnh báo</span>'; }
+  function tplan() {
+    var P = lessonsPlan();
+    return '<div class="a-card__h" style="margin:0"><div>' + A.toggle('t-auto', 'Tự tạo bài học', T.auto, 'Chia các từ hợp lệ thành bài nhỏ, mỗi bài gồm thẻ từ + Nghe và chọn hình + Chọn từ đúng cho hình').replace('class="a-toggle"', 'class="a-toggle" style="border:0;padding:0"') + '</div></div>' +
+      (T.auto ? '<div class="perrow"><span class="adm-h3" id="t-per-l">Số từ mỗi bài</span><div class="t-seg a-seg" role="radiogroup" aria-labelledby="t-per-l" data-per>' + [5, 6, 7, 8].map(function (k) { return '<button type="button" role="radio" data-v="' + k + '" aria-checked="' + (T.per === k) + '" aria-pressed="' + (T.per === k) + '">' + k + ' từ</button>'; }).join('') + '</div><span class="adm-small b-muted">Mỗi bài 5–8 từ để bé không bị quá tải.</span></div>' +
+        '<ol class="plan" aria-live="polite">' + P.map(function (ws, i) { return '<li><span class="pn">' + (i + 1) + '</span><div><b class="adm-h3">Bài ' + (i + 1) + ' · Holidays and travel</b><div class="pw">' + ws.map(function (w) { return '<span lang="en">' + w + '</span>'; }).join('') + '</div></div><span class="adm-small b-muted">' + ws.length + ' từ · ≈ ' + (ws.length + 4) + ' bước</span>' + A.status('draft', 'Nháp') + '</li>'; }).join('') + '</ol>'
+        + (tbad().length ? '<p class="adm-small b-muted" style="margin:6px 0 0">Dòng lỗi chưa được tính. Sửa xong, danh sách bài tự cập nhật.</p>' : '') : '<p class="adm-small b-muted" style="margin:8px 0 0">Chỉ thêm từ vào ngân hàng; tự soạn bài sau trong <b>Soạn bài học</b>.</p>');
+  }
+  function tstep(k) { var L = ['Tải tệp mẫu', 'Chọn tệp', 'Xem trước & sửa lỗi', 'Nhập (lưu dạng Nháp)']; return '<ol class="steps4">' + L.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'on' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '><i>' + (i < k ? B.icon('check', 14) : i + 1) + '</i>' + t + '</li>'; }).join('') + '</ol>'; }
+  function ttemplate() {
+    return '<section class="a-card" style="margin-bottom:var(--space-4)"><div class="a-card__h"><div><h2 class="adm-h2" style="margin:0">1. Tải tệp mẫu “Chủ đề mới”</h2><span class="adm-small b-muted">Một tệp = một chủ đề. Bố mẹ điền được, không cần biết soạn bài.</span></div>' + A.btn({ label: 'Tải tệp mẫu “Chủ đề mới” (.xlsx)', icon: 'download', variant: 'secondary', attrs: 'data-ttpl' }) + '</div><div class="tpl">' +
+      '<div><span class="x">' + B.icon('sheet', 20) + '</span><span><b class="adm-h3">Trang 1 · Chủ đề</b><br><span class="adm-small b-muted">1 dòng: <code>level</code> (cấp 1–10) · <code>name_en</code> (tên tiếng Anh) · <code>name_vi</code> (tên tiếng Việt)</span></span></div>' +
+      '<div><span class="x">' + B.icon('sheet', 20) + '</span><span><b class="adm-h3">Trang 2 · Từ vựng</b><br><span class="adm-small b-muted"><code>word</code> · <code>ipa</code> · <code>pos</code> (loại từ) · <code>meaning_vi</code> · <code>example_en</code> · <code>example_vi</code></span></span></div></div></section>';
+  }
+  function tpick(has) {
+    return '<section class="a-card" style="margin-bottom:var(--space-4)"><h2 class="adm-h2" style="margin:0 0 var(--space-3)">2. Chọn tệp</h2>' + (has ? '<div class="file"><span class="x">' + B.icon('sheet', 20) + '</span><span style="flex:1"><b class="adm-h3">chu-de-holidays-and-travel.xlsx</b><br><span class="adm-small b-muted">24 KB · 2 trang: Chủ đề (1 dòng) · Từ vựng (' + TROWS.length + ' dòng)</span></span>' + A.btn({ label: 'Chọn tệp khác', icon: 'upload', variant: 'secondary', size: 's', attrs: 'data-tpick' }) + '<button type="button" class="a-iconbtn" data-tunpick aria-label="Bỏ tệp">' + B.icon('close', 16) + '</button></div>'
+      : '<div class="file" style="border:2px dashed var(--line-strong);background:var(--surface)"><span class="x" style="background:var(--surface-soft);color:var(--ink-soft)">' + B.icon('upload', 20) + '</span><span style="flex:1"><b class="adm-h3">Kéo thả tệp .xlsx của chủ đề vào đây</b><br><span class="adm-small b-muted">Cần đủ 2 trang “Chủ đề” và “Từ vựng” · tối đa 200 từ</span></span>' + A.btn({ label: 'Chọn tệp', icon: 'upload', attrs: 'data-tpick' }) + '</div>') + '</section>';
+  }
+  function ttopicCard() {
+    return '<div class="tcard" data-level="5"><span class="lvn">5</span><div style="flex:1"><span class="adm-label b-muted">TRANG 1 · CHỦ ĐỀ</span><div class="adm-h2" style="margin:2px 0" lang="en">Holidays and travel</div><span class="adm-body b-muted">Kỳ nghỉ và du lịch · Cấp 5 · Cây lớn</span></div><div class="tmatch">' + A.status('ok', 'Khớp khung chương trình') + '<span class="adm-small b-muted">Chủ đề “Chưa có bài” · 42 từ mục tiêu · tệp có ' + TROWS.length + ' từ</span></div></div>';
+  }
+  function topicView(empty) {
+    if (!T.file || empty) return tstep(1) + ttemplate() + tpick(false);
+    var b = tbad().length, P = lessonsPlan(), nv = tvalid().length;
+    return tstep(b ? 2 : 3) + tpick(true) +
+      '<section class="a-card" style="margin-bottom:var(--space-4)"><div class="a-card__h"><div><h2 class="adm-h2" style="margin:0">3. Xem trước & sửa lỗi</h2><span class="adm-small b-muted">Ô tô cam sửa ngay trong bảng. Nhãn “Từ đã có” và “Chưa có hình” chỉ là cảnh báo, không chặn nhập.</span></div><div class="sumr" data-tsum aria-live="polite">' + tsum() + '</div></div>' + ttopicCard() + '</section>' +
+      ttable.html() +
+      '<section class="a-card" style="margin-top:var(--space-4)" data-tplan>' + tplan() + '</section>' +
+      '<div class="savebar"><span class="adm-small b-muted" data-twhy>' + (b ? 'Còn ' + b + ' dòng lỗi — sửa hoặc xoá để nhập.' : 'Sẵn sàng: ' + nv + ' từ' + (T.auto ? ', ' + P.length + ' bài học' : '') + ', tất cả ở trạng thái Nháp.') + '</span>' + A.btn({ label: 'Huỷ', variant: 'ghost', attrs: 'data-tunpick' }) + A.btn({ label: 'Nhập', icon: 'upload', size: 'l', attrs: 'data-timp' + (b ? ' disabled aria-disabled="true"' : '') }) + '</div>';
+  }
+  function topicLoading() { return tstep(2) + '<section class="a-card"><p class="adm-body" role="status" style="margin:0 0 var(--space-3)">Đang đọc chu-de-holidays-and-travel.xlsx (2 trang)…</p>' + B.sk('100%', '72px') + '<div style="height:12px"></div>' + [1, 2, 3, 4, 5, 6].map(function () { return B.sk('100%', '40px') + '<div style="height:8px"></div>'; }).join('') + '</section>'; }
+  function topicError() { return tstep(1) + '<section class="a-card">' + A.error({ title: 'Tệp thiếu trang “Từ vựng”', text: 'Tệp chu-de-holidays-and-travel.xlsx chỉ có trang “Chủ đề”. Tải tệp mẫu “Chủ đề mới”, dán từ vào trang 2 rồi chọn lại tệp.', code: 'XLS-422' }) + '</section>'; }
+  function wireTopic(scr, ctx, empty) {
+    function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+    var tt = scr.querySelector('[data-ttpl]'); tt && tt.addEventListener('click', function () { A.toast(ctx.scr, 'Đã tải mau-chu-de-moi.xlsx (2 trang: Chủ đề, Từ vựng).'); });
+    scr.querySelectorAll('[data-tunpick]').forEach(function (b) { b.addEventListener('click', function () { T.file = false; re('[data-tpick]'); }); });
+    scr.querySelectorAll('[data-tpick]').forEach(function (b) { b.addEventListener('click', function () { T.file = true; TROWS.length = 0; TROWS0.forEach(function (r) { TROWS.push(Object.assign({}, r)); }); ctx.setState('loading'); ctx.later(function () { re('#tp-q'); }, 900); }); });
+    if (!T.file || empty) return;
+    function refreshAll() {
+      var b = tbad().length, P = lessonsPlan(), nv = tvalid().length;
+      scr.querySelector('[data-tsum]').innerHTML = tsum();
+      scr.querySelector('[data-twhy]').textContent = b ? 'Còn ' + b + ' dòng lỗi — sửa hoặc xoá để nhập.' : 'Sẵn sàng: ' + nv + ' từ' + (T.auto ? ', ' + P.length + ' bài học' : '') + ', tất cả ở trạng thái Nháp.';
+      var bt = scr.querySelector('[data-timp]'); bt.disabled = !!b; if (b) bt.setAttribute('aria-disabled', 'true'); else bt.removeAttribute('aria-disabled');
+      var pl = scr.querySelector('[data-tplan]'); var ae = document.activeElement, foc = ae && pl.contains(ae) ? (ae.id ? '#' + ae.id : ae.getAttribute('data-v') ? '[data-per] [data-v="' + ae.getAttribute('data-v') + '"]' : null) : null; pl.innerHTML = tplan(); wirePlan(); if (foc) { var f = pl.querySelector(foc); f && f.focus(); }
+      scr.querySelectorAll('.steps4 li').forEach(function (li, i) { li.className = i < (b ? 2 : 3) ? 'done' : i === (b ? 2 : 3) ? 'on' : ''; });
+    }
+    function refreshRow(tr, r) {
+      tr.querySelector('#tst-' + r.id).outerHTML = tstatus(r);
+      var e = terrs(r); tr.querySelectorAll('[data-tcell]').forEach(function (inp) { var bad = !!e[inp.dataset.key]; inp.closest('td').classList.toggle('bad', bad); if (bad) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid'); });
+      // các dòng trùng nhau phụ thuộc lẫn nhau: cập nhật trạng thái mọi dòng đang hiện
+      scr.querySelectorAll('#tp tbody tr').forEach(function (row) { var st = row.querySelector('[id^="tst-"]'); if (!st || row === tr) return; var rr = TROWS.filter(function (x) { return 'tst-' + x.id === st.id; })[0]; if (rr) st.outerHTML = tstatus(rr); });
+      refreshAll();
+    }
+    function bindRows(box) {
+      box.querySelectorAll('[data-tcell]').forEach(function (inp) { var r = TROWS.filter(function (x) { return x.id === inp.dataset.tcell; })[0]; r['_' + inp.dataset.key] = true; inp.closest('td').classList.toggle('bad', !!terrs(r)[inp.dataset.key]); inp.addEventListener('input', function () { r[inp.dataset.key] = inp.value; refreshRow(inp.closest('tr'), r); }); });
+      box.querySelectorAll('[data-tdel]').forEach(function (b) { b.addEventListener('click', function () { var i = TROWS.map(function (x) { return x.id; }).indexOf(b.dataset.tdel), n = TROWS[i].n; TROWS.splice(i, 1); re('#tp-q'); A.toast(ctx.scr, 'Đã xoá dòng ' + n + '.'); }); });
+    }
+    function wirePlan() {
+      var sw = scr.querySelector('#t-auto'); sw && sw.addEventListener('click', function () { T.auto = !T.auto; refreshAll(); var n = scr.querySelector('#t-auto'); n && n.focus(); });
+      scr.querySelectorAll('[data-per] [data-v]').forEach(function (b) { b.addEventListener('click', function () { T.per = +b.dataset.v; refreshAll(); var n = scr.querySelector('[data-per] [data-v="' + T.per + '"]'); n && n.focus(); }); });
+    }
+    ttable.mount(scr, function () { bindRows(scr.querySelector('#tp')); }); bindRows(scr.querySelector('#tp')); wirePlan();
+    scr.querySelector('[data-timp]').addEventListener('click', function () {
+      if (tbad().length) return; var nv = tvalid().length, P = lessonsPlan();
+      A.dialog(scr, { title: 'Nhập chủ đề “Holidays and travel”?', body: '<p style="margin:0">Thêm vào <b>Cấp 5 · Cây lớn</b>: ' + nv + ' từ' + (T.auto ? ' và ' + P.length + ' bài học (tối đa ' + T.per + ' từ/bài)' : '') + '. Tất cả ở trạng thái <b>Nháp</b> — học sinh chưa thấy cho tới khi bạn xuất bản.</p><p style="margin:0">' + TROWS.filter(function (r) { return EXIST[r.word.trim().toLowerCase()]; }).length + ' từ đã có sẽ dùng lại, không tạo bản trùng. ' + TROWS.filter(function (r) { return !HASIMG[r.word.trim().toLowerCase()]; }).length + ' từ chưa có hình sẽ hiện trong cảnh báo của Bảng điều khiển.</p>',
+        actions: [{ label: 'Huỷ' }, { label: 'Nhập', variant: 'primary', icon: 'upload', onClick: function () { setTimeout(function () { T.file = false; re('[data-tpick]'); A.toast(ctx.scr, 'Đã nhập “Holidays and travel”: ' + nv + ' từ' + (T.auto ? ', ' + P.length + ' bài' : '') + ' (Nháp).'); }, 0); } }] });
+    });
+  }
+  A.screen({
+    labels: { empty: 'Trống (chưa chọn tệp)' },
+    notes: { normal: 'File mẫu có 12 dòng, 4 dòng lỗi (thiếu IPA, cấp “11”, từ đã có, câu ví dụ không chứa từ). Sửa trực tiếp trong ô tô cam — trạng thái dòng cập nhật ngay; nút Lưu chỉ bật khi hết lỗi. Lọc “Chỉ dòng lỗi”, tìm, sắp xếp. Tab “Xuất ra Excel” có chọn cột (bỏ hết cột để thấy lỗi). Tab “Nhập chủ đề mới”: tệp 2 trang Chủ đề + Từ vựng (21 dòng, 4 lỗi: thiếu phiên âm, trùng dòng, thiếu nghĩa, câu ví dụ không chứa từ); nhãn cảnh báo “Từ đã có”, “Chưa có hình” không chặn nhập; bật “Tự tạo bài học”, chọn 5–8 từ mỗi bài để xem danh sách bài; nút Nhập (lưu Nháp) chỉ bật khi hết lỗi.', loading: 'Đang đọc file: khung xương bảng.', empty: 'Chưa chọn file.', error: 'Không đọc được file.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { if (S.tab === 'topic') return page(tabsOnly(topicLoading())); return page(stepper(2) + '<section class="a-card"><p class="adm-body" role="status" style="margin:0 0 var(--space-3)">Đang đọc tu-vung-lop8-unit4.xlsx…</p>' + [1, 2, 3, 4, 5, 6].map(function () { return B.sk('100%', '40px') + '<div style="height:8px"></div>'; }).join('') + '</section>'); },
+      empty: function () { return page(main(true)); },
+      error: function () { if (S.tab === 'topic') return page(tabsOnly(topicError())); return page(stepper(1) + '<section class="a-card">' + A.error({ title: 'Không đọc được file', text: 'File “tu-vung-lop8-unit4.xls” không đúng định dạng .xlsx hoặc đã bị hỏng. Mở file bằng Excel, chọn Lưu thành → .xlsx rồi thử lại.', code: 'XLS-415' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) { if (ctx.state === 'normal') return; scr.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { S.tab = b.dataset.tab; ctx.setState('normal'); ctx.scr.querySelector('[data-tab="' + S.tab + '"]').focus(); }); }); if (ctx.state === 'empty' && S.tab === 'topic') wireTopic(scr, ctx, true); },
+      normal: function (scr, ctx) {
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { S.tab = b.dataset.tab; re('[data-tab="' + S.tab + '"]'); }); });
+      scr.querySelectorAll('[data-unpick]').forEach(function (b) { b.addEventListener('click', function () { S.file = false; re('[data-pick]'); }); });
+      scr.querySelectorAll('[data-pick]').forEach(function (b) { b.addEventListener('click', function () { S.file = true; ROWS.length = 0; ROWS0.forEach(function (r) { ROWS.push(Object.assign({}, r)); }); ctx.setState('loading'); ctx.later(function () { re('#imp-q'); }, 900); }); });
+      if (S.tab === 'topic') wireTopic(scr, ctx);
+      if (S.tab === 'imp' && S.file) {
+        function refresh(tr, r) { var st = tr.querySelector('#st-' + r.id); st.outerHTML = status(r); var e = errs(r); tr.querySelectorAll('[data-cell]').forEach(function (inp) { var bad = !!e[inp.dataset.key]; inp.closest('td').classList.toggle('bad', bad); if (bad) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid'); }); var n = nErr(); scr.querySelector('[data-sum]').innerHTML = summary(); scr.querySelector('[data-why]').textContent = n ? 'Còn ' + n + ' dòng lỗi — sửa hết để lưu.' : 'Tất cả ' + ROWS.length + ' dòng hợp lệ.'; var sv = scr.querySelector('[data-save]'); sv.disabled = !!n; if (n) sv.setAttribute('aria-disabled', 'true'); else sv.removeAttribute('aria-disabled'); }
+        function bind(box) {
+          box.querySelectorAll('[data-cell]').forEach(function (inp) { var r = ROWS.filter(function (x) { return x.id === inp.dataset.cell; })[0]; r['_' + inp.dataset.key] = true; inp.closest('td').classList.toggle('bad', !!errs(r)[inp.dataset.key]); inp.addEventListener('input', function () { r[inp.dataset.key] = inp.value; refresh(inp.closest('tr'), r); }); });
+          box.querySelectorAll('[data-del]').forEach(function (b) { b.addEventListener('click', function () { var i = ROWS.map(function (x) { return x.id; }).indexOf(b.dataset.del), n = ROWS[i].n; ROWS.splice(i, 1); re('#imp-q'); A.toast(ctx.scr, 'Đã xoá dòng ' + n + '.'); }); });
+        }
+        table.mount(scr, function () { bind(scr.querySelector('#imp')); }); bind(scr.querySelector('#imp'));
+        var sv = scr.querySelector('[data-save]'); sv && sv.addEventListener('click', function () { if (nErr()) return; var c = ROWS.length; A.dialog(scr, { title: 'Lưu ' + c + ' từ vào ngân hàng?', body: '<p style="margin:0">Các từ sẽ được thêm ở trạng thái <b>Nháp</b> vào Cấp 8 · Ethnic groups. Bạn có thể tạo giọng đọc hàng loạt sau đó.</p>', actions: [{ label: 'Huỷ' }, { label: 'Lưu ' + c + ' từ', variant: 'primary', icon: 'check', onClick: function () { setTimeout(function () { S.file = false; re('[data-pick]'); A.toast(ctx.scr, 'Đã thêm ' + c + ' từ (nháp) vào ngân hàng.'); }, 0); } }] }); });
+      }
+      var ex = scr.querySelector('[data-export]'); ex && ex.addEventListener('click', function () {
+        var n = scr.querySelectorAll('[data-col]:checked').length, e = scr.querySelector('#x-cols-e');
+        e.hidden = !!n; e.querySelector('span').textContent = n ? '' : 'Chọn ít nhất một cột để xuất.'; scr.querySelector('#x-cols-f').classList.toggle('is-error', !n);
+        if (!n) { scr.querySelector('[data-col]').focus(); return; }
+        ex.disabled = true; ex.lastChild.textContent = 'Đang tạo file…'; ctx.later(function () { ex.disabled = false; ex.lastChild.textContent = 'Xuất Excel'; A.toast(ctx.scr, 'Đã tạo tu-vung-tat-ca-2026-10-02.xlsx (2.926 dòng, ' + n + ' cột).'); }, 1200);
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

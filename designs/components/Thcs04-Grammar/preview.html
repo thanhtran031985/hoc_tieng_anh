@@ -1,0 +1,92 @@
+<!-- @dsCard group="Màn THCS · 4–9 Bài học" height=720 subtitle="4. Bài giảng ngữ pháp — thì hiện tại hoàn thành: công thức, giải thích, ví dụ có nghe, mẹo nhớ, lỗi hay gặp, 3 câu kiểm tra nhanh" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Bài giảng ngữ pháp — preview</title>
+<style>
+  .gr { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: var(--space-5); height: 100%; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: var(--space-4); min-height: 0; }
+  .fm { display: flex; flex-direction: column; gap: 8px; background: var(--surface-soft); border-radius: var(--thcs-radius-md); padding: var(--space-3) var(--space-4); }
+  .fm .r { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: var(--space-3); }
+  .fm .sg { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font: 700 16px/1 var(--font-thcs); background: var(--surface); border: 1px solid var(--line-strong); }
+  .fm .x { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font: 500 20px/28px var(--font-thcs); }
+  .fm .x b { background: var(--xp-soft); color: var(--xp); padding: 0 8px; border-radius: 6px; font-weight: 700; }
+  .uses { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 2px; }
+  .ex { display: flex; flex-direction: column; }
+  .ex .r { display: flex; align-items: center; gap: var(--space-3); padding: 7px 0; border-top: 1px solid var(--line); }
+  .ex .r:first-child { border-top: 0; }
+  .ex .r .vi { margin-left: auto; text-align: right; max-width: 220px; }
+  .hl { color: var(--brand-shade); font-weight: 700; }
+  .tipr { background: var(--info-soft); box-shadow: none; display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
+  .tipr h2 { display: flex; gap: 6px; align-items: center; }
+  .tipc { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .tipc > div { background: var(--surface); border-radius: var(--thcs-radius-sm); padding: 8px 10px; }
+  .err .r { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: center; padding: 2px 0; }
+  .err .no { color: var(--retry-shade); } .err .ok { color: var(--success-shade); }
+  .err .no + span { text-decoration: line-through; text-decoration-color: var(--retry-shade); }
+  .qc .q { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .qc .q:first-of-type { border-top: 0; }
+  .qc .os { display: flex; gap: 6px; flex-wrap: wrap; }
+  .qc .o { min-height: 40px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer; font: 500 20px/26px var(--font-thcs); }
+  .qc .o:hover { border-color: var(--brand); }
+  .qc .o.ok { background: var(--success-soft); border-color: var(--success-shade); color: var(--ink); font-weight: 700; }
+  .qc .o.no { background: var(--retry-soft); border-color: var(--retry-shade); }
+  .qc .why { font: 500 14px/20px var(--font-thcs); }
+  .qc .why.ok { color: var(--success-shade); } .qc .why.no { color: var(--retry-shade); }
+  .t-card.cmp { padding: var(--space-4); }
+  @container (max-height: 800px) { .t-card.cmp { padding: var(--space-3) var(--space-4); } .col { gap: var(--space-3); } .ex .r { padding: 4px 0; } .fm { gap: 4px; padding: 8px 12px; } .qc .q { padding: 5px 0; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var EX = [['I <span class="hl">have lived</span> in Hanoi since 2015.', 'I have lived in Hanoi since 2015.', 'Tớ sống ở Hà Nội từ năm 2015.'], ['She <span class="hl">has just finished</span> her homework.', 'She has just finished her homework.', 'Bạn ấy vừa làm xong bài tập.'],
+    ['<span class="hl">Have</span> you ever <span class="hl">been</span> to London?', 'Have you ever been to London?', 'Bạn đã từng đến London chưa?'], ['We <span class="hl">haven’t seen</span> that film yet.', 'We haven’t seen that film yet.', 'Chúng tớ chưa xem phim đó.']];
+  var QC = [{ q: 'I ___ Nam since we were in grade 6.', o: ['have known', 'knew', 'know'], a: 0, why: ['since + mốc trong quá khứ, còn đúng đến nay → have known.', '“knew” là quá khứ đơn: việc đã kết thúc, không hợp với “since”.', '“know” là hiện tại đơn, không nối được với mốc quá khứ.'] },
+    { q: 'They have lived here ___ ten years.', o: ['since', 'for', 'ago'], a: 1, why: ['“since” cần một mốc (since 2016), còn “ten years” là khoảng thời gian.', 'for + khoảng thời gian → for ten years.', '“ago” đi với quá khứ đơn: ten years ago.'] },
+    { q: 'We haven’t visited the British Museum ___.', o: ['already', 'yet', 'just'], a: 1, why: ['“already” dùng trong câu khẳng định.', '“yet” đứng cuối câu phủ định/câu hỏi → haven’t … yet.', '“just” nghĩa là “vừa mới”, không hợp câu phủ định này.'] }];
+  var ans = {};
+  function head() { return T.lessonHead({ crumb: 'Ngữ pháp · London › Giao thông', title: 'Thì hiện tại hoàn thành', n: 2, m: 6, xp: 20 }); }
+  function foot(off) { return T.lessonFoot(T.btn({ label: 'Lưu vào sổ tay', variant: 'secondary', icon: 'notebook', disabled: off }) + T.btn({ label: 'Nghe ví dụ', variant: 'ghost', icon: 'speaker', key: 'Space', disabled: off, attrs: 'data-replay' }), '<span class="thcs-body-s b-muted">' + Object.keys(ans).filter(function (k) { return ans[k] === QC[k].a; }).length + '/3 câu kiểm tra đúng</span>' + T.btn({ label: 'Luyện tập 10 câu', size: 'l', key: 'Enter', disabled: off, attrs: 'data-next' })); }
+  function body() {
+    var L = '<div class="col"><section class="t-card cmp"><h2 class="thcs-h3" style="margin-bottom:8px">Công thức</h2><div class="fm">' +
+      '<div class="r"><span class="sg" aria-label="Khẳng định">+</span><span class="x">S + <b>have / has</b> + <b>V3 / V-ed</b> + …</span></div>' +
+      '<div class="r"><span class="sg" aria-label="Phủ định">−</span><span class="x">S + <b>haven’t / hasn’t</b> + <b>V3</b> + …</span></div>' +
+      '<div class="r"><span class="sg" aria-label="Nghi vấn">?</span><span class="x"><b>Have / Has</b> + S + <b>V3</b> + … ?</span></div></div>' +
+      '<p class="thcs-body" style="margin-top:10px"><b>Dùng khi:</b></p><ul class="uses thcs-body"><li>việc bắt đầu trong quá khứ và <b>còn kéo dài đến nay</b> (since, for);</li><li>nói về <b>trải nghiệm</b> (ever, never) hoặc việc <b>vừa / đã / chưa</b> xảy ra (just, already, yet).</li></ul></section>' +
+      '<section class="t-card cmp"><h2 class="thcs-h3">Ví dụ</h2><div class="ex">' + EX.map(function (e) { return '<div class="r">' + B.speak(e[1], 's', 'Nghe: ' + e[1]) + '<span class="thcs-en">' + e[0] + '</span><span class="vi thcs-caption b-muted">' + e[2] + '</span></div>'; }).join('') + '</div></section>' +
+      '<section class="t-card cmp tipr"><h2 class="thcs-h3">' + B.icon('bulb', 20) + 'Mẹo nhớ</h2><span><b class="thcs-label">since + mốc</b> <span class="thcs-en">since 2015</span></span><span><b class="thcs-label">for + khoảng</b> <span class="thcs-en">for 3 years</span></span></section>' + '</div>';
+    var R = '<div class="col">' +
+      '<section class="t-card cmp err"><h2 class="thcs-h3">Lỗi hay gặp</h2>' +
+      '<div class="r"><span class="no" aria-label="Chưa đúng">' + B.icon('close', 18) + '</span><span class="thcs-en">I have lived here since 3 years.</span></div><div class="r"><span class="ok" aria-label="Đúng">' + B.icon('check', 18) + '</span><span class="thcs-en">I have lived here <b>for</b> 3 years.</span></div>' +
+      '<div class="r"><span class="no" aria-label="Chưa đúng">' + B.icon('close', 18) + '</span><span class="thcs-en">I have seen him yesterday.</span></div><div class="r"><span class="ok" aria-label="Đúng">' + B.icon('check', 18) + '</span><span><span class="thcs-en">I <b>saw</b> him yesterday.</span> <span class="thcs-caption b-muted">mốc quá khứ → quá khứ đơn</span></span></div></section>' +
+
+      '<section class="t-card cmp qc" style="flex:1;min-height:0"><h2 class="thcs-h3">Kiểm tra nhanh</h2>' + QC.map(function (q, i) {
+        var a = ans[i];
+        return '<div class="q"><span class="thcs-en"><b>' + (i + 1) + '.</b> ' + q.q + '</span><div class="os" role="radiogroup" aria-label="Câu ' + (i + 1) + '">' + q.o.map(function (o, j) { var c = a == null ? '' : j === a ? (a === q.a ? ' ok' : ' no') : ''; return '<button type="button" role="radio" aria-checked="' + (a === j) + '" class="o' + c + '" data-q="' + i + '" data-o="' + j + '">' + o + '</button>'; }).join('') + '</div>' +
+          (a == null ? '' : '<span class="why ' + (a === q.a ? 'ok' : 'no') + '">' + (a === q.a ? 'Đúng! ' : 'Chưa đúng — ') + q.why[a] + (a === q.a ? '' : ' Chọn lại nhé.') + '</span>') + '</div>';
+      }).join('') + '</section></div>';
+    return '<div class="gr">' + L + R + '</div>';
+  }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    notes: { normal: 'Bấm loa để nghe ví dụ (Space đọc ví dụ đầu). Kiểm tra nhanh: chọn sai sẽ hiện ngay lý do và cho chọn lại. Esc = thoát bài.', loading: 'Khung xương 2 cột.', empty: 'Bài giảng chưa có nội dung.', error: 'Không tải được bài giảng.' },
+    states: {
+      normal: function () { return wrap(body()); },
+      loading: function () { return wrap('<div class="gr"><div class="col">' + B.sk('100%', '220px') + B.sk('100%', '240px') + '</div><div class="col">' + B.sk('100%', '110px') + B.sk('100%', '150px') + B.sk('100%', '200px') + '</div></div>', true); },
+      empty: function () { return wrap(T.state({ kind: 'empty', title: 'Bài giảng đang được biên soạn', text: 'Thầy cô sẽ cập nhật sớm. Bạn có thể luyện tập chủ đề này trước.', action: T.btn({ label: 'Về chủ đề Giao thông', variant: 'secondary' }) }), true); },
+      error: function () { return wrap(T.state({ kind: 'error', title: 'Chưa tải được bài giảng', text: 'Kết nối đang chậm. Thử lại nhé — tiến độ của bạn không mất.' }), true); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        scr.querySelectorAll('[data-q]').forEach(function (b) { b.addEventListener('click', function () { var q = +b.dataset.q; ans[q] = +b.dataset.o; if (ans[q] === QC[q].a) ctx.burst(b, scr.querySelector('.t-chip--xp'), 6, 'bolt'); ctx.setState('normal'); var f = ctx.scr.querySelector('[data-q="' + q + '"][data-o="' + ans[q] + '"]'); f && f.focus(); }); });
+        scr.querySelector('[data-replay]').addEventListener('click', function () { B.say(EX[0][1]); });
+        ctx.onKey(function (e) { if (e.key === ' ' && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); B.say(EX[0][1], scr.querySelector('.ex .b-speak')); } });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+/* Cổng vào khu bố mẹ (Adult01): thẻ giữa màn, nền theme thcs sáng. */
+.gate {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
+  background: var(--bg);
+}
+.back {
+  position: absolute;
+  top: var(--space-5);
+  left: var(--space-6);
+}
+.card {
+  width: var(--adm-gate-card);
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-8);
+  border-radius: var(--adm-radius-xl);
+  background: var(--surface);
+  box-shadow: var(--adm-shadow-card);
+}
+.lock {
+  width: var(--adm-lock-icon);
+  height: var(--adm-lock-icon);
+  border-radius: var(--adm-radius-xl);
+  background: var(--brand-soft);
+  color: var(--brand-shade);
+  display: grid;
+  place-items: center;
+}
+.intro {
+  margin: var(--space-1) 0 0;
+}
+.notice {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--adm-radius-lg);
+  background: var(--brand-soft);
+}
+.notice svg {
+  flex: none;
+  margin-top: var(--lip-flat);
+}
+.noticeError {
+  background: var(--field-error-bg);
+  color: var(--field-error);
+}
+.noticeError span {
+  color: var(--ink);
+}
+.tabs {
+  align-self: flex-start;
+}
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

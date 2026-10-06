@@ -1,0 +1,80 @@
+<!-- @dsCard group="Màn THCS · 1–3 Tổng quan" height=720 subtitle="1. Trang chủ: mục tiêu XP hôm nay, Học tiếp, thẻ đến hạn, điểm yếu, lịch kiểm tra, chuỗi ngày, XP trong tuần" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Trang chủ — preview</title>
+<style>
+  .hm { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-5); }
+  .s4 { grid-column: span 4; } .s8 { grid-column: span 8; }
+  .hello { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+  .goal { display: flex; align-items: center; gap: var(--space-5); }
+  .goal ul { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .goal li { display: flex; align-items: center; gap: 8px; }
+  .goal li .b-ico { color: var(--success-shade); }
+  .goal li.todo .b-ico { color: var(--ink-soft); }
+  .next { display: grid; grid-template-columns: 1fr auto; gap: var(--space-4); align-items: end; }
+  .next .meta { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; margin-bottom: var(--space-2); }
+  .next .pg { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4); max-width: 420px; }
+  .big { font: 700 40px/44px var(--font-thcs); }
+  .split { display: flex; gap: var(--space-2); margin: var(--space-2) 0 var(--space-4); flex-wrap: wrap; }
+  .weak { display: flex; flex-direction: column; gap: var(--space-3); }
+  .weak .r { display: grid; grid-template-columns: 1fr 44px auto; gap: var(--space-3); align-items: center; }
+  .weak .r .b-progress { grid-column: 1 / 3; }
+  .cal { display: flex; flex-direction: column; gap: var(--space-3); }
+  .cal .r { display: flex; gap: var(--space-3); align-items: center; }
+  .cal .d { width: 52px; height: 56px; border-radius: var(--thcs-radius-md); background: var(--surface-soft); display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none; }
+  .cal .d b { font: 700 20px/22px var(--font-thcs); } .cal .d span { font: 600 11px/14px var(--font-thcs); color: var(--ink-soft); }
+  .cal .r > div:nth-child(2) { flex: 1; min-width: 0; }
+  .streak .days { display: flex; gap: 6px; margin: var(--space-3) 0; }
+  .streak .days span { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .streak .days i { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-sunk); color: var(--ink-soft); }
+  .streak .days i.on { background: var(--streak); color: #fff; }
+  .streak .days i.now { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--streak); }
+  .row2 { display: flex; align-items: baseline; gap: var(--space-2); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var wk = [{ k: 'T2', v: 220 }, { k: 'T3', v: 180 }, { k: 'T4', v: 260 }, { k: 'T5', v: 310, label: true }, { k: 'T6', v: 180, now: true }, { k: 'T7', v: null }, { k: 'CN', v: null }];
+  function page(main, o) { o = o || {}; return T.shell(Object.assign({ active: 'home', title: 'Trang chủ', crumb: 'Thứ Sáu, 02/10/2026', main: main }, o)); }
+  function hello(txt, expr) { return '<div class="hello"><div><h2 class="thcs-title">Chào buổi tối, Linh</h2><p class="thcs-body b-muted">Cấp 8 · London — tuần này bạn đã học 4/5 ngày.</p></div>' + T.tip(txt, expr) + '</div>'; }
+  var goal = '<section class="t-card s4" aria-labelledby="g1"><div class="t-card__h"><h3 class="thcs-h3" id="g1">Mục tiêu hôm nay</h3><button class="t-link" type="button">Đổi mục tiêu</button></div><div class="goal">' + T.ring(180, 250, 132, 'Đã có 180 trên 250 XP hôm nay') +
+    '<ul class="thcs-body-s"><li>' + B.icon('check', 18) + '1 bài học mới</li><li>' + B.icon('check', 18) + '15 thẻ ôn tập</li><li class="todo">' + B.icon('target', 18) + 'Còn 70 XP</li></ul></div></section>';
+  var next = '<section class="t-card s8" data-level="8" aria-labelledby="n1"><div class="next"><div><div class="meta">' + B.levelChip(8) + '<span class="t-pill">Chủ đề · Giao thông</span><span class="t-pill">Ngữ pháp</span></div>' +
+    '<h3 class="thcs-title" id="n1">Bài 4 · Thì hiện tại hoàn thành</h3><p class="thcs-body b-muted">since, for, already, yet — kể lại những gì bạn đã làm ở London.</p>' +
+    '<div class="pg">' + B.ProgressBar(3, 6) + '<span class="thcs-label b-muted" style="white-space:nowrap">3/6 bài · King’s Cross</span></div></div>' +
+    T.btn({ label: 'Học tiếp', size: 'l', icon: 'next', key: 'Enter', attrs: 'data-go' }) + '</div></section>';
+  var review = '<section class="t-card s4" aria-labelledby="r1"><div class="t-card__h"><h3 class="thcs-h3" id="r1">Ôn tập đến hạn</h3>' + B.icon('cards', 22) + '</div><div class="row2"><span class="big">29</span><span class="thcs-body b-muted">thẻ · khoảng 12 phút</span></div>' +
+    '<div class="split"><span class="t-pill t-pill--brand">21 từ vựng</span><span class="t-pill t-pill--xp">8 ngữ pháp</span></div>' + T.btn({ label: 'Ôn ngay', variant: 'secondary', block: true }) + '</section>';
+  var weakRows = [['since / for', 58], ['Trọng âm từ 3 âm tiết', 62], ['Câu bị động thì hiện tại', 65]];
+  var weak = '<section class="t-card s4" aria-labelledby="w1"><div class="t-card__h"><h3 class="thcs-h3" id="w1">Điểm yếu cần ôn</h3><button class="t-link" type="button">Xem tất cả</button></div><div class="weak">' +
+    weakRows.map(function (r) { return '<div class="r"><span class="thcs-body-s">' + r[0] + '</span><b class="thcs-label" style="text-align:right">' + r[1] + '%</b><button class="t-btn t-btn--ghost t-btn--s" type="button" aria-label="Ôn ' + r[0] + '">Ôn</button><div class="b-progress b-progress--s" role="progressbar" aria-label="Độ chính xác ' + r[1] + '%" aria-valuenow="' + r[1] + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + r[1] + '%;background:var(--retry)"></span></div></div>'; }).join('') + '</div></section>';
+  var cal = '<section class="t-card s4" aria-labelledby="c1"><div class="t-card__h"><h3 class="thcs-h3" id="c1">Lịch kiểm tra ở trường</h3><button class="t-iconbtn" type="button" aria-label="Thêm lịch kiểm tra">' + B.icon('plus', 18) + '</button></div><div class="cal">' +
+    '<div class="r"><div class="d"><b>08</b><span>Th10</span></div><div><b class="thcs-label">Kiểm tra 15 phút · Unit 4</b><div class="thcs-caption b-muted">Thứ Năm · còn 6 ngày</div></div>' + T.btn({ label: 'Luyện', variant: 'secondary', cls: 't-btn--s' }) + '</div>' +
+    '<div class="r"><div class="d"><b>03</b><span>Th11</span></div><div><b class="thcs-label">Kiểm tra giữa kỳ I</b><div class="thcs-caption b-muted">Thứ Ba · Unit 1–6</div></div>' + T.btn({ label: 'Luyện', variant: 'secondary', cls: 't-btn--s' }) + '</div></div></section>';
+  var chart = '<section class="t-card s8" aria-labelledby="x1"><div class="t-card__h"><h3 class="thcs-h3" id="x1">XP trong tuần</h3><span class="thcs-body-s b-muted">Tổng 1.150 XP · nhiều hơn tuần trước 12%</span></div>' + T.bars(wk, { h: 130 }) + '</section>';
+  var days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+  var streak = '<section class="t-card s4 streak" aria-labelledby="s1"><div class="t-card__h"><h3 class="thcs-h3" id="s1">Chuỗi ngày học</h3>' + B.icon('flame', 26) + '</div><div class="row2"><span class="big">23</span><span class="thcs-body b-muted">ngày liên tiếp</span></div>' +
+    '<div class="days">' + days.map(function (d, i) { return '<span><i class="' + (i < 5 ? 'on' : '') + (i === 4 ? ' now' : '') + '">' + (i < 5 ? B.icon('check', 16) : '') + '</i><span class="thcs-caption b-muted">' + d + '</span></span>'; }).join('') + '</div><p class="thcs-caption b-muted">Kỷ lục: 31 ngày. Bỏ lỡ một ngày cũng không mất XP.</p></section>';
+  function sk(span, h) { return '<section class="t-card ' + span + '" aria-hidden="true">' + B.sk('40%', '20px') + '<div style="height:12px"></div>' + B.sk('100%', h) + '</section>'; }
+  T.screen({
+    labels: { empty: 'Trống (mới vào THCS)' },
+    notes: { normal: 'Enter = Học tiếp. Bấm nút menu để thu gọn thanh bên; nút mặt trăng/mặt trời trên thanh trên để đổi sáng/tối. Rê chuột hoặc Tab vào cột biểu đồ để xem số XP.', loading: 'Khung xương giữ đúng lưới thẻ.', empty: 'Học sinh vừa lên THCS: chưa có XP, chưa có thẻ ôn, chưa có lịch.', error: 'Không tải được bảng tổng quan; menu và thanh trên vẫn dùng được.' },
+    states: {
+      normal: function () { return page('<div class="hm">' + hello('Còn <b>70 XP</b> nữa là đạt mục tiêu hôm nay!', 'chao') + goal + next + review + weak + cal + chart + streak + '</div>'); },
+      loading: function () { return page('<div class="hm"><div class="hello">' + B.sk('320px', '36px') + '</div>' + sk('s4', '132px') + sk('s8', '132px') + sk('s4', '120px') + sk('s4', '120px') + sk('s4', '120px') + sk('s8', '150px') + sk('s4', '150px') + '</div>', { xp: '···', streak: '·' }); },
+      empty: function () { return page('<div class="hm">' + hello('Chào mừng đến <b>London</b>! Bắt đầu bài đầu tiên nhé.', 'vui') +
+        '<section class="t-card s8" data-level="8"><div class="next"><div><div class="meta">' + B.levelChip(8) + '<span class="t-pill">Bài đầu tiên</span></div><h3 class="thcs-title">Bài 1 · Leisure time</h3><p class="thcs-body b-muted">Từ vựng về sở thích và cách nói “I enjoy / I’m into…”.</p></div>' + T.btn({ label: 'Bắt đầu', size: 'l', key: 'Enter' }) + '</div></section>' +
+        '<section class="t-card s4">' + T.ring(0, 250, 120, 'Chưa có XP hôm nay') + '</section>' +
+        '<section class="t-card s4"><h3 class="thcs-h3">Ôn tập</h3><p class="thcs-body b-muted" style="margin-top:8px">Chưa có thẻ nào. Từ bạn học sẽ tự vào đây để ôn đúng lúc.</p></section>' +
+        '<section class="t-card s4"><h3 class="thcs-h3">Điểm yếu cần ôn</h3><p class="thcs-body b-muted" style="margin-top:8px">Làm vài bài, Bông sẽ chỉ ra phần bạn cần luyện thêm.</p></section>' +
+        '<section class="t-card s4"><h3 class="thcs-h3">Lịch kiểm tra</h3><p class="thcs-body b-muted" style="margin:8px 0 12px">Thêm ngày kiểm tra để Bông nhắc bạn luyện trước.</p>' + T.btn({ label: 'Thêm lịch', variant: 'secondary', icon: 'plus' }) + '</section></div>', { xp: '0', streak: 0 }); },
+      error: function () { return page(T.state({ kind: 'error', title: 'Chưa tải được trang chủ', text: 'Mạng đang chập chờn — không phải lỗi của bạn. Menu bên trái vẫn dùng được.' })); }
+    },
+    mount: { normal: function (scr, ctx) { var g = scr.querySelector('[data-go]'); ctx.onKey(function (e) { if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'A') { g.focus(); ctx.burst(g, null, 8, 'bolt'); } }); } }
+  });
+})();
+</script>
+</body>
+</html>

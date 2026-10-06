@@ -1,0 +1,377 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Khu bố mẹ và quản trị: ai vào được bằng cách nào",
+    "locale": "vi",
+    "quality_profile": "showcase",
+    "output": "docs/so-do/tong-quan/workflow-khu-nguoi-lon.html",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "19da596766a7d60fa1ea85de2ccbc8c26a701c53"
+    },
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "Màn hình đã có trong code"
+        },
+        "security": {
+          "label": "Cổng, kiểm tra quyền"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "trinhduyet",
+      "label": "Trình duyệt (bố mẹ)"
+    },
+    {
+      "id": "maychu",
+      "label": "Máy chủ kiểm tra"
+    },
+    {
+      "id": "quantri",
+      "label": "Khu quản trị nội dung (task 12)"
+    }
+  ],
+  "mainPath": [
+    "btn",
+    "dlg",
+    "action",
+    "gate",
+    "guard",
+    "parent",
+    "qt",
+    "ra",
+    "admin"
+  ],
+  "nodes": [
+    {
+      "id": "btn",
+      "lane": "trinhduyet",
+      "col": 0,
+      "type": "frontend",
+      "label": "Nút Bố mẹ",
+      "sublabel": "ổ khóa ở /profiles",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(kid)/profiles/page.tsx",
+          "line": 23,
+          "label": "liên kết tới /parent/unlock"
+        }
+      ]
+    },
+    {
+      "id": "dlg",
+      "lane": "trinhduyet",
+      "col": 1,
+      "type": "frontend",
+      "label": "Màn cổng",
+      "sublabel": "/parent/unlock",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/parent/GateForm.tsx",
+          "line": 30,
+          "end_line": 60,
+          "label": "PIN 6 ô hoặc mật khẩu, lỗi dưới ô"
+        }
+      ]
+    },
+    {
+      "id": "parent",
+      "lane": "trinhduyet",
+      "col": 4,
+      "type": "frontend",
+      "label": "Khu vực bố mẹ",
+      "sublabel": "/parent · /parent/settings",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(parent)/layout.tsx",
+          "line": 12,
+          "end_line": 26,
+          "label": "khung + chọn con"
+        },
+        {
+          "path": "src/app/(parent)/parent/page.tsx",
+          "line": 11,
+          "end_line": 17,
+          "label": "Tổng quan theo ?kid="
+        },
+        {
+          "path": "src/app/(parent)/parent/settings/page.tsx",
+          "line": 24,
+          "label": "Cài đặt"
+        }
+      ]
+    },
+    {
+      "id": "url",
+      "lane": "trinhduyet",
+      "col": 3,
+      "type": "external",
+      "label": "Gõ thẳng /admin",
+      "sublabel": "không qua nút Quản trị",
+      "width": 126
+    },
+    {
+      "id": "action",
+      "lane": "maychu",
+      "col": 2,
+      "type": "backend",
+      "label": "Kiểm tra PIN",
+      "sublabel": "unlockParentAction",
+      "tag": "sai 5 lần: khóa 5 phút",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/features/parent/actions.ts",
+          "line": 22,
+          "end_line": 29,
+          "label": "unlockParentAction"
+        },
+        {
+          "path": "src/server/parent-secret.ts",
+          "line": 29,
+          "label": "checkParentSecret + số lần còn lại"
+        },
+        {
+          "path": "src/server/rate-limit.ts",
+          "line": 48,
+          "label": "PIN_LIMIT 5 lần / 5 phút"
+        }
+      ]
+    },
+    {
+      "id": "gate",
+      "lane": "maychu",
+      "col": 3,
+      "type": "security",
+      "label": "Mở cổng 15 phút",
+      "sublabel": "cookie ký, httpOnly",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/server/parent-gate.ts",
+          "line": 12,
+          "end_line": 21,
+          "label": "openParentGate"
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "lane": "maychu",
+      "col": 4,
+      "type": "security",
+      "label": "requireParentGate",
+      "sublabel": "hết hạn: về /parent/unlock",
+      "width": 126,
+      "sources": [
+        {
+          "path": "src/app/(parent)/layout.tsx",
+          "line": 13,
+          "label": "layout của /parent"
+        },
+        {
+          "path": "src/server/parent-gate.ts",
+          "line": 37,
+          "label": "kiểm cookie, chuyển về cổng"
+        }
+      ]
+    },
+    {
+      "width": 126,
+      "id": "qt",
+      "lane": "trinhduyet",
+      "col": 5,
+      "type": "frontend",
+      "label": "Nút Quản trị",
+      "sublabel": "chỉ hiện với admin",
+      "sources": [
+        {
+          "path": "src/components/adult/AdultShell.tsx",
+          "line": 52,
+          "end_line": 54,
+          "label": "liên kết tới /admin"
+        }
+      ]
+    },
+    {
+      "width": 126,
+      "id": "ra",
+      "lane": "maychu",
+      "col": 5,
+      "type": "security",
+      "label": "requireAdmin",
+      "sublabel": "role admin + cổng mở",
+      "tag": "cả server action",
+      "sources": [
+        {
+          "path": "src/server/admin-gate.ts",
+          "line": 10,
+          "end_line": 16,
+          "label": "đăng nhập → role admin → cổng bố mẹ"
+        },
+        {
+          "path": "src/app/(admin)/layout.tsx",
+          "line": 11,
+          "label": "layout của /admin"
+        }
+      ]
+    },
+    {
+      "width": 126,
+      "id": "deny",
+      "lane": "quantri",
+      "col": 4,
+      "type": "security",
+      "label": "Bị chặn",
+      "sublabel": "404 · về /profiles",
+      "sources": [
+        {
+          "path": "src/server/admin-gate.ts",
+          "line": 11,
+          "end_line": 15,
+          "label": "notFound / redirect"
+        }
+      ],
+      "tag": "parent / chưa mở cổng"
+    },
+    {
+      "width": 126,
+      "id": "admin",
+      "lane": "quantri",
+      "col": 5,
+      "type": "frontend",
+      "label": "Quản trị nội dung",
+      "sublabel": "Bảng điều khiển + 7 màn",
+      "tag": "task 12",
+      "sources": [
+        {
+          "path": "src/app/(admin)/layout.tsx",
+          "line": 11,
+          "end_line": 21,
+          "label": "khung quản trị"
+        },
+        {
+          "path": "src/components/adult/nav.ts",
+          "line": 17,
+          "end_line": 25,
+          "label": "menu ADMIN_NAV"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-btn-dlg",
+      "from": "btn",
+      "to": "dlg",
+      "label": "bấm",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-dlg-action",
+      "from": "dlg",
+      "to": "action",
+      "label": "PIN / mật khẩu",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-action-dlg",
+      "from": "action",
+      "to": "dlg",
+      "label": "sai: thử lại",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e-action-gate",
+      "from": "action",
+      "to": "gate",
+      "label": "đúng",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-gate-guard",
+      "from": "gate",
+      "to": "guard",
+      "label": "cookie"
+    },
+    {
+      "id": "e-guard-parent",
+      "from": "guard",
+      "to": "parent",
+      "label": "cho vào",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-parent-qt",
+      "from": "parent",
+      "to": "qt",
+      "label": "bấm Quản trị",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-qt-ra",
+      "from": "qt",
+      "to": "ra",
+      "label": "vào /admin",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-url-ra",
+      "from": "url",
+      "to": "ra",
+      "label": "gõ thẳng",
+      "variant": "security"
+    },
+    {
+      "id": "e-ra-admin",
+      "from": "ra",
+      "to": "admin",
+      "label": "đủ quyền",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e-ra-deny",
+      "from": "ra",
+      "to": "deny",
+      "label": "thiếu quyền",
+      "variant": "security",
+      "role": "error"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Khu bố mẹ (task 04 và 11)",
+      "items": [
+        "Cổng riêng /parent/unlock: PIN 4–6 số hoặc mật khẩu; sai 5 lần khóa 5 phút ở server",
+        "Tổng quan theo từng con và Cài đặt (giờ học, giao diện, hồ sơ, mật khẩu, PIN)"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Quản trị nội dung (task 12, đã làm)",
+      "items": [
+        "Vào bằng nút Quản trị sau khi mở cổng bố mẹ; gõ thẳng /admin cũng phải qua cổng và role admin",
+        "7 màn: Bảng điều khiển, Cấu trúc lộ trình, Từ vựng, Câu hỏi, Soạn bài học, Hình ảnh, Nhập & xuất Excel"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Chưa có trong code",
+      "items": [
+        "Kỹ năng, Kết quả thi, Bài viết, Lịch kiểm tra của khu bố mẹ (GĐ2–3)",
+        "Chủ điểm ngữ pháp, Tạo đề thi của quản trị (GĐ3)"
+      ]
+    }
+  ]
+}

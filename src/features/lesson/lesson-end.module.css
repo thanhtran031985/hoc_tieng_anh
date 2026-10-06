@@ -1,0 +1,276 @@
+/* Kết thúc bài (Screen12): bên trái rồng + 3 sao + lời chúc, bên phải thẻ kết quả. */
+.end {
+  position: relative;
+  min-height: 100dvh;
+  height: 100dvh;
+  box-sizing: border-box;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-12);
+  display: grid;
+  grid-template-columns: 1fr var(--size-end-card);
+  align-items: center;
+  gap: var(--space-12);
+  overflow: hidden;
+}
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  min-width: 0;
+}
+.hero > svg {
+  width: min(var(--size-end-dragon), 32vh);
+  height: auto;
+}
+.bigStars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+.bigStar {
+  display: block;
+  width: var(--size-bigstar);
+  height: var(--size-bigstar);
+  color: var(--star);
+  animation: starIn var(--duration-celebrate) cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  animation-delay: calc(var(--n) * var(--star-stagger));
+}
+.bigStarMid {
+  width: var(--size-bigstar-mid);
+  height: var(--size-bigstar-mid);
+  margin-bottom: var(--space-5);
+}
+.bigStar svg {
+  width: 100%;
+  height: 100%;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-xl);
+  line-height: var(--text-display-xl--line-height);
+  font-weight: var(--text-display-xl--font-weight);
+}
+.sub {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-height: 0;
+  max-height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-6);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+.note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--retry-soft);
+  border-radius: var(--radius-lg);
+  color: var(--retry-shade);
+}
+.note div {
+  display: flex;
+  flex-direction: column;
+}
+.note span {
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--size-tile-h);
+  padding: var(--space-3);
+  box-sizing: border-box;
+  background: var(--surface-soft);
+  border-radius: var(--radius-lg);
+}
+.tile b {
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: var(--text-stat--font-weight);
+}
+.tile span:not(.ok, .time) {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.tileCoin {
+  background: var(--level-1-soft);
+}
+.tileCoin svg {
+  color: var(--coin);
+}
+.ok {
+  color: var(--success);
+  display: inline-flex;
+}
+.time {
+  color: var(--brand);
+  display: inline-flex;
+}
+.wordsBox {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.wordsTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: var(--text-title--font-weight);
+}
+.wordsTitle span {
+  color: var(--ink-soft);
+  font-size: var(--text-label);
+  font-weight: var(--text-label--font-weight);
+}
+.words {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2) var(--space-4);
+  overflow-y: auto;
+}
+.wordRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.en {
+  font-family: var(--font-display);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: 700;
+}
+.vi {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.acts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+/* Giấy hoa rơi (trang trí). */
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.confetti i {
+  position: absolute;
+  top: calc(-1 * var(--space-6));
+  left: var(--x);
+  width: var(--space-3);
+  height: var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--level-1);
+  animation: fall var(--confetti-fall) linear infinite;
+  animation-delay: var(--d);
+}
+.confetti i:nth-child(6n + 2) {
+  background: var(--level-4);
+}
+.confetti i:nth-child(6n + 3) {
+  background: var(--level-6);
+}
+.confetti i:nth-child(6n + 4) {
+  background: var(--level-2);
+}
+.confetti i:nth-child(6n + 5) {
+  background: var(--level-5);
+}
+.confetti i:nth-child(6n) {
+  background: var(--star);
+}
+
+@keyframes starIn {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-40deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(540deg);
+  }
+}
+
+@media (max-width: 1400px) {
+  .end {
+    grid-template-columns: 1fr var(--size-end-card-s);
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+    gap: var(--space-10);
+  }
+}
+@media (max-height: 800px) {
+  .end {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-5);
+  }
+  .bigStar {
+    width: calc(var(--size-bigstar) * 0.75);
+    height: calc(var(--size-bigstar) * 0.75);
+  }
+  .bigStarMid {
+    width: calc(var(--size-bigstar-mid) * 0.75);
+    height: calc(var(--size-bigstar-mid) * 0.75);
+  }
+  .title {
+    font-size: var(--text-display-l);
+    line-height: var(--text-display-l--line-height);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  .bigStar {
+    animation: none;
+  }
+}

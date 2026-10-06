@@ -1,0 +1,114 @@
+<!-- @dsCard group="Màn THCS · 4–9 Bài học" height=720 subtitle="8. Đọc hiểu 2 cột: đoạn văn bên trái (bấm từ gạch chấm để tra nghĩa), câu hỏi bên phải" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Đọc hiểu — preview</title>
+<style>
+  .rd { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: var(--space-5); height: 100%; min-height: 0; }
+  .ps { position: relative; display: flex; flex-direction: column; gap: var(--space-2); min-height: 0; overflow: hidden; }
+  .ps .hd { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .ps .txt p { font: 400 20px/30px var(--font-thcs); margin: 0 0 8px; }
+  .ps .txt .pn { font: 700 12px/16px var(--font-thcs); color: var(--ink-soft); margin-right: 6px; vertical-align: 3px; }
+  .gw { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline dotted var(--brand); text-decoration-thickness: 2px; text-underline-offset: 5px; border-radius: 3px; }
+  .gw:hover { background: var(--brand-soft); }
+  .gw.is-on { background: var(--highlight); text-decoration-color: var(--ink); }
+  .pop { position: absolute; z-index: 5; width: 320px; padding: var(--space-4); box-shadow: var(--thcs-shadow-2); display: flex; flex-direction: column; gap: 6px; }
+  .pop .w { display: flex; align-items: center; gap: 8px; }
+  .pop .w b { font: 700 22px/28px var(--font-thcs); }
+  .pop .x { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; }
+  .qs { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; }
+  .qnav { display: flex; gap: 6px; align-items: center; }
+  .qnav button { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: 600 15px/1 var(--font-thcs); cursor: pointer; }
+  .qnav button[aria-current="true"] { border: 2px solid var(--brand); background: var(--brand-soft); }
+  .qnav button.ok { background: var(--success-soft); border-color: var(--success-shade); }
+  .qs .opts { display: flex; flex-direction: column; gap: var(--space-2); }
+  .qs .t-opt { min-height: 52px; }
+  .exp { display: grid; grid-template-columns: 24px 1fr; gap: 10px; border-radius: var(--thcs-radius-md); padding: 10px 12px; }
+  .exp.ok { background: var(--success-soft); } .exp.no { background: var(--retry-soft); }
+  .exp .ic { color: var(--success-shade); } .exp.no .ic { color: var(--retry-shade); }
+  @container (max-height: 800px) { .ps .txt p { margin-bottom: 4px; } .qs .t-opt { min-height: 48px; padding-top: 4px; padding-bottom: 4px; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var G = { surprisingly: ['/səˈpraɪ.zɪŋ.li/', 'adv', 'một cách đáng ngạc nhiên'], underground: ['/ˈʌn.də.ɡraʊnd/', 'n', 'tàu điện ngầm (ở London)'], locals: ['/ˈləʊ.kəlz/', 'n', 'người dân địa phương'], passengers: ['/ˈpæs.ɪn.dʒəz/', 'n', 'hành khách'],
+    landmarks: ['/ˈlænd.mɑːks/', 'n', 'địa danh, công trình nổi tiếng'], cathedral: ['/kəˈθiː.drəl/', 'n', 'nhà thờ lớn'], lanes: ['/leɪnz/', 'n', 'làn đường'], rent: ['/rent/', 'v', 'thuê'], contactless: ['/ˈkɒn.tækt.ləs/', 'adj', 'không tiếp xúc (thẻ chạm)'], prefer: ['/prɪˈfɜː/', 'v', 'thích hơn'] };
+  var P = ['London is one of the busiest cities in the world, but getting around it is {surprisingly} easy. The London {Underground}, which {locals} call “the Tube”, opened in 1863 and is the oldest underground railway in the world. Today it carries millions of {passengers} every day.',
+    'If you {prefer} to see the city while you travel, take one of the famous red double-decker buses. Sitting on the top deck is a cheap way to enjoy {landmarks} such as Big Ben and St Paul’s {Cathedral}.',
+    'Many Londoners cycle to school or work. The city has built hundreds of kilometres of cycle {lanes}, and you can {rent} a bike for a few pounds. Walking is a good choice too, because many sights are closer to each other than they look on the map.',
+    'Before you travel, get an Oyster card or use a {contactless} bank card. It is cheaper than buying a paper ticket every time.'];
+  var Q = [{ q: 'When did the London Underground open?', o: ['In 1836', 'In 1863', 'In 1963', 'In 1883'], a: 1, why: ['Bài viết ghi “opened in <b>1863</b>”, không phải 1836.', 'Đoạn 1: “opened in 1863”.', 'Đoạn 1 ghi 1863; 1963 là một thế kỷ sau.', 'Đoạn 1 ghi 1863, không phải 1883.'] },
+    { q: 'The word “locals” in paragraph 1 is closest in meaning to ___.', o: ['tourists', 'drivers', 'people who live in a place', 'passengers'], a: 2, why: ['“tourists” là khách du lịch — ngược nghĩa với người địa phương.', '“drivers” là tài xế, không liên quan.', '“locals” = người sống ở nơi đó (bấm vào từ trong bài để xem nghĩa).', '“passengers” là hành khách; người địa phương có thể không đi tàu.'] },
+    { q: 'Why is walking a good choice in London?', o: ['It is free of charge.', 'Many sights are close to each other.', 'There are no buses.', 'The Tube is often closed.'], a: 1, why: ['Bài không nhắc đến việc đi bộ miễn phí.', 'Đoạn 3: “many sights are closer to each other than they look on the map”.', 'Đoạn 2 nói về xe buýt hai tầng, nên ý này sai.', 'Bài không nói tàu điện ngầm hay đóng cửa.'] },
+    { q: 'What is cheaper than buying a paper ticket?', o: ['Taking a taxi', 'Renting a car', 'Using an Oyster card', 'Sitting on the top deck'], a: 2, why: ['Bài không nói về taxi.', 'Bài nói thuê xe đạp, không phải ô tô.', 'Đoạn 4: Oyster card hoặc thẻ contactless “is cheaper than buying a paper ticket”.', 'Ngồi tầng trên là cách ngắm cảnh rẻ, không phải loại vé.'] }];
+  var S = { q: 0, sel: {}, res: {}, pop: null, xp: 90 };
+  function passage() { return P.map(function (p, i) { return '<p><span class="pn">' + (i + 1) + '</span>' + p.replace(/\{(\w+)\}/g, function (m, w) { var k = w.toLowerCase(); return '<button type="button" class="gw' + (S.pop === k ? ' is-on' : '') + '" data-w="' + k + '" aria-haspopup="dialog">' + w + '</button>'; }) + '</p>'; }).join(''); }
+  function head() { return T.lessonHead({ crumb: 'Đọc hiểu · London › Giao thông', title: 'Getting Around London', n: Object.keys(S.res).filter(function (k) { return S.res[k] === 'ok'; }).length, m: 4, xp: S.xp }); }
+  function foot(off) { return T.lessonFoot(T.btn({ label: 'Nghe cả bài', variant: 'secondary', icon: 'speaker', key: 'Space', disabled: off, attrs: 'data-all' }) + T.btn({ label: 'Gợi ý', variant: 'ghost', icon: 'bulb', key: 'H', disabled: off, attrs: 'data-hint' }), T.btn({ label: S.res[S.q] === 'ok' ? 'Câu tiếp' : 'Kiểm tra', size: 'l', key: 'Enter', disabled: off || S.sel[S.q] == null || S.res[S.q] === 'no', attrs: 'data-check' })); }
+  function questions() {
+    var q = Q[S.q], sel = S.sel[S.q], r = S.res[S.q];
+    return '<section class="t-card qs" aria-labelledby="qh"><div class="qnav" aria-label="Chọn câu hỏi">' + Q.map(function (_, i) { return '<button type="button" data-qn="' + i + '" aria-current="' + (i === S.q) + '" class="' + (S.res[i] === 'ok' ? 'ok' : '') + '" aria-label="Câu ' + (i + 1) + (S.res[i] === 'ok' ? ', đã đúng' : '') + '">' + (i + 1) + '</button>'; }).join('') + '<span class="thcs-caption b-muted" style="margin-left:auto">Câu ' + (S.q + 1) + '/4</span></div>' +
+      '<h2 class="thcs-en" id="qh" style="font-weight:600">' + q.q + '</h2><div class="opts" role="radiogroup" aria-labelledby="qh">' + q.o.map(function (o, k) {
+        var st = r && k === sel ? (r === 'ok' ? 'is-correct' : 'is-retry') : k === sel ? 'is-selected' : '';
+        var h = T.opt('ABCD'[k], k, o, st); if (r === 'ok') h = h.replace('<button type="button"', '<button type="button" disabled'); if (st === 'is-correct') h = h.replace('<span class="t-opt__ic" aria-hidden="true"></span>', '<span class="t-opt__ic">' + B.icon('check', 22) + '</span>'); if (st === 'is-retry') h = h.replace('<span class="t-opt__ic" aria-hidden="true"></span>', '<span class="t-opt__ic">' + B.icon('replay', 20) + '</span>'); return h;
+      }).join('') + '</div>' + (r ? '<div class="exp ' + (r === 'ok' ? 'ok' : 'no') + '" role="status"><span class="ic">' + B.icon(r === 'ok' ? 'check' : 'info', 22) + '</span><p class="thcs-body-s">' + q.why[sel] + (r === 'ok' ? '' : ' Chọn lại nhé.') + '</p></div>' : '') + '</section>';
+  }
+  function body() { return '<div class="rd"><section class="t-card ps" aria-labelledby="pt"><div class="hd"><div><span class="thcs-caption b-muted">Đọc rồi trả lời 4 câu hỏi · ~190 từ</span><h1 class="thcs-h2" id="pt">Getting Around London</h1></div><span class="thcs-caption b-muted">Bấm từ có gạch chấm để tra nghĩa</span></div><div class="txt">' + passage() + '</div></section>' + questions() + '</div>'; }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    notes: { normal: 'Bấm (hoặc Tab + Enter) vào từ gạch chấm để xem phiên âm, nghĩa, nghe và lưu vào Sổ từ. Câu hỏi: 1–4 / A–D chọn, Enter kiểm tra; chưa đúng thì có trích dẫn lý do từ bài.', loading: 'Khung xương 2 cột.', empty: 'Bài đọc chưa có câu hỏi.', error: 'Không tải được bài đọc.' },
+    states: {
+      normal: function () { return wrap(body()); },
+      loading: function () { return wrap('<div class="rd"><section class="t-card ps">' + B.sk('50%', '28px') + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (i) { return B.sk((i % 4 === 0 ? 60 : 100) + '%', '20px'); }).join('') + '</section><section class="t-card qs">' + B.sk('180px', '40px') + B.sk('90%', '28px') + B.sk('100%', '52px') + B.sk('100%', '52px') + B.sk('100%', '52px') + B.sk('100%', '52px') + '</section></div>', true); },
+      empty: function () { return wrap('<div class="rd"><section class="t-card ps"><h1 class="thcs-h2">Getting Around London</h1><div class="txt">' + passage() + '</div></section><section class="t-card qs">' + T.state({ kind: 'empty', title: 'Chưa có câu hỏi', text: 'Bạn vẫn đọc và tra từ được. Câu hỏi sẽ có sớm.', action: T.btn({ label: 'Lưu bài đọc', variant: 'secondary', icon: 'notebook' }) }) + '</section></div>', true); },
+      error: function () { return wrap(T.state({ kind: 'error', title: 'Chưa tải được bài đọc', text: 'Kết nối đang chậm. Thử lại nhé.' }), true); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        var ps = scr.querySelector('.ps');
+        function openPop(btn) {
+          var k = btn.dataset.w, g = G[k]; S.pop = k; scr.querySelectorAll('.gw').forEach(function (b) { b.classList.toggle('is-on', b === btn); });
+          var old = ps.querySelector('.pop'); if (old) old.remove();
+          var s = (ctx.vp.__scale || 1), pr = ps.getBoundingClientRect(), br = btn.getBoundingClientRect();
+          var x = (br.left - pr.left) / s, y = (br.bottom - pr.top) / s + 8;
+          var pop = document.createElement('div'); pop.className = 't-card pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Nghĩa của ' + k);
+          pop.style.left = Math.min(x, ps.clientWidth - 336) + 'px'; pop.style.top = (y + 190 > ps.clientHeight ? (br.top - pr.top) / s - 190 : y) + 'px';
+          pop.innerHTML = '<button type="button" class="t-iconbtn x" aria-label="Đóng">' + B.icon('close', 18) + '</button><div class="w">' + B.speak(k, 's') + '<b>' + k + '</b><span class="t-pill">' + g[1] + '</span></div><span class="thcs-body-s b-muted">' + g[0] + '</span><p class="thcs-body"><b>' + g[2] + '</b></p>' +
+            '<div style="display:flex;gap:8px;margin-top:4px">' + T.btn({ label: 'Lưu vào Sổ từ', variant: 'secondary', icon: 'plus', cls: 't-btn--s', attrs: 'data-save' }) + '</div>';
+          ps.appendChild(pop);
+          pop.querySelector('.x').addEventListener('click', function () { pop.remove(); S.pop = null; btn.classList.remove('is-on'); btn.focus(); });
+          pop.querySelector('[data-save]').addEventListener('click', function (e) { e.currentTarget.innerHTML = B.icon('check', 18) + '<span>Đã lưu</span>'; ctx.burst(e.currentTarget, null, 5, 'bolt'); });
+          pop.querySelector('[data-save]').focus();
+        }
+        scr.querySelectorAll('.gw').forEach(function (b) { b.addEventListener('click', function () { openPop(b); }); });
+        if (S.pop) { var b0 = scr.querySelector('.gw[data-w="' + S.pop + '"]'); b0 && openPop(b0); }
+        function pick(k) { if (S.res[S.q] === 'ok') return; S.sel[S.q] = k; delete S.res[S.q]; S.pop = null; ctx.setState('normal'); var f = ctx.scr.querySelector('.qs .t-opt[data-i="' + k + '"]'); f && f.focus({ preventScroll: true }); }
+        function check() {
+          if (S.res[S.q] === 'ok') { S.q = (S.q + 1) % 4; S.pop = null; ctx.setState('normal'); return; }
+          if (S.sel[S.q] == null) return;
+          var ok = S.sel[S.q] === Q[S.q].a; S.res[S.q] = ok ? 'ok' : 'no'; if (ok) S.xp += 10; S.pop = null; ctx.setState('normal');
+          if (ok) ctx.burst(ctx.scr.querySelector('.qs .is-correct'), ctx.scr.querySelector('.t-chip--xp'), 8, 'bolt');
+        }
+        scr.querySelectorAll('.qs .t-opt').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+        scr.querySelectorAll('[data-qn]').forEach(function (b) { b.addEventListener('click', function () { S.q = +b.dataset.qn; S.pop = null; ctx.setState('normal'); }); });
+        scr.querySelector('[data-check]').addEventListener('click', check);
+        scr.querySelector('[data-all]').addEventListener('click', function () { B.say(P.join(' ').replace(/[{}]/g, '')); });
+        scr.querySelector('[data-hint]').addEventListener('click', function () { var k = ['locals', 'locals', 'lanes', 'contactless'][S.q]; var b = scr.querySelector('.gw[data-w="' + k + '"]'); b && openPop(b); });
+        ctx.onKey(function (e) {
+          var k = e.key.toLowerCase();
+          if (k === 'escape' && ps.querySelector('.pop')) { e.preventDefault(); e.stopImmediatePropagation && e.stopImmediatePropagation(); ps.querySelector('.pop .x').click(); return; }
+          if (/^[1-4]$/.test(k)) { e.preventDefault(); pick(+k - 1); }
+          else if (/^[abcd]$/.test(k)) { e.preventDefault(); pick('abcd'.indexOf(k)); }
+          else if (k === 'h') { e.preventDefault(); scr.querySelector('[data-hint]').click(); }
+          else if (e.key === ' ' && !(document.activeElement && document.activeElement.matches('button'))) { e.preventDefault(); B.say(P.join(' ').replace(/[{}]/g, '')); }
+          else if (e.key === 'Enter' && !(document.activeElement && document.activeElement.matches('button'))) { e.preventDefault(); check(); }
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

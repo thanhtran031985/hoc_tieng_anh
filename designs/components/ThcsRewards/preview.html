@@ -1,0 +1,31 @@
+<!-- @dsCard group="THCS · Thành phần" height=560 subtitle="Phần thưởng THCS: XP (vòng mục tiêu, chip, biểu đồ tuần), huy hiệu 3 bậc, danh hiệu theo cấp — thay cho sao và xu" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Phần thưởng THCS — preview</title>
+<style>
+  body { margin: 0; } .pane { padding: 16px; display: grid; grid-template-columns: 220px 1fr 1fr; gap: 16px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .titles { display: flex; flex-direction: column; gap: 8px; }
+  .ti { display: flex; align-items: center; gap: 10px; }
+  .ti .dot { width: 28px; height: 28px; border-radius: 8px; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; font: 700 13px/1 var(--font-thcs); }
+</style></head>
+<body>
+<div class="pane thcs" data-theme="thcs" id="a"></div>
+<div class="pane thcs" data-theme="thcs-toi" id="b"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T; B.suite('thcs');
+  var wk = [{ k: 'T2', v: 220 }, { k: 'T3', v: 180 }, { k: 'T4', v: 260 }, { k: 'T5', v: 310, label: true }, { k: 'T6', v: 140, now: true }, { k: 'T7', v: null }, { k: 'CN', v: null }];
+  var titles = [[6, 'Nhà thám hiểm Singapore', 'Đã đạt'], [7, 'Thuyền trưởng Sydney', 'Đã đạt'], [8, 'Thám tử London', 'Đang chinh phục · 62%'], [9, 'Phóng viên New York', 'Chưa mở'], [10, 'Đại sứ Toronto', 'Chưa mở']];
+  function pane(t) {
+    return '<div class="col"><span class="thcs-label b-muted">' + t + '</span>' + T.ring(180, 250, 150, 'Hôm nay 180 trên 250 XP') + T.chip('xp', '2.340', 'XP') + T.chip('streak', 23, 'ngày học liên tiếp') + '</div>' +
+      '<div class="col" style="align-items:stretch"><span class="thcs-label b-muted">XP tuần này</span>' + T.bars(wk, { h: 120 }) + '<span class="thcs-label b-muted">Huy hiệu</span><div class="badges">' +
+      T.badge({ name: 'Chuỗi 21 ngày', tier: 'gold', icon: 'flame', date: '28/09' }) + T.badge({ name: 'Bậc thầy since/for', tier: 'silver', icon: 'grammar' }) + T.badge({ name: '500 từ', tier: 'bronze', icon: 'notebook' }) + T.badge({ name: 'Điểm 10 bài thi', earned: false, progress: 'Cao nhất: 9,5' }) + '</div></div>' +
+      '<div class="col" style="align-items:stretch"><span class="thcs-label b-muted">Danh hiệu theo cấp</span><div class="titles">' + titles.map(function (x) { return '<div class="ti" data-level="' + x[0] + '"><span class="dot">' + x[0] + '</span><div><b class="thcs-label">' + x[1] + '</b><div class="thcs-caption b-muted">' + x[2] + '</div></div></div>'; }).join('') + '</div></div>';
+  }
+  document.getElementById('a').innerHTML = pane('SÁNG'); document.getElementById('b').innerHTML = pane('TỐI');
+})();
+</script>
+</body>
+</html>

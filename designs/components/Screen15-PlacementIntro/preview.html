@@ -1,0 +1,57 @@
+<!-- @dsCard group="Màn Tiểu học · 13–17 Bổ sung giai đoạn 1" height=700 subtitle="13a. Bài xếp lớp · giới thiệu: rồng Bông rủ bé chơi vài câu, nút Bắt đầu và “Bỏ qua, bắt đầu theo lớp”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bài xếp lớp · giới thiệu — preview</title>
+<style>
+  .pl { flex: 1; min-height: 0; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-6) var(--space-12); box-sizing: border-box; display: grid; grid-template-columns: 1fr 560px; gap: var(--space-12); align-items: center; }
+  .hero { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+  .hero .b-dragon { width: min(300px, 36cqh); height: auto; }
+  .hero .b-bubble { max-width: 460px; }
+  .card { padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-5); }
+  .facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .facts li { display: flex; align-items: center; gap: var(--space-3); }
+  .facts .ic { width: 48px; height: 48px; border-radius: var(--radius-md); background: var(--surface-soft); display: grid; place-items: center; color: var(--brand); flex: none; }
+  .facts .ic .b-ico[data-c] { color: inherit; }
+  .acts { display: flex; flex-direction: column; gap: var(--space-3); }
+  .acts .b-btn { width: 100%; }
+  .skip { text-align: center; }
+  @container (max-height: 800px) { .card { padding: var(--space-6); gap: var(--space-4); } .facts .ic { width: 40px; height: 40px; } }
+  @container (max-width: 1400px) { .pl { grid-template-columns: 1fr 520px; gap: var(--space-8); padding-left: var(--space-10); padding-right: var(--space-10); } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, kid = { name: 'Minh', grade: 3, level: 2, hair: 'short' };
+  function tb() { return B.topbar({ back: true, backLabel: 'Quay lại tạo hồ sơ', title: 'Chào bạn mới!', stats: false, right: '<span class="label b-muted">Hồ sơ: ' + kid.name + ' · Lớp ' + kid.grade + '</span>' }); }
+  function facts() {
+    return '<ul class="facts">' + [['speaker', '<b>12 câu</b> nghe và chọn hình'], ['clock', 'Khoảng <b>5 phút</b>'], ['star', 'Không có đúng hay sai — cứ chọn hình bé thấy giống nhất'], ['bulb', 'Chưa biết từ nào thì bấm <b>“Tớ chưa biết”</b>']].map(function (f) { return '<li><span class="ic">' + B.icon(f[0], 26) + '</span><span class="body-l">' + f[1] + '</span></li>'; }).join('') + '</ul>';
+  }
+  function card(off) {
+    return '<section class="b-card card" aria-labelledby="pl-t"><h1 class="display-l" id="pl-t">Bài xếp lớp</h1>' + facts() +
+      '<div class="acts">' + B.btn({ label: 'Bắt đầu', size: 'l', icon: 'next', key: 'Enter', attrs: 'data-start', disabled: off }) + B.btn({ label: 'Bỏ qua, bắt đầu theo lớp', variant: 'secondary', size: 'm', attrs: 'data-skip', disabled: off }) +
+      '<p class="caption b-muted skip">Bỏ qua thì Minh học từ <b>Cấp 3 · Lá xanh</b> (theo lớp 3). Bố mẹ đổi cấp được trong khu Bố mẹ.</p></div></section>';
+  }
+  function hero(expr, text) { return '<div class="hero">' + B.bubble(text) + B.dragon(expr, 300) + '</div>'; }
+  B.screen({
+    fit: true, level: 2,
+    notes: { normal: 'Enter = Bắt đầu. “Bỏ qua” mở hộp thoại xác nhận cấp theo lớp. Không có chữ “kiểm tra” hay “điểm” để bé không lo.', loading: 'Đang tải bộ câu hỏi xếp lớp: lời chào hiện ngay, thẻ bên phải là khung xương.', empty: 'Chưa có bài xếp lớp cho lớp này: cho bắt đầu theo lớp.', error: 'Không tải được bài xếp lớp: Thử lại, hoặc vẫn có thể bắt đầu theo lớp.' },
+    states: {
+      normal: function () { return tb() + '<div class="pl">' + hero('chao', 'Chào <b>Minh</b>! Mình cùng chơi vài câu để biết cậu bắt đầu từ đâu nhé!') + card() + '</div>'; },
+      loading: function () { return tb() + '<div class="pl">' + hero('suynghi', 'Bông đang chuẩn bị mấy câu đố vui…') + '<section class="b-card card">' + B.sk('260px', '44px', 'var(--radius-pill)') + [1, 2, 3, 4].map(function () { return '<div style="display:flex;gap:12px;align-items:center">' + B.sk('48px', '48px') + B.sk('70%', '22px', 'var(--radius-pill)') + '</div>'; }).join('') + B.sk('100%', '64px') + B.sk('100%', '52px') + '</section></div>'; },
+      empty: function () { return tb() + '<div class="pl">' + hero('suynghi', 'Bài xếp lớp cho lớp 3 Bông chưa soạn xong.') + '<section class="b-card card">' + B.stateBlock({ kind: 'empty', size: 120, title: 'Chưa có bài xếp lớp', text: 'Mình bắt đầu theo lớp của Minh nhé. Học vài bài là Bông biết cậu cần gì!', action: B.btn({ label: 'Bắt đầu ở Cấp 3 · Lá xanh', size: 'l', icon: 'next', attrs: 'data-start' }) }) + '</section></div>'; },
+      error: function () { return tb() + '<div class="pl">' + hero('dongvien', 'Ối, mạng chập chờn rồi. Không phải lỗi của Minh đâu!') + '<section class="b-card card">' + B.stateBlock({ kind: 'error', size: 120, title: 'Chưa tải được câu hỏi', text: 'Bấm Thử lại nhé. Hoặc bắt đầu theo lớp cũng được.', action: B.btn({ label: 'Thử lại', icon: 'replay', size: 'l', attrs: 'data-retry' }) + B.btn({ label: 'Bắt đầu theo lớp', variant: 'secondary', size: 'l' }) }) + '</section></div>'; }
+    },
+    mount: { normal: function (scr, ctx) {
+      var st = scr.querySelector('[data-start]');
+      st.addEventListener('click', function () { ctx.burst(st, null, 8); });
+      scr.querySelector('[data-skip]').addEventListener('click', function () {
+        ctx.dialog({ expr: 'suynghi', title: 'Bắt đầu ở Cấp 3 · Lá xanh?', body: 'Bông sẽ cho Minh học theo lớp 3. Nếu bài thấy khó quá, Bông sẽ gợi ý lùi lại một cấp.', actions: [{ label: 'Bắt đầu học', variant: 'primary', key: 'Enter' }, { label: 'Làm bài xếp lớp', variant: 'secondary', key: 'Esc' }] });
+      });
+      ctx.onKey(function (e) { if (e.key === 'Enter' && (!document.activeElement || document.activeElement.tagName !== 'BUTTON')) { e.preventDefault(); st.click(); } });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

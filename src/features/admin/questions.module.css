@@ -1,0 +1,162 @@
+/* Ngân hàng câu hỏi (Adult11). */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sum {
+  flex: 1;
+  margin: 0;
+}
+.text {
+  display: block;
+  max-width: calc(var(--space-16) * 6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.diff {
+  display: inline-flex;
+  gap: var(--space-1);
+  vertical-align: middle;
+}
+.diff i {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--surface-sunk);
+  border: var(--border-thin) solid var(--line-strong);
+}
+.diff i.diffOn {
+  background: var(--ink-soft);
+  border-color: var(--ink-soft);
+}
+.spring {
+  flex: 1;
+}
+
+/* Ngăn kéo biểu mẫu */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.types {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.type {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-thin) solid var(--line-strong);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.type b {
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+}
+.type span {
+  color: var(--ink-soft);
+  font-size: var(--text-adm-label);
+}
+.typeOn {
+  border-color: var(--brand);
+  box-shadow: inset 0 0 0 var(--border-thin) var(--brand);
+  background: var(--brand-soft);
+}
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.group {
+  margin: 0;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+  min-width: 0;
+}
+.groupError {
+  border-color: var(--field-error);
+}
+.choices,
+.pairs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.pic {
+  display: grid;
+  grid-template-columns: calc(var(--space-16)) minmax(0, 1fr);
+  grid-template-areas: "thumb input" "thumb radio";
+  gap: var(--space-1) var(--space-3);
+  align-items: start;
+  padding: var(--space-2);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+}
+.picOk {
+  border-color: var(--success);
+  box-shadow: inset 0 0 0 var(--border-thin) var(--success);
+}
+.thumb {
+  grid-area: thumb;
+  width: calc(var(--space-16));
+  height: calc(var(--space-16));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--adm-radius-md);
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+}
+.radio {
+  grid-area: radio;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+  font-size: var(--text-adm-label);
+  cursor: pointer;
+}
+.radio input {
+  accent-color: var(--success);
+}
+
+/* Xem như học sinh: lớp phủ toàn màn hình, trên cả ngăn kéo và hộp thoại. */
+.preview {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-burst);
+  background: var(--bg);
+}
+.previewBar {
+  position: absolute;
+  right: var(--space-6);
+  bottom: calc(var(--size-lesson-foot) + var(--space-4));
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--adm-shadow-card);
+  color: var(--ink);
+  font-size: var(--text-adm-small);
+}

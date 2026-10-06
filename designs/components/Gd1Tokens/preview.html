@@ -1,0 +1,33 @@
+<!-- @dsCard group="Chung · Màu" height=420 subtitle="Token bổ sung giai đoạn 1: nền 5 hộp ghi nhớ, mũ và búa của rồng Bông, cỡ sao tiến độ và hộp ghi nhớ, nhãn “Chưa có bài” của khu quản trị" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Token bổ sung giai đoạn 1 — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .p { padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  h3 { margin: 0 0 var(--space-2); }
+  .boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-2); }
+  .bx { border-radius: var(--radius-md); border: var(--border-thick) solid var(--m); background: var(--ms); padding: var(--space-2) var(--space-3); box-shadow: 0 4px 0 var(--m); }
+  .bx b { display: block; font: 800 15px/18px var(--font-body); }
+  code { font: 700 12px/16px var(--font-body); color: var(--ink-soft); display: block; }
+  .sw { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .sw div { display: flex; align-items: center; gap: var(--space-2); }
+  .sw i { width: 32px; height: 32px; border-radius: 8px; box-shadow: inset 0 0 0 2px rgba(0,0,0,.08); }
+  .sz { display: flex; gap: var(--space-5); align-items: flex-end; flex-wrap: wrap; }
+  .adm-demo { background: #fff; border-radius: 10px; padding: 10px 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+</style></head>
+<body>
+<div class="p" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var ML = ['Mới gặp', 'Đang nhớ', 'Khá nhớ', 'Nhớ tốt', 'Thuộc lòng'];
+  document.getElementById('p').innerHTML =
+    '<section><h3 class="title" style="font-size:20px">Hộp ghi nhớ (Ôn tập hôm nay)</h3><div class="boxes">' + ML.map(function (m, i) { return '<div class="bx" style="--m:var(--mastery-' + (i + 1) + ');--ms:var(--mastery-' + (i + 1) + '-soft)"><b>Hộp ' + (i + 1) + '</b><span class="caption">' + m + '</span><code>mastery-' + (i + 1) + '-soft</code></div>'; }).join('') + '</div>' +
+    '<h3 class="title" style="font-size:20px;margin-top:16px">Cỡ</h3><div class="sz"><span>' + B.icon('star', 28) + '<code>size-star-pip · 28px</code></span><span><span style="display:block;width:92px;height:40px;border-radius:12px;border:3px dashed var(--line-strong)"></span><code>size-memory-box · 184px (tối thiểu)</code></span></div></section>' +
+    '<section><h3 class="title" style="font-size:20px">Rồng Bông đang xây</h3><div class="sw">' + [['dragon-hat', 'Mũ'], ['dragon-hat-shade', 'Vành mũ'], ['dragon-tool', 'Cán búa'], ['dragon-tool-head', 'Đầu búa']].map(function (s) { return '<div><i style="background:var(--' + s[0] + ')"></i><span class="label">' + s[1] + '<code>' + s[0] + '</code></span></div>'; }).join('') + '</div>' +
+    '<h3 class="title" style="font-size:20px;margin-top:16px">Khu quản trị · trạng thái chủ đề</h3><div class="adm-demo thcs adm" data-theme="thcs">' + B.A.status('live', 'Đã xuất bản') + B.A.status('draft', 'Nháp') + B.A.status('none', 'Chưa có bài') + '<code>adm-status-none-ink · adm-status-none-line (nét đứt)</code></div></section>';
+})();
+</script>
+</body>
+</html>

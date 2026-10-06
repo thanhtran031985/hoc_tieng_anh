@@ -1,0 +1,86 @@
+<!-- @dsCard group="Màn THCS · 4–9 Bài học" height=720 subtitle="7. Viết lại câu không đổi nghĩa: câu gốc, phần đầu câu mới, ô gõ — Enter kiểm tra, H gợi ý (thử gõ “learned English since five years”)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Viết lại câu — preview</title>
+<style>
+  .rw { max-width: 920px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: var(--space-4); }
+  .orig { display: flex; align-items: center; gap: var(--space-3); }
+  .arrow { display: flex; align-items: center; gap: var(--space-2); color: var(--ink-soft); padding-left: var(--space-2); }
+  .nw { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+  .nw .start { font: 600 24px/34px var(--font-thcs); white-space: nowrap; }
+  .nw input { flex: 1; min-width: 320px; min-height: 56px; font: 500 22px/30px var(--font-thcs); }
+  .nw input.is-ok { border-color: var(--success-shade); background: var(--success-soft); }
+  .nw input.is-retry { border-color: var(--retry-shade); background: var(--retry-soft); }
+  .chips { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; }
+  .chips button { min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); background: var(--surface); color: var(--ink); font: 500 20px/26px var(--font-thcs); cursor: pointer; }
+  .chips button:hover { border-color: var(--brand); border-style: solid; }
+  .exp { display: grid; grid-template-columns: 28px 1fr; gap: var(--space-3); border-radius: var(--thcs-radius-md); padding: var(--space-3) var(--space-4); }
+  .exp.ok { background: var(--success-soft); } .exp.no { background: var(--retry-soft); }
+  .exp .ic { color: var(--success-shade); } .exp.no .ic { color: var(--retry-shade); }
+  .ans { font: 600 20px/28px var(--font-thcs); }
+  .count { display: flex; gap: var(--space-2); align-items: center; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var QS = [
+    { src: 'I started learning English five years ago.', start: 'I have', acc: ['learned english for five years', 'learnt english for five years', 'been learning english for five years', 'studied english for five years'], show: 'I have learned English for five years.', chips: ['learned', 'English', 'for', 'five years'], rule: 'started … ago → hiện tại hoàn thành + <b>for</b> + khoảng thời gian.',
+      diag: function (t) { if (/since/.test(t)) return '“since” đi với mốc thời gian (since 2021). “five years” là một khoảng → dùng <b>for five years</b>.'; if (/ago/.test(t)) return '“ago” chỉ dùng với quá khứ đơn. Ở thì hiện tại hoàn thành, nói <b>for five years</b>.'; if (/learn(?!ed|t)|study(?!ied)/.test(t)) return 'Sau “have” cần động từ dạng V3: <b>learned / learnt</b>.'; return 'Giữ nghĩa “đã học được 5 năm và vẫn đang học”: have + V3 + for + khoảng thời gian.'; } },
+    { src: 'This is the first time I have visited London.', start: 'I have never', acc: ['visited london before', 'been to london before'], show: 'I have never visited London before.', chips: ['visited', 'London', 'before'], rule: 'This is the first time + HTHT → S + have never + V3 + … + <b>before</b>.',
+      diag: function (t) { if (!/before/.test(t)) return 'Câu gốc nói “lần đầu tiên” → câu mới cần thêm <b>before</b> ở cuối: chưa từng … trước đây.'; if (/visit(?!ed)/.test(t)) return 'Sau “have never” cần V3: <b>visited</b>.'; return 'Gợi ý: have never + V3 + London + before.'; } }];
+  var S = { i: 0, n: 7, val: '', res: null, hint: false, xp: 70 };
+  function norm(t) { return t.toLowerCase().replace(/[’']/g, '').replace(/[.,!?]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function head() { return T.lessonHead({ crumb: 'Luyện tập · Viết lại câu', title: 'Viết lại câu không đổi nghĩa', n: S.n, m: 10, xp: S.xp }); }
+  function foot(off) { return T.lessonFoot(T.btn({ label: 'Gợi ý', variant: 'secondary', icon: 'bulb', key: 'H', disabled: off || S.hint, attrs: 'data-hint' }) + T.btn({ label: 'Nghe câu gốc', variant: 'ghost', icon: 'speaker', key: 'Space', disabled: off, attrs: 'data-replay' }), T.btn({ label: 'Kiểm tra', size: 'l', key: 'Enter', disabled: off || !S.val.trim() || S.res === 'ok', attrs: 'data-check' })); }
+  function body() {
+    var q = QS[S.i];
+    return '<div class="rw"><div><span class="t-pill t-pill--brand">Câu ' + S.n + '</span><h1 class="thcs-h2" style="margin-top:8px">Viết lại câu sao cho nghĩa không đổi, bắt đầu bằng phần cho sẵn.</h1></div>' +
+      '<section class="t-card"><span class="thcs-label b-muted">Câu gốc</span><div class="orig" style="margin-top:6px">' + B.speak(q.src, 'm', 'Nghe câu gốc') + '<p class="thcs-en-l">' + q.src + '</p></div></section>' +
+      '<div class="arrow">' + B.icon('chevdown', 22) + '<span class="thcs-body-s">Câu mới</span></div>' +
+      '<section class="t-card"><label class="nw" for="rw"><span class="start">' + q.start + '</span><input id="rw" class="t-input' + (S.res === 'ok' ? ' is-ok' : S.res === 'no' ? ' is-retry' : '') + '" placeholder="gõ tiếp phần còn lại của câu…" autocomplete="off" spellcheck="false" value="' + B.esc(S.val) + '"' + (S.res === 'ok' ? ' readonly' : '') + '></label>' +
+      '<div class="count" style="margin-top:10px"><span class="thcs-caption b-muted">Enter để kiểm tra · Không cần viết hoa chữ đầu, dấu chấm cuối câu có thể bỏ.</span></div>' +
+      (S.hint && S.res !== 'ok' ? '<div class="chips" style="margin-top:12px"><span class="thcs-label b-muted">Từ gợi ý:</span>' + q.chips.map(function (c) { return '<button type="button" data-chip="' + c + '">' + c + '</button>'; }).join('') + '</div>' : '') + '</section>' +
+      (S.res ? '<div class="exp ' + (S.res === 'ok' ? 'ok' : 'no') + '" role="status"><span class="ic">' + B.icon(S.res === 'ok' ? 'check' : 'info', 24) + '</span><div><b class="thcs-label">' + (S.res === 'ok' ? 'Đáp án mẫu' : 'Vì sao chưa đúng') + '</b>' + (S.res === 'ok' ? '<p class="ans">' + q.show + '</p><p class="thcs-body">' + q.rule + '</p>' : '<p class="thcs-body">' + q.diag(norm(S.val)) + '</p>') + '</div></div>' : '') + '</div>';
+  }
+  function wrap(inner, off) { return '<div class="t-lesson">' + head() + '<div class="t-lbody"><div class="t-lw" style="justify-content:center">' + inner + '</div></div>' + foot(off) + '</div>'; }
+  T.screen({
+    fit: true,
+    notes: { normal: 'Gõ phần còn lại rồi Enter. Chấm theo nhiều đáp án đúng (learned/learnt/been learning…). Chưa đúng: chỉ ra lỗi cụ thể (since/for, ago, dạng V3) rồi cho sửa ngay trong ô.', loading: 'Đang tải câu.', empty: 'Không có câu để luyện.', error: 'Không tải được bài.' },
+    states: {
+      normal: function () { return wrap(body()); },
+      loading: function () { return wrap('<div class="rw">' + B.sk('70%', '30px') + B.sk('100%', '96px') + B.sk('100%', '110px') + '</div>', true); },
+      empty: function () { return wrap(T.state({ kind: 'empty', title: 'Chưa có câu viết lại cho chủ đề này', text: 'Thử dạng trắc nghiệm trước nhé.', action: T.btn({ label: 'Sang trắc nghiệm', variant: 'secondary' }) }), true); },
+      error: function () { return wrap(T.state({ kind: 'error', title: 'Chưa tải được câu hỏi', text: 'Câu bạn đã gõ không bị mất. Thử lại nhé.' }), true); }
+    },
+    mount: {
+      normal: function (scr, ctx) {
+        var q = QS[S.i], inp = scr.querySelector('#rw'), chk = scr.querySelector('[data-check]');
+        inp.addEventListener('input', function () { S.val = inp.value; chk.disabled = !S.val.trim(); if (S.res === 'no') { S.res = null; inp.classList.remove('is-retry'); } });
+        function check() {
+          if (!S.val.trim() || S.res === 'ok') return;
+          var ok = q.acc.indexOf(norm(S.val)) >= 0;
+          if (ok) { S.res = 'ok'; S.xp += 15; ctx.setState('normal'); ctx.burst(ctx.scr.querySelector('#rw'), ctx.scr.querySelector('.t-chip--xp'), 8, 'bolt');
+            T.feedback(ctx.scr, { type: 'ok', title: 'Chuẩn rồi! +15 XP', detail: 'Nghĩa giữ nguyên, ngữ pháp đúng. Sang câu tiếp nhé.', onAction: function () { S.i = (S.i + 1) % QS.length; S.n++; S.val = ''; S.res = null; S.hint = false; ctx.setState('normal'); ctx.scr.querySelector('#rw').focus(); } }); }
+          else { S.res = 'no'; ctx.setState('normal'); var f = ctx.scr.querySelector('#rw'); f.focus(); f.setSelectionRange(f.value.length, f.value.length);
+            T.feedback(ctx.scr, { type: 'retry', title: 'Gần đúng rồi — sửa lại nhé', detail: 'Xem lý do ở khung phía trên rồi sửa ngay trong ô — không bị trừ XP.', action: 'Sửa câu', onAction: function () { var f2 = ctx.scr.querySelector('#rw'); f2.focus(); } }); }
+        }
+        chk.addEventListener('click', check);
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); check(); } });
+        scr.querySelector('[data-hint]').addEventListener('click', function () { S.hint = true; ctx.setState('normal'); });
+        scr.querySelector('[data-replay]').addEventListener('click', function () { B.say(q.src, scr.querySelector('.orig .b-speak')); });
+        scr.querySelectorAll('[data-chip]').forEach(function (c) { c.addEventListener('click', function () { S.val = (S.val.trim() + ' ' + c.dataset.chip).trim(); S.res = null; ctx.setState('normal'); var f = ctx.scr.querySelector('#rw'); f.focus(); f.setSelectionRange(f.value.length, f.value.length); }); });
+        ctx.onKey(function (e) {
+          if (document.activeElement === inp) return;
+          if (e.key.toLowerCase() === 'h' && !S.hint) { e.preventDefault(); S.hint = true; ctx.setState('normal'); }
+          else if (e.key === ' ' && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); B.say(q.src, scr.querySelector('.orig .b-speak')); }
+        });
+        if (S.res !== 'ok') ctx.later(function () { inp.focus({ preventScroll: true }); }, 60);
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

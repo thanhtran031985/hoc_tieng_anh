@@ -1,0 +1,155 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Task 08: một từ đi qua 5 hộp ôn tập thế nào",
+    "locale": "vi",
+    "output": "docs/so-do/tong-quan/lifecycle-5-hop-on-tap.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/thanhtran031985/hoc_tieng_anh.git",
+      "link_mode": "local-only",
+      "revision": "f30365ff7a306531251e16efb1464b6c4ccd4333"
+    }
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Từ trong 5 hộp (đúng thì lên, sai thì về hộp 1)"
+    }
+  ],
+  "states": [
+    {
+      "id": "h1",
+      "type": "active",
+      "label": "Hộp 1 · Mới gặp",
+      "sublabel": "từ mới · ôn sau 1 ngày",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "sources": [
+        {
+          "path": "src/lib/rules/review-box.ts",
+          "line": 42,
+          "end_line": 47,
+          "label": "nextReview"
+        }
+      ]
+    },
+    {
+      "id": "h2",
+      "type": "active",
+      "label": "Hộp 2 · Đang nhớ",
+      "sublabel": "ôn sau 3 ngày",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "sources": [
+        {
+          "path": "src/lib/rules/review-box.ts",
+          "line": 6,
+          "label": "BOX_INTERVAL_DAYS"
+        }
+      ]
+    },
+    {
+      "id": "h3",
+      "type": "active",
+      "label": "Hộp 3 · Khá nhớ",
+      "sublabel": "ôn sau 1 tuần",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "sources": [
+        {
+          "path": "src/lib/rules/review-box.ts",
+          "line": 28,
+          "end_line": 33,
+          "label": "intervalLabel"
+        }
+      ]
+    },
+    {
+      "id": "h4",
+      "type": "active",
+      "label": "Hộp 4 · Nhớ tốt",
+      "sublabel": "ôn sau 2 tuần",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "sources": [
+        {
+          "path": "src/lib/rules/review-box.ts",
+          "line": 20,
+          "label": "MASTERY_NAMES"
+        }
+      ]
+    },
+    {
+      "id": "h5",
+      "type": "success",
+      "label": "Hộp 5 · Thuộc lòng",
+      "sublabel": "ôn sau 1 tháng",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "sources": [
+        {
+          "path": "src/lib/rules/review-box.ts",
+          "line": 36,
+          "label": "isMastered"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "from": "h1",
+      "to": "h2",
+      "label": "đúng",
+      "variant": "emphasis"
+    },
+    {
+      "from": "h2",
+      "to": "h3",
+      "label": "đúng",
+      "variant": "emphasis"
+    },
+    {
+      "from": "h3",
+      "to": "h4",
+      "label": "đúng",
+      "variant": "emphasis"
+    },
+    {
+      "from": "h4",
+      "to": "h5",
+      "label": "đúng",
+      "variant": "emphasis"
+    },
+    {
+      "from": "h3",
+      "to": "h1",
+      "label": "chưa nhớ: về hộp 1",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Quy tắc đã làm",
+      "items": [
+        "Chỉ từ đến hạn và có hình vào phiên ôn, tối đa 15 từ (Tiểu học) / 20 (THCS)",
+        "Từ nhớ khi mọi câu của từ đúng ngay lần đầu; sai không trừ gì, chỉ về hộp 1"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Khác thiết kế",
+      "items": [
+        "Lịch 1/3/7/14/30 ngày theo PRD, không theo chữ trong bản xem trước (2/4 ngày)",
+        "Câu ngữ pháp từng sai (THCS) chưa có"
+      ]
+    }
+  ]
+}

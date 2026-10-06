@@ -1,0 +1,25 @@
+<!-- @dsCard group="Người lớn · Thành phần" height=560 subtitle="Bảng dữ liệu: tìm kiếm, bộ lọc, sắp xếp theo cột (aria-sort), chọn dòng, phân trang, trạng thái không có kết quả" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bảng dữ liệu người lớn — preview</title>
+<style> body { margin: 0; background: var(--bg); } .pane { padding: 16px; } </style></head>
+<body>
+<div class="pane thcs adm scr" data-theme="thcs" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A; B.suite('adult');
+  var rows = A.data.vocab.slice(0, 22);
+  var t = A.table({ id: 'demo', rows: rows, pageSize: 5, select: true, searchKeys: ['word', 'vi'], placeholder: 'Tìm từ hoặc nghĩa… (thử “xyz”)', sort: { key: 'word', dir: 'asc' },
+    filters: [{ key: 'topic', label: 'Chủ đề', options: ['Con vật', 'Trái cây', 'Màu sắc', 'Số đếm', 'Đồ chơi'] }],
+    right: A.btn({ label: 'Thêm từ', icon: 'plus', size: 's' }),
+    columns: [
+      { key: 'word', label: 'Từ', sort: true, render: function (r) { return '<span class="a-word"><span class="a-thumb">' + B.pic(r.word, 30) + '</span>' + B.speak(r.word, 's') + '<b lang="en">' + r.word + '</b></span>'; } },
+      { key: 'ipa', label: 'Phiên âm' }, { key: 'vi', label: 'Nghĩa', sort: true }, { key: 'topic', label: 'Chủ đề', sort: true },
+      { key: 'level', label: 'Cấp', sort: true, render: function (r) { return '<span data-level="' + r.level + '">' + B.levelChip(r.level) + '</span>'; } },
+      { key: 'status', label: 'Trạng thái', render: function (r) { return A.status('live', 'Đã xuất bản'); } }
+    ] });
+  var p = document.getElementById('p'); p.innerHTML = t.html(); t.mount(p);
+})();
+</script>
+</body>
+</html>

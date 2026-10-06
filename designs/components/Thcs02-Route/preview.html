@@ -1,0 +1,89 @@
+<!-- @dsCard group="Màn THCS · 1–3 Tổng quan" height=720 subtitle="2. Lộ trình: bản đồ thế giới nối 5 thành phố (cấp 6–10), dải tóm tắt 5 đảo Tiểu học — bấm thành phố để xem" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>THCS · Lộ trình — preview</title>
+<style>
+  .rt { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-5); align-items: start; }
+  .lc { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+  .mapc { padding: 0; overflow: hidden; position: relative; }
+  .map { position: relative; aspect-ratio: 1000 / 470; background: var(--map-sea); }
+  .map > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .city { position: absolute; transform: translate(-50%, -50%); border: 0; background: none; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .city .dot { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--lv); color: var(--on-lv); box-shadow: 0 0 0 4px var(--surface), var(--thcs-shadow-2); font: 700 16px/1 var(--font-thcs); }
+  .city.locked .dot { background: var(--surface-sunk); color: var(--ink-soft); }
+  .city.cur .dot { width: 56px; height: 56px; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 4px var(--surface), 0 0 0 12px var(--lv-soft); } }
+  .city .nm { background: var(--surface); color: var(--ink); border-radius: var(--radius-pill); padding: 3px 10px; font: 600 14px/18px var(--font-thcs); box-shadow: var(--thcs-shadow-1); white-space: nowrap; display: flex; gap: 4px; align-items: center; }
+  .city.is-sel .nm { background: var(--ink); color: var(--surface); }
+  .city .st { position: absolute; top: -6px; right: -8px; width: 22px; height: 22px; border-radius: 50%; background: var(--success); color: #fff; display: grid; place-items: center; }
+  .city .here { position: absolute; bottom: calc(100% + 4px); white-space: nowrap; background: var(--brand); color: var(--on-brand); font: 600 12px/16px var(--font-thcs); padding: 3px 8px; border-radius: 6px; }
+  .legend { position: absolute; left: 16px; bottom: 14px; display: flex; gap: 8px; }
+  .legend span { display: flex; align-items: center; gap: 6px; background: var(--surface); border-radius: var(--radius-pill); padding: 4px 10px; font: 600 13px/18px var(--font-thcs); box-shadow: var(--thcs-shadow-1); }
+  .legend i { width: 12px; height: 12px; border-radius: 50%; }
+  .panel { display: flex; flex-direction: column; gap: var(--space-4); }
+  .panel .hero { border-radius: var(--thcs-radius-md); background: var(--lv-soft); padding: var(--space-4); display: flex; flex-direction: column; gap: 6px; }
+  .panel .hero b.tt { color: var(--lv-ink); }
+  .clist { display: flex; flex-direction: column; gap: 4px; }
+  .crow { display: grid; grid-template-columns: 32px 1fr auto; gap: var(--space-3); align-items: center; padding: 8px 10px; border-radius: var(--thcs-radius-md); border: 0; background: none; cursor: pointer; text-align: left; color: var(--ink); font-family: var(--font-thcs); }
+  .crow:hover, .crow.is-sel { background: var(--surface-soft); }
+  .crow .n { width: 32px; height: 32px; border-radius: 8px; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; font: 700 14px/1 var(--font-thcs); }
+  .crow.locked .n { background: var(--surface-sunk); color: var(--ink-soft); }
+  .prim { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+  .prim .isl { display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px; border-radius: var(--radius-pill); background: var(--lv-soft); color: var(--lv-ink); font: 600 14px/18px var(--font-thcs); }
+  .prim .isl i { width: 22px; height: 22px; border-radius: 50%; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, T = B.T;
+  var C = [{ n: 6, x: 790, y: 262, st: 'done', pct: 100, title: 'Nhà thám hiểm Singapore', topics: '8/8 chủ đề' }, { n: 7, x: 905, y: 370, st: 'done', pct: 100, title: 'Thuyền trưởng Sydney', topics: '8/8 chủ đề' },
+    { n: 8, x: 500, y: 118, st: 'cur', pct: 62, title: 'Thám tử London', topics: '4/8 chủ đề xong' }, { n: 9, x: 322, y: 162, st: 'locked', pct: 0, title: 'Phóng viên New York', topics: '8 chủ đề' }, { n: 10, x: 226, y: 112, st: 'locked', pct: 0, title: 'Đại sứ Toronto', topics: '8 chủ đề' }];
+  var LAND = [
+    [[70, 70], [170, 48], [300, 46], [360, 70], [345, 120], [320, 150], [300, 190], [262, 215], [230, 238], [200, 210], [160, 160], [110, 130], [72, 100]],
+    [[262, 248], [320, 262], [352, 300], [330, 350], [302, 420], [282, 400], [272, 330]],
+    [[462, 80], [520, 58], [585, 66], [580, 108], [548, 132], [500, 140], [468, 120]],
+    [[470, 160], [540, 150], [598, 190], [600, 250], [570, 320], [538, 360], [512, 330], [500, 270], [462, 220]],
+    [[588, 62], [700, 40], [840, 46], [920, 78], [905, 130], [850, 160], [810, 205], [780, 232], [740, 210], [690, 190], [640, 170], [600, 130]],
+    [[838, 330], [890, 312], [940, 326], [950, 370], [905, 398], [850, 384]],
+    [[930, 410], [952, 418], [944, 440], [928, 432]]];
+  function blob(pts) { var n = pts.length, d = 'M' + pts[0][0] + ' ' + pts[0][1]; for (var i = 0; i < n; i++) { var p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n]; d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ' ' + p2[1]; } return d + 'Z'; }
+  function arc(a, b, done) { var mx = (a.x + b.x) / 2, my = Math.min(a.y, b.y) - 60; return '<path d="M' + a.x + ' ' + a.y + ' Q' + mx + ' ' + my + ' ' + b.x + ' ' + b.y + '" fill="none" stroke="' + (done ? 'var(--brand)' : 'var(--line-strong)') + '" stroke-width="' + (done ? 4 : 3) + '" stroke-dasharray="' + (done ? '0' : '2 10') + '" stroke-linecap="round"/>'; }
+  var sel = 8;
+  function map(o) {
+    o = o || {};
+    var svg = '<svg viewBox="0 0 1000 470" aria-hidden="true" preserveAspectRatio="xMidYMid slice">' + LAND.map(function (p) { return '<path d="' + blob(p) + '" fill="var(--map-land)" stroke="var(--line)" stroke-width="2"/>'; }).join('') +
+      '<g stroke="var(--line)" stroke-width="1" opacity=".7">' + [100, 200, 300, 400].map(function (y) { return '<line x1="0" x2="1000" y1="' + y + '" y2="' + y + '" stroke-dasharray="2 8"/>'; }).join('') + '</g>' +
+      (o.skel ? '' : C.slice(0, 4).map(function (c, i) { return arc(c, C[i + 1], i < 2); }).join('')) + '</svg>';
+    var pins = o.skel ? C.map(function (c) { return '<span class="b-sk" style="position:absolute;left:' + c.x / 10 + '%;top:' + c.y / 4.7 + '%;width:44px;height:44px;border-radius:50%;transform:translate(-50%,-50%)"></span>'; }).join('') : C.map(function (c) {
+      var l = B.levels[c.n - 1], st = o.fresh ? (c.n === 6 ? 'cur' : 'locked') : c.st;
+      return '<button type="button" class="city ' + st + (sel === c.n ? ' is-sel' : '') + '" data-level="' + c.n + '" data-c="' + c.n + '" style="left:' + c.x / 10 + '%;top:' + c.y / 4.7 + '%" aria-label="Cấp ' + c.n + ' ' + l.name + (st === 'done' ? ', đã qua' : st === 'cur' ? ', đang học' : ', còn khoá') + '">' +
+        (st === 'cur' ? '<span class="here">Bạn đang ở đây</span>' : '') + '<span class="dot">' + (st === 'locked' ? B.icon('lock', 18) : c.n) + (st === 'done' ? '<span class="st">' + B.icon('check', 14) + '</span>' : '') + '</span><span class="nm">' + l.name + '</span></button>';
+    }).join('');
+    return '<section class="t-card mapc"><div class="map">' + svg + pins + '<div class="legend" aria-hidden="true"><span><i style="background:var(--success)"></i>Đã qua</span><span><i style="background:var(--brand)"></i>Đang học</span><span><i style="background:var(--surface-sunk)"></i>Còn khoá</span></div></div></section>';
+  }
+  function panel(fresh) {
+    var c = C.filter(function (x) { return x.n === sel; })[0], l = B.levels[c.n - 1], st = fresh ? (c.n === 6 ? 'cur' : 'locked') : c.st;
+    var pct = fresh ? 0 : c.pct;
+    return '<aside class="t-card panel" data-level="' + c.n + '"><div class="hero"><span class="thcs-caption b-muted">Cấp ' + c.n + ' · THCS</span><b class="thcs-title tt">' + l.name + '</b><span class="thcs-body-s">Danh hiệu: <b>' + c.title + '</b></span>' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-top:6px">' + B.ProgressBar(pct, 100) + '<b class="thcs-label">' + pct + '%</b></div><span class="thcs-caption b-muted">' + (fresh && c.n !== 6 ? c.topics : c.topics) + '</span></div>' +
+      (st === 'locked' ? '<p class="thcs-body b-muted">' + B.icon('lock', 16) + ' Hoàn thành <b>' + B.levels[c.n - 2].name + '</b> để mở thành phố này.</p>' : T.btn({ label: st === 'done' ? 'Ôn lại ' + l.name : 'Tiếp tục ở ' + l.name, variant: st === 'done' ? 'secondary' : 'primary', block: true, size: 'l', key: st === 'cur' ? 'Enter' : '' })) +
+      '<div class="clist" role="listbox" aria-label="Năm thành phố">' + C.map(function (x) { var ll = B.levels[x.n - 1], s2 = fresh ? (x.n === 6 ? 'cur' : 'locked') : x.st; return '<button type="button" role="option" aria-selected="' + (x.n === sel) + '" class="crow ' + s2 + (x.n === sel ? ' is-sel' : '') + '" data-level="' + x.n + '" data-c="' + x.n + '"><span class="n">' + x.n + '</span><span><b class="thcs-label">' + ll.name + '</b><br><span class="thcs-caption b-muted">' + (s2 === 'done' ? 'Đã hoàn thành' : s2 === 'cur' ? 'Đang học · ' + (fresh ? 0 : x.pct) + '%' : 'Còn khoá') + '</span></span>' + (s2 === 'done' ? '<span style="color:var(--success-shade)">' + B.icon('check', 20) + '</span>' : s2 === 'locked' ? '<span class="b-muted">' + B.icon('lock', 18) + '</span>' : '<span class="t-pill t-pill--brand">Hiện tại</span>') + '</button>'; }).join('') + '</div></aside>';
+  }
+  var prim = '<section class="t-card prim" aria-label="Tiểu học"><b class="thcs-h3" style="display:inline-flex;align-items:center;gap:6px;width:100%"><span style="color:var(--success-shade);display:inline-flex">' + B.icon('check', 20) + '</span>Tiểu học · đã hoàn thành 5 đảo</b>' + B.levels.slice(0, 5).map(function (l) { return '<span class="isl" data-level="' + l.n + '"><i>' + B.icon('check', 14) + '</i>' + l.n + ' · ' + l.name + '</span>'; }).join('') + '<span class="thcs-body-s b-muted" style="margin-left:auto">1.240 sao · 186 bài</span></section>';
+  function page(main, o) { return T.shell(Object.assign({ active: 'route', title: 'Lộ trình 10 cấp', crumb: 'Cấp 6–10 · THCS', main: main }, o || {})); }
+  T.screen({
+    labels: { empty: 'Trống (mới lên THCS)' },
+    notes: { normal: 'Bấm thành phố trên bản đồ hoặc trong danh sách để xem chi tiết. Đường liền = chặng đã đi, đường chấm = chặng chưa mở.', loading: 'Bản đồ hiện trước, các thành phố là khung xương.', empty: 'Vừa xong Tiểu học: bắt đầu ở Singapore (cấp 6).', error: 'Không tải được tiến độ lộ trình.' },
+    states: {
+      normal: function () { return page('<div class="rt"><div class="lc">' + map() + prim + '</div>' + panel() + '</div>'); },
+      loading: function () { return page('<div class="rt"><div class="lc">' + map({ skel: true }) + '<section class="t-card prim">' + B.sk('60%', '28px') + '</section></div><aside class="t-card panel">' + B.sk('100%', '140px') + B.sk('100%', '52px') + B.sk('100%', '220px') + '</aside></div>', { xp: '···', streak: '·' }); },
+      empty: function () { var s0 = sel; sel = 6; var h = page('<div class="rt"><div class="lc">' + map({ fresh: true }) + prim + '</div>' + panel(true) + '</div>', { xp: '0', streak: 0 }); sel = s0; return h; },
+      error: function () { return page('<div class="lc"><section class="t-card">' + T.state({ kind: 'error', title: 'Chưa vẽ được bản đồ lộ trình', text: 'Kết nối chậm, bạn thử lại sau vài giây nhé.' }) + '</section>' + prim + '</div>'); }
+    },
+    mount: { normal: function (scr, ctx) { scr.querySelectorAll('[data-c]').forEach(function (b) { b.addEventListener('click', function () { sel = +b.dataset.c; ctx.setState('normal'); var f = ctx.scr.querySelector('.crow[data-c="' + sel + '"]'); f && f.focus(); }); }); } }
+  });
+})();
+</script>
+</body>
+</html>

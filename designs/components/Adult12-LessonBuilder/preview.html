@@ -1,0 +1,122 @@
+<!-- @dsCard group="Người lớn · Quản trị nội dung" height=760 subtitle="12. Soạn bài học: chọn từ và câu hỏi gợi ý theo chủ đề, kéo thả sắp xếp các bước, xem trước như học sinh" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Soạn bài học — preview</title>
+<style>
+  .lb { display: grid; grid-template-columns: 320px minmax(0, 1fr) 300px; gap: var(--space-4); align-items: start; }
+  .lb > section { min-width: 0; }
+  .sug { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-direction: column; }
+  .sug li { display: grid; grid-template-columns: 36px 1fr auto; gap: var(--space-2); align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+  .sug li:first-child { border-top: 0; }
+  .sug .in { color: var(--success-shade); font: 600 12px/16px var(--font-thcs); display: inline-flex; gap: 4px; align-items: center; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .step { display: grid; grid-template-columns: 28px 30px 34px 1fr auto; gap: var(--space-2); align-items: center; padding: 8px 10px 8px 4px; border: 1px solid var(--line); border-radius: var(--adm-radius-md); background: var(--surface); }
+  .step .no { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-sunk); display: grid; place-items: center; font: 700 12px/1 var(--font-thcs); color: var(--ink-soft); }
+  .step .ty { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: var(--lv-soft); color: var(--lv-ink); }
+  .step .ty.q { background: var(--chart-1-soft); color: var(--brand-shade); }
+  .step b { font: 600 14px/20px var(--font-thcs); display: block; }
+  .tot { display: flex; gap: var(--space-4); padding: var(--space-3) 0 0; margin-top: var(--space-3); border-top: 1px solid var(--line); }
+  .tot b { color: var(--ink); }
+  .pv-dots { display: flex; gap: 6px; justify-content: center; }
+  .pv-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+  .pv-dots i.on { background: var(--brand); width: 22px; border-radius: 4px; }
+  .pv-stage { min-height: 250px; justify-content: center; }
+  .pv-cards { display: flex; gap: 14px; }
+  .pv-card { width: 130px; background: var(--surface); border-radius: 18px; box-shadow: var(--shadow-card, 0 4px 0 var(--line)); padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .pv-card b { font: 800 20px/24px var(--font-display); }
+  .pv-opts { display: grid; grid-template-columns: repeat(4, 96px); gap: 12px; }
+  .pv-opts .b-choice { width: 96px; height: 96px; padding: 6px; }
+  .pv-opts .b-pic { width: 70px; height: 70px; }
+  .pv-t { font: 800 22px/28px var(--font-display); margin: 0; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var FR = ['apple', 'banana', 'grapes', 'orange', 'pear', 'strawberry'];
+  var KIND = { intro: ['cards', 'Giới thiệu từ', 1.5], listen: ['speaker', 'Nghe và chọn hình', 0.5], match: ['plusbox', 'Nối từ với hình', 1.5], boss: ['crown', 'Trùm Khỉ Lém', 3], abcd: ['exam', 'Chọn đáp án', 0.5] };
+  var uid = 0;
+  function St(kind, items, title) { return { id: 's' + (++uid), kind: kind, items: items, title: title }; }
+  var STEPS = [St('intro', ['apple', 'banana', 'orange']), St('listen', ['apple']), St('intro', ['grapes', 'pear', 'strawberry']), St('listen', ['grapes']), St('match', ['banana', 'orange', 'pear', 'strawberry']), St('boss', [], '5 câu ôn tập ngẫu nhiên')];
+  var QSUG = [['listen', ['banana'], 'Nghe và chọn hình: banana', 1], ['listen', ['orange'], 'Nghe và chọn hình: orange', 1], ['listen', ['strawberry'], 'Nghe và chọn hình: strawberry', 2], ['abcd', ['apple'], 'This is _____ apple. (a / an)', 1], ['match', ['apple', 'grapes', 'pear', 'banana'], 'Nối: apple · grapes · pear · banana', 2]];
+  var S = { tab: 'words', name: 'Ôn tập & Trùm Khỉ Lém', st: 'draft' };
+  function used(w) { return STEPS.some(function (s) { return s.kind === 'intro' && s.items.indexOf(w) > -1; }); }
+  function qused(q) { return STEPS.some(function (s) { return s.kind === q[0] && s.items.join() === q[1].join(); }); }
+  function desc(s) { return s.kind === 'boss' ? s.title : s.kind === 'abcd' ? s.title : '<span lang="en">' + s.items.join(', ') + '</span>'; }
+  function mins() { return Math.round(STEPS.reduce(function (a, s) { return a + KIND[s.kind][2] * (s.kind === 'intro' ? s.items.length / 2 + 0.5 : 1); }, 0)); }
+  function left() {
+    var list = S.tab === 'words' ? FR.map(function (w) { var d = B.words[w]; return '<li><span class="a-thumb">' + B.pic(w, 30) + '</span><span><b lang="en">' + w + '</b> <span class="adm-small b-muted">' + d.ipa + '</span><br><span class="adm-small b-muted">' + d.vi + '</span></span>' + (used(w) ? '<span class="in">' + B.icon('check', 14) + 'Đã có</span>' : A.btn({ label: 'Thêm', icon: 'plus', variant: 'secondary', size: 's', attrs: 'data-addw="' + w + '" aria-label="Thêm từ ' + w + ' vào bài"' })) + '</li>'; })
+      : QSUG.map(function (q, i) { return '<li><span class="a-thumb">' + B.icon(KIND[q[0]][0], 18) + '</span><span><b class="adm-body" style="font-weight:600">' + q[2] + '</b><br><span class="adm-small b-muted">' + KIND[q[0]][1] + ' · độ khó ' + q[3] + '</span></span>' + (qused(q) ? '<span class="in">' + B.icon('check', 14) + 'Đã có</span>' : A.btn({ label: 'Thêm', icon: 'plus', variant: 'secondary', size: 's', attrs: 'data-addq="' + i + '"' })) + '</li>'; });
+    return '<section class="a-card" aria-labelledby="sg"><h2 class="adm-h2" id="sg" style="margin:0 0 var(--space-2)">Gợi ý theo chủ đề</h2>' +
+      A.field({ id: 'sg-topic', label: 'Chủ đề', type: 'select', value: 'Trái cây', options: [['Trái cây', 'Cấp 2 · Trái cây'], ['Đồ chơi', 'Cấp 2 · Đồ chơi'], ['Gia đình', 'Cấp 2 · Gia đình']] }) +
+      '<div class="t-tabs" role="tablist" style="margin-top:var(--space-3)"><button type="button" class="t-tab" role="tab" data-tab="words" aria-selected="' + (S.tab === 'words') + '">Từ vựng (6)</button><button type="button" class="t-tab" role="tab" data-tab="qs" aria-selected="' + (S.tab === 'qs') + '">Câu hỏi (' + QSUG.length + ')</button></div>' +
+      '<ul class="sug" role="tabpanel">' + list.join('') + '</ul></section>';
+  }
+  function mid() {
+    return '<section class="a-card" aria-labelledby="stp" data-level="2"><div class="a-card__h"><div><h2 class="adm-h2" id="stp">Các bước của bài (' + STEPS.length + ')</h2><span class="adm-small b-muted">Kéo tay nắm để đổi thứ tự · Tab tới tay nắm rồi ↑ / ↓</span></div>' + A.btn({ label: 'Thêm bước trống', icon: 'plus', variant: 'ghost', size: 's' }) + '</div>' +
+      (STEPS.length ? '<ol class="steps" data-steps>' + STEPS.map(function (s, i) { var q = s.kind !== 'intro' && s.kind !== 'boss'; return '<li class="step" data-sort-item="' + s.id + '" data-name="Bước ' + KIND[s.kind][1] + '"><button type="button" class="a-grip" aria-label="Kéo bước ' + (i + 1) + ': ' + KIND[s.kind][1] + '">' + B.icon('grip', 16) + '</button><span class="no">' + (i + 1) + '</span><span class="ty' + (q ? ' q' : '') + '">' + B.icon(KIND[s.kind][0], 18) + '</span><span><b>' + KIND[s.kind][1] + '</b><span class="adm-small b-muted">' + desc(s) + '</span></span><button type="button" class="a-iconbtn" data-rm="' + s.id + '" aria-label="Bỏ bước ' + (i + 1) + '" title="Bỏ bước">' + B.icon('close', 16) + '</button></li>'; }).join('') + '</ol>'
+        : A.empty({ title: 'Bài chưa có bước nào', text: 'Thêm từ hoặc câu hỏi ở cột gợi ý bên trái.' })) +
+      '<div class="tot adm-small b-muted"><span>Khoảng <b>' + mins() + ' phút</b></span><span><b>' + STEPS.filter(function (s) { return s.kind === 'intro'; }).reduce(function (a, s) { return a + s.items.length; }, 0) + '</b> từ mới</span><span><b>' + STEPS.filter(function (s) { return s.kind !== 'intro'; }).length + '</b> hoạt động / câu hỏi</span></div><p class="a-err adm-small" id="steps-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></section>';
+  }
+  function right() {
+    return '<section class="a-card" aria-labelledby="ls"><h2 class="adm-h2" id="ls" style="margin:0 0 var(--space-3)">Thông tin bài</h2><div class="a-form" style="grid-template-columns:1fr">' +
+      A.field({ id: 'l-name', label: 'Tên bài', value: S.name, required: true }) + A.field({ id: 'l-goal', label: 'Mục tiêu bài', type: 'textarea', rows: 2, value: 'Nhớ và nghe đúng 6 loại quả; nói “I like …”.' }) +
+      '<div class="readonly adm-small" style="background:var(--surface-soft);border-radius:var(--adm-radius-md);padding:8px 12px">Cấp 2 · Mầm non › Trái cây › Bài 7</div>' +
+      A.field({ id: 'l-st', label: 'Trạng thái', type: 'seg', value: S.st, options: [['draft', 'Nháp'], ['live', 'Xuất bản']] }) +
+      '<div class="a-actions" style="justify-content:stretch">' + A.btn({ label: 'Xem trước', icon: 'eye', variant: 'secondary', attrs: 'data-prev', block: true }) + A.btn({ label: 'Lưu bài', icon: 'check', attrs: 'data-save', block: true }) + '</div></div>' +
+      '<p class="adm-small b-muted" style="margin:var(--space-3) 0 0">Tự lưu nháp lúc 21:04</p></section>';
+  }
+  function preview() {
+    var i = 0;
+    function stage() {
+      var s = STEPS[i], h;
+      if (s.kind === 'intro') h = '<p class="pv-t">Học từ mới</p><div class="pv-cards">' + s.items.map(function (w) { return '<div class="pv-card">' + B.pic(w, 80) + '<b lang="en">' + w + '</b>' + B.speak(w, 's') + '</div>'; }).join('') + '</div>';
+      else if (s.kind === 'listen') { var w = s.items[0], o = [w].concat(FR.filter(function (x) { return x !== w; }).slice(0, 3)); o.sort(); h = '<p class="pv-t">Nghe và chọn hình đúng</p>' + B.speak(w, 'm') + '<div class="pv-opts">' + o.map(function (x) { return '<button type="button" class="b-choice" data-pw="' + x + '" aria-label="Hình">' + B.pic(x, 70) + '</button>'; }).join('') + '</div>'; }
+      else if (s.kind === 'match') h = '<p class="pv-t">Nối từ với hình</p><div class="pv-opts">' + s.items.map(function (x) { return '<div class="b-choice" style="cursor:default">' + B.pic(x, 70) + '</div>'; }).join('') + '</div><div class="pv-opts">' + s.items.slice().reverse().map(function (x) { return '<div class="b-choice" style="height:auto;cursor:default"><b lang="en">' + x + '</b></div>'; }).join('') + '</div>';
+      else if (s.kind === 'boss') h = B.dragon('chao', 110) + '<p class="pv-t">Trùm Khỉ Lém xuất hiện!</p><p style="margin:0">' + s.title + ' từ các bước trước.</p>';
+      else h = '<p class="pv-t" lang="en">' + s.title + '</p>';
+      return h;
+    }
+    var d = A.dialog(SCR, { title: 'Xem trước · ' + S.name, wide: 680, body: '<div class="a-stu pv-stage" data-theme="tieu-hoc" data-level="2" data-pv>' + stage() + '</div><div class="pv-dots" aria-hidden="true">' + STEPS.map(function (_, k) { return '<i class="' + (k === 0 ? 'on' : '') + '"></i>'; }).join('') + '</div><p class="adm-small" style="margin:0;text-align:center" aria-live="polite" data-pvn>Bước 1 / ' + STEPS.length + '</p>',
+      actions: [{ label: 'Bước trước', icon: 'back', onClick: function () { go(-1); return false; } }, { label: 'Bước sau', variant: 'primary', icon: 'next', onClick: function () { go(1); return false; } }, { label: 'Đóng' }] });
+    function go(n) { i = Math.max(0, Math.min(STEPS.length - 1, i + n)); d.el.querySelector('[data-pv]').innerHTML = stage(); d.el.querySelectorAll('.pv-dots i').forEach(function (x, k) { x.classList.toggle('on', k === i); }); d.el.querySelector('[data-pvn]').textContent = 'Bước ' + (i + 1) + ' / ' + STEPS.length; bind(); }
+    function bind() { d.el.querySelectorAll('[data-pw]').forEach(function (b) { b.addEventListener('click', function () { var ok = b.dataset.pw === STEPS[i].items[0]; d.el.querySelectorAll('[data-pw]').forEach(function (x) { x.classList.remove('is-correct', 'is-retry'); }); b.classList.add(ok ? 'is-correct' : 'is-retry'); }); }); }
+    bind();
+  }
+  var SCR;
+  function main() { return '<div class="lb">' + left() + mid() + right() + '</div>'; }
+  function page(m) { return A.shell({ area: 'admin', active: 'builder', title: 'Soạn bài: ' + S.name, crumb: 'Cấp 2 · Mầm non › Trái cây', main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (bài mới)' },
+    notes: { normal: 'Bấm “Thêm” ở cột gợi ý để thêm bước; kéo tay nắm (hoặc Tab rồi ↑/↓) để sắp xếp; bấm × để bỏ bước. “Xem trước” chạy từng bước bằng giao diện Tiểu học. Xoá tên bài hoặc chọn Xuất bản khi bài dưới 3 bước rồi Lưu để thấy lỗi.', loading: 'Khung xương ba cột.', empty: 'Bài mới, chưa có bước nào.', error: 'Không tải được bài học.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="lb">' + A.skel('420px') + A.skel('420px') + A.skel('320px') + '</div>'); },
+      empty: function () { var keep = STEPS; STEPS = []; var h = page(main()); STEPS = keep; return h; },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'LSN-500' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      SCR = scr;
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { S.tab = b.dataset.tab; re('[data-tab="' + S.tab + '"]'); }); });
+      scr.querySelectorAll('[data-addw]').forEach(function (b) { b.addEventListener('click', function () { var last = STEPS.filter(function (s) { return s.kind === 'intro'; }).pop(); STEPS.splice(STEPS.length - 1, 0, St('intro', [b.dataset.addw])); re('[data-tab="words"]'); A.toast(ctx.scr, 'Đã thêm bước giới thiệu “' + b.dataset.addw + '”.'); }); });
+      scr.querySelectorAll('[data-addq]').forEach(function (b) { b.addEventListener('click', function () { var q = QSUG[+b.dataset.addq]; STEPS.splice(STEPS.length - 1, 0, St(q[0], q[1].slice(), q[2])); re('[data-tab="qs"]'); A.toast(ctx.scr, 'Đã thêm câu hỏi vào trước bước Trùm.'); }); });
+      scr.querySelectorAll('[data-rm]').forEach(function (b) { b.addEventListener('click', function () { var i = STEPS.map(function (s) { return s.id; }).indexOf(b.dataset.rm); STEPS.splice(i, 1); re(STEPS[i] ? '[data-rm="' + STEPS[i].id + '"]' : '#stp'); }); });
+      var ol = scr.querySelector('[data-steps]'); ol && A.sortable(ol, { onChange: function (ids) { STEPS = ids.map(function (id) { return STEPS.filter(function (s) { return s.id === id; })[0]; }); ol.querySelectorAll('.no').forEach(function (n, k) { n.textContent = k + 1; }); } });
+      var lst = scr.querySelector('#l-st'); lst.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { S.st = b.dataset.v; A.setErr(scr, 'l-st', ''); }); });
+      var rules = { 'l-name': function (v) { return !v.trim() ? 'Nhập tên bài.' : v.trim().length > 50 ? 'Tên bài tối đa 50 ký tự.' : ''; } };
+      A.wireValidate(scr, rules);
+      function stepErr(m) { var e = scr.querySelector('#steps-e'); e.hidden = !m; e.querySelector('span').textContent = m || ''; }
+      scr.querySelector('[data-save]').addEventListener('click', function () {
+        if (A.validate(scr, rules)) return;
+        if (S.st === 'live') { var m = STEPS.length < 3 ? 'Bài cần ít nhất 3 bước để xuất bản.' : !STEPS.some(function (s) { return s.kind !== 'intro'; }) ? 'Bài cần ít nhất 1 câu hỏi hoặc trò chơi để xuất bản.' : ''; stepErr(m); A.setErr(scr, 'l-st', m ? 'Chưa xuất bản được — xem lỗi ở danh sách bước.' : ''); if (m) { scr.querySelector('#l-st [data-v="live"]').focus(); return; } }
+        S.name = scr.querySelector('#l-name').value.trim(); re('[data-save]'); A.toast(ctx.scr, S.st === 'live' ? 'Đã lưu và xuất bản bài.' : 'Đã lưu bài (nháp).');
+      });
+      scr.querySelector('[data-prev]').addEventListener('click', function () { if (!STEPS.length) return; preview(); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!-- @dsCard group="Người lớn · Khu bố mẹ" height=760 subtitle="5. Bài viết & ghi âm của con: nghe, đọc, chấm theo tiêu chí và gửi nhận xét (báo lỗi ngay dưới ô)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Người lớn · Bài viết và ghi âm — preview</title>
+<style>
+  .wl { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .wl button { width: 100%; display: grid; grid-template-columns: 36px 1fr; gap: 2px var(--space-3); text-align: left; border: 0; background: none; padding: 10px var(--space-3); border-radius: var(--adm-radius-md); cursor: pointer; font: inherit; color: var(--ink); }
+  .wl button:hover { background: var(--surface-soft); }
+  .wl button[aria-pressed="true"] { background: var(--brand-soft); box-shadow: inset 3px 0 0 var(--brand); }
+  .wl .ic { grid-row: span 3; width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-soft); color: var(--ink-soft); }
+  .wl .meta { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+  .prompt { background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: var(--space-3) var(--space-4); margin: var(--space-3) 0; }
+  .essay { font: 500 15px/26px var(--font-thcs); color: var(--ink); margin: 0; }
+  .essay mark { background: var(--retry-soft); color: inherit; border-bottom: 2px solid var(--retry); padding: 0 2px; border-radius: 2px; cursor: help; }
+  .player { display: flex; align-items: center; gap: var(--space-4); background: var(--surface-soft); border-radius: var(--adm-radius-lg); padding: var(--space-3) var(--space-4); margin: var(--space-3) 0; }
+  .pbtn { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; cursor: pointer; flex: none; }
+  .wave { flex: 1; display: flex; align-items: center; gap: 2px; height: 44px; cursor: pointer; }
+  .wave i { flex: 1; border-radius: 2px; background: var(--line-strong); }
+  .wave i.on { background: var(--chart-1); }
+  .tm { font: 600 13px/18px var(--font-thcs); color: var(--ink-soft); white-space: nowrap; min-width: 84px; text-align: right; }
+  .grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+  .rub { display: flex; flex-direction: column; gap: var(--space-2); }
+  .rub .r { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+  .rub .t-seg button { min-width: 34px; padding: 0 8px; }
+  .tot { display: flex; justify-content: space-between; align-items: baseline; padding-top: var(--space-2); border-top: 1px dashed var(--line); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips button { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius-pill); padding: 3px 10px; font: 500 13px/18px var(--font-thcs); color: var(--ink); cursor: pointer; }
+  .chips button:hover { background: var(--surface-soft); }
+  .sent { background: var(--success-soft); border-radius: var(--adm-radius-md); padding: var(--space-3) var(--space-4); }
+  .sent b { color: var(--success-shade); }
+  .cnt { text-align: right; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var ESSAY = 'Our environment is in serious danger, and teenagers can help to protect it. First, we should reduce plastic waste. I always bring my own water bottle to school and say no to plastic bags. Second, we can save energy by turning off the lights and fans when we leave a room. Third, it is a good idea to walk or cycle to school instead of going by motorbike. This helps to reduce air pollution and traffic congestion. Finally, we can join clean-up days in our neighbourhood. If everyone <mark title="Gợi ý: everyone does">do</mark> a small thing every day, our city will become greener and cleaner.';
+  var W = {
+    linh: [
+      { id: 'w1', kind: 'write', title: 'Protect the environment', when: 'Hôm nay 20:40', size: '101 từ', unit: 'Unit 4 · Viết đoạn văn', prompt: 'Write a paragraph (80–100 words) about what teenagers can do to protect the environment.', body: ESSAY, crit: ['Nội dung', 'Từ vựng', 'Ngữ pháp', 'Bố cục'], done: null },
+      { id: 'r1', kind: 'rec', title: 'Đọc to: Getting Around London', when: 'Hôm qua 21:02', size: '1:12', dur: 72, unit: 'Unit 3 · Đọc to đoạn văn', prompt: 'Read the passage aloud clearly. Pay attention to linking sounds.', body: '“London has many ways to get around. The Underground, or the Tube, is the oldest metro system in the world…”', crit: ['Phát âm', 'Ngữ điệu', 'Trôi chảy', 'Rõ ràng'], done: null },
+      { id: 'w2', kind: 'write', title: 'My favourite free-time activity', when: 'T5 24/9', size: '86 từ', unit: 'Unit 1 · Viết đoạn văn', prompt: 'Write about your favourite free-time activity.', body: 'In my free time, I love doing DIY. Last month I made a pencil case from old jeans…', crit: ['Nội dung', 'Từ vựng', 'Ngữ pháp', 'Bố cục'], done: { score: 8.5, text: 'Ý tưởng tái chế quần jeans rất hay! Lần sau con thử dùng thêm từ nối như “however”, “moreover” nhé.' } }
+    ],
+    minh: [
+      { id: 'r2', kind: 'rec', title: 'Introduce your family', when: 'Hôm nay 19:48', size: '0:38', dur: 38, unit: 'Unit 2 · My family · Nói', prompt: 'Giới thiệu các thành viên trong gia đình (3–5 câu).', body: 'Bông nghe được: “This is my father. This is my mother. She is a teacher. This is my sister, Lan. I love my family.”', crit: ['Phát âm', 'Ngữ điệu', 'Trôi chảy', 'Rõ ràng'], done: null },
+      { id: 'w3', kind: 'write', title: 'Con vật em thích', when: 'T3 29/9', size: '12 từ', unit: 'Unit 4 · Viết 3 câu', prompt: 'Viết 3 câu về con vật em thích.', body: 'I like cats. My cat is white. It can run and jump.', crit: ['Nội dung', 'Từ vựng', 'Ngữ pháp', 'Bố cục'], done: { score: 9, text: 'Minh viết đúng hết rồi! Mẹ rất thích câu “It can run and jump”.' } },
+      { id: 'r3', kind: 'rec', title: 'Đọc to: The cat is sleeping.', when: 'CN 27/9', size: '0:06', dur: 6, unit: 'Unit 4 · Đọc to', prompt: 'Đọc to câu tiếng Anh.', body: '“The cat is sleeping.”', crit: ['Phát âm', 'Ngữ điệu', 'Trôi chảy', 'Rõ ràng'], done: { score: 9.5, text: 'Con đọc to và rõ lắm. Giỏi quá!' } }
+    ]
+  };
+  var CHIPS = { linh: ['Bài viết có ý rõ ràng.', 'Chú ý chia động từ sau “everyone”.', 'Thử dùng thêm từ nối nhé.'], minh: ['Con nói to và rõ lắm!', 'Mẹ rất tự hào về con.', 'Mình đọc chậm hơn một chút nhé.'] };
+  var S = { sel: { linh: 'w1', minh: 'r2' }, filter: 'all', score: {}, play: false, pos: 0 };
+  function list() { return W[A.state.kid]; }
+  function cur() { var id = S.sel[A.state.kid]; return list().filter(function (w) { return w.id === id; })[0]; }
+  function st(w) { return w.done ? A.status('ok', 'Đã chấm · ' + A.nf(w.done.score % 1 ? w.done.score : w.done.score.toFixed(1))) : A.status('info', w.kind === 'rec' ? 'Chờ bố mẹ nghe' : 'Chờ bố mẹ chấm'); }
+  function fmt(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function wave(w) { var n = 64, out = ''; for (var i = 0; i < n; i++) { var h = 18 + Math.round(70 * Math.abs(Math.sin(i * 0.7 + w.dur) * Math.cos(i * 0.23))); out += '<i style="height:' + h + '%"' + (i / n < S.pos / w.dur ? ' class="on"' : '') + '></i>'; } return out; }
+  function detail(w) {
+    var sc = S.score[w.id] || {}, total = w.crit.every(function (c) { return sc[c]; }) ? w.crit.reduce(function (a, c) { return a + sc[c]; }, 0) / 2 : null;
+    var head = '<div class="a-card__h" style="margin:0"><div><span class="adm-label b-muted">' + w.unit.toUpperCase() + '</span><h2 class="adm-h2" style="margin:2px 0 0" lang="en">' + w.title + '</h2><span class="adm-small b-muted">' + w.when + ' · ' + w.size + '</span></div>' + st(w) + '</div>';
+    var prompt = '<div class="prompt adm-small"><b>Đề bài:</b> <span' + (/^(Write|Read)/.test(w.prompt) ? ' lang="en"' : '') + '>' + w.prompt + '</span></div>';
+    var content = w.kind === 'write' ? '<p class="essay" lang="en">' + w.body + '</p>' + (w.body.indexOf('<mark') > -1 ? '<p class="adm-small b-muted a-note" style="margin:var(--space-2) 0 0">' + B.icon('bulb', 14) + ' Bông gợi ý 1 chỗ cần xem lại (tô cam). Rê chuột để xem gợi ý.</p>' : '')
+      : '<div class="player"><button type="button" class="pbtn" data-play aria-label="' + (S.play ? 'Tạm dừng' : 'Phát bản ghi') + '">' + B.icon(S.play ? 'pause' : 'play', 22) + '</button><div class="wave" data-wave role="slider" tabindex="0" aria-label="Vị trí phát" aria-valuemin="0" aria-valuemax="' + w.dur + '" aria-valuenow="' + Math.round(S.pos) + '" aria-valuetext="' + fmt(S.pos) + '">' + wave(w) + '</div><span class="tm" data-tm>' + fmt(S.pos) + ' / ' + fmt(w.dur) + '</span><div class="t-seg a-seg" role="radiogroup" aria-label="Tốc độ phát"><button type="button" role="radio" aria-checked="true" aria-pressed="true" data-v="1">1×</button><button type="button" role="radio" aria-checked="false" aria-pressed="false" data-v="0.75">0,75×</button></div></div><p class="adm-body" style="margin:0">' + w.body + '</p>';
+    var grade;
+    if (w.done) grade = '<div class="grade" style="grid-template-columns:1fr"><div class="sent"><b>' + B.icon('okcircle', 16) + ' Đã gửi nhận xét cho ' + (A.state.kid === 'minh' ? 'Minh' : 'Khánh Linh') + '</b><p class="adm-body" style="margin:6px 0 0">“' + w.done.text + '”</p></div></div>';
+    else grade = '<div class="grade"><div><h3 class="adm-h3" style="margin:0 0 var(--space-2)" id="rub-l">Chấm theo tiêu chí (1–5)</h3><div class="rub" role="group" aria-labelledby="rub-l" aria-describedby="rub-e">' + w.crit.map(function (c) { return '<div class="r"><span class="adm-body">' + c + '</span><div class="t-seg" role="radiogroup" aria-label="' + c + '">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" role="radio" data-c="' + c + '" data-n="' + n + '" aria-checked="' + (sc[c] === n) + '" aria-pressed="' + (sc[c] === n) + '">' + n + '</button>'; }).join('') + '</div></div>'; }).join('') +
+      '<div class="tot"><span class="adm-h3">Điểm quy đổi</span><span><b class="adm-kpi" data-total>' + (total == null ? '—' : A.nf(total)) + '</b><span class="adm-body b-muted"> / 10</span></span></div></div><p class="a-err adm-small" id="rub-e" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>' +
+      '<div class="a-form" style="grid-template-columns:1fr;align-content:start">' + A.field({ id: 'cmt', label: 'Nhận xét gửi con', type: 'textarea', rows: 4, required: true, placeholder: 'Con sẽ thấy lời nhắn này trong mục Thư của bố mẹ…', hint: 'Lời khen cụ thể giúp con có động lực hơn.' }) +
+      '<div class="chips" aria-label="Câu gợi ý">' + CHIPS[A.state.kid].map(function (c) { return '<button type="button" data-chip>' + c + '</button>'; }).join('') + '</div><span class="adm-small b-muted cnt" data-cnt>0 / 300 ký tự</span>' +
+      '<div class="a-actions">' + A.btn({ label: 'Lưu nháp', variant: 'ghost' }) + A.btn({ label: 'Gửi nhận xét cho con', icon: 'next', attrs: 'data-send' }) + '</div></div></div>';
+    return '<section class="a-card a-s8" aria-label="Chi tiết bài">' + head + prompt + content + grade + '</section>';
+  }
+  function main(empty) {
+    if (empty) return '<section class="a-card">' + A.empty({ title: 'Chưa có bài viết hay ghi âm nào', text: 'Khi con nộp bài viết hoặc ghi âm phần Nói, bài sẽ hiện ở đây để bố mẹ nghe và nhận xét.', expr: 'chao' }) + '</section>';
+    var L = list(), wait = L.filter(function (w) { return !w.done; }).length;
+    var shown = L.filter(function (w) { return S.filter === 'all' || (S.filter === 'wait' ? !w.done : w.kind === S.filter); });
+    var side = '<section class="a-card a-s4" aria-labelledby="wl"><div class="a-card__h" style="margin-bottom:var(--space-2)"><h2 class="adm-h2" id="wl">Bài của con</h2><span class="t-pill t-pill--brand">' + wait + ' chờ chấm</span></div>' +
+      '<div class="t-seg a-seg" role="radiogroup" aria-label="Lọc" data-filter>' + [['all', 'Tất cả'], ['wait', 'Chờ chấm'], ['write', 'Bài viết'], ['rec', 'Ghi âm']].map(function (f) { return '<button type="button" role="radio" data-v="' + f[0] + '" aria-checked="' + (S.filter === f[0]) + '" aria-pressed="' + (S.filter === f[0]) + '">' + f[1] + '</button>'; }).join('') + '</div>' +
+      (shown.length ? '<ul class="wl">' + shown.map(function (w) { return '<li><button type="button" data-w="' + w.id + '" aria-pressed="' + (w.id === S.sel[A.state.kid]) + '"><span class="ic">' + B.icon(w.kind === 'rec' ? 'mic' : 'pen', 18) + '</span><span class="adm-h3" lang="en">' + w.title + '</span><span class="adm-small b-muted">' + w.when + ' · ' + w.size + '</span><span class="meta">' + st(w) + '</span></button></li>'; }).join('') + '</ul>'
+        : A.empty({ title: 'Không còn bài chờ chấm', text: 'Bố mẹ đã chấm hết rồi.', expr: 'vui' })) + '</section>';
+    return '<div class="a-grid">' + side + detail(cur()) + '</div>';
+  }
+  function page(m) { var kid = A.kids.filter(function (x) { return x.id === A.state.kid; })[0]; return A.shell({ area: 'parent', active: 'works', title: 'Bài viết & ghi âm · ' + kid.name, crumb: 'Lớp ' + kid.grade + ' · Bông chấm sơ bộ, bố mẹ chấm và nhận xét', kids: true, main: m }); }
+  A.screen({
+    labels: { empty: 'Trống (chưa nộp bài)' },
+    notes: { normal: 'Chọn bài ở cột trái. Ghi âm: bấm phát, kéo/Tab vào sóng âm và dùng ←/→ để tua. Chấm 4 tiêu chí rồi viết nhận xét; bấm “Gửi” khi còn thiếu sẽ báo lỗi ngay dưới ô (màu cam đậm, không đỏ).', loading: 'Khung xương danh sách và nội dung bài.', empty: 'Con chưa nộp bài nào.', error: 'Không tải được bài của con.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s4">' + A.skel('360px') + '</div><div class="a-s8">' + A.skel('360px') + '</div></div>'); },
+      empty: function () { return page(main(true)); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'WRK-502' }) + '</section>'); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var w = cur();
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus(); }
+      scr.querySelectorAll('[data-w]').forEach(function (b) { b.addEventListener('click', function () { S.sel[A.state.kid] = b.dataset.w; S.play = false; S.pos = 0; re('[data-w="' + b.dataset.w + '"]'); }); });
+      var fl = scr.querySelector('[data-filter]'); fl && fl.addEventListener('segchange', function (e) { S.filter = e.detail; re('[data-filter] [data-v="' + e.detail + '"]'); });
+      if (!w) return;
+      var pb = scr.querySelector('[data-play]');
+      function tick() { var wv = scr.querySelector('[data-wave]'); if (!wv) return; wv.innerHTML = wave(w); wv.setAttribute('aria-valuenow', Math.round(S.pos)); wv.setAttribute('aria-valuetext', fmt(S.pos)); scr.querySelector('[data-tm]').textContent = fmt(S.pos) + ' / ' + fmt(w.dur); }
+      if (pb) {
+        pb.addEventListener('click', function () { S.play = !S.play; if (S.pos >= w.dur) S.pos = 0; pb.innerHTML = B.icon(S.play ? 'pause' : 'play', 22); pb.setAttribute('aria-label', S.play ? 'Tạm dừng' : 'Phát bản ghi'); });
+        ctx.every(function () { if (!S.play) return; S.pos = Math.min(w.dur, S.pos + 0.25 * (w.dur > 20 ? 4 : 1)); if (S.pos >= w.dur) { S.play = false; pb.innerHTML = B.icon('play', 22); } tick(); }, 250);
+        var wv = scr.querySelector('[data-wave]');
+        wv.addEventListener('click', function (e) { var r = wv.getBoundingClientRect(); S.pos = Math.max(0, Math.min(w.dur, (e.clientX - r.left) / r.width * w.dur)); tick(); });
+        wv.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); S.pos = Math.max(0, Math.min(w.dur, S.pos + (e.key === 'ArrowRight' ? 5 : -5))); tick(); } });
+      }
+      var sc = S.score[w.id] = S.score[w.id] || {};
+      var re2 = scr.querySelector('#rub-e');
+      function showTotal() { var all = w.crit.every(function (c) { return sc[c]; }); scr.querySelector('[data-total]').textContent = all ? A.nf(w.crit.reduce(function (a, c) { return a + sc[c]; }, 0) / 2) : '—'; if (all && re2) re2.hidden = true; }
+      scr.querySelectorAll('[data-c]').forEach(function (b) { b.addEventListener('click', function () { sc[b.dataset.c] = +b.dataset.n; b.parentNode.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); showTotal(); }); });
+      var rules = { cmt: function (v) { v = v.trim(); return !v ? 'Hãy viết vài lời cho con trước khi gửi.' : v.length < 10 ? 'Nhận xét hơi ngắn — viết ít nhất 10 ký tự nhé.' : v.length > 300 ? 'Nhận xét dài quá 300 ký tự (' + v.length + ').' : ''; } };
+      A.wireValidate(scr, rules);
+      var ta = scr.querySelector('#cmt'), cnt = scr.querySelector('[data-cnt]');
+      function count() { cnt.textContent = ta.value.length + ' / 300 ký tự'; }
+      ta && ta.addEventListener('input', count);
+      scr.querySelectorAll('[data-chip]').forEach(function (c) { c.addEventListener('click', function () { ta.value = (ta.value ? ta.value.trim() + ' ' : '') + c.textContent; count(); A.setErr(scr, 'cmt', ''); ta.focus(); }); });
+      var send = scr.querySelector('[data-send]');
+      send && send.addEventListener('click', function () {
+        var missing = w.crit.filter(function (c) { return !sc[c]; });
+        if (missing.length) { re2.hidden = false; re2.querySelector('span').textContent = 'Chưa chấm: ' + missing.join(', ') + '.'; }
+        var bad = A.validate(scr, rules, !!missing.length);
+        if (missing.length) { scr.querySelector('[data-c="' + missing[0] + '"]').focus(); return; }
+        if (bad) return;
+        w.done = { score: w.crit.reduce(function (a, c) { return a + sc[c]; }, 0) / 2, text: ta.value.trim() };
+        re('[data-w="' + w.id + '"]'); A.toast(ctx.scr, 'Đã gửi nhận xét. Con sẽ thấy trong mục Thư của bố mẹ.');
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

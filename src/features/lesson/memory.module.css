@@ -1,0 +1,123 @@
+/* Lật thẻ ghép cặp (Screen10): lưới thẻ úp có sao, lật 3D, đếm cặp và lượt. */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), calc(min(var(--size-memory-card), 27vh) * 0.84));
+  gap: var(--space-5);
+  perspective: var(--perspective-memory);
+}
+.card {
+  height: min(var(--size-memory-card), 27vh);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.card:focus-visible {
+  outline: var(--border-thick) solid var(--brand);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-lg);
+}
+.inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--flip-duration) cubic-bezier(0.3, 1.25, 0.5, 1);
+}
+.up .inner {
+  transform: rotateY(180deg);
+}
+.face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+}
+.back {
+  background: var(--lv);
+  color: var(--on-lv);
+  box-shadow: 0 var(--lip-m) 0 var(--lv-shade);
+  border: var(--border-thick) dashed var(--on-lv);
+}
+.front {
+  transform: rotateY(180deg);
+  background: var(--surface);
+  border: var(--border-thick) solid var(--line);
+  box-shadow: 0 var(--lip-m) 0 var(--line);
+}
+.front svg,
+.front img {
+  width: 70%;
+  height: auto;
+}
+.word {
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: var(--text-word--line-height);
+  font-weight: var(--text-word--font-weight);
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.ok .front {
+  border-color: var(--success);
+  background: var(--success-soft);
+  box-shadow: 0 var(--lip-m) 0 var(--success-shade);
+}
+.no .front {
+  border-color: var(--retry);
+  background: var(--retry-soft);
+  box-shadow: 0 var(--lip-m) 0 var(--retry-shade);
+}
+.tip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.tip svg {
+  width: var(--size-tip-dragon-s);
+  height: auto;
+  flex: none;
+}
+.note {
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: var(--text-body--font-weight);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inner {
+    transition-duration: 0.01ms;
+  }
+}
+/* Lời của rồng trên một dòng để vừa chân bài thấp (màn 768). */
+.tip > div {
+  max-width: none;
+  white-space: nowrap;
+}
