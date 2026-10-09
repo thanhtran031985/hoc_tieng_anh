@@ -20,6 +20,10 @@ export const saveExtraQuestionSchema = z.object({
   ignoreEndPunct: z.boolean(),
   cards: z.array(z.string().max(30, "Thẻ tối đa 30 ký tự.")).max(MAX_CARDS),
   correct: z.number().int().min(0).max(MAX_CARDS - 1).nullable(),
+  title: z.string().max(60, "Tiêu đề tối đa 60 ký tự."),
+  questions: z
+    .array(z.object({ text: z.string().max(120), choices: z.array(z.string().max(30)).max(3), correct: z.number().int().min(0).max(2).nullable(), evidence: z.number().int().min(0).max(5) }))
+    .max(3),
   picture: z.string().max(100),
 });
 

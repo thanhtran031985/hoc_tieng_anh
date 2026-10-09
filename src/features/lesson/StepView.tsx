@@ -8,6 +8,7 @@ import { MatchStep } from "./MatchStep";
 import { PickWordStep } from "./PickWordStep";
 import { MemoryStep } from "./MemoryStep";
 import { PhonicsStep } from "./PhonicsStep";
+import { ReadingStep } from "./ReadingStep";
 import { SentenceOrderStep } from "./SentenceOrderStep";
 import { StoryStep } from "./StoryStep";
 import { StubStep } from "./StubStep";
@@ -35,6 +36,8 @@ export function StepView({ step, ...rest }: StepProps & { step: PlayStep }) {
       return <DictationStep step={step} {...rest} />;
     case "fill_blank":
       return <FillBlankStep step={step} {...rest} />;
+    case "short_reading":
+      return <ReadingStep step={step} {...rest} />;
     case "story":
       return <StoryStep step={step} {...rest} />;
     default:

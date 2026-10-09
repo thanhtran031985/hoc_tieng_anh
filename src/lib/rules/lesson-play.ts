@@ -1,8 +1,10 @@
 // Dựng bộ câu hỏi của một bài học từ các bước đã lưu (hàm thuần, không đụng database).
 // Bước chỉ lưu dạng bài và từ; đáp án nhiễu chọn ở đây từ các từ cùng chủ đề, xáo theo hạt giống để tải lại trang vẫn ra đúng bộ cũ.
 // Import tương đối có đuôi .ts để Node chạy thẳng được (test).
-import { parseExtraQuestion, type DictationQuestionData, type FillBlankQuestionData, type PhonicsQuestionData, type SentenceOrderQuestionData } from "../schemas/question-extra.ts";
+import { parseExtraQuestion, type DictationQuestionData, type FillBlankQuestionData, type PhonicsQuestionData, type SentenceOrderQuestionData, type ShortReadingQuestionData } from "../schemas/question-extra.ts";
 import { splitBlank } from "./grading/fill-blank.ts";
+import { splitPassage } from "./grading/reading.ts";
+import { splitSentence } from "./sentence-words.ts";
 import { isShortWord } from "./grading/dictation.ts";
 import { seededRandom, shuffled } from "./random.ts";
 
@@ -59,6 +61,17 @@ export type PlayStep =
   | ({ id: string; kind: "story" } & StoryPlay)
   | {
       id: string;
+      kind: "short_reading";
+      questionId: number | null;
+      title: string;
+      sentences: string[];
+      picture: PlayWord | null;
+      questions: { text: string; choices: string[]; correct: number; evidence: number }[];
+      /** Nghĩa ngắn theo chữ thường của các chữ trong đoạn và câu hỏi. */
+      glossary: Record<string, string>;
+    }
+  | {
+      id: string;
       kind: "phonics";
       questionId: number | null;
       text: string;
@@ -88,7 +101,7 @@ export type PlayStep =
 export type PlayStepKind = PlayStep["kind"];
 
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" }>;
 
 const DEFAULT_OPTIONS = 3;
 const DEFAULT_PAIRS = 4;
@@ -111,6 +124,8 @@ export type PlayExtras = {
   meanings?: ReadonlyMap<string, string>;
   /** Âm phonics theo chữ (grapheme). */
   sounds?: ReadonlyMap<string, PhonicsSoundInfo>;
+  /** Nghĩa ngắn theo chữ thường (đọc hiểu ngắn). */
+  glossary?: ReadonlyMap<string, string>;
   /** Truyện đã nạp, theo mã truyện (bước `story`). */
   stories?: ReadonlyMap<number, StoryPlay>;
 };
@@ -170,6 +185,7 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
       case "phonics":
       case "sentence_order":
       case "dictation":
+      case "short_reading":
       case "fill_blank": {
         const built = buildQuestionStep(step, id, random, extras);
         if (built) play.push(built);
@@ -243,6 +259,25 @@ function buildQuestionStep(step: StoredStep, id: string, random: () => number, e
         cards: cardsOf(d.options.cards),
         correct: d.options.cards[d.answer.correct],
         meanings,
+      };
+    }
+    case "short_reading": {
+      const d = data as ShortReadingQuestionData;
+      const words = new Set([...splitPassage(d.prompt.text), ...d.options.questions.flatMap((x) => [x.text, ...x.choices])].flatMap((t) => splitSentence(t).flatMap((x) => (x.word ? [x.word] : []))));
+      const glossary: Record<string, string> = {};
+      for (const w of words) {
+        const meaning = extras.glossary?.get(w);
+        if (meaning) glossary[w] = meaning;
+      }
+      return {
+        id,
+        kind: "short_reading",
+        questionId: q.id,
+        title: d.prompt.title,
+        sentences: splitPassage(d.prompt.text),
+        picture: withPicture,
+        questions: d.options.questions.map((x, i) => ({ text: x.text, choices: x.choices, correct: d.answer.correct[i], evidence: x.evidence })),
+        glossary,
       };
     }
     default:

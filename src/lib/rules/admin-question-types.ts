@@ -4,15 +4,17 @@ import type { ExtraQuestionType } from "../schemas/question-extra.ts";
 import { extraQuestionSchemas } from "../schemas/question-extra.ts";
 import type { BankWord } from "./admin-questions.ts";
 import { BLANK } from "./grading/fill-blank.ts";
+import { READING_CHOICES, READING_MAX_QUESTIONS, READING_MAX_SENTENCES, READING_MIN_QUESTIONS, READING_MIN_SENTENCES, splitPassage } from "./grading/reading.ts";
 import { sameWords, wordKey } from "./grading/sentence-order.ts";
 import { normalizeAnswer } from "./grading/text.ts";
 import { buildPlaySteps, type PhonicsSoundInfo, type PlayStep, type PlayWord } from "./lesson-play.ts";
 
-export const EXTRA_TYPE_INFO: Record<ExtraQuestionType, { code: string; label: string; hint: string; icon: "music" | "grammar" | "keyboard" | "pen"; skill: string; summary: string }> = {
+export const EXTRA_TYPE_INFO: Record<ExtraQuestionType, { code: string; label: string; hint: string; icon: "music" | "grammar" | "keyboard" | "pen" | "notebook"; skill: string; summary: string }> = {
   phonics: { code: "8.5", label: "Ghép âm", hint: "Từ + ô âm + âm thanh", icon: "music", skill: "pronunciation", summary: "Ghép âm" },
   sentence_order: { code: "8.8", label: "Sắp xếp câu", hint: "Tự tách thẻ, từ nhiễu", icon: "grammar", skill: "writing", summary: "Xếp câu" },
   dictation: { code: "8.9", label: "Nghe và gõ", hint: "Âm thanh, đáp án chấp nhận", icon: "keyboard", skill: "listening", summary: "Nghe và gõ" },
   fill_blank: { code: "8.10", label: "Điền từ", hint: "Câu có ô trống, thẻ từ", icon: "pen", skill: "grammar", summary: "Điền" },
+  short_reading: { code: "8.11", label: "Đọc hiểu ngắn", hint: "Đoạn 3–6 câu, 2–3 câu hỏi", icon: "notebook", skill: "reading", summary: "Đọc hiểu" },
 };
 
 export const MAX_DISTRACTORS = 3;
@@ -41,6 +43,10 @@ export type ExtraForm = {
   /** Tối đa 4 thẻ từ (điền từ). */
   cards: string[];
   correct: number | null;
+  /** Tiêu đề bài đọc (đọc hiểu ngắn). */
+  title: string;
+  /** 3 chỗ cho câu hỏi của bài đọc hiểu; chỗ để trống bị bỏ khi lưu. */
+  questions: ReadingQForm[];
   /** Chữ của từ có hình minh họa trong ngân hàng từ; để trống nếu không dùng hình. */
   picture: string;
 };
@@ -55,10 +61,17 @@ export const emptyExtraForm = (): ExtraForm => ({
   ignoreEndPunct: true,
   cards: ["", "", "", ""],
   correct: null,
+  title: "",
+  questions: [emptyReadingQuestion(), emptyReadingQuestion(), emptyReadingQuestion()],
   picture: "",
 });
 
-export type ExtraField = "text" | "tiles" | "distractors" | "alternatives" | "accepted" | "cards" | "picture";
+/** Một câu hỏi của bài Đọc hiểu ngắn trong biểu mẫu: đề, 3 đáp án, đáp án đúng, câu (từ 0) chứa đáp án. */
+export type ReadingQForm = { text: string; choices: string[]; correct: number | null; evidence: number };
+
+export const emptyReadingQuestion = (): ReadingQForm => ({ text: "", choices: ["", "", ""], correct: null, evidence: 0 });
+
+export type ExtraField = "text" | "tiles" | "distractors" | "alternatives" | "title" | "questions" | "accepted" | "cards" | "picture";
 export type ExtraBuilt = { prompt: unknown; options: unknown; answer: unknown };
 export type ExtraBuildResult = { ok: true; data: ExtraBuilt } | { ok: false; field: ExtraField; message: string };
 
@@ -160,6 +173,33 @@ export function buildExtraData(type: ExtraQuestionType, form: ExtraForm, ctx: Ex
       if ("error" in picture) return fail("picture", picture.error);
       return { ok: true, data: { prompt: { text, ...withPicture }, options: { cards: indexed.map((c) => c.word) }, answer: { correct } } };
     }
+    case "short_reading": {
+      const title = clean(form.title);
+      if (!title) return fail("title", "Nhập tiêu đề bài đọc.");
+      if (!text) return fail("text", "Nhập đoạn văn.");
+      const sentences = splitPassage(text);
+      if (sentences.length < READING_MIN_SENTENCES || sentences.length > READING_MAX_SENTENCES) return fail("text", `Đoạn văn cần ${READING_MIN_SENTENCES}–${READING_MAX_SENTENCES} câu (đang có ${sentences.length}).`);
+      const filled = form.questions.map((q, i) => ({ q, i })).filter(({ q }) => clean(q.text) || q.choices.some((c) => clean(c)));
+      if (filled.length < READING_MIN_QUESTIONS) return fail("questions", `Cần ít nhất ${READING_MIN_QUESTIONS} câu hỏi (đang có ${filled.length}).`);
+      if (filled.length > READING_MAX_QUESTIONS) return fail("questions", `Tối đa ${READING_MAX_QUESTIONS} câu hỏi.`);
+      for (const [n, { q }] of filled.entries()) {
+        const choices = q.choices.map(clean);
+        if (!clean(q.text)) return fail("questions", `Câu hỏi ${n + 1} chưa có nội dung.`);
+        if (choices.length !== READING_CHOICES || choices.some((c) => !c)) return fail("questions", `Câu hỏi ${n + 1} cần đủ ${READING_CHOICES} đáp án.`);
+        if (new Set(choices.map(key)).size !== choices.length) return fail("questions", `Câu hỏi ${n + 1} có hai đáp án trùng nhau.`);
+        if (q.correct === null || q.correct < 0 || q.correct >= READING_CHOICES) return fail("questions", `Câu hỏi ${n + 1} chưa chọn đáp án đúng.`);
+        if (q.evidence < 0 || q.evidence >= sentences.length) return fail("questions", `Câu hỏi ${n + 1}: câu chứa đáp án phải nằm trong đoạn văn.`);
+      }
+      if ("error" in picture) return fail("picture", picture.error);
+      return {
+        ok: true,
+        data: {
+          prompt: { title, text: sentences.join(" "), ...withPicture },
+          options: { questions: filled.map(({ q }) => ({ text: clean(q.text), choices: q.choices.map(clean), evidence: q.evidence })) },
+          answer: { correct: filled.map(({ q }) => q.correct as number) },
+        },
+      };
+    }
   }
 }
 
@@ -190,6 +230,15 @@ export function readExtraForm(type: string, prompt: unknown, options: unknown, a
     form.accepted = asStrings(a?.accepted).join("\n");
     form.ignoreCase = o?.ignoreCase !== false;
     form.ignoreEndPunct = o?.ignoreEndPunct !== false;
+  } else if (type === "short_reading") {
+    form.title = typeof p?.title === "string" ? p.title : "";
+    const qs = Array.isArray(o?.questions) ? (o.questions as Record<string, unknown>[]) : [];
+    const correct = Array.isArray(a?.correct) ? (a.correct as unknown[]) : [];
+    form.questions = [0, 1, 2].map((i) => {
+      const x = qs[i];
+      if (!x) return emptyReadingQuestion();
+      return { text: typeof x.text === "string" ? x.text : "", choices: [...asStrings(x.choices), "", "", ""].slice(0, READING_CHOICES), correct: typeof correct[i] === "number" ? (correct[i] as number) : null, evidence: typeof x.evidence === "number" ? x.evidence : 0 };
+    });
   } else if (type === "fill_blank") {
     const cards = asStrings(o?.cards);
     form.cards = [...cards, "", "", "", ""].slice(0, MAX_CARDS);
@@ -201,7 +250,8 @@ export function readExtraForm(type: string, prompt: unknown, options: unknown, a
 /** Dòng mô tả câu hỏi cho bảng ("Ghép âm: cat"). */
 export function extraQuestionSummary(type: string, prompt: unknown): string {
   const info = EXTRA_TYPE_INFO[type as ExtraQuestionType];
-  const text = typeof (prompt as Json)?.text === "string" ? String((prompt as { text: string }).text) : "";
+  const p = prompt as Json;
+  const text = type === "short_reading" && typeof p?.title === "string" ? p.title : typeof p?.text === "string" ? String(p.text) : "";
   return `${info?.summary ?? type}: ${text}`.trim();
 }
 

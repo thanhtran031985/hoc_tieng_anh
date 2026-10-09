@@ -5,6 +5,7 @@ import { today } from "@/lib/rules/dates";
 import { buildAudioMap } from "@/lib/rules/tts";
 import { levelStatus } from "@/lib/rules/unlock";
 import { getVoiceMp3Enabled } from "./app-settings";
+import { splitSentence } from "@/lib/rules/sentence-words";
 import { getStoriesPlay } from "./story-play";
 import { db } from "./db";
 import { requireLearner } from "./learners";
@@ -115,6 +116,7 @@ async function getPlayExtras(questions: QuestionRow[], storyIds: number[]): Prom
   const wordIds = new Set<number>();
   const cardWords = new Set<string>();
   const graphemes = new Set<string>();
+  const readingWords = new Set<string>();
   for (const q of questions) {
     if (!isExtraQuestionType(q.type)) continue;
     const data = parseExtraQuestion(q.type, { prompt: q.prompt, options: q.options, answer: q.answer });
@@ -122,10 +124,14 @@ async function getPlayExtras(questions: QuestionRow[], storyIds: number[]): Prom
     if (data.prompt.wordId !== undefined) wordIds.add(data.prompt.wordId);
     if ("cards" in data.options) for (const c of data.options.cards) cardWords.add(c.toLowerCase());
     if ("tiles" in data.options) for (const t of data.options.tiles) graphemes.add(t.sound);
+    if ("questions" in data.options) {
+      const passage = "text" in data.prompt ? data.prompt.text : "";
+      for (const text of [passage, ...data.options.questions.flatMap((x) => [x.text, ...x.choices])]) for (const t of splitSentence(text)) if (t.word) readingWords.add(t.word);
+    }
   }
   const [words, meaningRows, sounds, stories] = await Promise.all([
     wordIds.size ? db.word.findMany({ where: { id: { in: [...wordIds] } }, select: wordSelect }) : [],
-    cardWords.size ? db.word.findMany({ where: { word: { in: [...cardWords] } }, select: { word: true, meaningVi: true } }) : [],
+    cardWords.size || readingWords.size ? db.word.findMany({ where: { word: { in: [...new Set([...cardWords, ...readingWords])] } }, select: { word: true, meaningVi: true }, orderBy: { id: "asc" } }) : [],
     graphemes.size ? db.phonicsSound.findMany({ where: { grapheme: { in: [...graphemes] } }, select: { grapheme: true, ipa: true, audio: true } }) : [],
     getStoriesPlay(storyIds),
   ]);
@@ -134,6 +140,7 @@ async function getPlayExtras(questions: QuestionRow[], storyIds: number[]): Prom
   return {
     words: new Map(words.map((w) => [w.id, w])),
     meanings,
+    glossary: meanings,
     sounds: new Map<string, PhonicsSoundInfo>(sounds.map((s) => [s.grapheme, { ipa: s.ipa, audio: s.audio }])),
     stories,
   };
