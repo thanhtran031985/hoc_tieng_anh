@@ -19,3 +19,4 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 09/10/2026 | “Chưa có âm thanh” (Adult08, Adult13, Adult10) nghĩa là thiếu tệp của từ **hoặc** của câu ví dụ. | Bé nghe cả từ lẫn câu ví dụ; đếm riêng từ sẽ báo đủ khi câu ví dụ vẫn đọc bằng giọng trình duyệt. |
 | 09/10/2026 | `AdultTable.toolbarRight` nhận thêm dạng hàm `(visible) => node` để nút “tạo cho các mục đang lọc” biết các hàng đang lọc. | Sửa nhỏ, không đổi cách dùng cũ (vẫn nhận node). |
 | 09/10/2026 | Đổi chữ của từ/câu ví dụ ở Adult10 thì xóa tệp mp3 cũ ngay khi lưu; muốn có giọng mới thì bấm tạo lại. | Bảng tra cứu mp3 của bài học theo chữ: giữ tệp cũ sẽ làm bé nghe câu cũ khi chữ đã đổi. |
+| 09/10/2026 | Lệnh `audio:generate` không kiểm công tắc “Giọng mp3”, chỉ kiểm có cài `kokoro-js` và có `DATABASE_URL`. | Công tắc quyết định bé nghe gì, không quyết định có tạo tệp hay không; tạo trước rồi mới bật là cách làm tự nhiên. Màn quản trị vẫn kiểm công tắc như đã chốt. |

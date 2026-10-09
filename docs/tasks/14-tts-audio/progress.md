@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 0 | Chọn dịch vụ TTS (DỪNG chờ tôi) | ✅ | Đã chốt Kokoro chạy trên máy, giọng en-US, không dùng API; chờ bố/mẹ nghe 10 tệp mẫu và chọn giọng |
 | 1 | Hàm tạo và phát mp3 | ✅ | `synthesizeMp3` (Kokoro) + mp3, route `/audio/[name]`, bảng `app_settings`, `SpeechConfig`; kiểm bằng Edge không đầu |
 | 2 | Nút tạo giọng đọc trong quản trị (Adult10, Adult13) | ✅ | Công tắc “Giọng mp3”, tạo từng từ và hàng loạt có tiến trình + Dừng, cảnh báo Adult08 đếm đủ tiếng |
-| 3 | Lệnh tạo mp3 cho nội dung seed | ⬜ | |
+| 3 | Lệnh tạo mp3 cho nội dung seed | ✅ | `npm run audio:generate -- --level 3 --missing`; chạy lại bỏ qua mục đã có |
 | 4 | Âm phonics (Adult20) | ⬜ | |
 
 ## Nhật ký
@@ -44,6 +44,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Sửa Bước 1: `kokoro-js` bị Next đóng gói nên không tìm được tệp giọng (`src/generated/voices/...`); nạp bằng `createRequire` (Node nạp thẳng), bỏ `serverExternalPackages`.
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 226/226 ✅, `build` ✅. Edge không đầu (DB verify, admin PIN): công tắc mặc định tắt và mọi nút Tạo mờ; bật thì lưu vào `app_settings` và nút sáng; tạo thật cho “wake up” mất 6 giây ra `word-351-….mp3` và `example-351-….mp3`, phát được qua `/audio` (200, `audio/mpeg`); tạo lại cùng nội dung ghi đè đúng tệp (không thêm tệp); hàng loạt 11 từ: hiện tiến trình, bấm Dừng thì dừng ở 10/11 và hiện “Đã dừng”; Adult10: nút mờ khi công tắc tắt, sáng khi bật, mờ khi chữ chưa lưu, nút theo bộ lọc “Tạo giọng đọc cho 1 từ đang lọc”; đổi câu ví dụ thì tệp mp3 của câu bị xóa còn tệp của từ giữ nguyên; Adult08 giảm đúng 1 (900 → 899) khi một từ đủ tiếng; không lỗi console. Đã dọn tệp và dữ liệu thử.
 
+### Bước 3 — 09/10/2026
+- `npm run audio:generate -- [--level N] [--missing] [--force] [--limit N] [--dry-run] [--help]` (`scripts/audio-generate.mjs`): đọc từ vựng trong database (`DATABASE_URL` từ `.env`), chọn từ còn thiếu tệp của từ hoặc của câu ví dụ (tệp ghi đường dẫn nhưng mất trên đĩa cũng tính là thiếu), tạo theo lượt 20 từ, in tiến độ `[n/N] từ — đã tạo`, Ctrl+C dừng sau từ đang làm, cuối cùng in tổng kết và liệt kê từ lỗi (mã thoát 1 nếu có lỗi). Dùng chung lõi `generateForWords` với màn quản trị (bỏ kiểm công tắc “Giọng mp3”, vì đây là việc của máy dev).
+- `src/lib/rules/audio-cli.ts` (hàm đọc tham số, 4 test mới, báo lỗi tiếng Việt); `scripts/alias-loader.mjs` cho script `node` hiểu `@/` và nhập `.ts` không ghi đuôi.
+- Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 230/230 ✅. Trên DB verify: `--help`; `--level 0` báo lỗi; `--level 3 --dry-run` báo 250 từ cần tạo (500 tệp); `--level 3 --limit 20 --missing` tạo 40 tệp trong 86 giây (≈ 2 giây mỗi tệp, nên cả cấp 3 khoảng 18 phút), 0 lỗi; sau đó `--dry-run` báo “đã đủ: 20”; gọi lại đúng 20 từ đó thì cả 20 được bỏ qua trong 12 ms (không nạp giọng đọc); mở `/lesson/220` bật “Giọng mp3”: bấm loa phát `/audio/word-351-….mp3` (1,58 giây, phát hết, không lỗi). Đã dọn tệp và dữ liệu thử.
+- **Chưa chạy hết cấp 3** (và các cấp khác) trên database thật: bố/mẹ chạy `npm run audio:generate -- --level 3 --missing` ở máy dev khi tiện (≈ 18 phút cho cấp 3, ≈ 55 phút cho cấp 1–4 hai tệp mỗi từ; lần đầu tải mô hình ~160 MB). Tệp nằm ở `storage/uploads/audio/` (không đưa lên git); đưa thư mục này lên hosting cùng cột `audio` trong database.
+
 ## Bước tiếp theo
 
-Bước 3 — Lệnh tạo mp3 cho nội dung seed (`npm run audio:generate`).
+Bước 4 — Âm phonics (Adult20).

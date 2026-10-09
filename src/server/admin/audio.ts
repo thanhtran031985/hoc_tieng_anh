@@ -12,17 +12,28 @@ export async function generateWordAudio(input: unknown): Promise<GenerateAudioRe
   const parsed = generateAudioSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Dữ liệu chưa hợp lệ." };
   if (!(await getVoiceMp3Enabled())) return { ok: false, message: "Hãy bật “Giọng mp3” trước khi tạo giọng đọc." };
+  return generateForWords(parsed.data.wordIds, parsed.data.force);
+}
 
-  const { wordIds, force } = parsed.data;
-  const words = await db.word.findMany({ where: { id: { in: wordIds } }, select: { id: true, word: true, audio: true, exampleEn: true, exampleAudio: true } });
+/**
+ * Lõi tạo giọng đọc cho danh sách từ, không kiểm công tắc (màn quản trị đã kiểm ở trên; lệnh `audio:generate` là việc của máy dev).
+ * `onItem` được gọi sau mỗi từ để lệnh dòng lệnh in tiến độ.
+ */
+export async function generateForWords(wordIds: readonly number[], force: boolean, onItem?: (item: AudioItemResult) => void): Promise<GenerateAudioResult> {
+  const words = await db.word.findMany({ where: { id: { in: [...wordIds] } }, select: { id: true, word: true, audio: true, exampleEn: true, exampleAudio: true } });
   const byId = new Map(words.map((w) => [w.id, w]));
   const voice = currentVoice();
   const items: AudioItemResult[] = [];
 
+  const push = (item: AudioItemResult) => {
+    items.push(item);
+    onItem?.(item);
+  };
+
   for (const id of wordIds) {
     const w = byId.get(id);
     if (!w) {
-      items.push({ id, word: `#${id}`, status: "error", message: "Không tìm thấy từ này nữa." });
+      push({ id, word: `#${id}`, status: "error", message: "Không tìm thấy từ này nữa." });
       continue;
     }
     // Chỗ đã ghi đường dẫn nhưng mất tệp trên đĩa cũng tính là thiếu.
@@ -33,15 +44,15 @@ export async function generateWordAudio(input: unknown): Promise<GenerateAudioRe
     };
     const targets = audioTargets(current, force);
     if (targets.length === 0) {
-      items.push({ id, word: w.word, status: "skipped" });
+      push({ id, word: w.word, status: "skipped" });
       continue;
     }
     try {
       for (const target of targets) await makeOne(w.id, w, target, voice);
-      items.push({ id, word: w.word, status: "made" });
+      push({ id, word: w.word, status: "made" });
     } catch (error) {
       if (error instanceof TtsUnavailableError) return { ok: false, message: error.message };
-      items.push({ id, word: w.word, status: "error", message: error instanceof TtsTextError ? error.message : "Chưa tạo được giọng đọc cho từ này." });
+      push({ id, word: w.word, status: "error", message: error instanceof TtsTextError ? error.message : "Chưa tạo được giọng đọc cho từ này." });
       if (!(error instanceof TtsTextError)) console.error("tạo giọng đọc:", error);
     }
   }

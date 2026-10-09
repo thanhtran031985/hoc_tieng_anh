@@ -21,7 +21,7 @@ function tryFile(base) {
 export async function resolve(specifier, context, next) {
   let target = null;
   if (specifier.startsWith("@/")) target = tryFile(path.join(SRC, specifier.slice(2)));
-  else if ((specifier.startsWith("./") || specifier.startsWith("../")) && context.parentURL?.startsWith("file:") && !/\.[a-z]+$/i.test(specifier)) {
+  else if ((specifier.startsWith("./") || specifier.startsWith("../")) && context.parentURL?.startsWith("file:") && !/\\.[a-z]+$/i.test(specifier)) {
     target = tryFile(path.resolve(path.dirname(fileURLToPath(context.parentURL)), specifier));
   }
   if (target) return next(target, context);
