@@ -5,7 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // Kiểm tra micro: xin quyền, đo mức âm lượng bằng AnalyserNode, báo "nghe thấy rồi" khi có tiếng.
 // Không ghi âm và không gửi âm thanh đi đâu: chỉ đọc mức âm lượng rồi tắt micro.
 
-export type MicStatus = "idle" | "listening" | "heard" | "unavailable";
+// "insecure": trang mở bằng http:// ở địa chỉ không phải localhost nên trình duyệt không cung cấp micro (không có hộp thoại xin quyền).
+export type MicStatus = "idle" | "listening" | "heard" | "unavailable" | "insecure";
 
 const HEARD_LEVEL = 0.12; // mức âm lượng coi là có tiếng (0–1)
 const HEARD_COUNT = 8; // số khung hình có tiếng cần có trong khoảng HEARD_WINDOW_MS (tiếng nói ngắt quãng vẫn tính)
@@ -25,7 +26,7 @@ export function useMicTest() {
   const start = useCallback(async () => {
     stop();
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      setStatus("unavailable");
+      setStatus(typeof window !== "undefined" && !window.isSecureContext ? "insecure" : "unavailable");
       return;
     }
     let stream: MediaStream;

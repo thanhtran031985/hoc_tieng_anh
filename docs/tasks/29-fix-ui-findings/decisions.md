@@ -31,3 +31,9 @@
 - Bối cảnh: `designs/tokens.json` mới có thêm 108 token màu hex (đọc to, ghép âm, bong bóng, đập chuột…). Theme của app (`globals.css`) chưa có, vì chúng thuộc GĐ2.
 - Kết quả: `01-nen-tang` "mọi token màu dạng hex của bộ Tiểu học khớp designs/tokens.json" hỏng: 108 token "trang có rỗng", 0 token đổi giá trị (221 token GĐ1 vẫn khớp). Các test khác của task 01 đạt (32/33); `npm run build`, `tsc`, `lint` sạch.
 - Quyết định: KHÔNG nới test. Test này tự hết đỏ khi task `13-gd2-ui-kit` thêm token GĐ2 vào theme.
+
+### 09/10/2026 — Thêm lỗi 10 và 11 vào task (theo yêu cầu của bạn)
+- Lỗi 10 (`ERR_TOO_MANY_REDIRECTS`): cookie đăng nhập còn hạn nhưng tài khoản đã mất khỏi database → `requireUser` về `/login`, proxy thấy cookie và đẩy ngược về `/profiles`, lặp mãi. Sửa: `requireUser` chuyển tới route `src/app/session-expired/route.ts`, chỉ khi cookie hợp lệ mà người dùng không còn thì route xóa cookie phiên (Set-Cookie hết hạn) rồi về `/login`.
+- Phát hiện khi gỡ lỗi: `signOut()` của Auth.js trong route handler không xóa cookie phiên (chỉ gửi `callback-url`), nên xóa cookie bằng tay. `/session-expired` bị loại khỏi `matcher` của `proxy.ts` để proxy không làm mới cookie cùng lúc.
+- Lưu ý: các yêu cầu tải trước (prefetch) đang chạy dở với cookie cũ có thể làm cookie sống lại vài giây; lần vào trang bảo vệ kế tiếp tự xóa lại, không lặp. Test kiểm cả hai điều này.
+- Lỗi 11: `use-mic-test.ts` thêm trạng thái `insecure` (`!window.isSecureContext`), `StepAudio.tsx` hiện "Mở web bằng localhost hoặc https" thay vì "bấm Cho phép".

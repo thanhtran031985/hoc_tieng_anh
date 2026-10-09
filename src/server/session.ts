@@ -23,7 +23,11 @@ export async function getSessionUser(): Promise<SessionUser | null> {
 /** Dùng ở đầu layout, trang và server action cần đăng nhập. */
 export async function requireUser(): Promise<SessionUser> {
   const user = await getSessionUser();
-  if (!user) redirect("/login");
+  if (!user) {
+    // Có cookie nhưng tài khoản không còn: về /login thẳng sẽ lặp vô tận (proxy thấy cookie và đẩy lại), nên xóa cookie trước.
+    const session = await auth();
+    redirect(session?.user ? "/session-expired" : "/login");
+  }
   return user;
 }
 

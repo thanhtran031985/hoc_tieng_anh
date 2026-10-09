@@ -228,6 +228,25 @@ test.describe("Bước 2 và 3 — tạo hồ sơ, PIN (tài khoản P chưa có
     expect(kid.school_grade).toBe(9);
   });
 
+  test("trang mở bằng http ở địa chỉ không an toàn (vd 192.168.x.x): báo đúng lý do, không bảo bấm Cho phép (lỗi 11)", async ({ page }) => {
+    await page.addInitScript(() => {
+      // Giả lập trang không an toàn: trình duyệt không cung cấp micro (navigator.mediaDevices không tồn tại).
+      Object.defineProperty(window, "isSecureContext", { value: false });
+      Object.defineProperty(navigator, "mediaDevices", { value: undefined });
+    });
+    await loginUI(page, EMAIL.p);
+    await page.goto("/profiles/new");
+    await page.getByLabel("Tên của bé").fill("Bé Thử Micro");
+    await page.getByRole("radio", { name: "Lớp 3" }).click();
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    await page.getByRole("button", { name: "Bấm và nói Hello" }).click();
+    const alert = page.getByRole("alert").filter({ hasText: "micro" });
+    await expect(alert).toContainText("localhost");
+    await expect(alert).not.toContainText("Cho phép");
+    expect(await count("learners", "name = ?", ["Bé Thử Micro"])).toBe(0);
+  });
+
   test("hủy tạo hồ sơ (×) thì về màn chọn hồ sơ", async ({ page }) => {
     await loginUI(page, EMAIL.p);
     await page.goto("/profiles/new");
@@ -331,6 +350,45 @@ test.describe("Chặn truy cập chéo giữa các gia đình", () => {
     const page = await context.newPage();
     await page.goto("/home");
     await expect(page).toHaveURL(/\/profiles$/);
+    await context.close();
+  });
+});
+
+test.describe("Phiên của tài khoản đã bị xóa khỏi database (lỗi 10)", () => {
+  test.use({ storageState: NO_STATE });
+
+  test("cookie còn hạn nhưng tài khoản không còn: về /login, không lặp chuyển hướng, cookie bị xóa", async ({ page }) => {
+    const email = `het-han-${runId}@edu.local`;
+    await page.goto("/register");
+    await page.getByLabel("Tên của bố mẹ").fill("Phụ huynh tạm");
+    await page.getByLabel("Email").fill(email);
+    await page.getByLabel("Mật khẩu", { exact: true }).fill("MatKhau12345");
+    await page.getByLabel("Nhập lại mật khẩu").fill("MatKhau12345");
+    await page.getByRole("button", { name: "Tạo tài khoản" }).click();
+    await page.waitForURL("**/profiles");
+    await page.waitForLoadState("networkidle");
+
+    await exec("DELETE FROM users WHERE email = ?", [email]);
+    let clearing = "";
+    page.on("response", async (r) => {
+      if (new URL(r.url()).pathname === "/session-expired") clearing = (await r.headerValue("set-cookie")) ?? "";
+    });
+    await page.goto("/profiles"); // trước đây: ERR_TOO_MANY_REDIRECTS
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole("heading", { name: "Đăng nhập" })).toBeVisible();
+    expect(clearing, "Phản hồi của /session-expired phải xóa cookie phiên").toMatch(/authjs\.session-token=;/);
+    // Trang /login tự tải trước vài trang khác bằng cookie cũ nên có thể làm cookie sống lại; lần vào trang bảo vệ kế tiếp lại tự xóa, không lặp.
+    await page.waitForLoadState("networkidle");
+    await page.goto("/profiles");
+    await expect(page).toHaveURL(/\/login$/);
+  });
+
+  test("/session-expired khi cookie bình thường chỉ chuyển hướng, không đăng xuất", async ({ browser }) => {
+    const context = await browser.newContext({ storageState: STATE.a });
+    const page = await context.newPage();
+    await page.goto("/session-expired");
+    await expect(page).toHaveURL(/\/profiles$/);
+    expect((await context.cookies()).some((c) => c.name.includes("session-token"))).toBe(true);
     await context.close();
   });
 });

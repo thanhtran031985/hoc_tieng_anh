@@ -18,4 +18,5 @@ export default auth((request) => {
   }
 });
 
-export const config = { matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"] };
+// /session-expired tự xử lý cookie (xóa phiên của tài khoản đã mất): nếu proxy làm mới cookie cùng lúc thì cookie cũ sống lại.
+export const config = { matcher: ["/((?!api|session-expired|_next/static|_next/image|favicon.ico|.*\\..*).*)"] };

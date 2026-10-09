@@ -1,6 +1,6 @@
 # Báo cáo test giao diện tự động — task 01 đến 12
 
-> **Cập nhật sau task 29 (09/10/2026):** lỗi 1–7 đã sửa; chạy lại `npm run test:e2e` được 408 đạt, 0 hỏng, 44 bỏ qua. Lỗi 8, 9 chưa sửa (chờ quyết). Nội dung bên dưới là kết quả lần chạy đầu (trước khi sửa).
+> **Cập nhật sau task 29 (09/10/2026):** lỗi 1–7 đã sửa; chạy lại `npm run test:e2e` được 410 đạt, 1 hỏng (token GĐ2, chờ task 13), 44 bỏ qua. Lỗi 8, 9 chưa sửa (chờ quyết). Nội dung bên dưới là kết quả lần chạy đầu (trước khi sửa).
 
 Chạy ngày 09/10/2026 bằng `npm run test:e2e` (Chrome 155, database `hoc_tieng_anh_test`, bản build production, 33,8 phút). Cách chạy lại: xem `docs/test/README.md`.
 

@@ -47,15 +47,21 @@ export function StepAudio({ pet, onSkip, disabled }: Props) {
           </div>
 
           <div className={styles.panel} data-dragon={pet}>
-            {mic.status === "unavailable" ? (
+            {mic.status === "unavailable" || mic.status === "insecure" ? (
               <>
                 <div className={styles.alert} role="alert">
                   <span className={styles.alertIcon}>
                     <Icon name="mic" size={26} />
                   </span>
-                  <span>
-                    Chưa dùng được micro. Bố mẹ bấm <b>Cho phép</b> trên trình duyệt nhé.
-                  </span>
+                  {mic.status === "insecure" ? (
+                    <span>
+                      Trình duyệt không cho dùng micro ở địa chỉ này. Bố mẹ mở web bằng <b>localhost</b> hoặc <b>https</b> nhé.
+                    </span>
+                  ) : (
+                    <span>
+                      Chưa dùng được micro. Bố mẹ bấm <b>Cho phép</b> trên trình duyệt nhé.
+                    </span>
+                  )}
                 </div>
                 <Button variant="secondary" size="m" icon="replay" label="Thử lại" onClick={() => void mic.start()} />
               </>
