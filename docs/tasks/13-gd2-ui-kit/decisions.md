@@ -24,3 +24,7 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 
 ### 09/10/2026 — Test token đang đỏ trước khi làm task này
 - `tests/e2e/01-nen-tang.spec.ts` ("mọi token màu dạng hex ... khớp designs/tokens.json") đang hỏng vì thiếu 108 token GĐ2 trong theme (xem `29-fix-ui-findings/decisions.md`). Thêm token vào theme ở bước đầu của task này và chạy lại `npx playwright test 01-`; test phải đạt, không nới test.
+
+### 09/10/2026 — Tổng kết khi đóng task
+- Bố/mẹ báo "test ok" cho phần kiểm tra thủ công. **Quyết định của bố/mẹ:** chạy bộ Playwright (`npm run test:e2e:db` rồi `npx playwright test`) hoãn tới khi xong hết các task. Khi chạy: test `01-` (token) phải hết đỏ; `07-`/`chung` có thể cần chỉnh vì khung bài có thanh đường dẫn mới; `13-gd2-ui-kit.spec.ts` (5 test) chưa từng chạy.
+- Khác với `task.md` gốc: 165 token (không phải 166); `GameFrame` ở `src/features/lesson/`; thêm token cỡ cho hộp thoại game/quà, thanh đường dẫn, bảng âm thanh, công tắc, thanh kéo; thanh đường dẫn `LessonCrumb` có ở mọi bài học; kèm bài nhạc nền tự soạn `nhac-nen-nhe.wav`; `RewardPopup` không có sao bay.
