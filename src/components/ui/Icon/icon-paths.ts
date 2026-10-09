@@ -65,6 +65,22 @@ export const ICON_PATHS = {
   music: "<path d=\"M9 18V6l10-2v12\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.5\" fill=\"none\"/><circle cx=\"16.5\" cy=\"16\" r=\"2.5\" fill=\"none\"/>",
   copy: "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\" fill=\"none\"/><path d=\"M5 15.5V5.5a1.5 1.5 0 0 1 1.5-1.5h9.5\"/>",
   tree: "<rect x=\"3.5\" y=\"3.5\" width=\"6\" height=\"5\" rx=\"1.2\" fill=\"none\"/><rect x=\"14.5\" y=\"10\" width=\"6\" height=\"5\" rx=\"1.2\" fill=\"none\"/><rect x=\"14.5\" y=\"17\" width=\"6\" height=\"4\" rx=\"1.2\" fill=\"none\"/><path d=\"M6.5 8.5v10h8M6.5 12.5h8\"/>",
+  // Icon bổ sung giai đoạn 2 (khung bài học, phần thưởng, phòng của tớ, cửa hàng), chép từ designs/components/bundle.js.
+  flag: "<path d=\"M5 21V3.5\"/><path d=\"M5 4h13l-3 4.5 3 4.5H5\" fill=\"currentColor\" stroke-linejoin=\"round\"/>",
+  medal: "<path d=\"M8 2.5l2.5 6M16 2.5l-2.5 6\"/><circle cx=\"12\" cy=\"15\" r=\"6\" fill=\"none\"/><path d=\"M12 12v6M9.8 13.2L12 12\" />",
+  island: "<path d=\"M3 19c3-2 6-2 9 0s6 2 9 0\"/><path d=\"M6 16c1.5-3 10.5-3 12 0\"/><path d=\"M12 14V6M12 6c-2-2-5-1.5-6 0M12 6c2-2 5-1.5 6 0M12 6c-1-2.5 0-4 1.5-4\"/>",
+  expand: "<path d=\"M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15\"/>",
+  shrink: "<path d=\"M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5\"/>",
+  volume: "<path d=\"M4 9.5h3.2L12 5.5v13l-4.8-4H4z\" fill=\"currentColor\" stroke-linejoin=\"round\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11\"/>",
+  mute: "<path d=\"M4 9.5h3.2L12 5.5v13l-4.8-4H4z\" fill=\"currentColor\" stroke-linejoin=\"round\"/><path d=\"M16 9.5l5 5M21 9.5l-5 5\"/>",
+  gift: "<rect x=\"4\" y=\"9\" width=\"16\" height=\"11\" rx=\"1.5\" fill=\"none\"/><path d=\"M3 9h18M12 9v11M12 9C10 5 6 4.5 6 7s4 2 6 2c2 0 6 .5 6-2s-4-2-6 2\"/>",
+  bag: "<path d=\"M5 8h14l-1 12H6z\" fill=\"none\"/><path d=\"M9 8V6.5a3 3 0 0 1 6 0V8\"/>",
+  rotate: "<path d=\"M19 12a7 7 0 1 1-2.1-5\"/><path d=\"M19.5 4v4h-4\"/>",
+  box: "<path d=\"M4 8l8-4 8 4v9l-8 4-8-4z\" fill=\"none\"/><path d=\"M4 8l8 4 8-4M12 12v9\"/>",
+  shirt: "<path d=\"M8 4l4 2 4-2 4 3-2 4h-2v9H8v-9H6L4 7z\" fill=\"none\"/>",
+  print: "<path d=\"M7 9V4h10v5\"/><rect x=\"4\" y=\"9\" width=\"16\" height=\"7\" rx=\"2\" fill=\"none\"/><path d=\"M7 14h10v6H7z\" fill=\"none\"/>",
+  snow: "<path d=\"M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5\"/>",
+  sunrise: "<path d=\"M4 18h16M7 18a5 5 0 0 1 10 0M12 5v4M5.5 9.5l2 2M18.5 9.5l-2 2\"/>",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

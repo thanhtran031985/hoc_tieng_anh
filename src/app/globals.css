@@ -351,6 +351,9 @@
   /* Khung trò chơi GĐ2 (task 13): hộp thoại bắt đầu / tạm dừng / kết thúc rộng hơn hộp thường, hình nhô lên trên mép. */
   --size-dialog-game: 560px;
   --dialog-art-lift: 96px;
+  --size-dialog-reward: 600px;
+  --size-sticker-reward: 140px;
+  --size-reward-glow: 260px;
   --feedback-mascot-lift: 64px;
 
   /* Trang chủ của bé (Screen04) và màn "Sắp có" (Screen22). */

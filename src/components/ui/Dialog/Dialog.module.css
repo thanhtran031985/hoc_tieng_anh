@@ -40,6 +40,9 @@
 .game {
   width: var(--size-dialog-game);
 }
+.reward {
+  width: var(--size-dialog-reward);
+}
 .art {
   margin-top: calc(-1 * var(--dialog-art-lift));
   display: flex;

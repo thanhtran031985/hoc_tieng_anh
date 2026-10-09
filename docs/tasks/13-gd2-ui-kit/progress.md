@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 0 | Token và hằng số GĐ2 | ✅ | 165 biến vào `globals.css`, `COINS`/`WORDLAB` vào `constants.ts`; test Playwright `01-` chưa chạy (chờ bố/mẹ đồng ý reset DB test) |
 | 1 | Rồng Bông lớn lên (MascotGrowth) | ✅ | Mascot có prop `stage`, thêm `MascotGrowth`; 40/40 hình khớp bundle.js |
 | 2 | Chữ bấm được và khung trò chơi | ✅ | `ClickableWords`, 3 hộp thoại game, `GameFoot`, `GameFrame`; trang thử `/dev/game` |
-| 3 | Hộp quà nhận thưởng (RewardPopup) | ⬜ | |
+| 3 | Hộp quà nhận thưởng (RewardPopup) | ✅ | `RewardPopup`, `GiftBox`, `Sticker`, `Medal` ở `src/components/rewards/` |
 | 4 | Công cụ bài học (LessonTools) và học tập trung | ⬜ | |
 | 5 | Âm thanh hiệu ứng và nhạc nền | ⬜ | |
 
@@ -40,6 +40,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Token thêm vào `globals.css` (liệt kê theo CLAUDE.md): `--size-dialog-game: 560px`, `--dialog-art-lift: 96px` (hộp thoại game rộng hơn và hình nhô lên 96px, lấy từ `.b-dialog--game` và `.b-ov2__how` của bundle.css).
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 199/199 ✅, `build` ✅. Edge không đầu ở 1366×768 trên `/dev/game`, 25 điều kiện đều đạt: Enter bắt đầu; bấm "bird" thì `speechSynthesis.speak` nhận đúng "bird" và hiện "con chim"; Space, H chạy khi đang chơi; Esc mở Tạm dừng và game dừng; Esc lần nữa chơi tiếp; nút ⏸ mở Tạm dừng; Thoát mở "Dừng bài học?" (hộp tạm dừng ẩn), Esc ở đó ở lại rồi quay về Tạm dừng; ✕ mở "Dừng bài học?"; Dừng lại gọi `onExit`; đủ điểm mở bảng kết thúc, Enter = Tiếp tục; không cuộn; không lỗi console. Dùng toàn bằng bàn phím.
 
+### Bước 3 — 09/10/2026
+- `src/components/rewards/` (mới): `RewardPopup` (2 bước trên một `Dialog`), `GiftBox` (đóng/mở nắp kèm tia sáng), `Sticker` (hình từ vựng trong khung cắt bế; là nút khi có `onClick`), `Medal` (huy hiệu: vòng vàng, lõi màu cấp, ruy-băng). Nét vẽ chép từ `rgift`/`rmedal`/`rsticker` trong `bundle.js`; màu theo token `gift-*`, `badge-*`, `sticker-*`.
+- `RewardPopup` nhận `kind` ("sticker" kèm `word`/`src`, hoặc "badge" kèm `icon`/`level`/`cond`), `en`, `vi`, `coins` (mặc định `COINS.stickerLesson` = 10 hoặc `COINS.badge` = 50), `skipGift`, `onAdd`. Tên tiếng Anh và nghĩa do nơi gọi truyền vào (lấy từ database), không viết cứng trong component.
+- `Dialog` thêm `size="reward"`. Icon thêm 15 hình GĐ2 vào `icon-paths.ts` (gift, expand, shrink, volume, mute, flag, medal, island, bag, rotate, box, shirt, print, snow, sunrise): chép từ `bundle.js`, các bước sau dùng tiếp.
+- Token thêm vào `globals.css`: `--size-dialog-reward: 600px`, `--size-sticker-reward: 140px`, `--size-reward-glow: 260px` (lấy từ `.b-rw .b-dialog--game`, `.b-rw__stk .b-stk`, `.b-rw__glow` của bundle.css).
+- `/dev/ui` có mục "Hộp quà nhận thưởng (RewardPopup)": nút mở thử sticker và huy hiệu, kèm hộp quà đóng/mở, sticker (có, mới, trống), huy hiệu (đã nhận, chưa nhận).
+- Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 199/199 ✅, `build` ✅. Edge không đầu ở 1366×768, 15 điều kiện đạt: Enter, bấm hộp, nút "Mở quà" và Esc đều mở quà; tên "cat" tự đọc đúng 1 lần (`speechSynthesis.speak`); hiện nghĩa, "+10 xu" (huy hiệu "+50 xu" kèm điều kiện đã đạt); Enter, Esc hoặc bấm nút "Cho vào bộ sưu tập" đều gọi `onAdd` đúng một lần; bật giảm chuyển động thì `animation-name` của hộp quà là `none` (bình thường có lắc); không lỗi console.
+- Không có sao bay (`Bong.burst`) khi mở quà: chỉ còn tia sáng và hộp lắc, vì hiệu ứng sao bay hiện có (`burstStars`) bay về thanh tiến độ, không áp dụng cho hộp quà.
+
 ## Bước tiếp theo
 
-Bước 3 — Hộp quà nhận thưởng (RewardPopup).
+Bước 4 — Công cụ bài học (LessonTools) và học tập trung.

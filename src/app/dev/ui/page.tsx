@@ -22,6 +22,7 @@ import {
 } from "@/components/ui";
 import { ClickableWords, GameFoot } from "@/components/lesson";
 import { Gd2Tokens } from "./gd2-tokens";
+import { RewardsDemo } from "./rewards-demo";
 import { GrowthDemo } from "./growth-demo";
 import { HotkeysDemo } from "./hotkeys-demo";
 import { OverlaysDemo } from "./overlays-demo";
@@ -384,6 +385,14 @@ export default function DevUiPage() {
             Mở khung trò chơi thử (/dev/game)
           </a>
         </p>
+      </Section>
+
+      <Section
+        id="sec-rewards"
+        title="Hộp quà nhận thưởng (RewardPopup)"
+        note="Hộp quà 2 bước: Enter, bấm hộp hoặc Esc mở quà; tên tiếng Anh tự đọc một lần; Enter hoặc Esc cho vào bộ sưu tập."
+      >
+        <RewardsDemo />
       </Section>
 
       <Section id="sec-gd2-tokens" title="Token GĐ2" note="Gd2Tokens, Gd3Tokens, Gd4Tokens: màu hiện ô màu, kích thước và thời lượng hiện giá trị đọc từ trang.">

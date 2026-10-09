@@ -32,8 +32,8 @@ export type DialogProps = {
   actions: DialogAction[];
   /** Hình tuỳ ý nhô lên trên mép hộp, thay cho rồng Bông (hộp thoại trò chơi: hình hướng dẫn, rồng ngủ, rồng chúc mừng). */
   art?: React.ReactNode;
-  /** "game": hộp rộng hơn dùng cho lớp phủ bắt đầu, tạm dừng, kết thúc trò chơi. */
-  size?: "default" | "game";
+  /** "game": hộp rộng hơn dùng cho lớp phủ bắt đầu, tạm dừng, kết thúc trò chơi. "reward": rộng nhất, hộp nhận quà. */
+  size?: "default" | "game" | "reward";
   /** Bấm ra ngoài hộp thì đóng. Mặc định có; lớp phủ trò chơi tắt để bé không lỡ bấm. */
   closeOnBackdrop?: boolean;
 };
@@ -126,7 +126,7 @@ export function Dialog({ open, onClose, title, body, expr, actions, art, size = 
     <div className={styles.overlay} data-open={open ? "true" : undefined} inert={!open} onClick={onBackdropClick}>
       <div
         ref={dialogRef}
-        className={cn(styles.dialog, size === "game" && styles.game)}
+        className={cn(styles.dialog, size === "game" && styles.game, size === "reward" && styles.reward)}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

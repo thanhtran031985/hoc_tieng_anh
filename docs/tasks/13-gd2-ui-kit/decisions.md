@@ -12,6 +12,8 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 09/10/2026 | `GameFrame` đặt ở `src/features/lesson/`, còn `ClickableWords`, các hộp thoại game và `GameFoot` ở `src/components/lesson/`. | `GameFrame` ghép `LessonFrame` và `ExitDialog` của feature bài học (đang dùng chung `lesson.module.css` với 5 màn khác), chuyển sang `components/` sẽ phải tách css đang chia sẻ. Các phần không phụ thuộc feature thì ở `components/lesson/` đúng như task.md. |
 | 09/10/2026 | Hộp thoại game không đóng khi bấm ra ngoài (`closeOnBackdrop={false}`). | Bản thiết kế chỉ đóng bằng nút hoặc Esc; bé đang chơi không lỡ bấm ra ngoài mà bỏ qua bảng kết thúc. |
 | 09/10/2026 | Esc ở lớp phủ bắt đầu = Bắt đầu; Esc ở bảng kết thúc = Tiếp tục; Esc ở Tạm dừng = Chơi tiếp. | Đúng `onEsc` của `loverlay` trong bundle.js. |
+| 09/10/2026 | `RewardPopup` bỏ hiệu ứng sao bay khi mở quà (còn hộp lắc, tia sáng, rồng chúc mừng). | `burstStars` bay về thanh tiến độ của bài học, hộp quà có thể mở ở màn không có thanh đó; sao bay chỉ là trang trí. Thêm sau nếu bố/mẹ muốn. |
+| 09/10/2026 | Tên tiếng Anh, nghĩa và hình của phần thưởng truyền qua props; không có bảng `STICKER_WORDS` cứng như bundle.js. | CLAUDE.md: nội dung học nằm trong database, không viết cứng vào component. |
 
 ### 09/10/2026 — Test token đang đỏ trước khi làm task này
 - `tests/e2e/01-nen-tang.spec.ts` ("mọi token màu dạng hex ... khớp designs/tokens.json") đang hỏng vì thiếu 108 token GĐ2 trong theme (xem `29-fix-ui-findings/decisions.md`). Thêm token vào theme ở bước đầu của task này và chạy lại `npx playwright test 01-`; test phải đạt, không nới test.

@@ -1,0 +1,244 @@
+/* ---- Sticker ---- */
+.stk {
+  --tilt: 0deg;
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 0;
+  width: var(--size-sticker);
+  height: var(--size-sticker);
+  display: grid;
+  place-items: center;
+  border-radius: 26%;
+}
+button.stk {
+  cursor: pointer;
+}
+.art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 26%;
+  transition: transform var(--duration-fast);
+}
+.art svg,
+.art img {
+  width: 82%;
+  height: auto;
+}
+.owned .art {
+  background: var(--sticker-frame);
+  box-shadow:
+    0 0 0 var(--size-sticker-frame) var(--sticker-frame),
+    0 var(--space-2) var(--space-4) var(--sticker-shadow);
+  transform: rotate(var(--tilt));
+}
+button.owned:hover .art {
+  transform: rotate(0) scale(1.06);
+}
+.empty {
+  cursor: default;
+}
+.empty .art {
+  background: var(--sticker-slot);
+  box-shadow: inset 0 0 0 var(--border-thick) var(--sticker-slot);
+  outline: var(--border-thick) dashed var(--sticker-slot-line);
+  outline-offset: calc(-1 * var(--border-thick));
+}
+.empty .art :is(svg *, img) {
+  fill: var(--sticker-ghost) !important;
+  stroke: none !important;
+}
+.new {
+  position: absolute;
+  top: calc(-1 * var(--space-2));
+  right: calc(-1 * var(--space-2));
+  background: var(--sticker-new);
+  color: var(--ink);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  box-shadow: 0 var(--space-1) 0 var(--sticker-shadow);
+}
+button.stk:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--space-2);
+}
+
+/* ---- Huy hiệu ---- */
+.medal {
+  position: relative;
+  width: var(--sz);
+  height: calc(var(--sz) * 1.18);
+  display: block;
+}
+.rib {
+  position: absolute;
+  left: 6%;
+  bottom: 0;
+  width: 88%;
+  height: auto;
+}
+.ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--sz);
+  height: var(--sz);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: repeating-conic-gradient(var(--badge-ring) 0 10deg, var(--badge-ring-shade) 10deg 20deg);
+  box-shadow:
+    inset 0 0 0 3px var(--dragon-line),
+    0 var(--space-2) 0 var(--sticker-shadow);
+}
+.core {
+  width: 74%;
+  height: 74%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--c);
+  color: var(--surface);
+  box-shadow:
+    inset 0 0 0 3px var(--dragon-line),
+    inset 0 calc(-1 * var(--space-2)) 0 var(--sticker-shadow);
+}
+.core svg {
+  filter: drop-shadow(0 2px 0 var(--sticker-shadow));
+}
+.locked .ring {
+  background: var(--badge-locked);
+  box-shadow: inset 0 0 0 3px var(--sticker-slot-line);
+}
+.locked .core {
+  background: var(--sticker-slot);
+  color: var(--badge-locked-ink);
+  box-shadow: inset 0 0 0 3px var(--sticker-slot-line);
+}
+.locked .core svg {
+  filter: none;
+}
+
+/* ---- Hộp quà ---- */
+.gift {
+  display: block;
+}
+.lid {
+  transition: transform var(--duration-slide) cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.rays {
+  animation: rays 2.4s linear infinite;
+  transform-origin: 60px 50px;
+}
+@keyframes rays {
+  to {
+    transform: rotate(14deg);
+  }
+}
+
+/* ---- Hộp thoại nhận quà ---- */
+.top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.top > :global(svg) {
+  height: auto;
+  margin-left: calc(-1 * var(--space-4));
+}
+.glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--size-reward-glow);
+  height: var(--size-reward-glow);
+  transform: translate(-60%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gift-glow), transparent 70%);
+  z-index: -1;
+}
+.stickerBig {
+  --size-sticker: var(--size-sticker-reward);
+  display: inline-flex;
+  transform: rotate(-4deg);
+}
+.giftbtn {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  animation: wobble 1.6s ease-in-out infinite;
+}
+@keyframes wobble {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0);
+  }
+  70% {
+    transform: rotate(-6deg);
+  }
+  80% {
+    transform: rotate(6deg);
+  }
+  90% {
+    transform: rotate(-3deg);
+  }
+}
+.name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.name b {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 800;
+  color: var(--ink);
+}
+.meaning {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+.coin {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  background: var(--price-chip);
+  color: var(--price-chip-ink);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+}
+.coin b {
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rays,
+  .giftbtn {
+    animation: none;
+  }
+  .lid,
+  .art {
+    transition-duration: 1ms;
+  }
+}
