@@ -1,6 +1,6 @@
 # Tiến độ — 13-gd2-ui-kit — Bộ thành phần GĐ2 và khung bài học mới
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -69,4 +69,10 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 
 ## Bước tiếp theo
 
-Xong 6 bước. Kiểm tra cuối task và đóng task (`/finish-task`).
+Task đã xong. Việc bố/mẹ cần làm tay nằm ở mục "Kiểm tra cuối task" bên dưới.
+
+## Kiểm tra cuối task — 09/10/2026
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` chạy không lỗi; `npm test` 209/209 (task này thêm 20 test: hằng số, tách câu, dáng rồng, dáng theo cấp, cài đặt âm thanh, hiệu ứng).
+- `/dev/ui` ở 1366×768 và 1920×1080: đủ 5 mục mới (rồng lớn lên, chữ bấm được + chân bài game, công cụ bài học, hộp quà, token GĐ2), không cuộn ngang, không lỗi console. `/dev/game` thử đủ luồng khung trò chơi.
+- Bài GĐ1 thật (`/lesson/220`, hồ sơ Mai Linh) bật học tập trung bằng F ở 1366×768 và 1920×1080: vừa màn hình không cuộn, ẩn thanh đường dẫn, nhãn "Đang học tập trung · Esc để thoát".
+- Việc cần bố/mẹ làm tay: (1) chạy `npm run test:e2e:db` rồi `npx playwright test` (cần đồng ý reset `hoc_tieng_anh_test`): test `01-` (token) phải hết đỏ, và các test bài học `07-` có thể cần chỉnh vì khung bài học nay có thêm thanh đường dẫn và 2 nút công cụ; (2) bỏ một tệp nhạc nền hợp bản quyền vào `public/media/music/`; (3) nghe thử tiếng hiệu ứng trên loa thật.

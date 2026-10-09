@@ -362,6 +362,8 @@
   --size-switch-knob: 24px;
   --size-range-track: 10px;
   --size-range-thumb: 26px;
+  /* Viền trong của sticker trống và huy hiệu (rewards.module.css). */
+  --size-inset-ring: 3px;
   --feedback-mascot-lift: 64px;
 
   /* Trang chủ của bé (Screen04) và màn "Sắp có" (Screen22). */

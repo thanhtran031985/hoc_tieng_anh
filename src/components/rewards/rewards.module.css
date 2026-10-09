@@ -95,7 +95,7 @@ button.stk:focus-visible {
   place-items: center;
   background: repeating-conic-gradient(var(--badge-ring) 0 10deg, var(--badge-ring-shade) 10deg 20deg);
   box-shadow:
-    inset 0 0 0 3px var(--dragon-line),
+    inset 0 0 0 var(--size-inset-ring) var(--dragon-line),
     0 var(--space-2) 0 var(--sticker-shadow);
 }
 .core {
@@ -107,20 +107,20 @@ button.stk:focus-visible {
   background: var(--c);
   color: var(--surface);
   box-shadow:
-    inset 0 0 0 3px var(--dragon-line),
+    inset 0 0 0 var(--size-inset-ring) var(--dragon-line),
     inset 0 calc(-1 * var(--space-2)) 0 var(--sticker-shadow);
 }
 .core svg {
-  filter: drop-shadow(0 2px 0 var(--sticker-shadow));
+  filter: drop-shadow(0 var(--border-thin) 0 var(--sticker-shadow));
 }
 .locked .ring {
   background: var(--badge-locked);
-  box-shadow: inset 0 0 0 3px var(--sticker-slot-line);
+  box-shadow: inset 0 0 0 var(--size-inset-ring) var(--sticker-slot-line);
 }
 .locked .core {
   background: var(--sticker-slot);
   color: var(--badge-locked-ink);
-  box-shadow: inset 0 0 0 3px var(--sticker-slot-line);
+  box-shadow: inset 0 0 0 var(--size-inset-ring) var(--sticker-slot-line);
 }
 .locked .core svg {
   filter: none;

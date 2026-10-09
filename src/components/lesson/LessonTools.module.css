@@ -104,7 +104,7 @@
   height: var(--size-switch-knob);
   border-radius: 50%;
   background: var(--surface);
-  box-shadow: 0 2px 0 var(--sticker-shadow);
+  box-shadow: 0 var(--border-thin) 0 var(--sticker-shadow);
   transition: transform var(--duration-fast);
 }
 .switch[aria-checked="true"] {
@@ -162,7 +162,7 @@
   border-radius: 50%;
   background: var(--surface);
   border: var(--border-thick) solid var(--volume-fill);
-  box-shadow: 0 2px 0 var(--sticker-shadow);
+  box-shadow: 0 var(--border-thin) 0 var(--sticker-shadow);
   box-sizing: border-box;
 }
 .range::-moz-range-thumb {
