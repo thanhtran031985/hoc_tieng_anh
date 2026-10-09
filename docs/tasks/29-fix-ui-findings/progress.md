@@ -1,6 +1,6 @@
 # Tiến độ — 29-fix-ui-findings
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |------|-----|------------|---------|
@@ -27,15 +27,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Sau khi thêm lỗi 10, 11 và áp dụng gói thiết kế GĐ2, chạy lại toàn bộ: **410 đạt, 1 hỏng, 44 bỏ qua**. Test hỏng duy nhất là token màu của `01-nen-tang` (thiếu 108 token GĐ2 trong theme, chờ task 13; xem decisions.md).
 
 ## Bước tiếp theo
-Bạn tự test tay trên Chrome (checklist ở mục dưới), báo "test ok" thì đóng task.
+Hoàn thành (bạn đã test tay xong, 09/10/2026).
 
 ## Checklist test thủ công
-- [ ] Lỗi 2: vào một bài, câu "Nghe và chọn hình" và "Chọn từ đúng cho hình": phím A, B, C, D chọn đúng thẻ như phím 1–4.
-- [ ] Lỗi 3: Quản trị › Ngân hàng câu hỏi › mở một câu › "Xem như học sinh": bấm phím 1 rồi Enter ngay (chưa bấm chuột) thì có dải phản hồi.
-- [ ] Lỗi 4: Quản trị › Soạn bài › Xem trước: bấm Esc thì đóng.
-- [ ] Lỗi 5: trang chủ › nút Bản đồ khi mạng chậm (F12 › Network › Slow 3G) thì có khung xương.
-- [ ] Lỗi 6: tab trình duyệt có biểu tượng rồng, Console không báo 404 favicon.
-- [ ] Lỗi 7: gõ `/map/99` thì thấy trang tiếng Việt có nút "Về trang chủ".
-- [ ] Lỗi 10: mở `localhost:3000/login` khi cookie cũ của tài khoản đã mất: về trang đăng nhập, không còn "redirected you too many times".
-- [ ] Lỗi 11: mở tạo hồ sơ bằng `http://192.168.x.x:3000`, bước micro hiện "Mở web bằng localhost hoặc https".
-- [ ] Lỗi 1 (khó làm tay): có thể bỏ qua, test tự động đã kiểm.
+- [x] Lỗi 2: vào một bài, câu "Nghe và chọn hình" và "Chọn từ đúng cho hình": phím A, B, C, D chọn đúng thẻ như phím 1–4.
+- [x] Lỗi 3: Quản trị › Ngân hàng câu hỏi › mở một câu › "Xem như học sinh": bấm phím 1 rồi Enter ngay (chưa bấm chuột) thì có dải phản hồi.
+- [x] Lỗi 4: Quản trị › Soạn bài › Xem trước: bấm Esc thì đóng.
+- [x] Lỗi 5: trang chủ › nút Bản đồ khi mạng chậm (F12 › Network › Slow 3G) thì có khung xương.
+- [x] Lỗi 6: tab trình duyệt có biểu tượng rồng, Console không báo 404 favicon.
+- [x] Lỗi 7: gõ `/map/99` thì thấy trang tiếng Việt có nút "Về trang chủ".
+- [x] Lỗi 10: mở `localhost:3000/login` khi cookie cũ của tài khoản đã mất: về trang đăng nhập, không còn "redirected you too many times".
+- [x] Lỗi 11: mở tạo hồ sơ bằng `http://192.168.x.x:3000`, bước micro hiện "Mở web bằng localhost hoặc https".
+- [x] Lỗi 1 (khó làm tay): có thể bỏ qua, test tự động đã kiểm.
