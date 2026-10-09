@@ -1,12 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AdultButton, AdultButtonLink, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSelect, AdultTable, AdultTextarea, adultStyles, useToast, type AdultColumn } from "@/components/adult";
-import { Icon, LevelChip, WordPicture } from "@/components/ui";
+import { Icon, LevelChip, SpeakerButton, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { TTS_UI_BATCH_SIZE, hasFullAudio } from "@/lib/rules/tts";
 import { PARTS_OF_SPEECH } from "@/lib/schemas/content";
 import { PART_OF_SPEECH_LABEL, saveWordSchema } from "@/lib/schemas/admin-vocab";
 import type { VocabData, VocabRow } from "@/server/admin/vocab";
+import { AudioBatchStatus } from "./AudioBatchStatus";
+import { useAudioBatch } from "./useAudioBatch";
 import { saveWordAction } from "./vocab-actions";
 import styles from "./vocab.module.css";
 
@@ -14,6 +18,7 @@ type Row = VocabRow & { posLabel: string; topicText: string; hasImage: boolean; 
 type Errors = Record<string, string>;
 
 const nf = (n: number) => n.toLocaleString("vi-VN");
+const fileName = (path: string) => path.split("/").pop() ?? path;
 const posLabel = (pos: string) => PART_OF_SPEECH_LABEL[pos as keyof typeof PART_OF_SPEECH_LABEL] ?? pos;
 
 /** Ngân hàng từ vựng (Adult10): bảng có tìm, lọc theo cấp / chủ đề / thiếu hình–âm, sắp xếp, phân trang; sửa và thêm từ trong ngăn kéo. */
@@ -21,8 +26,12 @@ export function VocabView({ data }: { data: VocabData }) {
   // `editing`: null là đóng, "new" là thêm từ, số là id từ đang sửa.
   const [editing, setEditing] = useState<number | "new" | null>(null);
   const levelName = new Map(data.levels.map((l) => [l.number, l.name]));
+  const router = useRouter();
+  const batch = useAudioBatch(() => router.refresh());
+  const canMake = data.mp3Enabled && data.ttsAvailable;
+  const why = !data.ttsAvailable ? "Máy chủ này chưa có công cụ tạo giọng đọc" : !data.mp3Enabled ? "Bật “Giọng mp3” ở Hình ảnh & âm thanh để tạo giọng đọc" : undefined;
 
-  const rows: Row[] = data.rows.map((r) => ({ ...r, posLabel: posLabel(r.pos), topicText: r.topics.join(", "), hasImage: Boolean(r.image), hasAudio: Boolean(r.audio) }));
+  const rows: Row[] = data.rows.map((r) => ({ ...r, posLabel: posLabel(r.pos), topicText: r.topics.join(", "), hasImage: Boolean(r.image), hasAudio: hasFullAudio(r) }));
   const noImage = rows.filter((r) => !r.hasImage).length;
   const noAudio = rows.filter((r) => !r.hasAudio).length;
   const topicNames = [...new Set(rows.flatMap((r) => r.topics))].sort((a, b) => a.localeCompare(b));
@@ -95,6 +104,7 @@ export function VocabView({ data }: { data: VocabData }) {
         <AdultButtonLink label="Nhập Excel" icon="upload" variant="secondary" href="/admin/excel" />
         {addButton}
       </div>
+      <AudioBatchStatus state={batch.state} onStop={batch.stop} />
       <AdultTable
         caption="Ngân hàng từ vựng"
         columns={columns}
@@ -116,6 +126,19 @@ export function VocabView({ data }: { data: VocabData }) {
             match: (r, v) => (v === "image" ? !r.hasImage : !r.hasAudio),
           },
         ]}
+        toolbarRight={(visible) => {
+          const todo = visible.filter((r) => !r.hasAudio).map((r) => r.id);
+          return (
+            <AdultButton
+              label={todo.length > 0 ? `Tạo giọng đọc cho ${nf(todo.length)} từ đang lọc` : "Các từ đang lọc đã đủ giọng đọc"}
+              icon="speaker"
+              variant="secondary"
+              disabled={!canMake || batch.busy || todo.length === 0}
+              title={why ?? `Mỗi lượt ${TTS_UI_BATCH_SIZE} từ, có thể dừng giữa chừng`}
+              onClick={() => void batch.start(todo)}
+            />
+          );
+        }}
         onRowClick={(r) => setEditing(r.id)}
         actions={(r) => <AdultIconButton icon="pen" label={`Sửa từ ${r.word}`} onClick={() => setEditing(r.id)} />}
       />
@@ -124,9 +147,11 @@ export function VocabView({ data }: { data: VocabData }) {
   );
 }
 
-/** Ngăn kéo thêm / sửa một từ. Hình và âm thanh chỉ xem ở đây; gán hình ở Thư viện hình ảnh, giọng đọc GĐ1 dùng giọng trình duyệt. */
+/** Ngăn kéo thêm / sửa một từ. Hình chỉ xem ở đây (gán hình ở Thư viện hình ảnh); giọng đọc mp3 tạo được ngay ở đây khi công tắc “Giọng mp3” bật. */
 function WordDrawer({ data, row, onClose }: { data: VocabData; row: VocabRow | undefined; onClose: () => void }) {
   const toast = useToast();
+  const router = useRouter();
+  const batch = useAudioBatch(() => router.refresh());
   const [word, setWord] = useState(row?.word ?? "");
   const [ipa, setIpa] = useState(row?.ipa ?? "");
   const [pos, setPos] = useState(row?.pos || "noun");
@@ -140,6 +165,10 @@ function WordDrawer({ data, row, onClose }: { data: VocabData; row: VocabRow | u
   const [busy, setBusy] = useState(false);
 
   const clear = (...fields: string[]) => setErrors((e) => ({ ...e, ...Object.fromEntries(fields.map((f) => [f, ""])) }));
+  const canMake = data.mp3Enabled && data.ttsAvailable;
+  const why = !data.ttsAvailable ? "Máy chủ này chưa có công cụ tạo giọng đọc" : !data.mp3Enabled ? "Bật “Giọng mp3” ở Hình ảnh & âm thanh để tạo giọng đọc" : undefined;
+  // Giọng đọc tạo từ chữ đã lưu: chữ đang sửa khác chữ đã lưu thì phải lưu trước.
+  const textChanged = Boolean(row) && (word.trim() !== row?.word || exampleEn.trim() !== row?.exampleEn);
   const levelOptions = data.topicsByLevel[levelId] ?? [];
   // Chủ đề hiện tại của từ có thể không nằm trong cây của cấp: vẫn hiện để không mất khi lưu.
   const topicOptions = topic && !levelOptions.includes(topic) ? [topic, ...levelOptions] : levelOptions;
@@ -230,9 +259,26 @@ function WordDrawer({ data, row, onClose }: { data: VocabData; row: VocabRow | u
         <section className={styles.section} aria-label="Âm thanh">
           <h3 className={adultStyles.h3}>Âm thanh</h3>
           <div className={styles.audio}>
-            <span className={cn(adultStyles.small, adultStyles.muted)}>{row?.audio ? `Tệp: ${row.audio}` : "Chưa có tệp âm thanh. Giai đoạn 1 đọc bằng giọng có sẵn của trình duyệt."}</span>
-            <AdultButton label="Tạo giọng đọc tự động" icon="speaker" variant="secondary" size="s" disabled title="Sắp có" />
+            <span className={cn(adultStyles.small, adultStyles.muted)}>
+              {row?.audio || row?.exampleAudio
+                ? `Tệp từ: ${row.audio ? fileName(row.audio) : "chưa có"} · Tệp câu ví dụ: ${row.exampleAudio ? fileName(row.exampleAudio) : "chưa có"}`
+                : "Chưa có tệp âm thanh: bé nghe bằng giọng có sẵn của trình duyệt."}
+            </span>
+            <span className={styles.audioBtns}>
+              {row?.audio && <SpeakerButton word={row.word} audioUrl={row.audio} size="s" label={`Nghe tệp của từ ${row.word}`} />}
+              {row?.exampleAudio && row.exampleEn && <SpeakerButton word={row.exampleEn} audioUrl={row.exampleAudio} size="s" label={`Nghe tệp câu ví dụ của ${row.word}`} />}
+              <AdultButton
+                label="Tạo giọng đọc tự động"
+                icon="speaker"
+                variant="secondary"
+                size="s"
+                disabled={!row || !canMake || batch.busy || textChanged}
+                title={!row ? "Lưu từ trước rồi mới tạo giọng đọc" : textChanged ? "Lưu thay đổi chữ trước khi tạo giọng đọc" : why}
+                onClick={() => row && void batch.start([row.id], hasFullAudio(row))}
+              />
+            </span>
           </div>
+          <AudioBatchStatus state={batch.state} onStop={batch.stop} />
         </section>
 
         <div className={cn(styles.grid, styles.section)}>

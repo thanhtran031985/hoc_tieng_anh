@@ -56,6 +56,9 @@ function targetWordCount(value: unknown): number {
   return Array.isArray(value) ? value.length : 0;
 }
 
+/** Từ chưa có đủ tiếng: thiếu tệp của từ hoặc của câu ví dụ. */
+const NO_FULL_AUDIO = { OR: [{ audio: null }, { exampleAudio: null }] };
+
 export async function getDashboard(now: Date = new Date()): Promise<DashboardData> {
   const [levels, units, wordsAll, wordsImage, wordsAudio, questionsAll, noImageTotal, noAudioTotal, noImageExamples, noAudioExamples, noImageByLevel, noAudioByLevel, noExplanation, questionsNew, lessonsDraft] =
     await Promise.all([
@@ -63,14 +66,14 @@ export async function getDashboard(now: Date = new Date()): Promise<DashboardDat
       db.unit.findMany({ select: { levelId: true, title: true, titleVi: true, source: true, targetWords: true, status: true, sortOrder: true, _count: { select: { lessons: true } }, lessons: { select: { status: true } } } }),
       db.word.groupBy({ by: ["levelId"], _count: { _all: true } }),
       db.word.groupBy({ by: ["levelId"], where: { image: { not: null } }, _count: { _all: true } }),
-      db.word.groupBy({ by: ["levelId"], where: { audio: { not: null } }, _count: { _all: true } }),
+      db.word.groupBy({ by: ["levelId"], where: { audio: { not: null }, exampleAudio: { not: null } }, _count: { _all: true } }),
       db.question.groupBy({ by: ["levelId"], _count: { _all: true } }),
       db.word.count({ where: { image: null } }),
-      db.word.count({ where: { audio: null } }),
+      db.word.count({ where: NO_FULL_AUDIO }),
       db.word.findMany({ where: { image: null }, orderBy: { id: "asc" }, take: EXAMPLE_COUNT, select: { word: true } }),
-      db.word.findMany({ where: { audio: null }, orderBy: { id: "asc" }, take: EXAMPLE_COUNT, select: { word: true } }),
+      db.word.findMany({ where: NO_FULL_AUDIO, orderBy: { id: "asc" }, take: EXAMPLE_COUNT, select: { word: true } }),
       db.word.groupBy({ by: ["levelId"], where: { image: null }, _count: { _all: true } }),
-      db.word.groupBy({ by: ["levelId"], where: { audio: null }, _count: { _all: true } }),
+      db.word.groupBy({ by: ["levelId"], where: NO_FULL_AUDIO, _count: { _all: true } }),
       db.question.count({ where: { OR: [{ explanation: null }, { explanation: "" }] } }),
       db.question.count({ where: { createdAt: { gte: new Date(now.getTime() - WEEK_MS) } } }),
       db.lesson.count({ where: { status: "draft" } }),

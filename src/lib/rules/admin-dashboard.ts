@@ -85,7 +85,7 @@ export function pickWarnings(input: WarningInput): DashboardWarning[] {
       kind: "audio",
       tone: "info",
       title: `${vn(wordsNoAudio.count)} từ chưa có âm thanh`,
-      detail: "Giai đoạn 1 đọc bằng giọng có sẵn của trình duyệt; tệp mp3 sẽ có ở giai đoạn 2",
+      detail: "Bé vẫn nghe bằng giọng có sẵn của trình duyệt; bật “Giọng mp3” rồi tạo tệp ở Hình ảnh & âm thanh để có giọng chuẩn",
       examples: wordsNoAudio.examples,
     });
   }

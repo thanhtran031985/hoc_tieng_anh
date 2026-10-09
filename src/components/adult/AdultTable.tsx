@@ -36,8 +36,8 @@ type Props<Row> = {
   pageSize?: number;
   /** Cột thao tác bên phải mỗi hàng (nút, menu). */
   actions?: (row: Row) => React.ReactNode;
-  /** Vùng bên phải thanh công cụ (nút "Thêm…"). */
-  toolbarRight?: React.ReactNode;
+  /** Vùng bên phải thanh công cụ (nút "Thêm…"). Dạng hàm thì nhận các hàng đang lọc (trước khi chia trang). */
+  toolbarRight?: React.ReactNode | ((visible: readonly Row[]) => React.ReactNode);
   onRowClick?: (row: Row) => void;
   caption: string;
 };
@@ -126,7 +126,7 @@ export function AdultTable<Row extends Record<string, unknown>>({ columns, rows,
           </span>
         ))}
         <span className={table.spacer} />
-        {toolbarRight}
+        {typeof toolbarRight === "function" ? toolbarRight(visible) : toolbarRight}
       </div>
 
       <div className={table.wrap}>

@@ -3,6 +3,9 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { MEDIA_MAX_BYTES, contentTypeOf, isAssignablePath, isStoredFileName, sniffImage, storedFileName, uploadPath, wordFromFileName } from "@/lib/rules/admin-media";
+import { hasFullAudio } from "@/lib/rules/tts";
+import { getVoiceMp3Enabled } from "../app-settings";
+import { isTtsAvailable } from "../audio/tts";
 import { db } from "../db";
 import { fail, firstIssue, type AdminResult } from "./result";
 
@@ -11,24 +14,38 @@ import { fail, firstIssue, type AdminResult } from "./result";
 
 export const UPLOAD_DIR = path.join(process.cwd(), "storage", "uploads");
 
-export type LibraryWord = { id: number; word: string; level: number; image: string | null; audio: string | null; usedIn: number };
+export type LibraryWord = { id: number; word: string; level: number; image: string | null; audio: string | null; exampleEn: string; exampleAudio: string | null; usedIn: number };
 export type LibraryUpload = { path: string; size: number; createdAt: string };
-export type MediaLibrary = { words: LibraryWord[]; unassigned: LibraryUpload[]; imageCount: number; audioCount: number };
+export type MediaLibrary = {
+  words: LibraryWord[];
+  unassigned: LibraryUpload[];
+  imageCount: number;
+  /** Số từ đã có đủ tiếng (cả từ lẫn câu ví dụ). */
+  audioCount: number;
+  /** Công tắc “Giọng mp3” (toàn hệ thống) đang bật. */
+  mp3Enabled: boolean;
+  /** Máy chủ này tạo được giọng đọc (đã cài công cụ). */
+  ttsAvailable: boolean;
+};
 
 export async function getLibrary(): Promise<MediaLibrary> {
-  const [words, steps, media] = await Promise.all([
-    db.word.findMany({ orderBy: [{ level: { number: "asc" } }, { word: "asc" }], select: { id: true, word: true, image: true, audio: true, level: { select: { number: true } } } }),
+  const [words, steps, media, mp3Enabled, ttsAvailable] = await Promise.all([
+    db.word.findMany({ orderBy: [{ level: { number: "asc" } }, { word: "asc" }], select: { id: true, word: true, image: true, audio: true, exampleEn: true, exampleAudio: true, level: { select: { number: true } } } }),
     db.lessonStep.findMany({ where: { wordId: { not: null } }, distinct: ["wordId", "lessonId"], select: { wordId: true } }),
     db.media.findMany({ where: { type: "image" }, orderBy: { id: "desc" }, select: { path: true, size: true, createdAt: true } }),
+    getVoiceMp3Enabled(),
+    isTtsAvailable(),
   ]);
   const used = new Map<number, number>();
   for (const s of steps) if (s.wordId !== null) used.set(s.wordId, (used.get(s.wordId) ?? 0) + 1);
   const attached = new Set(words.flatMap((w) => (w.image ? [w.image] : [])));
   return {
-    words: words.map((w) => ({ id: w.id, word: w.word, level: w.level.number, image: w.image, audio: w.audio, usedIn: used.get(w.id) ?? 0 })),
+    words: words.map((w) => ({ id: w.id, word: w.word, level: w.level.number, image: w.image, audio: w.audio, exampleEn: w.exampleEn ?? "", exampleAudio: w.exampleAudio, usedIn: used.get(w.id) ?? 0 })),
     unassigned: media.filter((m) => !attached.has(m.path)).map((m) => ({ path: m.path, size: m.size, createdAt: m.createdAt.toISOString() })),
     imageCount: words.filter((w) => w.image).length,
-    audioCount: words.filter((w) => w.audio).length,
+    audioCount: words.filter(hasFullAudio).length,
+    mp3Enabled,
+    ttsAvailable,
   };
 }
 

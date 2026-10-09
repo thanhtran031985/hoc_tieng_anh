@@ -2,12 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
-import { AdultButton, AdultCard, AdultEmpty, AdultInput, AdultSegmented, AdultSelect, AdultTable, Status, adultStyles, useToast, type AdultColumn } from "@/components/adult";
-import { Icon, LevelChip, WordPicture } from "@/components/ui";
+import { AdultButton, AdultCard, AdultEmpty, AdultInput, AdultSegmented, AdultSelect, AdultTable, AdultToggle, Status, adultStyles, useToast, type AdultColumn } from "@/components/adult";
+import { Icon, LevelChip, SpeakerButton, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { MEDIA_MAX_BYTES } from "@/lib/rules/admin-media";
+import { TTS_UI_BATCH_SIZE, hasFullAudio } from "@/lib/rules/tts";
 import type { LibraryWord, MediaLibrary } from "@/server/admin/media";
+import { setVoiceMp3Action } from "./audio-actions";
+import { AudioBatchStatus } from "./AudioBatchStatus";
 import { assignImageAction } from "./media-actions";
+import { useAudioBatch } from "./useAudioBatch";
+import audioStyles from "./audio.module.css";
 import styles from "./media.module.css";
 
 type Tab = "images" | "audio";
@@ -63,7 +68,7 @@ export function MediaView({ data }: { data: MediaLibrary }) {
       <p className={cn(adultStyles.body, adultStyles.muted, styles.sum)}>
         {nf(noImage)} từ chưa có hình · {nf(noAudio)} từ chưa có âm thanh
       </p>
-      {tab === "images" ? <ImagesPanel data={data} noImage={noImage} /> : <AudioPanel data={data} noAudio={noAudio} />}
+      {tab === "images" ? <ImagesPanel data={data} noImage={noImage} /> : <AudioPanel data={data} />}
     </div>
   );
 }
@@ -282,10 +287,40 @@ function ImagesPanel({ data, noImage }: { data: MediaLibrary; noImage: number })
   );
 }
 
-type AudioRow = LibraryWord & { state: "yes" | "no"; file: string };
+type AudioRow = LibraryWord & { state: "yes" | "no"; wordFile: string; exampleFile: string };
 
-function AudioPanel({ data, noAudio }: { data: MediaLibrary; noAudio: number }) {
-  const rows: AudioRow[] = data.words.map((w) => ({ ...w, state: w.audio ? "yes" : "no", file: w.audio ? fileOf(w.audio) : "—" }));
+/** Tab Âm thanh: công tắc “Giọng mp3” (toàn hệ thống), tạo giọng đọc hàng loạt có tiến trình và nút Dừng, tạo/nghe từng từ. */
+function AudioPanel({ data }: { data: MediaLibrary }) {
+  const router = useRouter();
+  const toast = useToast();
+  const [enabled, setEnabled] = useState(data.mp3Enabled);
+  const [saving, setSaving] = useState(false);
+  const batch = useAudioBatch(() => router.refresh());
+  const canMake = enabled && data.ttsAvailable;
+  const why = !data.ttsAvailable ? "Máy chủ này chưa có công cụ tạo giọng đọc" : !enabled ? "Bật “Giọng mp3” để tạo giọng đọc" : undefined;
+
+  const rows: AudioRow[] = data.words.map((w) => ({
+    ...w,
+    state: hasFullAudio(w) ? "yes" : "no",
+    wordFile: w.audio ? fileOf(w.audio) : "—",
+    exampleFile: w.exampleAudio ? fileOf(w.exampleAudio) : "—",
+  }));
+  const missing = rows.filter((r) => r.state === "no").map((r) => r.id);
+
+  async function toggle(next: boolean) {
+    setEnabled(next);
+    setSaving(true);
+    const result = await setVoiceMp3Action({ enabled: next });
+    setSaving(false);
+    if (!result.ok) {
+      setEnabled(!next);
+      toast(result.message);
+      return;
+    }
+    toast(next ? "Đã bật Giọng mp3. Bé sẽ nghe tệp mp3 khi từ có tệp." : "Đã tắt Giọng mp3. Bé nghe bằng giọng của trình duyệt.");
+    router.refresh();
+  }
+
   const columns: readonly AdultColumn<AudioRow>[] = [
     {
       key: "word",
@@ -298,27 +333,60 @@ function AudioPanel({ data, noAudio }: { data: MediaLibrary; noAudio: number }) 
         </span>
       ),
     },
-    { key: "file", label: "Tệp", sort: true },
+    { key: "wordFile", label: "Tệp của từ", sort: true },
+    { key: "exampleFile", label: "Tệp câu ví dụ", sort: true },
     { key: "level", label: "Cấp", sort: true, render: (r) => <LevelChip level={r.level} name="" plain /> },
-    { key: "state", label: "Trạng thái", sort: true, render: (r) => (r.state === "yes" ? <Status kind="ok" label="Đã có" /> : <Status kind="warn" label="Chưa có" />) },
+    {
+      key: "state",
+      label: "Trạng thái",
+      sort: true,
+      render: (r) => (r.state === "yes" ? <Status kind="ok" label="Đã có" /> : <Status kind="warn" label={r.audio || r.exampleAudio ? "Thiếu một phần" : "Chưa có"} />),
+    },
   ];
+
   return (
     <>
-      <AdultCard className={styles.bulk} aria-labelledby="bulk-title">
-        <div>
-          <h2 className={adultStyles.h2} id="bulk-title">
-            Tạo giọng đọc hàng loạt
-          </h2>
-          <span className={cn(adultStyles.small, adultStyles.muted)}>Sắp có ở giai đoạn 2. Giai đoạn 1 đọc từ và câu bằng giọng có sẵn của trình duyệt nên {nf(noAudio)} từ chưa có tệp âm thanh vẫn học bình thường.</span>
-        </div>
-        <AdultButton label={`Tạo cho ${nf(noAudio)} từ`} icon="speaker" disabled title="Sắp có" />
+      <AdultCard className={audioStyles.toggleCard} aria-labelledby="mp3-title">
+        <h2 className={adultStyles.h2} id="mp3-title">
+          Giọng đọc của bé
+        </h2>
+        <AdultToggle
+          label="Giọng mp3"
+          sub={enabled ? "Bé nghe tệp mp3 khi từ có tệp; thiếu tệp thì nghe giọng trình duyệt." : "Đang tắt: bé nghe bằng giọng có sẵn của trình duyệt (mặc định)."}
+          checked={enabled}
+          onChange={(next) => {
+            if (!saving) void toggle(next);
+          }}
+        />
       </AdultCard>
+
+      <AdultCard className={cn(audioStyles.bulk, !canMake && audioStyles.off)} aria-labelledby="bulk-title">
+        <div className={audioStyles.bulkHead}>
+          <div>
+            <h2 className={adultStyles.h2} id="bulk-title">
+              Tạo giọng đọc hàng loạt
+            </h2>
+            <span className={cn(adultStyles.small, adultStyles.muted)}>
+              {why ?? `Tạo tệp mp3 cho từ và câu ví dụ, mỗi lượt ${TTS_UI_BATCH_SIZE} từ. Từ đã có tệp được bỏ qua; tắt trang giữa chừng thì chạy lại làm tiếp.`}
+            </span>
+          </div>
+          <AdultButton
+            label={missing.length > 0 ? `Tạo cho ${nf(missing.length)} từ` : "Đã đủ giọng đọc"}
+            icon="speaker"
+            disabled={!canMake || batch.busy || missing.length === 0}
+            title={why}
+            onClick={() => void batch.start(missing)}
+          />
+        </div>
+        <AudioBatchStatus state={batch.state} onStop={batch.stop} />
+      </AdultCard>
+
       <AdultTable
         caption="Âm thanh của từ vựng"
         columns={columns}
         rows={rows}
         rowKey={(r) => r.id}
-        searchKeys={["word", "file"]}
+        searchKeys={["word", "wordFile", "exampleFile"]}
         searchPlaceholder="Tìm từ hoặc tên tệp…"
         pageSize={8}
         filters={[
@@ -327,12 +395,26 @@ function AudioPanel({ data, noAudio }: { data: MediaLibrary; noAudio: number }) 
             label: "Tình trạng",
             options: [
               ["yes", "Đã có âm thanh"],
-              ["no", "Chưa có âm thanh"],
+              ["no", "Chưa đủ âm thanh"],
             ],
           },
           { key: "level", label: "Cấp", options: Array.from({ length: 10 }, (_, i) => [String(i + 1), `Cấp ${i + 1}`] as const), match: (r, v) => String(r.level) === v },
         ]}
-        actions={() => <AdultButton label="Tạo" icon="speaker" variant="secondary" size="s" disabled title="Sắp có" />}
+        actions={(r) => (
+          <span className={audioStyles.files}>
+            {r.audio && <SpeakerButton word={r.word} audioUrl={r.audio} size="s" label={`Nghe tệp của từ ${r.word}`} />}
+            {r.exampleAudio && r.exampleEn && <SpeakerButton word={r.exampleEn} audioUrl={r.exampleAudio} size="s" label={`Nghe tệp câu ví dụ của ${r.word}`} />}
+            <AdultButton
+              label={r.state === "yes" ? "Tạo lại" : "Tạo"}
+              icon="speaker"
+              variant="secondary"
+              size="s"
+              disabled={!canMake || batch.busy}
+              title={why}
+              onClick={() => void batch.start([r.id], r.state === "yes")}
+            />
+          </span>
+        )}
       />
     </>
   );

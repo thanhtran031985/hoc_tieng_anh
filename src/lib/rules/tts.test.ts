@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { audioFileName, buildAudioMap, audioKey, audioNameFromUrl, audioUrlPath, chunk, isAudioFileName, parseByteRange, splitSentences, spokenText } from "./tts.ts";
+import { audioFileName, audioTargets, buildAudioMap, hasFullAudio, audioKey, audioNameFromUrl, audioUrlPath, chunk, isAudioFileName, parseByteRange, splitSentences, spokenText } from "./tts.ts";
 
 describe("văn bản cần đọc", () => {
   it("gọn khoảng trắng; khóa tra cứu không phân biệt hoa thường", () => {
@@ -88,5 +88,37 @@ describe("buildAudioMap", () => {
 
   it("bỏ đường dẫn không phải mp3 hợp lệ", () => {
     assert.deepEqual(buildAudioMap([{ word: "cat", audio: "/audio/../x.mp3", exampleEn: "A cat.", exampleAudio: "/uploads/a.png" }]), {});
+  });
+});
+
+describe("audioTargets", () => {
+  const base = { word: "cat", audio: null, exampleEn: "The  cat sleeps.", exampleAudio: null };
+
+  it("thiếu cả hai thì tạo cả từ và câu ví dụ (chữ đã gọn)", () => {
+    assert.deepEqual(audioTargets(base), [
+      { kind: "word", field: "audio", text: "cat" },
+      { kind: "example", field: "exampleAudio", text: "The cat sleeps." },
+    ]);
+  });
+
+  it("chỉ lấy chỗ còn thiếu; force thì lấy hết", () => {
+    const half = { ...base, audio: "/audio/word-1-ab12cd34.mp3" };
+    assert.deepEqual(audioTargets(half).map((t) => t.kind), ["example"]);
+    assert.deepEqual(audioTargets(half, true).map((t) => t.kind), ["word", "example"]);
+  });
+
+  it("bỏ chỗ không có chữ hoặc quá dài", () => {
+    assert.deepEqual(audioTargets({ ...base, exampleEn: null }).map((t) => t.kind), ["word"]);
+    assert.deepEqual(audioTargets({ ...base, exampleEn: "x".repeat(501) }).map((t) => t.kind), ["word"]);
+  });
+});
+
+describe("hasFullAudio", () => {
+  it("cần tiếng của từ và của câu ví dụ", () => {
+    const a = "/audio/word-1-ab12cd34.mp3";
+    assert.equal(hasFullAudio({ word: "cat", audio: a, exampleEn: "A cat.", exampleAudio: a }), true);
+    assert.equal(hasFullAudio({ word: "cat", audio: a, exampleEn: "A cat.", exampleAudio: null }), false);
+    assert.equal(hasFullAudio({ word: "cat", audio: null, exampleEn: null, exampleAudio: null }), false);
+    assert.equal(hasFullAudio({ word: "cat", audio: a, exampleEn: "", exampleAudio: null }), true);
   });
 });

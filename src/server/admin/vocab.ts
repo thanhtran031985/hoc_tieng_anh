@@ -1,4 +1,8 @@
+import { audioKey } from "@/lib/rules/tts";
 import { saveWordSchema } from "@/lib/schemas/admin-vocab";
+import { getVoiceMp3Enabled } from "../app-settings";
+import { removeAudioFile } from "../audio/files";
+import { isTtsAvailable } from "../audio/tts";
 import { db } from "../db";
 import { fail, firstIssue, type AdminResult } from "./result";
 
@@ -19,6 +23,7 @@ export type VocabRow = {
   topics: string[];
   image: string | null;
   audio: string | null;
+  exampleAudio: string | null;
 };
 
 export type VocabData = {
@@ -26,10 +31,14 @@ export type VocabData = {
   levels: { id: number; number: number; name: string }[];
   /** Chủ đề chọn được theo cấp (id cấp → tên chủ đề), lấy từ cây lộ trình. */
   topicsByLevel: Record<number, string[]>;
+  /** Công tắc “Giọng mp3” đang bật (nút “Tạo giọng đọc tự động” chỉ sáng khi bật). */
+  mp3Enabled: boolean;
+  /** Máy chủ này tạo được giọng đọc (đã cài công cụ). */
+  ttsAvailable: boolean;
 };
 
 export async function getVocab(): Promise<VocabData> {
-  const [words, levels, units] = await Promise.all([
+  const [words, levels, units, mp3Enabled, ttsAvailable] = await Promise.all([
     db.word.findMany({
       orderBy: [{ level: { number: "asc" } }, { id: "asc" }],
       select: {
@@ -42,6 +51,7 @@ export async function getVocab(): Promise<VocabData> {
         exampleVi: true,
         image: true,
         audio: true,
+        exampleAudio: true,
         levelId: true,
         level: { select: { number: true } },
         topics: { select: { topic: { select: { name: true } } } },
@@ -49,6 +59,8 @@ export async function getVocab(): Promise<VocabData> {
     }),
     db.level.findMany({ orderBy: { number: "asc" }, select: { id: true, number: true, name: true } }),
     db.unit.findMany({ orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { levelId: true, title: true } }),
+    getVoiceMp3Enabled(),
+    isTtsAvailable(),
   ]);
   const topicsByLevel: Record<number, string[]> = {};
   for (const level of levels) topicsByLevel[level.id] = [];
@@ -67,9 +79,12 @@ export async function getVocab(): Promise<VocabData> {
       topics: w.topics.map((t) => t.topic.name),
       image: w.image,
       audio: w.audio,
+      exampleAudio: w.exampleAudio,
     })),
     levels,
     topicsByLevel,
+    mp3Enabled,
+    ttsAvailable,
   };
 }
 
@@ -101,13 +116,29 @@ export async function saveWord(input: unknown): Promise<AdminResult> {
     topicId = null;
   }
 
+  // Đổi chữ của từ hoặc câu ví dụ thì tệp mp3 cũ không còn đúng: bỏ tệp để bé không nghe nhầm.
+  const staleAudio: string[] = [];
+  const audioReset: { audio?: null; exampleAudio?: null } = {};
+  if (id) {
+    const before = await db.word.findUnique({ where: { id }, select: { word: true, exampleEn: true, audio: true, exampleAudio: true } });
+    if (before?.audio && audioKey(before.word) !== audioKey(data.word)) {
+      staleAudio.push(before.audio);
+      audioReset.audio = null;
+    }
+    if (before?.exampleAudio && audioKey(before.exampleEn ?? "") !== audioKey(data.exampleEn ?? "")) {
+      staleAudio.push(before.exampleAudio);
+      audioReset.exampleAudio = null;
+    }
+  }
+
   const saved = await db.$transaction(async (tx) => {
-    const row = id ? await tx.word.update({ where: { id }, data, select: { id: true } }) : await tx.word.create({ data, select: { id: true } });
+    const row = id ? await tx.word.update({ where: { id }, data: { ...data, ...audioReset }, select: { id: true } }) : await tx.word.create({ data, select: { id: true } });
     if (topicId !== undefined) {
       await tx.wordTopic.deleteMany({ where: { wordId: row.id } });
       if (topicId !== null) await tx.wordTopic.create({ data: { wordId: row.id, topicId } });
     }
     return row;
   });
+  for (const path of staleAudio) await removeAudioFile(path);
   return { ok: true, id: saved.id };
 }

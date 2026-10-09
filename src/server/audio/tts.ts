@@ -1,3 +1,5 @@
+import { createRequire } from "node:module";
+import path from "node:path";
 import { TTS_DEFAULT_VOICE, TTS_MAX_CHARS, TTS_SPEED, spokenText, splitSentences } from "@/lib/rules/tts";
 import { encodeMp3 } from "./mp3";
 
@@ -28,12 +30,19 @@ export class TtsTextError extends Error {
 type RawAudio = { audio: Float32Array; sampling_rate: number };
 type Engine = { generate: (text: string, options: { voice: string; speed: number }) => Promise<RawAudio> };
 
+type KokoroModule = { KokoroTTS: { from_pretrained: (id: string, options: { dtype: string; device: string }) => Promise<unknown> } };
+
+// Nạp `kokoro-js` bằng `require` của Node, không qua bộ đóng gói của Next: gói này tìm tệp giọng theo vị trí của chính nó
+// (`voices/*.bin`), qua bộ đóng gói thì đường dẫn bị sai.
+const nodeRequire = createRequire(path.join(process.cwd(), "package.json"));
+const loadKokoro = (): KokoroModule => nodeRequire("kokoro-js") as KokoroModule;
+
 let enginePromise: Promise<Engine> | null = null;
 
 function loadEngine(): Promise<Engine> {
   enginePromise ??= (async () => {
     try {
-      const { KokoroTTS } = await import("kokoro-js");
+      const { KokoroTTS } = loadKokoro();
       return (await KokoroTTS.from_pretrained(MODEL_ID, { dtype: "fp16", device: "cpu" })) as unknown as Engine;
     } catch (error) {
       enginePromise = null;
@@ -51,7 +60,7 @@ export function currentVoice(): string {
 /** Công cụ tạo giọng đọc có dùng được không (để quản trị biết nút "Tạo giọng đọc" có chạy được). */
 export async function isTtsAvailable(): Promise<boolean> {
   try {
-    await import("kokoro-js");
+    nodeRequire.resolve("kokoro-js");
     return true;
   } catch {
     return false;

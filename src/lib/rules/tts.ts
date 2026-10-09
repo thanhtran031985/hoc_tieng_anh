@@ -103,3 +103,26 @@ export function buildAudioMap(words: readonly AudioSource[]): Record<string, str
   }
   return map;
 }
+
+export type AudioTarget = { kind: "word" | "example"; field: "audio" | "exampleAudio"; text: string };
+
+/**
+ * Những chỗ của một từ cần tạo giọng đọc: chính từ (cột `audio`) và câu ví dụ (cột `exampleAudio`).
+ * Chỉ lấy chỗ còn thiếu tệp, hoặc tất cả khi `force`; bỏ chỗ không có chữ hoặc dài quá giới hạn.
+ */
+export function audioTargets(w: AudioSource, force = false): AudioTarget[] {
+  const out: AudioTarget[] = [];
+  const word = spokenText(w.word);
+  if (word && word.length <= TTS_MAX_CHARS && (force || !w.audio)) out.push({ kind: "word", field: "audio", text: word });
+  const example = spokenText(w.exampleEn ?? "");
+  if (example && example.length <= TTS_MAX_CHARS && (force || !w.exampleAudio)) out.push({ kind: "example", field: "exampleAudio", text: example });
+  return out;
+}
+
+/** Từ đã có đủ tiếng: cả từ lẫn câu ví dụ (nếu có câu ví dụ). */
+export function hasFullAudio(w: AudioSource): boolean {
+  return Boolean(w.audio) && (!spokenText(w.exampleEn ?? "") || Boolean(w.exampleAudio));
+}
+
+/** Số mục mỗi lượt khi tạo hàng loạt ở màn quản trị: nhỏ để thanh tiến trình nhích đều và nút Dừng có tác dụng sớm. */
+export const TTS_UI_BATCH_SIZE = 5;
