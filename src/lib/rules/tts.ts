@@ -1,0 +1,105 @@
+// Giọng đọc mp3: quy tắc thuần (đặt tên tệp, văn bản cần đọc, chia lô, dải byte). Phần gọi mô hình và ghi tệp nằm ở src/server/audio/.
+
+/** Loại nội dung có tệp mp3: từ, câu ví dụ, câu hỏi, âm phonics. */
+export const AUDIO_KINDS = ["word", "example", "question", "phonics"] as const;
+export type AudioKind = (typeof AUDIO_KINDS)[number];
+
+/** Giọng Kokoro mặc định cho cả web (Anh-Mỹ, nữ). Đổi bằng biến môi trường `TTS_VOICE` (vd `am_michael`). */
+export const TTS_DEFAULT_VOICE = "af_heart";
+/** Tốc độ đọc khi tạo tệp (chậm hơn bình thường một chút cho bé nghe rõ). */
+export const TTS_SPEED = 0.9;
+/** Văn bản dài hơn mức này không tạo giọng đọc (trùng giới hạn câu hỏi 500 ký tự). */
+export const TTS_MAX_CHARS = 500;
+/** Số mục mỗi lượt khi tạo hàng loạt ở quản trị và dòng lệnh. */
+export const TTS_BATCH_SIZE = 20;
+/** Khóa cài đặt hệ thống của công tắc "Giọng mp3". */
+export const VOICE_MP3_SETTING_KEY = "voice_mp3";
+
+const NAME_PATTERN = new RegExp(`^(?:${AUDIO_KINDS.join("|")})-[0-9]{1,10}-[0-9a-f]{8}\\.mp3$`);
+const URL_PREFIX = "/audio/";
+
+/** Gọn khoảng trắng và dấu xuống dòng trước khi đưa cho giọng đọc. */
+export function spokenText(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/** Tách văn bản thành từng câu (theo . ! ?) để đọc lần lượt; giữ dấu câu ở cuối mỗi câu. */
+export function splitSentences(text: string): string[] {
+  return spokenText(text)
+    .split(/(?<=[.!?])\s+/)
+    .filter((part) => part.length > 0);
+}
+
+/** Khóa tra cứu một câu/từ trong bảng tệp mp3 (không phân biệt hoa thường và khoảng trắng thừa). */
+export function audioKey(text: string): string {
+  return spokenText(text).toLowerCase();
+}
+
+/** Tên tệp mp3, ví dụ `word-12-ab12cd34.mp3`; `hash` là 8 ký tự hex tính từ văn bản và giọng (đổi chữ thì đổi tên tệp). */
+export function audioFileName(kind: AudioKind, id: number, hash: string): string {
+  if (!Number.isInteger(id) || id < 1) throw new RangeError("id phải là số nguyên dương");
+  if (!/^[0-9a-f]{8}$/.test(hash)) throw new RangeError("hash phải là 8 ký tự hex");
+  return `${kind}-${id}-${hash}.mp3`;
+}
+
+/** Tên tệp hợp lệ: chặn mọi đường dẫn lạ (`../`, thư mục con, đuôi khác). */
+export function isAudioFileName(name: string): boolean {
+  return NAME_PATTERN.test(name);
+}
+
+/** Đường dẫn lưu ở cột `audio`/`example_audio` và dùng làm `src`. */
+export function audioUrlPath(name: string): string {
+  return URL_PREFIX + name;
+}
+
+/** Lấy tên tệp từ đường dẫn đã lưu; không phải đường dẫn mp3 hợp lệ thì null. */
+export function audioNameFromUrl(path: string | null | undefined): string | null {
+  if (!path || !path.startsWith(URL_PREFIX)) return null;
+  const name = path.slice(URL_PREFIX.length);
+  return isAudioFileName(name) ? name : null;
+}
+
+/** Chia danh sách thành các lô nhỏ. */
+export function chunk<T>(items: readonly T[], size: number = TTS_BATCH_SIZE): T[][] {
+  if (!Number.isInteger(size) || size < 1) throw new RangeError("size phải là số nguyên dương");
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+
+export type ByteRange = { start: number; end: number };
+
+/**
+ * Đọc tiêu đề `Range: bytes=…` (một dải). Không có hoặc không hiểu thì `null` (trả cả tệp);
+ * dải nằm ngoài tệp thì `"unsatisfiable"` (trả 416).
+ */
+export function parseByteRange(header: string | null | undefined, size: number): ByteRange | "unsatisfiable" | null {
+  if (!header) return null;
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!match || (match[1] === "" && match[2] === "")) return null;
+  let start: number;
+  let end: number;
+  if (match[1] === "") {
+    const suffix = Number(match[2]);
+    if (suffix === 0) return "unsatisfiable";
+    start = Math.max(0, size - suffix);
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] === "" ? size - 1 : Math.min(Number(match[2]), size - 1);
+  }
+  if (start >= size || start > end) return "unsatisfiable";
+  return { start, end };
+}
+
+export type AudioSource = { word: string; audio: string | null; exampleEn: string | null; exampleAudio: string | null };
+
+/** Bảng "chữ → đường dẫn mp3" cho các từ của một bài (từ và câu ví dụ); chỉ lấy đường dẫn mp3 hợp lệ. */
+export function buildAudioMap(words: readonly AudioSource[]): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const w of words) {
+    if (audioNameFromUrl(w.audio)) map[audioKey(w.word)] = w.audio as string;
+    if (w.exampleEn && audioNameFromUrl(w.exampleAudio)) map[audioKey(w.exampleEn)] = w.exampleAudio as string;
+  }
+  return map;
+}

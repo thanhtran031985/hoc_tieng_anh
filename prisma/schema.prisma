@@ -302,6 +302,15 @@ model Media {
   @@map("media")
 }
 
+/// Cài đặt chung của cả hệ thống (không theo từng bé), dạng khóa → giá trị JSON, ví dụ `voice_mp3` = { "enabled": false }.
+model AppSetting {
+  key       String   @id @db.VarChar(64)
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("app_settings")
+}
+
 // ---------------------------------------------------------------------------
 // Kết quả học
 // ---------------------------------------------------------------------------

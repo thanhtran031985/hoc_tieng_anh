@@ -3,6 +3,7 @@ export * from "./admin-builder";
 export * from "./admin-questions";
 export * from "./admin-vocab";
 export * from "./answer-log";
+export * from "./app-settings";
 export * from "./auth";
 export * from "./curriculum";
 export * from "./learner";

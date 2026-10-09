@@ -4,6 +4,7 @@ import { toHair, toMascotColor } from "@/features/kid/learner-art";
 import { LessonEmpty } from "@/features/lesson/LessonEmpty";
 import { LessonPlayer } from "@/features/lesson/LessonPlayer";
 import { SoundProvider } from "@/features/sound/SoundProvider";
+import { SpeechConfig } from "@/features/speech/SpeechConfig";
 import { requireActiveLearner } from "@/server/active-learner";
 import { getMusicSrc } from "@/server/music";
 import { LessonLockedError, getLessonPlay } from "@/server/lesson-play";
@@ -34,6 +35,7 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
   const { musicOn, soundOn, volume } = learner.settings;
   return (
     <SoundProvider initial={{ musicOn, soundOn, volume }} musicSrc={await getMusicSrc()}>
+      <SpeechConfig accent={learner.settings.voice.accent} audio={plan.audio} />
       <LessonPlayer
         plan={plan}
         learnerId={learner.id}

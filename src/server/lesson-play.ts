@@ -1,7 +1,9 @@
 import { parseLessonStepConfig } from "@/lib/schemas";
 import { buildPlaySteps, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
 import { today } from "@/lib/rules/dates";
+import { buildAudioMap } from "@/lib/rules/tts";
 import { levelStatus } from "@/lib/rules/unlock";
+import { getVoiceMp3Enabled } from "./app-settings";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { getLevelNodes } from "./level-nodes";
@@ -30,6 +32,8 @@ export type LessonPlay = {
   steps: PlayStep[];
   /** Các từ của bài theo thứ tự xuất hiện, cho danh sách "Từ vừa học". */
   words: PlayWord[];
+  /** Bảng "chữ → đường dẫn mp3" của các từ và câu ví dụ trong bài; rỗng khi công tắc "Giọng mp3" tắt (dùng giọng trình duyệt). */
+  audio: Record<string, string>;
 };
 
 const wordSelect = { id: true, word: true, ipa: true, meaningVi: true, exampleEn: true, exampleVi: true, image: true } as const;
@@ -75,5 +79,16 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   const seen = new Set<number>();
   const words = lesson.steps.flatMap((s) => (s.word && !seen.has(s.word.id) && seen.add(s.word.id) ? [s.word] : []));
 
-  return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, steps, words };
+  const audio = (await getVoiceMp3Enabled()) ? await getAudioMap([...lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])), ...unitWords.map((w) => w.id)]) : {};
+
+  return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, steps, words, audio };
+}
+
+/** Bảng mp3 của các từ (theo id): tra thêm cột `audio`/`example_audio` vì `wordSelect` không lấy chúng. */
+async function getAudioMap(wordIds: number[]): Promise<Record<string, string>> {
+  const rows = await db.word.findMany({
+    where: { id: { in: [...new Set(wordIds)] }, OR: [{ audio: { not: null } }, { exampleAudio: { not: null } }] },
+    select: { word: true, audio: true, exampleEn: true, exampleAudio: true },
+  });
+  return buildAudioMap(rows);
 }

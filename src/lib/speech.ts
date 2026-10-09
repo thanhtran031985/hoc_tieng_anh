@@ -1,5 +1,6 @@
 // Phát âm từ và câu tiếng Anh (chỉ chạy trên trình duyệt).
-// GĐ1: dùng tệp mp3 nếu từ có `audio`, nếu không thì dùng giọng đọc của trình duyệt (speechSynthesis).
+// Dùng tệp mp3 nếu có (công tắc "Giọng mp3" của quản trị bật và từ có tệp), nếu không thì dùng giọng đọc của trình duyệt (speechSynthesis).
+import { audioKey } from "@/lib/rules/tts";
 
 export type SpeechAccent = "en-US" | "en-GB";
 
@@ -11,7 +12,7 @@ const MIN_PLAYING_MS = 1300;
 const PLAYING_MS_PER_CHAR = 150;
 
 export type PronunciationOptions = {
-  /** Đường dẫn tệp mp3 của từ (nếu có). Lỗi tải tệp thì dùng giọng đọc của trình duyệt. */
+  /** Đường dẫn tệp mp3 của từ (nếu có). Không truyền thì tra bảng của `configureSpeech`. Lỗi tải tệp thì dùng giọng đọc của trình duyệt. */
   audioUrl?: string | null;
   accent?: SpeechAccent;
   rate?: number;
@@ -20,6 +21,23 @@ export type PronunciationOptions = {
 };
 
 let currentAudio: HTMLAudioElement | null = null;
+
+// Cấu hình chung của màn đang mở (do SpeechConfig đặt): giọng Anh/Mỹ của bé và bảng "chữ → mp3". Nhờ vậy các bước học
+// chỉ gọi playPronunciation(text) mà vẫn dùng đúng giọng và tệp mp3, không phải truyền qua từng thành phần.
+let configAccent: SpeechAccent = "en-US";
+let configAudio: Readonly<Record<string, string>> = {};
+
+/** Đặt giọng và bảng mp3 cho màn đang mở. `audio` rỗng (công tắc "Giọng mp3" tắt) thì luôn dùng giọng trình duyệt. */
+export function configureSpeech(next: { accent?: SpeechAccent; audio?: Readonly<Record<string, string>> | null }): void {
+  if (next.accent) configAccent = next.accent;
+  if (next.audio !== undefined) configAudio = next.audio ?? {};
+}
+
+/** Về cài đặt mặc định (khi rời màn). */
+export function resetSpeech(): void {
+  configAccent = "en-US";
+  configAudio = {};
+}
 
 // Báo cho nhạc nền biết giọng đọc đang chạy để hạ nhỏ (src/lib/sound.ts). Giọng đọc không bao giờ phụ thuộc cài đặt âm thanh.
 type SpeakingListener = (speaking: boolean) => void;
@@ -87,7 +105,8 @@ function speakWithVoice(text: string, accent: SpeechAccent, rate: number, finish
  * Nếu trình duyệt không hỗ trợ giọng đọc, hiệu ứng vẫn chạy một lúc rồi kết thúc.
  */
 export function playPronunciation(text: string, options: PronunciationOptions = {}): () => void {
-  const { audioUrl, accent = "en-US", rate = DEFAULT_SPEECH_RATE, onEnd } = options;
+  const { accent = configAccent, rate = DEFAULT_SPEECH_RATE, onEnd } = options;
+  const audioUrl = options.audioUrl !== undefined ? options.audioUrl : (configAudio[audioKey(text)] ?? null);
   silence();
   const token = ++activeToken;
   setSpeaking(true);
@@ -102,7 +121,13 @@ export function playPronunciation(text: string, options: PronunciationOptions = 
     onEnd?.();
   }
 
-  const fallback = () => speakWithVoice(text, accent, rate, finish);
+  // Tệp lỗi làm cả `onerror` lẫn `play().catch` chạy: chỉ đọc bằng giọng trình duyệt một lần.
+  let fellBack = false;
+  const fallback = () => {
+    if (fellBack || finished) return;
+    fellBack = true;
+    speakWithVoice(text, accent, rate, finish);
+  };
 
   if (audioUrl) {
     const audio = new Audio(audioUrl);
