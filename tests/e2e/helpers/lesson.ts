@@ -6,7 +6,7 @@ import { spoken } from "./fixtures";
 /** Giống pictureSlug của ứng dụng: "ice cream" → "ice-cream". */
 export const slug = (word: string) => word.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
-export type StepKind = "card-front" | "card-back" | "listen" | "match" | "memory" | "pick" | "end" | "unknown";
+export type StepKind = "card-front" | "card-back" | "listen" | "match" | "memory" | "pick" | "phonics" | "order" | "dictation" | "fill" | "end" | "unknown";
 
 /** Dạng bước đang hiện (đọc từ tiêu đề h1 hoặc màn kết thúc). */
 export async function stepKind(page: Page): Promise<StepKind> {
@@ -18,6 +18,11 @@ export async function stepKind(page: Page): Promise<StepKind> {
   if (h1.startsWith("Kéo từ vào đúng hình")) return "match";
   if (h1.startsWith("Lật thẻ")) return "memory";
   if (h1.startsWith("Chọn từ")) return "pick";
+  // Task 15: bốn dạng bài lấy nội dung từ câu hỏi (chơi riêng trong 15-dang-bai-moi.spec.ts).
+  if (h1.startsWith("Ghép âm")) return "phonics";
+  if (h1.startsWith("Sắp xếp")) return "order";
+  if (h1.startsWith("Nghe và gõ")) return "dictation";
+  if (h1.startsWith("Điền từ")) return "fill";
   return "unknown";
 }
 

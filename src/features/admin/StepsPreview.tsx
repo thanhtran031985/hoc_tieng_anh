@@ -9,6 +9,9 @@ import type { PlayStep } from "@/lib/rules/lesson-play";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import styles from "./questions.module.css";
 
+/** Esc đóng cả khi đang gõ trong ô nhập của bài nghe và gõ, điền từ. */
+const ESC_WHILE_TYPING = ["Escape"] as const;
+
 type Props = {
   steps: readonly PlayStep[];
   /** Cấp của bài (1–10): quyết định giao diện Tiểu học (1–5) hay THCS (6–10) và màu cấp. */
@@ -25,7 +28,7 @@ export function StepsPreview({ steps, level, onClose }: Props) {
   const [round, setRound] = useState(0);
   const overlay = useRef<HTMLDivElement>(null);
   // Esc đóng bản xem thử (bước con như nối từ vẫn nhận Esc của nó trước).
-  useHotkeys({ Escape: onClose });
+  useHotkeys({ Escape: onClose }, { inInputs: ESC_WHILE_TYPING });
   // Đưa focus vào lớp phủ để Enter/Space không rơi vào nút của ngăn kéo bên dưới; đóng thì trả focus về chỗ cũ.
   useEffect(() => {
     const before = document.activeElement;

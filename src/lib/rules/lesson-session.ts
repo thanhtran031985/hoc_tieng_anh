@@ -4,7 +4,10 @@
 
 /** Kết quả của một mục được chấm trong một bước (mỗi câu nghe/chọn là 1 mục, mỗi cặp nối là 1 mục). */
 export type ItemResult = {
-  wordId: number;
+  /** Từ của mục; null với mục chỉ thuộc một câu hỏi (ghép âm, sắp xếp câu, nghe và gõ, điền từ không gắn từ). */
+  wordId: number | null;
+  /** Câu hỏi của mục (dạng bài dựng từ ngân hàng câu hỏi). */
+  questionId?: number;
   /** Đúng ngay lần chọn đầu tiên (không cần gợi ý hay thử lại). */
   firstTryCorrect: boolean;
   /** Số lần chọn sai trước khi đúng hoặc khi hiện đáp án. */

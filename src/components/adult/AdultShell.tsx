@@ -64,6 +64,7 @@ export function AdultShell({ area, active, title, crumb, kids, actions, user, on
               <Link key={item.key} href={item.href} className={cn(styles.navItem, item.key === active && styles.navOn)} aria-current={item.key === active ? "page" : undefined}>
                 <Icon name={item.icon} size={20} />
                 <span>{item.label}</span>
+                {item.badge && <span className={styles.navTag}>{item.badge}</span>}
               </Link>
             ) : (
               <span key={item.key} className={cn(styles.navItem, styles.navOff)} aria-disabled="true">

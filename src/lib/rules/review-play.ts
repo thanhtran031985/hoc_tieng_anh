@@ -1,7 +1,7 @@
 // Dựng phiên Ôn tập hôm nay từ các thẻ đến hạn (hàm thuần, không đụng database).
 // Mỗi từ vào đúng một câu: các từ cuối ghép thành một bước nối cặp, còn lại xen kẽ nghe-chọn-hình và chọn-từ-cho-hình.
 // Import tương đối có đuôi .ts để Node chạy thẳng được (test).
-import type { PlayStep, PlayWord } from "./lesson-play.ts";
+import type { PlayWord, WordPlayStep } from "./lesson-play.ts";
 import { seededRandom, shuffled } from "./random.ts";
 import { isPrimaryLevel } from "./lesson-score.ts";
 
@@ -22,7 +22,7 @@ export type DueWord = PlayWord & { box: number };
  * Các bước của phiên ôn. `due` đã sắp theo thứ tự ưu tiên (hộp thấp, hạn cũ trước); `pool` là các từ có hình khác làm đáp án nhiễu.
  * Id bước là `r1`, `r2`… để không lẫn với id số của bài học. Từ không có hình bị bỏ qua (cả ba dạng đều cần hình).
  */
-export function buildReviewSteps(due: readonly DueWord[], pool: readonly PlayWord[], seed: string, limit: number): PlayStep[] {
+export function buildReviewSteps(due: readonly DueWord[], pool: readonly PlayWord[], seed: string, limit: number): WordPlayStep[] {
   const random = seededRandom(seed);
   const words = due.filter((w) => w.image !== null).slice(0, limit);
   const matchWords = words.length >= MATCH_MIN_WORDS ? words.slice(-MATCH_PAIRS) : [];
@@ -34,7 +34,7 @@ export function buildReviewSteps(due: readonly DueWord[], pool: readonly PlayWor
       random,
     ).slice(0, OPTION_COUNT - 1);
 
-  const steps: PlayStep[] = [];
+  const steps: WordPlayStep[] = [];
   singles.forEach((target, index) => {
     const options = shuffled([target, ...distractors(target, true)], random);
     if (options.length < 2) return;
@@ -60,8 +60,8 @@ export function rewardForReview(words: number, levelNumber: number): ReviewRewar
 export type ReviewWordResult = { wordId: number; right: boolean };
 
 /** Gộp kết quả các mục thành kết quả theo từ: từ "nhớ" khi mọi mục của từ đúng ngay lần đầu. */
-export function wordResults(items: readonly { wordId: number; firstTryCorrect: boolean }[]): ReviewWordResult[] {
+export function wordResults(items: readonly { wordId: number | null; firstTryCorrect: boolean }[]): ReviewWordResult[] {
   const byWord = new Map<number, boolean>();
-  for (const item of items) byWord.set(item.wordId, (byWord.get(item.wordId) ?? true) && item.firstTryCorrect);
+  for (const item of items) if (item.wordId !== null) byWord.set(item.wordId, (byWord.get(item.wordId) ?? true) && item.firstTryCorrect);
   return [...byWord].map(([wordId, right]) => ({ wordId, right }));
 }

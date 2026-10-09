@@ -49,6 +49,9 @@ type Props = {
 type Progress = { session: Session; activeMs: number; /** Lúc bắt đầu bài (ms); 0 nghĩa là chưa xong bước nào. */ startedAt: number };
 
 // Trình học một bài: giữ trạng thái luồng câu hỏi, hỏi trước khi thoát, giữ tiến độ dở trên máy, ghi kết quả khi xong.
+/** Esc vẫn mở hộp thoại thoát khi bé đang gõ trong ô nhập (bài nghe và gõ, điền từ). */
+const ESC_WHILE_TYPING = ["Escape"] as const;
+
 export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learnerLevel }: Props) {
   const router = useRouter();
   const tools = useFocusMode();
@@ -95,7 +98,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   const runSave = useCallback(
     async (progress: Progress) => {
       saveStarted.current = true;
-      const items = progress.session.results.flatMap((r) => r.items).map(({ wordId, firstTryCorrect, wrong, revealed, picks, scored }) => ({ wordId, firstTryCorrect, wrong, revealed, picks, scored }));
+      const items = progress.session.results.flatMap((r) => r.items).map(({ wordId, questionId, firstTryCorrect, wrong, revealed, picks, scored }) => ({ wordId, questionId, firstTryCorrect, wrong, revealed, picks, scored }));
       try {
         const result = await completeLessonAction({
           lessonId: plan.lessonId,
@@ -176,7 +179,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   // Esc thoát học tập trung trước; bấm Esc lần nữa mới hỏi "Dừng bài học?". F bật/tắt học tập trung.
   useHotkeys(
     { Escape: () => (tools.focus ? tools.setFocus(false) : setExitOpen(true)), f: tools.toggle },
-    { enabled: !exitOpen && !stopped && state !== null && !finished },
+    { enabled: !exitOpen && !stopped && state !== null && !finished, inInputs: ESC_WHILE_TYPING },
   );
   useHotkeys({ Enter: () => router.push(mapHref) }, { enabled: stopped });
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { lessonItemSchema } from "./lesson-complete";
+import { reviewItemSchema } from "./lesson-complete";
 
 // Dữ liệu client gửi khi bé ôn xong một phiên. Chỉ gồm kết quả từng mục; sao, xu, XP và hộp mới do server tính.
 
@@ -10,7 +10,7 @@ export const completeReviewInputSchema = z.object({
   /** Lúc bé bắt đầu phiên ôn (ms), giữ nguyên qua các lần thử lưu lại để một phiên chỉ ghi một lần. */
   startedAtMs: z.number().int().positive(),
   durationMs: z.number().int().min(0).max(MAX_DURATION_MS),
-  items: z.array(lessonItemSchema).min(1).max(MAX_ITEMS),
+  items: z.array(reviewItemSchema).min(1).max(MAX_ITEMS),
 });
 
 export type CompleteReviewInput = z.infer<typeof completeReviewInputSchema>;

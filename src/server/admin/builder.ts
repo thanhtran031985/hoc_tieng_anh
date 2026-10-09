@@ -1,9 +1,11 @@
-import { estimateMinutes, isBuilderActivity, type BuilderActivity } from "@/lib/rules/admin-builder";
+import { estimateMinutes, isBuilderActivity, isQuestionActivity, type BuilderActivity } from "@/lib/rules/admin-builder";
+import { extraQuestionSummary } from "@/lib/rules/admin-question-types";
 import { questionSummary } from "@/lib/rules/admin-questions";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
 import type { PlayWord } from "@/lib/rules/lesson-play";
 import { lessonIdSchema, saveLessonSchema, unitWordsSchema } from "@/lib/schemas/admin-builder";
 import { lessonStepConfigSchemas } from "@/lib/schemas/lesson-step-config";
+import { EXTRA_QUESTION_TYPES, isExtraQuestionType } from "@/lib/schemas/question-extra";
 import { db } from "../db";
 import { fail, firstIssue, type AdminResult } from "./result";
 
@@ -67,7 +69,7 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
   const [suggestions, questions] = await Promise.all([
     getUnitWords({ unitId: unit.id }),
     db.question.findMany({
-      where: { levelId: unit.level.id, type: { in: ["listen_choose_picture", "match_pairs", "choose_word_for_picture"] } },
+      where: { levelId: unit.level.id, type: { in: ["listen_choose_picture", "match_pairs", "choose_word_for_picture", ...EXTRA_QUESTION_TYPES] } },
       orderBy: { id: "asc" },
       select: { id: true, type: true, options: true, answer: true, difficulty: true, prompt: true },
     }),
@@ -99,7 +101,7 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
     questions: questions.map((q) => ({
       id: q.id,
       type: q.type,
-      summary: questionSummary(q.type, q.options, q.answer),
+      summary: isExtraQuestionType(q.type) ? extraQuestionSummary(q.type, q.prompt) : questionSummary(q.type, q.options, q.answer),
       difficulty: q.difficulty,
       wordId: typeof (q.prompt as { wordId?: unknown } | null)?.wordId === "number" ? (q.prompt as { wordId: number }).wordId : null,
     })),
@@ -120,6 +122,15 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
   if (status === "published") {
     const block = lessonPublishBlock(steps.length, steps.filter((s) => s.activityType !== "word_card").length);
     if (block) return fail(block, "steps");
+  }
+
+  // Dạng bài lấy nội dung từ câu hỏi (task 15) phải gắn đúng một câu hỏi cùng dạng.
+  const needQuestion = steps.filter((s) => isQuestionActivity(s.activityType));
+  if (needQuestion.some((s) => s.questionId === null)) return fail("Bước ghép âm, sắp xếp câu, nghe và gõ, điền từ cần gắn một câu hỏi cùng dạng.", "steps");
+  if (needQuestion.length) {
+    const types = await db.question.findMany({ where: { id: { in: needQuestion.map((s) => s.questionId!) } }, select: { id: true, type: true } });
+    const typeOf = new Map(types.map((q) => [q.id, q.type]));
+    if (needQuestion.some((s) => typeOf.get(s.questionId!) !== s.activityType)) return fail("Có bước gắn câu hỏi khác dạng. Hãy tải lại trang rồi soạn lại.", "steps");
   }
 
   const wordIds = [...new Set(steps.flatMap((s) => (s.wordId === null ? [] : [s.wordId])))];

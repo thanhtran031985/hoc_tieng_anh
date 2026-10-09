@@ -5,17 +5,27 @@ import { z } from "zod";
 const MAX_ITEMS = 60;
 const MAX_DURATION_MS = 3 * 60 * 60 * 1000;
 
-export const lessonItemSchema = z.object({
-  wordId: z.number().int().positive(),
+const lessonItemBase = z.object({
   /** Đúng ngay lần chọn đầu tiên. */
   firstTryCorrect: z.boolean(),
   wrong: z.number().int().min(0).max(20),
   revealed: z.boolean(),
-  /** Các lựa chọn bé đã bấm, theo thứ tự (ghi nhật ký câu trả lời). */
-  picks: z.array(z.string().min(1).max(40)).max(6),
+  /** Các lựa chọn bé đã bấm, theo thứ tự (ghi nhật ký câu trả lời). Chữ bé gõ dài hơn một lựa chọn nên cho tới 200 ký tự. */
+  picks: z.array(z.string().min(1).max(200)).max(6),
   /** Mục làm lại ở cuối bài không tính sao nhưng vẫn ghi nhật ký. */
   scored: z.boolean(),
 });
+
+export const lessonItemSchema = lessonItemBase
+  .extend({
+    wordId: z.number().int().positive().nullable(),
+    /** Câu hỏi của mục (4 dạng bài dựng từ ngân hàng câu hỏi); mục phải có từ hoặc câu hỏi. */
+    questionId: z.number().int().positive().optional(),
+  })
+  .refine((i) => i.wordId !== null || i.questionId !== undefined, "Mục cần có từ hoặc câu hỏi");
+
+/** Kết quả một mục của phiên ôn tập: luôn theo từ. */
+export const reviewItemSchema = lessonItemBase.extend({ wordId: z.number().int().positive() });
 
 export type LessonItemInput = z.infer<typeof lessonItemSchema>;
 

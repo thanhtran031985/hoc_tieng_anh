@@ -1,0 +1,99 @@
+/* Điền từ vào chỗ trống (Screen28): hình bên trái, câu có ô trống bên phải, thẻ từ ở dưới. Vừa 1366×768, không cuộn. */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.caption {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-10);
+}
+.pic {
+  flex: none;
+  width: min(var(--size-pick-pic), 34vh);
+  aspect-ratio: 1;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+}
+.pic > svg,
+.pic > img {
+  width: 70%;
+  height: auto;
+}
+.sentence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: calc(var(--size-pick-opts) * 1.6);
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}
+.text {
+  white-space: pre-wrap;
+}
+.blank {
+  box-sizing: border-box;
+  min-width: calc(var(--size-pick-card-h) * 1.4);
+  padding: var(--space-1) var(--space-4);
+  text-align: center;
+  border: var(--border-thick) dashed var(--line);
+  border-radius: var(--radius-md);
+  background: var(--phon-slot);
+  color: var(--ink);
+  font: inherit;
+}
+.blank:focus {
+  outline: none;
+  border-style: solid;
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.over,
+.filled {
+  border-style: solid;
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.ok {
+  border-style: solid;
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.bad {
+  border-style: solid;
+  border-color: var(--retry);
+  background: var(--retry-soft);
+}
+.cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: min(var(--space-5), 2.4vh) var(--space-5);
+}
+.cards > .card {
+  min-width: calc(var(--size-pick-card-h) * 1.8);
+  height: min(var(--size-pick-card-h), 12.6vh);
+  padding: 0 var(--space-8);
+}
+.word {
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+}

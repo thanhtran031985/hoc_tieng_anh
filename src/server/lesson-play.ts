@@ -1,5 +1,6 @@
 import { parseLessonStepConfig } from "@/lib/schemas";
-import { buildPlaySteps, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
+import { buildPlaySteps, type PhonicsSoundInfo, type PlayExtras, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
+import { isExtraQuestionType, parseExtraQuestion } from "@/lib/schemas";
 import { today } from "@/lib/rules/dates";
 import { buildAudioMap } from "@/lib/rules/tts";
 import { levelStatus } from "@/lib/rules/unlock";
@@ -48,7 +49,10 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
       title: true,
       kind: true,
       unit: { select: { id: true, title: true, titleVi: true, level: { select: { id: true, number: true, name: true } } } },
-      steps: { orderBy: { sortOrder: "asc" }, select: { id: true, activityType: true, config: true, word: { select: wordSelect } } },
+      steps: {
+        orderBy: { sortOrder: "asc" },
+        select: { id: true, activityType: true, config: true, word: { select: wordSelect }, question: { select: { id: true, type: true, prompt: true, options: true, answer: true, status: true } } },
+      },
     },
   });
   if (!lesson || (lesson.kind !== "lesson" && lesson.kind !== "unit_test")) return null;
@@ -71,9 +75,16 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   const unitWords = unitCards.flatMap((c) => (c.word ? [c.word] : []));
   const seed = `${learnerId}:${lesson.id}:${today().toISOString().slice(0, 10)}`;
   const steps = buildPlaySteps(
-    lesson.steps.map((s) => ({ id: s.id, activityType: s.activityType, config: parseLessonStepConfig(s.activityType, s.config), word: s.word })),
+    lesson.steps.map((s) => ({
+      id: s.id,
+      activityType: s.activityType,
+      config: parseLessonStepConfig(s.activityType, s.config),
+      word: s.word,
+      question: s.question && s.question.status === "published" ? s.question : null,
+    })),
     unitWords,
     seed,
+    await getPlayExtras(lesson.steps.flatMap((s) => (s.question && s.question.status === "published" ? [s.question] : []))),
   );
 
   const seen = new Set<number>();
@@ -91,4 +102,33 @@ async function getAudioMap(wordIds: number[]): Promise<Record<string, string>> {
     select: { word: true, audio: true, exampleEn: true, exampleAudio: true },
   });
   return buildAudioMap(rows);
+}
+
+type QuestionRow = { id: number; type: string; prompt: unknown; options: unknown; answer: unknown };
+
+/** Tra thêm cho các dạng bài lấy nội dung từ câu hỏi: hình của từ tham chiếu, nghĩa của các thẻ điền từ, âm phonics. */
+async function getPlayExtras(questions: QuestionRow[]): Promise<PlayExtras> {
+  const wordIds = new Set<number>();
+  const cardWords = new Set<string>();
+  const graphemes = new Set<string>();
+  for (const q of questions) {
+    if (!isExtraQuestionType(q.type)) continue;
+    const data = parseExtraQuestion(q.type, { prompt: q.prompt, options: q.options, answer: q.answer });
+    if (!data) continue;
+    if (data.prompt.wordId !== undefined) wordIds.add(data.prompt.wordId);
+    if ("cards" in data.options) for (const c of data.options.cards) cardWords.add(c.toLowerCase());
+    if ("tiles" in data.options) for (const t of data.options.tiles) graphemes.add(t.sound);
+  }
+  const [words, meaningRows, sounds] = await Promise.all([
+    wordIds.size ? db.word.findMany({ where: { id: { in: [...wordIds] } }, select: wordSelect }) : [],
+    cardWords.size ? db.word.findMany({ where: { word: { in: [...cardWords] } }, select: { word: true, meaningVi: true } }) : [],
+    graphemes.size ? db.phonicsSound.findMany({ where: { grapheme: { in: [...graphemes] } }, select: { grapheme: true, ipa: true, audio: true } }) : [],
+  ]);
+  const meanings = new Map<string, string>();
+  for (const m of meaningRows) if (!meanings.has(m.word.toLowerCase())) meanings.set(m.word.toLowerCase(), m.meaningVi);
+  return {
+    words: new Map(words.map((w) => [w.id, w])),
+    meanings,
+    sounds: new Map<string, PhonicsSoundInfo>(sounds.map((s) => [s.grapheme, { ipa: s.ipa, audio: s.audio }])),
+  };
 }

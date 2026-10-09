@@ -1,4 +1,5 @@
 import { APP_TIME_ZONE } from "@/lib/rules/dates";
+import { EXTRA_QUESTION_TYPES } from "@/lib/schemas/question-extra";
 import { MIN_LESSONS_PER_UNIT, pickWarnings, sumByLevel, type DashboardWarning } from "@/lib/rules/admin-dashboard";
 import { db } from "../db";
 
@@ -74,7 +75,8 @@ export async function getDashboard(now: Date = new Date()): Promise<DashboardDat
       db.word.findMany({ where: NO_FULL_AUDIO, orderBy: { id: "asc" }, take: EXAMPLE_COUNT, select: { word: true } }),
       db.word.groupBy({ by: ["levelId"], where: { image: null }, _count: { _all: true } }),
       db.word.groupBy({ by: ["levelId"], where: NO_FULL_AUDIO, _count: { _all: true } }),
-      db.question.count({ where: { OR: [{ explanation: null }, { explanation: "" }] } }),
+      // 4 dạng câu hỏi mới (task 15) không có ô giải thích nên không tính vào cảnh báo.
+      db.question.count({ where: { type: { notIn: [...EXTRA_QUESTION_TYPES] }, OR: [{ explanation: null }, { explanation: "" }] } }),
       db.question.count({ where: { createdAt: { gte: new Date(now.getTime() - WEEK_MS) } } }),
       db.lesson.count({ where: { status: "draft" } }),
     ]);

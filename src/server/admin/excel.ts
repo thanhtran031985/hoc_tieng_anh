@@ -26,6 +26,7 @@ import {
 } from "@/lib/rules/admin-excel";
 import { buildQuestionData, readQuestionForm, type BankWord } from "@/lib/rules/admin-questions";
 import { wordKey } from "@/lib/rules/admin-vocab";
+import { QUESTION_TYPES } from "@/lib/schemas/question";
 import { db } from "../db";
 import { fail, type AdminResult } from "./result";
 
@@ -320,7 +321,8 @@ export async function buildExport(input: unknown): Promise<ExportFile | { messag
       });
   } else {
     const questions = await db.question.findMany({
-      where: { ...(level === "all" ? {} : { level: { number: level } }), ...(status === "all" ? {} : { status }) },
+      // Excel chỉ có cột cho dạng chọn và nối cặp (8.2–8.4); 4 dạng mới soạn ở màn Câu hỏi dạng mới.
+      where: { type: { in: [...QUESTION_TYPES] }, ...(level === "all" ? {} : { level: { number: level } }), ...(status === "all" ? {} : { status }) },
       orderBy: [{ level: { number: "asc" } }, { id: "asc" }],
       select: { id: true, type: true, options: true, answer: true, explanation: true, skill: true, difficulty: true, status: true, level: { select: { number: true } } },
     });
@@ -355,6 +357,6 @@ export async function buildExport(input: unknown): Promise<ExportFile | { messag
 export type ExcelPageData = { vocabCount: number; questionCount: number };
 
 export async function getExcelPage(): Promise<ExcelPageData> {
-  const [vocabCount, questionCount] = await Promise.all([db.word.count(), db.question.count()]);
+  const [vocabCount, questionCount] = await Promise.all([db.word.count(), db.question.count({ where: { type: { in: [...QUESTION_TYPES] } } })]);
   return { vocabCount, questionCount };
 }

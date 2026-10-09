@@ -180,3 +180,18 @@ export function padToMinimum(samples: Float32Array, minSamples: number): Float32
 
 /** Độ dài tối thiểu của âm tạo tự động (giây): cao hơn một chút mức 0,3 giây của tệp tải lên cho chắc. */
 export const PHONICS_MIN_GENERATED_SECONDS = 0.35;
+
+// ---------------------------------------------------------------------------
+// Giọng trình duyệt đọc âm rời: đọc tên chữ cái ("see") thì sai, nên đọc kèm nguyên âm ("kuh"). Chỉ dùng khi âm chưa có tệp.
+// ---------------------------------------------------------------------------
+
+const PHONICS_SAY: Record<string, string> = {
+  a: "ae", b: "buh", c: "kuh", d: "duh", e: "eh", f: "fuh", g: "guh", h: "huh", i: "ih", j: "juh", k: "kuh", l: "luh", m: "muh",
+  n: "nuh", o: "ah", p: "puh", q: "kwuh", r: "ruh", s: "suh", t: "tuh", u: "uh", v: "vuh", w: "wuh", x: "ks", y: "yuh", z: "zuh",
+  sh: "shh", ch: "chuh", th: "thuh", ck: "kuh", ng: "ng", ee: "ee", oo: "oo", ai: "ay", ar: "ar", or: "or",
+};
+
+/** Chữ để giọng trình duyệt đọc một âm; âm lạ thì đọc nguyên chữ. */
+export function phonicsSay(grapheme: string): string {
+  return PHONICS_SAY[grapheme.toLowerCase()] ?? grapheme;
+}

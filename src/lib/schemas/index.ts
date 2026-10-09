@@ -15,5 +15,6 @@ export * from "./lesson-step-config";
 export * from "./parent-settings";
 export * from "./placement";
 export * from "./question";
+export * from "./question-extra";
 export * from "./review-complete";
 export * from "./word-extra";

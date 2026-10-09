@@ -2,14 +2,31 @@
 import { MAX_LESSON_MINUTES, MIN_LESSON_MINUTES } from "./admin-tree.ts";
 
 /** Dạng bài (activity_type) của giai đoạn 1 mà màn soạn bài thêm được. */
-export type BuilderActivity = "word_card" | "listen_choose_picture" | "choose_word_for_picture" | "match_pairs" | "memory_game";
+export type BuilderActivity =
+  | "word_card"
+  | "listen_choose_picture"
+  | "choose_word_for_picture"
+  | "match_pairs"
+  | "memory_game"
+  | "phonics"
+  | "sentence_order"
+  | "dictation"
+  | "fill_blank";
 
-export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "cards" | "speaker" | "image" | "plusbox" | "gem"; seconds: number; needsWord: boolean }> = {
+/** Dạng bài lấy toàn bộ nội dung từ câu hỏi gắn vào bước (task 15): bước phải có `questionId`. */
+export const QUESTION_ACTIVITIES: readonly BuilderActivity[] = ["phonics", "sentence_order", "dictation", "fill_blank"];
+export const isQuestionActivity = (type: string): boolean => (QUESTION_ACTIVITIES as readonly string[]).includes(type);
+
+export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "cards" | "speaker" | "image" | "plusbox" | "gem" | "music" | "grammar" | "keyboard" | "pen"; seconds: number; needsWord: boolean }> = {
   word_card: { label: "Giới thiệu từ", icon: "cards", seconds: 20, needsWord: true },
   listen_choose_picture: { label: "Nghe và chọn hình", icon: "speaker", seconds: 25, needsWord: true },
   choose_word_for_picture: { label: "Chọn từ đúng cho hình", icon: "image", seconds: 25, needsWord: true },
   match_pairs: { label: "Nối từ với hình", icon: "plusbox", seconds: 60, needsWord: false },
   memory_game: { label: "Lật thẻ ghép cặp", icon: "gem", seconds: 90, needsWord: false },
+  phonics: { label: "Ghép âm thành từ", icon: "music", seconds: 40, needsWord: false },
+  sentence_order: { label: "Sắp xếp câu", icon: "grammar", seconds: 45, needsWord: false },
+  dictation: { label: "Nghe và gõ", icon: "keyboard", seconds: 40, needsWord: false },
+  fill_blank: { label: "Điền từ vào chỗ trống", icon: "pen", seconds: 30, needsWord: false },
 };
 
 export const MAX_STEPS = 60;

@@ -26,7 +26,7 @@ export async function completeLesson(userId: number, learnerId: number, input: u
 
   const lesson = await db.lesson.findFirst({
     where: { id: data.lessonId, status: "published", kind: { in: ["lesson", "unit_test"] }, unit: { status: "published" } },
-    select: { id: true, unit: { select: { levelId: true, level: { select: { number: true } } } }, steps: { select: { wordId: true } } },
+    select: { id: true, unit: { select: { levelId: true, level: { select: { number: true } } } }, steps: { select: { wordId: true, questionId: true } } },
   });
   if (!lesson) throw new Error("Không tìm thấy bài học");
   const { levelId } = lesson.unit;
@@ -55,9 +55,10 @@ export async function completeLesson(userId: number, learnerId: number, input: u
     };
   }
 
-  // Chỉ nhận kết quả của các từ thuộc bài này.
+  // Chỉ nhận kết quả của các từ và câu hỏi thuộc bài này.
   const lessonWordIds = new Set(lesson.steps.flatMap((s) => (s.wordId === null ? [] : [s.wordId])));
-  const items = data.items.filter((i) => lessonWordIds.has(i.wordId));
+  const lessonQuestionIds = new Set(lesson.steps.flatMap((s) => (s.questionId === null ? [] : [s.questionId])));
+  const items = data.items.filter((i) => (i.questionId !== undefined ? lessonQuestionIds.has(i.questionId) : i.wordId !== null && lessonWordIds.has(i.wordId)));
   const scored = items.filter((i) => i.scored);
   const stars = starsFor(scored);
   const reward = rewardFor(stars, levelNumber);
@@ -82,9 +83,11 @@ export async function completeLesson(userId: number, learnerId: number, input: u
           learnerId,
           source: "lesson" as const,
           wordId: i.wordId,
+          questionId: i.questionId,
           attemptId: attempt.id,
           isCorrect: i.firstTryCorrect,
-          answer: i.picks.length > 0 ? { selected: i.picks } : undefined,
+          // Câu hỏi chữ (ghép âm, sắp xếp câu, nghe và gõ, điền từ): ghi chữ bé đã gõ/xếp; câu chọn đáp án: ghi các lựa chọn.
+          answer: i.picks.length === 0 ? undefined : i.questionId !== undefined ? { text: i.picks.join(" | ").slice(0, 500) } : { selected: i.picks },
         })),
       });
     }

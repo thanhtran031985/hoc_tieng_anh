@@ -1,0 +1,148 @@
+/* Sắp xếp các từ thành câu (Screen26): hình bên trái, khu "Câu của cậu" và khu "Thẻ từ" bên phải. Vừa 1366×768, không cuộn. */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.caption {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-10);
+  width: 100%;
+}
+.pic {
+  flex: none;
+  width: min(var(--size-pick-pic), 34vh);
+  aspect-ratio: 1;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+}
+.pic > svg,
+.pic > img {
+  width: 70%;
+  height: auto;
+}
+.work {
+  flex: 1;
+  min-width: 0;
+  max-width: calc(var(--size-pick-opts) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: min(var(--space-4), 2vh);
+}
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--ink-soft);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+}
+.tip {
+  margin-left: auto;
+  background: var(--info-soft);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-4);
+  color: var(--ink);
+}
+.zone,
+.bank {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--space-3);
+}
+.zone {
+  min-height: min(calc(var(--size-pick-card-h) * 1.5), 19vh);
+  padding: var(--space-4);
+  box-sizing: border-box;
+  border: var(--border-thick) dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--phon-slot);
+}
+.placeholder {
+  align-self: center;
+  color: var(--ink-disabled);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+.card {
+  position: relative;
+  min-height: min(var(--size-count-min), 9vh);
+  padding: var(--space-3) var(--space-6);
+  border: var(--border-thick) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: 0 var(--lip-s) 0 0 var(--line);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: var(--text-word--line-height);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform var(--duration-base),
+    background-color var(--duration-base),
+    border-color var(--duration-base),
+    opacity var(--duration-base);
+}
+.card:hover:not(:disabled) {
+  transform: translateY(calc(-1 * var(--lift-choice)));
+  border-color: var(--brand-soft-shade);
+}
+.bankCard {
+  padding-left: var(--space-8);
+}
+.key {
+  position: absolute;
+  top: calc(-1 * var(--space-2));
+  left: calc(-1 * var(--space-2));
+  width: var(--badge-size);
+  height: var(--badge-size);
+  border-radius: var(--radius-round);
+  background: var(--brand);
+  color: var(--ink-on-dark);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+.gone {
+  opacity: 0.3;
+  box-shadow: none;
+  cursor: default;
+}
+.lit {
+  background: var(--read-highlight);
+  border-color: var(--retry);
+}
+.ok {
+  background: var(--success-soft);
+  border-color: var(--success);
+}
+.bad {
+  background: var(--retry-soft);
+  border-color: var(--retry);
+}
+.left {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  min-height: var(--text-caption--line-height);
+}

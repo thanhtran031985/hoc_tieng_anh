@@ -1,0 +1,147 @@
+/* Ghép âm thành từ (Screen23): hình + loa bên trái, hàng ô trống và khay ô chữ bên phải. Vừa 1366×768, không cuộn. */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.caption {
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: var(--text-caption--font-weight);
+}
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+}
+.pic {
+  position: relative;
+  width: min(var(--size-pick-pic), 36vh);
+  aspect-ratio: 1;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+}
+.pic > svg,
+.pic > img {
+  width: 70%;
+  height: auto;
+}
+.picSpeaker {
+  position: absolute;
+  right: calc(-1 * var(--space-3));
+  bottom: calc(-1 * var(--space-3));
+}
+.work {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(var(--space-8), 4vh);
+}
+.slots,
+.pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+.slot,
+.tile {
+  --tile: min(var(--size-phon-tile), 13vh);
+  width: var(--tile);
+  height: var(--tile);
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: var(--text-display-l--font-weight);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform var(--duration-base),
+    background-color var(--duration-base),
+    border-color var(--duration-base),
+    opacity var(--duration-base);
+}
+.wide {
+  width: calc(var(--tile) * 1.45);
+}
+.slot {
+  border: var(--border-thick) dashed var(--line);
+  background: var(--phon-slot);
+}
+.slot.filled {
+  border-style: solid;
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.slot.lit {
+  border-style: solid;
+  border-color: var(--retry);
+  background: var(--read-highlight);
+  transform: scale(1.06);
+}
+.slot.ok {
+  border-style: solid;
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.slot.bad {
+  border-style: solid;
+  border-color: var(--retry);
+  background: var(--retry-soft);
+}
+.ghost {
+  color: var(--ink-disabled);
+  opacity: 0.55;
+}
+.tile {
+  position: relative;
+  border: var(--border-thick) solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 var(--lip-m) 0 0 var(--line);
+}
+.tile:hover:not(:disabled) {
+  transform: translateY(calc(-1 * var(--lift-choice)));
+  border-color: var(--brand-soft-shade);
+  box-shadow: 0 var(--lip-choice-hover) 0 0 var(--brand-soft-shade);
+}
+.tile.playing {
+  background: var(--read-highlight);
+}
+.tile.used {
+  opacity: 0.3;
+  box-shadow: none;
+  cursor: default;
+}
+.letter {
+  line-height: 1;
+}
+.ipa {
+  position: absolute;
+  bottom: var(--space-1);
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 600;
+}
+
+@media (max-width: 1400px) {
+  .stage {
+    gap: var(--space-8);
+  }
+}

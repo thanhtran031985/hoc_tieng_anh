@@ -18,11 +18,18 @@ export type UseHotkeysOptions = {
    * hộp thoại thoát). Handler đã xử lý thì chặn mặc định, nên phím tắt bao ngoài tự bỏ qua.
    */
   capture?: boolean;
+  /**
+   * Tên phím vẫn chạy khi bé đang gõ trong ô nhập (mặc định mọi phím đều tắt khi đang gõ). Dùng ở các bài gõ chữ cho phím không gõ ra chữ
+   * (Enter, "?" để xin gợi ý). Phím có tiền tố "Ctrl+" (vd "Ctrl+Space" nghe lại câu) luôn chạy kể cả khi đang gõ.
+   */
+  inInputs?: readonly string[];
 };
 
+const NONE: readonly string[] = [];
+
 function normalize(event: KeyboardEvent): string {
-  if (event.key === " ") return "Space";
-  return event.key.length === 1 ? event.key.toLowerCase() : event.key;
+  const name = event.key === " " ? "Space" : event.key.length === 1 ? event.key.toLowerCase() : event.key;
+  return event.ctrlKey ? `Ctrl+${name}` : name;
 }
 
 function isTyping(target: EventTarget | null): boolean {
@@ -39,7 +46,7 @@ function activatesNatively(target: EventTarget | null): boolean {
  * Phím tắt dùng chung cho bài học: 1–4 (hoặc A–D), Enter, Space, ←/→, Esc.
  * Không chạy khi đang gõ trong ô nhập, khi giữ Ctrl/Alt/Meta, hoặc khi phím lặp.
  */
-export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = false, capture = false }: UseHotkeysOptions = {}) {
+export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = false, capture = false, inInputs = NONE }: UseHotkeysOptions = {}) {
   const handlers = useRef(map);
   useEffect(() => {
     handlers.current = map;
@@ -48,9 +55,10 @@ export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = fal
   useEffect(() => {
     if (!enabled) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.defaultPrevented || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
-      if (isTyping(event.target)) return;
+      if (event.defaultPrevented || event.repeat || event.altKey || event.metaKey) return;
       const name = normalize(event);
+      const ctrl = name.startsWith("Ctrl+");
+      if (isTyping(event.target) && !ctrl && !inInputs.includes(name)) return;
       const handler = handlers.current[name];
       if (!handler) return;
       if ((name === "Enter" || name === "Space") && activatesNatively(event.target)) {
@@ -62,5 +70,5 @@ export function useHotkeys(map: HotkeyMap, { enabled = true, captureNative = fal
     }
     window.addEventListener("keydown", onKeyDown, capture);
     return () => window.removeEventListener("keydown", onKeyDown, capture);
-  }, [enabled, captureNative, capture]);
+  }, [enabled, captureNative, capture, inInputs]);
 }

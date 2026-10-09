@@ -2,7 +2,7 @@ import type { IconName } from "@/components/ui";
 
 // Menu của khu người lớn (DESIGN_SYSTEM mục 14). `ready: false` là màn của giai đoạn sau: hiện mờ với nhãn "Sắp có".
 
-export type AdultNavItem = { key: string; label: string; icon: IconName; href: string; ready: boolean };
+export type AdultNavItem = { key: string; label: string; icon: IconName; href: string; ready: boolean; /** Nhãn nhỏ cạnh tên mục (vd "Mới"). */ badge?: string };
 
 export const PARENT_NAV: readonly AdultNavItem[] = [
   { key: "overview", label: "Tổng quan", icon: "grid", href: "/parent", ready: true },
@@ -18,6 +18,7 @@ export const ADMIN_NAV: readonly AdultNavItem[] = [
   { key: "tree", label: "Cấu trúc lộ trình", icon: "tree", href: "/admin/tree", ready: true },
   { key: "vocab", label: "Ngân hàng từ vựng", icon: "notebook", href: "/admin/vocab", ready: true },
   { key: "questions", label: "Ngân hàng câu hỏi", icon: "exam", href: "/admin/questions", ready: true },
+  { key: "question-types", label: "Câu hỏi dạng mới", icon: "exam", href: "/admin/question-types", ready: true, badge: "Mới" },
   { key: "builder", label: "Soạn bài học", icon: "cards", href: "/admin/builder", ready: true },
   { key: "media", label: "Hình ảnh & âm thanh", icon: "image", href: "/admin/media", ready: true },
   { key: "excel", label: "Nhập & xuất Excel", icon: "sheet", href: "/admin/excel", ready: true },
