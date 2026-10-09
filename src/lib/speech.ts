@@ -21,6 +21,26 @@ export type PronunciationOptions = {
 
 let currentAudio: HTMLAudioElement | null = null;
 
+// Báo cho nhạc nền biết giọng đọc đang chạy để hạ nhỏ (src/lib/sound.ts). Giọng đọc không bao giờ phụ thuộc cài đặt âm thanh.
+type SpeakingListener = (speaking: boolean) => void;
+const speakingListeners = new Set<SpeakingListener>();
+let speaking = false;
+let activeToken = 0;
+
+function setSpeaking(next: boolean): void {
+  if (speaking === next) return;
+  speaking = next;
+  speakingListeners.forEach((listener) => listener(next));
+}
+
+/** Đăng ký nhận tin "giọng đọc bắt đầu/xong". Trả về hàm hủy đăng ký. */
+export function onSpeaking(listener: SpeakingListener): () => void {
+  speakingListeners.add(listener);
+  return () => speakingListeners.delete(listener);
+}
+
+export const isSpeaking = (): boolean => speaking;
+
 function normalizeLang(lang: string): string {
   return lang.replace("_", "-").toLowerCase();
 }
@@ -37,6 +57,12 @@ function pickVoice(accent: SpeechAccent): SpeechSynthesisVoice | null {
 
 /** Dừng mọi âm thanh đang phát. */
 export function stopPronunciation(): void {
+  activeToken++;
+  setSpeaking(false);
+  silence();
+}
+
+function silence(): void {
   if (currentAudio) {
     currentAudio.pause();
     currentAudio = null;
@@ -62,7 +88,9 @@ function speakWithVoice(text: string, accent: SpeechAccent, rate: number, finish
  */
 export function playPronunciation(text: string, options: PronunciationOptions = {}): () => void {
   const { audioUrl, accent = "en-US", rate = DEFAULT_SPEECH_RATE, onEnd } = options;
-  stopPronunciation();
+  silence();
+  const token = ++activeToken;
+  setSpeaking(true);
 
   let finished = false;
   const timer = setTimeout(() => finish(), Math.max(MIN_PLAYING_MS, text.length * PLAYING_MS_PER_CHAR));
@@ -70,6 +98,7 @@ export function playPronunciation(text: string, options: PronunciationOptions = 
     if (finished) return;
     finished = true;
     clearTimeout(timer);
+    if (token === activeToken) setSpeaking(false);
     onEnd?.();
   }
 

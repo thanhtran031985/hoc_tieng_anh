@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { seededRandom, shuffled } from "@/lib/rules/random";
 import { playPronunciation } from "@/lib/speech";
 import { useHotkeys } from "@/lib/use-hotkeys";
+import { playSfx } from "@/lib/sound";
 import { burstStars } from "./burst";
 import { LessonFoot, LessonMain } from "./LessonFrame";
 import lesson from "./lesson.module.css";
@@ -72,6 +73,7 @@ export function MemoryStep({ step, active, onComplete }: StepProps<"memory_game"
       if (nextMatched.size === pairs.length) later(() => setDone(true), 700);
     } else {
       busy.current = true;
+      playSfx("retry");
       setBad(next);
       setTip({ expr: "dongvien", text: "Chưa khớp rồi. Nhớ vị trí và thử lại nhé!" });
       later(() => {

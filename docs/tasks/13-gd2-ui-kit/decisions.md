@@ -19,6 +19,8 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 09/10/2026 | Thanh đường dẫn `LessonCrumb` thêm vào mọi bài học (ẩn khi học tập trung). | Screen46 là "biến thể mới của màn cũ": khung bài có thanh Đảo › Chủ đề › Bài ở trên; cao thêm 48 px nhưng vẫn vừa 1366×768. |
 | 09/10/2026 | Học tập trung chỉ đổi nền, khoảng cách và ẩn thanh đường dẫn; thẻ đáp án không to thêm. | Màn "Nghe và chọn hình" của task 07 đã lấy cỡ thẻ theo chiều cao cửa sổ (tối đa 33vh), gần bằng cỡ học tập trung của thiết kế. |
 | 09/10/2026 | Công tắc Nhạc nền nhận prop `musicAvailable` (mặc định true); bước 5 đặt theo việc có tệp nhạc hay không. | Công tắc mờ kèm chú thích "Chưa có nhạc nền" theo task.md. |
+| 09/10/2026 | Bộ phát âm thanh (`src/lib/sound.ts`) là module dùng chung, mặc định tắt; `SoundProvider` bật theo cài đặt hồ sơ. Màn không có `SoundProvider` (ôn tập, xếp lớp) không có tiếng. | Giữ hành vi cũ của các màn đã có và tôn trọng "tắt hiệu ứng thì không còn tiếng". Muốn có tiếng ở màn khác thì bọc `SoundProvider` như trang bài học. |
+| 09/10/2026 | Không kèm tệp nhạc nền; công tắc Nhạc nền mờ cho tới khi có tệp trong `public/media/music/`. | Theo task.md. Bố/mẹ chọn bài nhạc hợp bản quyền rồi bỏ vào thư mục. |
 
 ### 09/10/2026 — Test token đang đỏ trước khi làm task này
 - `tests/e2e/01-nen-tang.spec.ts` ("mọi token màu dạng hex ... khớp designs/tokens.json") đang hỏng vì thiếu 108 token GĐ2 trong theme (xem `29-fix-ui-findings/decisions.md`). Thêm token vào theme ở bước đầu của task này và chạy lại `npx playwright test 01-`; test phải đạt, không nới test.

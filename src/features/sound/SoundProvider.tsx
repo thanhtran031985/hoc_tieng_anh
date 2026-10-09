@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { SoundSettings } from "@/lib/schemas";
+import { configureSound, shutdownSound } from "@/lib/sound";
 import { saveSoundSettingsAction } from "./actions";
 
 /** Chờ bé ngừng kéo thanh âm lượng rồi mới lưu một lần. */
@@ -9,6 +10,8 @@ const SAVE_DELAY_MS = 400;
 
 type SoundContextValue = {
   sound: SoundSettings;
+  /** Đã có tệp nhạc nền chưa; chưa có thì công tắc Nhạc nền mờ đi. */
+  musicAvailable: boolean;
   /** Đổi một phần cài đặt: áp dụng ngay, lưu lên server sau một lúc ngắn. */
   setSound: (patch: Partial<SoundSettings>) => void;
 };
@@ -26,7 +29,7 @@ export function useSound(): SoundContextValue {
  * Giữ cài đặt âm thanh của bé trong lúc học (nhạc nền, hiệu ứng, âm lượng). Giá trị đầu lấy từ `learners.settings` do server truyền xuống,
  * nên mọi máy bé dùng đều giống nhau; đổi thì lưu lại bằng server action (chỉ ghi hồ sơ đang chọn của tài khoản đang đăng nhập).
  */
-export function SoundProvider({ initial, children }: { initial: SoundSettings; children: React.ReactNode }) {
+export function SoundProvider({ initial, musicSrc, children }: { initial: SoundSettings; /** Đường dẫn tệp nhạc nền, null nếu chưa có. */ musicSrc: string | null; children: React.ReactNode }) {
   const [sound, setState] = useState(initial);
   const latest = useRef(initial);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -47,6 +50,12 @@ export function SoundProvider({ initial, children }: { initial: SoundSettings; c
     [flush],
   );
 
+  // Áp dụng cho bộ phát: hiệu ứng theo `soundOn`, nhạc nền theo `musicOn` (chỉ khi có tệp), cùng một âm lượng.
+  useEffect(() => {
+    configureSound({ sfxOn: sound.soundOn, musicOn: sound.musicOn, volume: sound.volume, musicSrc });
+  }, [sound, musicSrc]);
+  useEffect(() => shutdownSound, []);
+
   // Rời màn khi còn thay đổi chưa lưu thì lưu ngay.
   useEffect(
     () => () => {
@@ -55,6 +64,7 @@ export function SoundProvider({ initial, children }: { initial: SoundSettings; c
     [flush],
   );
 
-  const value = useMemo(() => ({ sound, setSound }), [sound, setSound]);
+  const musicAvailable = musicSrc !== null;
+  const value = useMemo(() => ({ sound, musicAvailable, setSound }), [sound, musicAvailable, setSound]);
   return <SoundContext.Provider value={value}>{children}</SoundContext.Provider>;
 }

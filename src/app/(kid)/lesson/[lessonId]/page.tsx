@@ -5,6 +5,7 @@ import { LessonEmpty } from "@/features/lesson/LessonEmpty";
 import { LessonPlayer } from "@/features/lesson/LessonPlayer";
 import { SoundProvider } from "@/features/sound/SoundProvider";
 import { requireActiveLearner } from "@/server/active-learner";
+import { getMusicSrc } from "@/server/music";
 import { LessonLockedError, getLessonPlay } from "@/server/lesson-play";
 import { requireUser } from "@/server/session";
 
@@ -32,7 +33,7 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
   if (plan.steps.length === 0) return <LessonEmpty level={plan.levelNumber} mascot={mascot} />;
   const { musicOn, soundOn, volume } = learner.settings;
   return (
-    <SoundProvider initial={{ musicOn, soundOn, volume }}>
+    <SoundProvider initial={{ musicOn, soundOn, volume }} musicSrc={await getMusicSrc()}>
       <LessonPlayer
         plan={plan}
         learnerId={learner.id}

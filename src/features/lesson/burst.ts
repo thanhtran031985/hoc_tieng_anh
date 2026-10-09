@@ -1,9 +1,12 @@
 // Sao bay từ đáp án đúng vào thanh tiến độ (Bong.burst của thiết kế). Chỉ trang trí: tắt khi bật giảm chuyển động.
 
+import { playSfx } from "@/lib/sound";
+
 const STAR = "★";
 
 /** Bắn `count` ngôi sao từ giữa `from` bay vào thanh tiến độ (phần tử `[role=progressbar] > span`). */
 export function burstStars(from: Element | null, count = 8): void {
+  playSfx("correct");
   if (typeof window === "undefined" || !from || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const target = document.querySelector('[role="progressbar"] > span');
   if (!target) return;

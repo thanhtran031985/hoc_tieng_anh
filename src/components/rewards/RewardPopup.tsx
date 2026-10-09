@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Dialog, Icon, Mascot, SpeakerButton, type IconName } from "@/components/ui";
 import { COINS } from "@/lib/rules/constants";
+import { playSfx } from "@/lib/sound";
 import { playPronunciation, stopPronunciation } from "@/lib/speech";
 import { GiftBox } from "./GiftBox";
 import { Medal } from "./Medal";
@@ -11,6 +12,8 @@ import styles from "./rewards.module.css";
 
 /** Tốc độ đọc tên phần thưởng, chậm hơn một chút cho bé nghe rõ. */
 const NAME_RATE = 0.85;
+/** Tiếng xu vang lên sau tiếng mở quà một chút (ms). */
+const COIN_DELAY_MS = 700;
 
 type Common = {
   open: boolean;
@@ -55,10 +58,16 @@ export function RewardPopup(props: RewardPopupProps) {
   // Tên phần thưởng tự đọc đúng một lần khi quà được mở; rời đi thì ngừng đọc.
   useEffect(() => {
     if (!open || !revealed) return;
+    // Mở quà: tiếng "pop" rồi tiếng xu; hiệu ứng theo cài đặt âm thanh của bé, giọng đọc luôn chạy.
+    playSfx("gift");
+    const coinTimer = window.setTimeout(() => playSfx("coin"), COIN_DELAY_MS);
     playPronunciation(en, { rate: NAME_RATE });
     // Đưa focus vào nút chính của bước mới (nút của bước trước đã biến mất).
     host.current?.querySelector<HTMLElement>("[data-dialog-action='0']")?.focus({ preventScroll: true });
-    return () => stopPronunciation();
+    return () => {
+      window.clearTimeout(coinTimer);
+      stopPronunciation();
+    };
   }, [open, revealed, en]);
 
   const reveal = () => setOpened(true);

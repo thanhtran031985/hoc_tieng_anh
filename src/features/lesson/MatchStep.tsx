@@ -24,6 +24,7 @@ import type { ItemResult } from "@/lib/rules/lesson-session";
 import { seededRandom, shuffled } from "@/lib/rules/random";
 import { playPronunciation } from "@/lib/speech";
 import { useHotkeys } from "@/lib/use-hotkeys";
+import { playSfx } from "@/lib/sound";
 import { burstStars } from "./burst";
 import { LessonFoot, LessonMain } from "./LessonFrame";
 import lesson from "./lesson.module.css";
@@ -96,6 +97,7 @@ export function MatchStep({
         window.setTimeout(() => setDone(true), 600);
     } else {
       stat(wordId).wrong += 1;
+      playSfx("retry");
       setShake(picId);
       window.setTimeout(() => setShake(null), 650);
       setTip({

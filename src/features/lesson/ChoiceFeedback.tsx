@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { FeedbackBar, SpeakerButton } from "@/components/ui";
+import { playSfx } from "@/lib/sound";
 import type { PlayWord } from "@/lib/rules/lesson-play";
 import type { ChoicePhase } from "./choice-flow";
 import styles from "./lesson.module.css";
@@ -36,6 +38,10 @@ function Answer({ word }: { word: PlayWord }) {
 /** Dải phản hồi sau khi bé bấm Kiểm tra. Đúng: xanh lá; chưa đúng: cam nhẹ, không trừ gì; sai lần 3 thì cho xem đáp án. */
 export function ChoiceFeedback({ phase, tries, target, lastWrong, kind, onContinue, onRetry }: Props) {
   const open = phase !== "answering";
+  // Chưa đúng (kể cả khi cho xem đáp án): tiếng mềm, không phạt.
+  useEffect(() => {
+    if (phase === "wrong" || phase === "reveal") playSfx("retry");
+  }, [phase]);
   if (phase === "ok" || phase === "answering") {
     return <FeedbackBar open={open} type="ok" title={OK_TITLES[target.id % OK_TITLES.length]} detail={<Answer word={target} />} onAction={onContinue} />;
   }

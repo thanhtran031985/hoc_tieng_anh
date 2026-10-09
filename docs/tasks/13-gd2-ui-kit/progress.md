@@ -9,7 +9,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 2 | Chữ bấm được và khung trò chơi | ✅ | `ClickableWords`, 3 hộp thoại game, `GameFoot`, `GameFrame`; trang thử `/dev/game` |
 | 3 | Hộp quà nhận thưởng (RewardPopup) | ✅ | `RewardPopup`, `GiftBox`, `Sticker`, `Medal` ở `src/components/rewards/` |
 | 4 | Công cụ bài học (LessonTools) và học tập trung | ✅ | `LessonTools`, `LessonCrumb`, `useFocusMode`, `SoundProvider`; đã nối vào `LessonPlayer` |
-| 5 | Âm thanh hiệu ứng và nhạc nền | ⬜ | |
+| 5 | Âm thanh hiệu ứng và nhạc nền | ✅ | `src/lib/sound.ts` (Web Audio + nhạc nền + hạ nhạc khi giọng đọc chạy), `sound-effects.ts` (hàm thuần) |
 
 ## Nhật ký
 
@@ -58,6 +58,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 202/202 ✅ (thêm 3 test cài đặt âm thanh), `build` ✅. Edge không đầu, hồ sơ "Mai Linh" ở `/lesson/220` (cấp 3): 1366×768 và 1920×1080 không cuộn; F vào học tập trung (toàn màn hình thật, ẩn đường dẫn, nhãn "Đang học tập trung · Esc để thoát", nút đổi thành "Thoát học tập trung (Esc)"); Esc 1 thoát học tập trung mà chưa mở hộp thoại, Esc 2 mở "Dừng bài học?"; bảng âm thanh đóng bằng Esc (focus về nút loa, không mở "Dừng bài học?") hoặc Tab ra ngoài; ← ← đổi 70 → 50 mà không chạy phím tắt bài học; sau 1 giây `learners.settings` có `volume: 50, soundOn: false` và vẫn giữ giới hạn giờ; tải lại trang bảng hiện đúng 50% và Hiệu ứng tắt; không lỗi console. Đã khôi phục `settings` của hồ sơ thử.
 - Chưa chạy Playwright (cần reset DB test): các test bài học `07-` có thể cần cập nhật nếu chúng giả định khung bài không có thanh đường dẫn.
 
+### Bước 5 — 09/10/2026
+- `src/lib/rules/sound-effects.ts` (hàm thuần, có test): nốt của 4 hiệu ứng (`correct`, `retry`, `coin`, `gift`), đường cong âm lượng, độ to hiệu ứng và nhạc nền (nhạc nhỏ hơn, còn 30% khi giọng đọc chạy), chọn tệp nhạc. Tiếng "chưa đúng" nhỏ và mềm hơn tiếng "đúng" (không phạt).
+- `src/lib/sound.ts` (chỉ chạy trên trình duyệt): `playSfx` tạo tiếng bằng Web Audio (không cần tệp); nhạc nền là `HTMLAudioElement` lặp, chờ thao tác đầu tiên của bé nếu trình duyệt chưa cho phát, hạ/nâng từ từ (250 ms) theo giọng đọc. Mặc định tắt cho tới khi `SoundProvider` nạp cài đặt, nên màn nào chưa có cài đặt (ôn tập, xếp lớp) vẫn im lặng như trước.
+- `src/lib/speech.ts` thêm `onSpeaking`/`isSpeaking` để biết giọng đọc đang chạy; giọng đọc không phụ thuộc cài đặt âm thanh.
+- `src/server/music.ts`: `getMusicSrc()` lấy tệp âm thanh đầu tiên trong `public/media/music/` (đã tạo thư mục với `.gitkeep`); trang bài học truyền xuống `SoundProvider`. Chưa có tệp thì `musicAvailable` false: công tắc Nhạc nền mờ kèm "Chưa có nhạc nền".
+- Nối hiệu ứng: tiếng đúng cùng chỗ sao bay (`burstStars`); tiếng chưa đúng ở `ChoiceFeedback` (sai, xem đáp án), ghép cặp và lật thẻ; `RewardPopup` phát tiếng mở quà rồi tiếng xu. `/dev/ui` mục hộp quà bọc `SoundProvider` để nghe thử.
+- Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 209/209 ✅ (thêm 7 test), `build` ✅. Edge không đầu ở `/lesson/220` (hồ sơ Mai Linh): chưa có tệp nhạc thì công tắc Nhạc nền mờ kèm chú thích, không phát nhạc; trả lời đúng thì tạo đúng 2 nốt (mỗi tiếng sai thêm 2 nốt); tắt Hiệu ứng thì không tạo nốt nào mà `speechSynthesis.speak` vẫn chạy khi bấm nút loa; thêm tệp WAV thử vào `public/media/music` thì nhạc phát lặp, âm lượng 0,098 (70%), giọng đọc chạy thì hạ còn 0,029 rồi nâng lại 0,098 khi xong, công tắc tắt thì nhạc dừng, bật lại thì phát tiếp; ở `/dev/ui` mở quà tạo 6 nốt (gift 4 + xu 2); không lỗi console. Đã xóa tệp WAV thử và khôi phục `settings` hồ sơ thử.
+- Bố/mẹ cần làm: bỏ tệp nhạc nền (mp3/ogg/wav/m4a, nhẹ nhàng, hợp lệ bản quyền) vào `public/media/music/`; chưa có thì công tắc Nhạc nền vẫn mờ.
+
 ## Bước tiếp theo
 
-Bước 5 — Âm thanh hiệu ứng và nhạc nền.
+Xong 6 bước. Kiểm tra cuối task và đóng task (`/finish-task`).

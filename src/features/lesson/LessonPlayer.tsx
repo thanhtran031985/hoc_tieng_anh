@@ -52,7 +52,7 @@ type Progress = { session: Session; activeMs: number; /** Lúc bắt đầu bài
 export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learnerLevel }: Props) {
   const router = useRouter();
   const tools = useFocusMode();
-  const { sound, setSound } = useSound();
+  const { sound, setSound, musicAvailable } = useSound();
   const { usedMinutes, limitMinutes } = useStudyClock();
   const stepsById = useMemo(() => new Map<string, PlayStep>(plan.steps.map((s) => [s.id, s])), [plan.steps]);
   const baseIds = useMemo(() => new Set(stepsById.keys()), [stepsById]);
@@ -246,7 +246,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
       extra={
         <>
           {tools.focus && <FocusBadge />}
-          <LessonTools focus={tools.focus} onToggleFocus={tools.toggle} sound={sound} onSoundChange={setSound} />
+          <LessonTools focus={tools.focus} onToggleFocus={tools.toggle} sound={sound} onSoundChange={setSound} musicAvailable={musicAvailable} />
         </>
       }
     >
