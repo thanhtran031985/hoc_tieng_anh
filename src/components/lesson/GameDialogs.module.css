@@ -1,0 +1,38 @@
+.line {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+  color: var(--ink);
+}
+.line svg {
+  color: var(--brand);
+  flex: none;
+}
+.stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+  color: var(--ink);
+}
+.stats > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.stats b {
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--text-display-l--line-height);
+  font-weight: 800;
+}
+.note {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--ink-soft);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: var(--text-body--font-weight);
+}

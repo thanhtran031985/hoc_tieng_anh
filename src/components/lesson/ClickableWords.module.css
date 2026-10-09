@@ -1,0 +1,69 @@
+.host {
+  position: relative;
+}
+.kw {
+  border: 0;
+  background: none;
+  padding: 0 var(--space-1);
+  margin: 0 calc(-1 * var(--space-1));
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast);
+}
+.kw:hover {
+  background: var(--surface-soft);
+  text-decoration: underline dotted;
+  text-underline-offset: var(--space-1);
+}
+.lit {
+  background: var(--read-highlight);
+}
+.punct {
+  margin-left: calc(-1 * var(--space-1));
+}
+
+/* Bong bóng "loa · chữ · nghĩa" nằm trên chữ vừa bấm. */
+.gloss {
+  position: absolute;
+  z-index: var(--z-sticky);
+  transform: translate(-50%, calc(-100% - var(--space-2)));
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  white-space: nowrap;
+  pointer-events: none;
+  font-style: normal;
+}
+.gloss > button {
+  pointer-events: auto;
+}
+.gloss b {
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: 800;
+  color: var(--ink);
+}
+.gloss > span {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.gloss::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(-1 * var(--space-2));
+  margin-left: calc(-1 * var(--space-2));
+  border: var(--space-2) solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--surface);
+}

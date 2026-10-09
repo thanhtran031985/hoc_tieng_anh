@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, type MouseEvent } from "react";
+import { cn } from "@/lib/cn";
 import { Button, type ButtonVariant } from "../Button/Button";
+import type { IconName } from "../Icon/icon-paths";
 import { Mascot, type Expr } from "../Mascot/Mascot";
 import styles from "./Dialog.module.css";
 
@@ -14,6 +16,8 @@ export type DialogAction = {
   /** Giữ hộp thoại mở sau khi bấm (vd nhập sai PIN, cần báo lỗi ngay trong hộp). Mặc định đóng. */
   keepOpen?: boolean;
   disabled?: boolean;
+  /** Icon trong nút (hộp thoại trò chơi: next, play, close). */
+  icon?: IconName;
 };
 
 export type DialogProps = {
@@ -26,6 +30,12 @@ export type DialogProps = {
   expr?: Expr;
   /** 1–2 nút cỡ l. Nút an toàn/tiếp tục học đặt trước và là primary; nút rời đi là secondary. Không dùng nút Huỷ màu đỏ. */
   actions: DialogAction[];
+  /** Hình tuỳ ý nhô lên trên mép hộp, thay cho rồng Bông (hộp thoại trò chơi: hình hướng dẫn, rồng ngủ, rồng chúc mừng). */
+  art?: React.ReactNode;
+  /** "game": hộp rộng hơn dùng cho lớp phủ bắt đầu, tạm dừng, kết thúc trò chơi. */
+  size?: "default" | "game";
+  /** Bấm ra ngoài hộp thì đóng. Mặc định có; lớp phủ trò chơi tắt để bé không lỡ bấm. */
+  closeOnBackdrop?: boolean;
 };
 
 const FOCUSABLE = 'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
@@ -37,7 +47,7 @@ const isEscape = (shortcut?: string) => shortcut === "Esc" || shortcut === "Esca
  * Hộp luôn nằm trong cây DOM (ẩn bằng CSS khi đóng) để chuyển cảnh mượt; đặt trong vùng có `position: relative` thì phủ vùng đó,
  * không thì phủ cả cửa sổ.
  */
-export function Dialog({ open, onClose, title, body, expr, actions }: DialogProps) {
+export function Dialog({ open, onClose, title, body, expr, actions, art, size = "default", closeOnBackdrop = true }: DialogProps) {
   const titleId = useId();
   const bodyId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -109,23 +119,27 @@ export function Dialog({ open, onClose, title, body, expr, actions }: DialogProp
   }, [open]);
 
   function onBackdropClick(event: MouseEvent<HTMLDivElement>) {
-    if (event.target === event.currentTarget) onClose();
+    if (closeOnBackdrop && event.target === event.currentTarget) onClose();
   }
 
   return (
     <div className={styles.overlay} data-open={open ? "true" : undefined} inert={!open} onClick={onBackdropClick}>
       <div
         ref={dialogRef}
-        className={styles.dialog}
+        className={cn(styles.dialog, size === "game" && styles.game)}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={body ? bodyId : undefined}
       >
-        {expr && (
-          <div className={styles.mascot}>
-            <Mascot expr={expr} size={150} />
-          </div>
+        {art ? (
+          <div className={styles.art}>{art}</div>
+        ) : (
+          expr && (
+            <div className={styles.mascot}>
+              <Mascot expr={expr} size={150} />
+            </div>
+          )
         )}
         <h2 id={titleId} className={styles.title}>
           {title}
@@ -143,6 +157,7 @@ export function Dialog({ open, onClose, title, body, expr, actions }: DialogProp
               variant={action.variant ?? "secondary"}
               label={action.label}
               shortcut={action.shortcut}
+              icon={action.icon}
               onClick={() => {
                 action.onClick?.();
                 if (!action.keepOpen) onClose();

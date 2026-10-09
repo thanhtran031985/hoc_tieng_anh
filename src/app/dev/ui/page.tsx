@@ -20,6 +20,7 @@ import {
   type Expr,
   type MascotColor,
 } from "@/components/ui";
+import { ClickableWords, GameFoot } from "@/components/lesson";
 import { Gd2Tokens } from "./gd2-tokens";
 import { GrowthDemo } from "./growth-demo";
 import { HotkeysDemo } from "./hotkeys-demo";
@@ -365,6 +366,24 @@ export default function DevUiPage() {
         note="Hộp thoại và dải phản hồi mở trong khung giả lập một màn hình."
       >
         <OverlaysDemo />
+      </Section>
+
+      <Section
+        id="sec-lesson-kit"
+        title="Chữ bấm được và chân bài trò chơi"
+        note="Bấm một chữ để nghe và xem nghĩa. Khung trò chơi đầy đủ (bắt đầu, tạm dừng Esc, thoát, kết thúc) xem ở /dev/game."
+      >
+        <p className="mt-12 font-display text-word">
+          <ClickableWords text="This is a brown bird. It likes seeds!" glossary={{ this: "đây, cái này", is: "là", a: "một", bird: "con chim", brown: "màu nâu", it: "nó", likes: "thích", seeds: "hạt" }} />
+        </p>
+        <div className="mt-12 overflow-hidden rounded-lg shadow-card">
+          <GameFoot message="Tìm chữ b nào!" score={2} total={5} enabled={false} />
+        </div>
+        <p className="mt-4 font-body text-body">
+          <a className="text-brand underline" href="/dev/game">
+            Mở khung trò chơi thử (/dev/game)
+          </a>
+        </p>
       </Section>
 
       <Section id="sec-gd2-tokens" title="Token GĐ2" note="Gd2Tokens, Gd3Tokens, Gd4Tokens: màu hiện ô màu, kích thước và thời lượng hiện giá trị đọc từ trang.">

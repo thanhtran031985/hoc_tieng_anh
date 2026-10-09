@@ -27,6 +27,8 @@ export type LessonFrameProps = {
   value: number;
   max: number;
   onExit: () => void;
+  /** Có thì hiện nút ⏸ "Tạm dừng (Esc)" cạnh nút thoát (khung trò chơi). */
+  onPause?: () => void;
   /** Bỏ thanh tiến độ (trò chơi lật thẻ, màn kết thúc). */
   head?: React.ReactNode;
   children: React.ReactNode;
@@ -36,11 +38,12 @@ export type LessonFrameProps = {
  * Khung bài học: nút × (hỏi "Dừng bài học?"), thanh tiến độ kèm số "n/N", rồi vùng hoạt động và chân bài do từng dạng bài đưa vào.
  * `head` thay phần giữa của thanh đầu khi dạng bài cần tiêu đề riêng (trò chơi lật thẻ).
  */
-export function LessonFrame({ level, mascot, value, max, onExit, head, children }: LessonFrameProps) {
+export function LessonFrame({ level, mascot, value, max, onExit, onPause, head, children }: LessonFrameProps) {
   return (
     <div className={styles.screen} data-level={level} data-dragon={mascot}>
       <header className={styles.head}>
         <IconButton icon="close" label="Thoát bài học" onClick={onExit} data-exit data-hotkey-skip />
+        {onPause && <IconButton icon="pause" label="Tạm dừng (Esc)" iconSize={24} onClick={onPause} data-pause data-hotkey-skip />}
         {head ?? (
           <>
             <ProgressBar value={value} max={max} label="Tiến độ bài học" />

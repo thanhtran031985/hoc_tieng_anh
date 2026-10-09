@@ -9,6 +9,9 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 09/10/2026 | Hằng số `COINS`/`WORDLAB` viết dạng camelCase (`stickerLesson`, `priceFurnitureS`, `linksMaxDepth`…), bỏ tiền tố `coin-`. | Hợp văn phong TypeScript; test `constants.test.ts` ánh xạ từ tên token trong `tokens.json` nên không lệch. |
 | 09/10/2026 | Nhãn đọc màn hình "dáng cấp N" thêm cho mọi dáng được truyền `stage`, kể cả dáng 3. | `bundle.js` bỏ nhãn ở dáng 3; README MascotGrowth và Kiểm tra Bước 1 đều yêu cầu nhãn có "dáng cấp N", nên làm đồng nhất. Không truyền `stage` thì nhãn như cũ. |
 | 09/10/2026 | `dragon-parts.ts` chia thành đoạn thay vì một chuỗi mỗi biểu cảm. | Dáng theo cấp đặt biến đổi riêng cho đuôi, cánh, thân và đầu (như `bundle.js`); ghép lại dáng gốc vẫn ra đúng hình cũ. |
+| 09/10/2026 | `GameFrame` đặt ở `src/features/lesson/`, còn `ClickableWords`, các hộp thoại game và `GameFoot` ở `src/components/lesson/`. | `GameFrame` ghép `LessonFrame` và `ExitDialog` của feature bài học (đang dùng chung `lesson.module.css` với 5 màn khác), chuyển sang `components/` sẽ phải tách css đang chia sẻ. Các phần không phụ thuộc feature thì ở `components/lesson/` đúng như task.md. |
+| 09/10/2026 | Hộp thoại game không đóng khi bấm ra ngoài (`closeOnBackdrop={false}`). | Bản thiết kế chỉ đóng bằng nút hoặc Esc; bé đang chơi không lỡ bấm ra ngoài mà bỏ qua bảng kết thúc. |
+| 09/10/2026 | Esc ở lớp phủ bắt đầu = Bắt đầu; Esc ở bảng kết thúc = Tiếp tục; Esc ở Tạm dừng = Chơi tiếp. | Đúng `onEsc` của `loverlay` trong bundle.js. |
 
 ### 09/10/2026 — Test token đang đỏ trước khi làm task này
 - `tests/e2e/01-nen-tang.spec.ts` ("mọi token màu dạng hex ... khớp designs/tokens.json") đang hỏng vì thiếu 108 token GĐ2 trong theme (xem `29-fix-ui-findings/decisions.md`). Thêm token vào theme ở bước đầu của task này và chạy lại `npx playwright test 01-`; test phải đạt, không nới test.

@@ -348,6 +348,9 @@
   --size-create-foot-s: 96px;
   --size-panel-min-h-s: 240px;
   --size-feedback-mascot: 112px;
+  /* Khung trò chơi GĐ2 (task 13): hộp thoại bắt đầu / tạm dừng / kết thúc rộng hơn hộp thường, hình nhô lên trên mép. */
+  --size-dialog-game: 560px;
+  --dialog-art-lift: 96px;
   --feedback-mascot-lift: 64px;
 
   /* Trang chủ của bé (Screen04) và màn "Sắp có" (Screen22). */

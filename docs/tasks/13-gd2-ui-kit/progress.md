@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 |---|---|---|---|
 | 0 | Token và hằng số GĐ2 | ✅ | 165 biến vào `globals.css`, `COINS`/`WORDLAB` vào `constants.ts`; test Playwright `01-` chưa chạy (chờ bố/mẹ đồng ý reset DB test) |
 | 1 | Rồng Bông lớn lên (MascotGrowth) | ✅ | Mascot có prop `stage`, thêm `MascotGrowth`; 40/40 hình khớp bundle.js |
-| 2 | Chữ bấm được và khung trò chơi | ⬜ | |
+| 2 | Chữ bấm được và khung trò chơi | ✅ | `ClickableWords`, 3 hộp thoại game, `GameFoot`, `GameFrame`; trang thử `/dev/game` |
 | 3 | Hộp quà nhận thưởng (RewardPopup) | ⬜ | |
 | 4 | Công cụ bài học (LessonTools) và học tập trung | ⬜ | |
 | 5 | Âm thanh hiệu ứng và nhạc nền | ⬜ | |
@@ -31,6 +31,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Chưa nối `stageForLevel` vào màn nào (task 20 làm "rồng Bông lớn lên" theo cấp trên trang chủ); bước này chỉ có thành phần và hàm quy tắc.
 - Test Playwright vẫn chưa chạy (cần reset DB test, chờ bố/mẹ đồng ý).
 
+### Bước 2 — 09/10/2026
+- `src/components/lesson/` (mới): `ClickableWords` (mỗi chữ là một nút; bấm thì đọc đúng chữ và hiện bong bóng "loa · chữ · nghĩa" 2,6 giây; nhãn đọc màn hình có nghĩa), `GameStartDialog` / `GamePauseDialog` / `GameEndDialog`, `GameFoot` (Bông + lời nhắn, Nghe lại Space, Gợi ý H, điểm).
+- `Dialog` (task 02) mở rộng, không đổi cách dùng cũ: thêm `art` (hình tuỳ ý nhô lên mép hộp), `size="game"` (rộng hơn), `closeOnBackdrop`, và `icon` cho nút.
+- `src/features/lesson/GameFrame.tsx` (mới): bắt đầu → chơi → tạm dừng → kết thúc, ghép `LessonFrame` + `ExitDialog`. `LessonFrame` thêm prop `onPause` (nút ⏸ "Tạm dừng (Esc)"). `children({ running })` để trò chơi dừng chuyển động và phím tắt khi chưa bắt đầu, đang tạm dừng, đang hỏi thoát hoặc đã xong.
+- `src/lib/rules/sentence-words.ts` (mới, có test): tách câu thành chữ, chữ thường và dấu câu.
+- Trang thử `/dev/game` (chỉ khi phát triển) và mục "Chữ bấm được và chân bài trò chơi" ở `/dev/ui`.
+- Token thêm vào `globals.css` (liệt kê theo CLAUDE.md): `--size-dialog-game: 560px`, `--dialog-art-lift: 96px` (hộp thoại game rộng hơn và hình nhô lên 96px, lấy từ `.b-dialog--game` và `.b-ov2__how` của bundle.css).
+- Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 199/199 ✅, `build` ✅. Edge không đầu ở 1366×768 trên `/dev/game`, 25 điều kiện đều đạt: Enter bắt đầu; bấm "bird" thì `speechSynthesis.speak` nhận đúng "bird" và hiện "con chim"; Space, H chạy khi đang chơi; Esc mở Tạm dừng và game dừng; Esc lần nữa chơi tiếp; nút ⏸ mở Tạm dừng; Thoát mở "Dừng bài học?" (hộp tạm dừng ẩn), Esc ở đó ở lại rồi quay về Tạm dừng; ✕ mở "Dừng bài học?"; Dừng lại gọi `onExit`; đủ điểm mở bảng kết thúc, Enter = Tiếp tục; không cuộn; không lỗi console. Dùng toàn bằng bàn phím.
+
 ## Bước tiếp theo
 
-Bước 2 — Chữ bấm được và khung trò chơi.
+Bước 3 — Hộp quà nhận thưởng (RewardPopup).
