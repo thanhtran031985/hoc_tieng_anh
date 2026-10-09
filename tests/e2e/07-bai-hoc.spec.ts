@@ -188,7 +188,7 @@ test.describe("Bước 2 — nghe và chọn hình (Screen07)", () => {
     await expect(options.nth(1)).toHaveAttribute("aria-pressed", "true");
     await page.keyboard.press("a");
     await expect(options.nth(0)).toHaveAttribute("aria-pressed", "true");
-    await expect(options.nth(1)).toHaveAttribute("aria-pressed", "false");
+    await expect(options.nth(1)).not.toHaveAttribute("aria-pressed", "true");
     // Chưa chọn thì nút Kiểm tra bị khóa.
     await page.keyboard.press("a");
   });

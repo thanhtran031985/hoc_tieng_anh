@@ -1,0 +1,28 @@
+# Quyết định — 29-fix-ui-findings
+
+### 09/10/2026 — Lỗi 1 dùng `retry` của Next thay vì `router.refresh()`
+- Bối cảnh: báo cáo test đề xuất thêm `router.refresh()`. Next 16.3.8 có sẵn prop `retry()` cho `error.tsx` (tài liệu trong `node_modules/next/dist/docs/.../error.md`): lấy lại dữ liệu rồi vẽ lại; `reset()` chỉ vẽ lại.
+- Quyết định: đổi `reset` thành `retry` ở mọi `error.tsx`.
+- Lý do: đúng API chính thức, không phải tự viết `startTransition`.
+- Ảnh hưởng: sửa 19 tệp (báo cáo ghi 16: còn thiếu `home`, `placement`, `time-up` cũng dùng `reset`).
+
+### 09/10/2026 — Favicon là tệp SVG tĩnh có mã màu
+- Bối cảnh: `src/app/icon.svg` không đọc được token CSS của trang.
+- Quyết định: chép đầu rồng Bông (biểu cảm `chao`, nét vẽ từ `dragon-parts.ts`) vào tệp SVG với màu của rồng ngọc (token `--dragon-*`) ghi trực tiếp.
+- Lý do: tệp biểu tượng độc lập với CSS; đây là ngoại lệ duy nhất của quy tắc "không mã màu hex".
+
+### 09/10/2026 — Bỏ qua thư mục báo cáo test khi lint
+- Bối cảnh: `npm run lint` quét cả `playwright-report/` (JS đã đóng gói) và báo hàng nghìn lỗi.
+- Quyết định: thêm `playwright-report/**`, `test-results/**` vào `globalIgnores` của `eslint.config.mjs`.
+
+### 09/10/2026 — Cho phép mở bản dev từ địa chỉ mạng nhà (`allowedDevOrigins`)
+- Bối cảnh: mở `http://192.168.1.221:3000/login` thì nút Đăng nhập và Tạo tài khoản không bao giờ sáng, dù ô đã có chữ. Mở bằng `localhost` thì bình thường. Thử bằng Chrome: bản dev chặn kết nối HMR từ địa chỉ lạ (`WebSocket ... failed`), trang không chạy được mã phía trình duyệt.
+- Quyết định: thêm `allowedDevOrigins: ["192.168.*.*"]` vào `next.config.ts` (chỉ có tác dụng khi chạy `npm run dev`, cần chạy lại dev server).
+- Lý do: dùng `*` cho 2 nhãn cuối để khỏi phải sửa khi router đổi địa chỉ máy; chỉ mạng nhà `192.168.x.x`.
+- Ảnh hưởng: bản build/hosting không đổi.
+
+### 09/10/2026 — Đổi mật khẩu: nhập tự do, không ràng buộc (theo yêu cầu của bạn)
+- Bối cảnh: bạn muốn ô "Mật khẩu mới" ở Khu bố mẹ › Mật khẩu & mã PIN nhập tự do.
+- Quyết định: `validateNewPassword` (`src/lib/rules/parent-settings.ts`, dùng chung cho client và server) chỉ báo lỗi khi để trống; bỏ yêu cầu ≥ 8 ký tự và có cả chữ lẫn số. Giữ độ dài tối đa của schema (bcrypt chỉ dùng 72 byte đầu) và việc hai lần nhập phải khớp. Cập nhật gợi ý dưới ô, test hàm thuần và tên test `11`.
+- Không đổi: form Đăng ký vẫn yêu cầu ≥ 8 ký tự (`src/lib/schemas/auth.ts`); mật khẩu vẫn băm bcrypt.
+- Ảnh hưởng: ngược quy tắc "mật khẩu mạnh" của task 04; chấp nhận để tiện khi dev, nên siết lại trước khi đưa lên hosting.

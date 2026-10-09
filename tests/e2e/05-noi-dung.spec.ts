@@ -19,10 +19,10 @@ test.describe("Task 05 — bé chỉ thấy nội dung đã xuất bản", () =>
   test("gõ thẳng URL bài Nháp thì không vào được (404), bài không tồn tại cũng 404", async ({ page }) => {
     const draftLesson = seedInfo().draft.lessonId;
     await page.goto(`/lesson/${draftLesson}`);
-    await expect(page.getByRole("heading", { level: 1, name: "404" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Bông tìm mãi mà không thấy trang này" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Thoát bài học" })).toHaveCount(0);
     await page.goto("/lesson/9999999");
-    await expect(page.getByRole("heading", { level: 1, name: "404" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Bông tìm mãi mà không thấy trang này" })).toBeVisible();
   });
 
   test("bài ở trạng thái Nháp của chủ đề đã xuất bản cũng không vào được", async ({ page }) => {
@@ -32,7 +32,7 @@ test.describe("Task 05 — bé chỉ thấy nội dung đã xuất bản", () =>
     await sql("UPDATE lessons SET status = 'draft' WHERE id = ?", [row.id]);
     try {
       await page.goto(`/lesson/${row.id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "404" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Bông tìm mãi mà không thấy trang này" })).toBeVisible();
       await page.goto("/map/3");
       await expect(page.getByRole("heading", { name: /Bản đồ Đảo 3/ })).toBeVisible();
     } finally {
@@ -49,7 +49,7 @@ test.describe("Task 05 — bé chỉ thấy nội dung đã xuất bản", () =>
 
   test("cấp không tồn tại thì 404", async ({ page }) => {
     await page.goto("/map/99");
-    await expect(page.getByRole("heading", { level: 1, name: "404" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Bông tìm mãi mà không thấy trang này" })).toBeVisible();
   });
 });
 

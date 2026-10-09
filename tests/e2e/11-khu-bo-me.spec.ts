@@ -412,7 +412,7 @@ test.describe("Bước 3 — Cài đặt (Adult07), gia đình S", () => {
     expect(await sql("SELECT id FROM learners WHERE id = ?", [bap])).toHaveLength(0);
   });
 
-  test("đổi mật khẩu kiểm đúng luật: mật khẩu hiện tại sai, mật khẩu mới yếu, hai lần nhập khác nhau", async ({ page }) => {
+  test("đổi mật khẩu kiểm đúng luật: mật khẩu hiện tại sai, hai lần nhập khác nhau (mật khẩu mới nhập tự do, không kiểm độ mạnh)", async ({ page }) => {
     const [before] = await sql<{ p: string }>("SELECT password AS p FROM users WHERE email = ?", [EMAIL.s]);
     await page.getByRole("tab", { name: "Mật khẩu & mã PIN" }).click();
     const panel = page.getByRole("tabpanel", { name: "Mật khẩu & mã PIN" });

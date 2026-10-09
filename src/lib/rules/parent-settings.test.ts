@@ -32,11 +32,12 @@ describe("tên, mật khẩu, PIN", () => {
     assert.match(validateName("Minh2"), /chữ cái/);
   });
 
-  it("mật khẩu mới ≥ 8 ký tự có cả chữ và số", () => {
+  it("mật khẩu mới nhập tự do, chỉ không được để trống", () => {
     assert.equal(validateNewPassword("matkhau123"), "");
-    assert.match(validateNewPassword("ngan1"), /ít nhất 8/);
-    assert.match(validateNewPassword("chiconchu"), /cả chữ và số/);
-    assert.match(validateNewPassword("12345678"), /cả chữ và số/);
+    assert.equal(validateNewPassword("a"), "");
+    assert.equal(validateNewPassword("chiconchu"), "");
+    assert.equal(validateNewPassword("12345678"), "");
+    assert.equal(validateNewPassword(""), "Nhập mật khẩu mới.");
   });
 
   it("PIN dễ đoán: lặp số hoặc số liền nhau", () => {

@@ -1,7 +1,7 @@
-# Kế hoạch task 13 — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7)
+# Kế hoạch task 29 — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7)
 
 ## Context
-Bộ test Playwright (commit a09504e) phát hiện 9 lỗi của app, ghi ở `docs/test/bao-cao-test.md`. Người dùng chọn sửa lỗi 1–7 trước; lỗi 8 (từ chưa có hình) và 9 (câu "ôn hết" cho bé mới) chờ quyết về nội dung/logic nên NGOÀI phạm vi. Task đã tạo: `docs/tasks/13-fix-ui-findings/` (nhánh `feat/13-fix-ui-findings`, dòng 13 trong README, dashboard 0 cảnh báo). Mục tiêu: test tương ứng chuyển từ hỏng sang đạt, không nới test, không đổi tính năng khác.
+Bộ test Playwright (commit a09504e) phát hiện 9 lỗi của app, ghi ở `docs/test/bao-cao-test.md`. Người dùng chọn sửa lỗi 1–7 trước; lỗi 8 (từ chưa có hình) và 9 (câu "ôn hết" cho bé mới) chờ quyết về nội dung/logic nên NGOÀI phạm vi. Task đã tạo: `docs/tasks/29-fix-ui-findings/` (nhánh `feat/29-fix-ui-findings`, dòng 29 trong README, dashboard 0 cảnh báo). Mục tiêu: test tương ứng chuyển từ hỏng sang đạt, không nới test, không đổi tính năng khác.
 
 ## Phát hiện khi khảo sát (khác với báo cáo)
 - **Lỗi 1:** Next 16.3.8 có sẵn prop `retry()` cho `error.tsx` (docs `node_modules/next/dist/docs/.../error.md`; `reset()` "chỉ vẽ lại, không lấy lại dữ liệu"). Cách sửa chuẩn: đổi prop `reset` → `retry` rồi `onRetry={retry}`, KHÔNG cần tự viết `router.refresh()` + `startTransition`. Dùng `retry` có sẵn sạch hơn kế hoạch ban đầu trong task.md → ghi vào decisions.md.
@@ -29,8 +29,8 @@ Bộ test Playwright (commit a09504e) phát hiện 9 lỗi của app, ghi ở `d
 **Bước 6 — Kiểm tra cuối.** `npx tsc --noEmit`, `npm run lint`, `npm run build`. Tắt `npm run dev`, chạy `npm run test:e2e` (cần `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` cho `migrate reset` trên `hoc_tieng_anh_test`; người dùng đã đồng ý reset database test ở phiên trước — nếu bị chặn lại thì hỏi). Cập nhật `docs/test/bao-cao-test.md` (lỗi 1–7 → đã sửa, số liệu mới) và test nếu cần chuyển kỳ vọng (không nới). Thêm màn `/not-found` vào `chung.spec.ts` (trợ năng, không cuộn) và kiểm "không lỗi console" không còn 404 favicon.
 
 ## Quy trình / hồ sơ
-- Sau kế hoạch được duyệt: lưu bản này vào `docs/tasks/13-fix-ui-findings/plan.md`.
-- Sau mỗi bước: tsc + test liên quan, cập nhật `progress.md` (bảng bước: dòng đầu tiên có cột "Bước" và "Trạng thái"), `npm run tasks:dashboard` (Cảnh báo: 0), commit `13-fix-ui-findings: step N — …` và push (đã được phép tự commit/push theo quy trình tự chủ).
+- Sau kế hoạch được duyệt: lưu bản này vào `docs/tasks/29-fix-ui-findings/plan.md`.
+- Sau mỗi bước: tsc + test liên quan, cập nhật `progress.md` (bảng bước: dòng đầu tiên có cột "Bước" và "Trạng thái"), `npm run tasks:dashboard` (Cảnh báo: 0), commit `29-fix-ui-findings: step N — …` và push (đã được phép tự commit/push theo quy trình tự chủ).
 - Cuối task: chạy `.claude/commands/finish-task.md` giai đoạn C (Playwright đã nằm trong đó), README → ✅ khi người dùng báo test ok, soạn mô tả PR.
 - Không cài package mới, không sửa `designs/`, không đọc `.env`.
 

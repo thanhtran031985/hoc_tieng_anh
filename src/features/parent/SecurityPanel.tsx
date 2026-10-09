@@ -23,7 +23,7 @@ export function SecurityPanel({ email, hasPin }: { email: string; hasPin: boolea
         <div className={styles.row2}>
           <AdultInput label="Mật khẩu hiện tại" type="password" autoComplete="current-password" required value={password.current} onChange={(e) => password.set("current", e.target.value)} error={password.errors.current} />
           <span />
-          <AdultInput label="Mật khẩu mới" type="password" autoComplete="new-password" required hint="Ít nhất 8 ký tự, có cả chữ và số" value={password.next} onChange={(e) => password.set("password", e.target.value)} onBlur={password.validateNext} error={password.errors.password} />
+          <AdultInput label="Mật khẩu mới" type="password" autoComplete="new-password" required hint="Nhập tự do, không giới hạn ký tự" value={password.next} onChange={(e) => password.set("password", e.target.value)} onBlur={password.validateNext} error={password.errors.password} />
           <AdultInput label="Nhập lại mật khẩu mới" type="password" autoComplete="new-password" required value={password.confirm} onChange={(e) => password.set("confirm", e.target.value)} error={password.errors.confirm} />
         </div>
         {password.errors.form && <p role="alert">{password.errors.form}</p>}

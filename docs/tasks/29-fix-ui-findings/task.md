@@ -1,4 +1,4 @@
-# 13 — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7)
+# 29 — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7)
 
 > Quy trình làm việc và quy tắc code: xem `CLAUDE.md`.
 > Nguồn: `docs/test/bao-cao-test.md` (bộ test Playwright chạy 09/10/2026). Task này sửa **lỗi 1–7**.
@@ -32,7 +32,7 @@ Sửa 7 lỗi do bộ test giao diện tự động phát hiện, mà không đ�
 
 ## Các bước
 ### Bước 0 — Kiểm tra dự án (không sửa code)
-Đọc `docs/test/bao-cao-test.md`, xác nhận từng lỗi còn tái hiện và file nghi ngờ còn đúng. Tạo nhánh `feat/13-fix-ui-findings`.
+Đọc `docs/test/bao-cao-test.md`, xác nhận từng lỗi còn tái hiện và file nghi ngờ còn đúng. Tạo nhánh `feat/29-fix-ui-findings`.
 - Kiểm tra: `git status` sạch phần code; liệt kê file sẽ sửa cho từng lỗi.
 
 ### Bước 1 — Nút "Thử lại" tải lại dữ liệu (lỗi 1)

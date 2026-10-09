@@ -6,7 +6,6 @@ const CLOCK = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 /** Khung giờ học tối thiểu (phút). */
 export const MIN_WINDOW_MINUTES = 30;
 export const MAX_NAME_LENGTH = 20;
-export const MIN_PASSWORD_LENGTH = 8;
 
 /** "17:05" → 1025 phút kể từ 0 giờ; sai dạng thì null. */
 export function clockMinutes(value: string): number | null {
@@ -49,12 +48,9 @@ export function validateName(raw: string): string {
   return "";
 }
 
-/** Mật khẩu mới: ít nhất 8 ký tự, có cả chữ và số. */
+/** Mật khẩu mới: nhập tự do, không ràng buộc độ dài hay loại ký tự (chỉ không được để trống; độ dài tối đa kiểm ở schema). */
 export function validateNewPassword(value: string): string {
-  if (!value) return "Nhập mật khẩu mới.";
-  if (value.length < MIN_PASSWORD_LENGTH) return `Mật khẩu cần ít nhất ${MIN_PASSWORD_LENGTH} ký tự.`;
-  if (!(/\d/.test(value) && /[a-zA-Z]/.test(value))) return "Mật khẩu cần có cả chữ và số.";
-  return "";
+  return value ? "" : "Nhập mật khẩu mới.";
 }
 
 /** PIN quá dễ đoán: lặp một số (1111) hoặc các số liền nhau tăng/giảm (1234, 4321). */

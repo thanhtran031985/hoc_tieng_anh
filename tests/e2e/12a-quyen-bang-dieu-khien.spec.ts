@@ -15,7 +15,7 @@ test.describe("Chặn quyền: tài khoản thường (parent) đã mở cổng 
     await openParentGate(page, pinOf("A"));
     for (const route of ADMIN_PAGES) {
       await page.goto(route);
-      await expect(page.getByRole("heading", { level: 1, name: "404" }), route).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Bông tìm mãi mà không thấy trang này" }), route).toBeVisible();
       await expect(page.getByRole("heading", { name: "Bảng điều khiển" })).toHaveCount(0);
     }
   });
