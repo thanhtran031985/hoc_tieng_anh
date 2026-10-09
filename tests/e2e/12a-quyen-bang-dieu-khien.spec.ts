@@ -4,7 +4,7 @@ import { count, seedInfo, sql } from "./helpers/db";
 import { expect, test } from "./helpers/fixtures";
 import { cssVar } from "./helpers/layout";
 
-const ADMIN_PAGES = ["/admin", "/admin/tree", "/admin/vocab", "/admin/questions", "/admin/builder", "/admin/media", "/admin/excel", "/admin/phonics", "/admin/question-types"];
+const ADMIN_PAGES = ["/admin", "/admin/tree", "/admin/vocab", "/admin/questions", "/admin/builder", "/admin/media", "/admin/excel", "/admin/phonics", "/admin/question-types", "/admin/stories"];
 const NO_STATE = { cookies: [], origins: [] };
 
 test.describe("Chặn quyền: tài khoản thường (parent) đã mở cổng bố mẹ", () => {
@@ -149,7 +149,7 @@ test.describe("Bước 0 — Bảng điều khiển (Adult08)", () => {
 
   test("menu quản trị: các mục GĐ1 bật, ngữ pháp và đề thi hiện mờ 'Sắp có'", async ({ page }) => {
     const nav = page.getByRole("navigation").first();
-    for (const name of ["Bảng điều khiển", "Cấu trúc lộ trình", "Ngân hàng từ vựng", "Ngân hàng câu hỏi", "Soạn bài học", "Hình ảnh & âm thanh", "Nhập & xuất Excel", "Âm phonics", "Câu hỏi dạng mới"]) {
+    for (const name of ["Bảng điều khiển", "Cấu trúc lộ trình", "Ngân hàng từ vựng", "Ngân hàng câu hỏi", "Soạn bài học", "Hình ảnh & âm thanh", "Nhập & xuất Excel", "Âm phonics", "Câu hỏi dạng mới", "Truyện tranh"]) {
       await expect(nav.getByRole("link", { name })).toBeVisible();
     }
     await expect(nav.getByRole("link", { name: "Chủ điểm ngữ pháp" })).toHaveCount(0);

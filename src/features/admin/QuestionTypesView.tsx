@@ -18,6 +18,7 @@ import {
   type ExtraForm,
 } from "@/lib/rules/admin-question-types";
 import type { BankWord } from "@/lib/rules/admin-questions";
+import { READING_CHOICES, READING_MAX_QUESTIONS, READING_MAX_SENTENCES, READING_MIN_QUESTIONS, READING_MIN_SENTENCES, splitPassage } from "@/lib/rules/grading/reading";
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { phonicsSay } from "@/lib/rules/phonics";
 import { saveExtraQuestionSchema } from "@/lib/schemas/admin-question-types";
@@ -432,6 +433,58 @@ function QuestionTypeDrawer({ data, row, startType, onClose }: { data: ExtraQues
                 ))}
               </div>
               <GroupError id="qt-cards-e" message={errors.cards} />
+            </fieldset>
+            {pictureField}
+          </>
+        )}
+
+        {type === "short_reading" && (
+          <>
+            <AdultInput label="Tiêu đề bài đọc" lang="en" value={form.title} error={errors.title} onChange={(e) => patch({ title: e.target.value }, "title")} onBlur={() => checkField("title")} />
+            <AdultTextarea
+              label="Đoạn văn"
+              lang="en"
+              rows={5}
+              value={form.text}
+              hint={`${READING_MIN_SENTENCES}–${READING_MAX_SENTENCES} câu (đang có ${splitPassage(form.text).length}). Mỗi câu kết thúc bằng . ! hoặc ?`}
+              error={errors.text}
+              onChange={(e) => patch({ text: e.target.value }, "text", "questions")}
+              onBlur={() => checkField("text")}
+            />
+            <fieldset className={cn(styles.group, errors.questions && styles.groupError)} aria-describedby="qt-qs-e" data-invalid={errors.questions ? "true" : undefined}>
+              <legend className={adultStyles.h3}>
+                Câu hỏi ({READING_MIN_QUESTIONS}–{READING_MAX_QUESTIONS}) · mỗi câu {READING_CHOICES} đáp án
+              </legend>
+              <div className={styles.readQs}>
+                {form.questions.map((rq, qi) => (
+                  <div key={qi} className={styles.readQ}>
+                    <AdultInput label={`Câu hỏi ${qi + 1}${qi >= READING_MIN_QUESTIONS ? " (tùy chọn)" : ""}`} lang="en" value={rq.text} onChange={(e) => patch({ questions: form.questions.map((x, j) => (j === qi ? { ...x, text: e.target.value } : x)) }, "questions")} />
+                    <div className={styles.readChoices}>
+                      {rq.choices.map((c, ci) => (
+                        <div key={ci} className={cn(styles.readChoice, rq.correct === ci && styles.cardOk)}>
+                          <AdultInput
+                            label={`Đáp án ${qi + 1}.${ci + 1}`}
+                            lang="en"
+                            value={c}
+                            onChange={(e) => patch({ questions: form.questions.map((x, j) => (j === qi ? { ...x, choices: x.choices.map((y, k) => (k === ci ? e.target.value : y)) } : x)) }, "questions")}
+                          />
+                          <label className={styles.radio}>
+                            <input type="radio" name={`qt-read-${qi}`} checked={rq.correct === ci} onChange={() => patch({ questions: form.questions.map((x, j) => (j === qi ? { ...x, correct: ci } : x)) }, "questions")} />
+                            Đáp án đúng
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                    <AdultSelect
+                      label={`Câu chứa đáp án của câu hỏi ${qi + 1}`}
+                      value={rq.evidence}
+                      onChange={(e) => patch({ questions: form.questions.map((x, j) => (j === qi ? { ...x, evidence: Number(e.target.value) } : x)) }, "questions")}
+                      options={(splitPassage(form.text).length > 0 ? splitPassage(form.text) : [""]).map((sentence, si) => [si, `${si + 1}. ${sentence || "(chưa có đoạn văn)"}`.slice(0, 70)] as const)}
+                    />
+                  </div>
+                ))}
+              </div>
+              <GroupError id="qt-qs-e" message={errors.questions} />
             </fieldset>
             {pictureField}
           </>

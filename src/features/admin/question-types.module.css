@@ -35,7 +35,7 @@
 }
 .tiles {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--space-3);
 }
 .tile {
@@ -83,7 +83,7 @@
 }
 .types {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--space-2);
 }
 .type {
@@ -249,4 +249,32 @@
   border-radius: var(--adm-radius-md);
   background: var(--surface-soft);
   color: var(--ink-soft);
+}
+
+/* Đọc hiểu ngắn */
+.readQs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.readQ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+}
+.readChoices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.readChoice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
 }

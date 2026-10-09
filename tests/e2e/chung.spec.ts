@@ -174,6 +174,7 @@ const ADMIN_SCREENS: Screen[] = [
   { name: "Nhập và xuất Excel", path: "/admin/excel" },
   { name: "Âm phonics", path: "/admin/phonics" },
   { name: "Câu hỏi dạng mới", path: "/admin/question-types" },
+  { name: "Truyện tranh", path: "/admin/stories" },
 ];
 
 async function auditScreen(page: Page, screen: Screen) {
