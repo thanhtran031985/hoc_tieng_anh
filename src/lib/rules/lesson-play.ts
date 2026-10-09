@@ -21,10 +21,26 @@ export type PlayWord = {
 export type StoredStep = {
   id: number;
   activityType: string;
-  config: { showExample?: boolean; autoPlay?: boolean; optionCount?: number; pairCount?: number } | null;
+  config: { showExample?: boolean; autoPlay?: boolean; optionCount?: number; pairCount?: number; storyId?: number } | null;
   word: PlayWord | null;
   /** Câu hỏi gắn vào bước (dạng ghép âm, sắp xếp câu, nghe và gõ, điền từ). */
   question?: { id: number; type: string; prompt: unknown; options: unknown; answer: unknown } | null;
+};
+
+/** Một trang của truyện tranh khi chơi: trang truyện (tranh + câu + âm thanh) hoặc trang câu hỏi xen giữa. */
+export type StoryPlayPage =
+  | { kind: "page"; id: number; image: string | null; sentences: string[]; audio: string | null }
+  | { kind: "question"; id: number; questionId: number; text: string; choices: { id: string; text: string }[]; correct: string };
+
+/** Truyện đã nạp để chơi (bước `story`). `glossary` là nghĩa ngắn theo chữ thường, tra từ ngân hàng từ vựng. */
+export type StoryPlay = {
+  storyId: number;
+  title: string;
+  titleVi: string;
+  levelNumber: number;
+  pages: StoryPlayPage[];
+  newWords: { word: string; meaningVi: string | null }[];
+  glossary: Record<string, string>;
 };
 
 /** Một ô chữ của bài Ghép âm: `id` là chỉ số trong thứ tự đúng, `sound` là chữ của âm cần phát. */
@@ -40,6 +56,7 @@ export type PlayStep =
   | { id: string; kind: "choose_word_for_picture"; target: PlayWord; options: PlayWord[] }
   | { id: string; kind: "match_pairs"; pairs: PlayWord[] }
   | { id: string; kind: "memory_game"; pairs: PlayWord[] }
+  | ({ id: string; kind: "story" } & StoryPlay)
   | {
       id: string;
       kind: "phonics";
@@ -71,7 +88,7 @@ export type PlayStep =
 export type PlayStepKind = PlayStep["kind"];
 
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" }>;
 
 const DEFAULT_OPTIONS = 3;
 const DEFAULT_PAIRS = 4;
@@ -94,6 +111,8 @@ export type PlayExtras = {
   meanings?: ReadonlyMap<string, string>;
   /** Âm phonics theo chữ (grapheme). */
   sounds?: ReadonlyMap<string, PhonicsSoundInfo>;
+  /** Truyện đã nạp, theo mã truyện (bước `story`). */
+  stories?: ReadonlyMap<number, StoryPlay>;
 };
 
 /**
@@ -154,6 +173,11 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
       case "fill_blank": {
         const built = buildQuestionStep(step, id, random, extras);
         if (built) play.push(built);
+        break;
+      }
+      case "story": {
+        const story = config.storyId !== undefined ? extras.stories?.get(config.storyId) : undefined;
+        if (story && story.pages.length > 0) play.push({ id, kind: "story", ...story });
         break;
       }
       default:

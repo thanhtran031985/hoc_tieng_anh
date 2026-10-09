@@ -1,4 +1,4 @@
-import { completeLessonInputSchema, type LessonCompletion } from "@/lib/schemas";
+import { completeLessonInputSchema, parseLessonStepConfig, type LessonCompletion } from "@/lib/schemas";
 import { today } from "@/lib/rules/dates";
 import { newStars, rewardFor, starsFor } from "@/lib/rules/lesson-score";
 import { nextReview } from "@/lib/rules/review-box";
@@ -26,7 +26,7 @@ export async function completeLesson(userId: number, learnerId: number, input: u
 
   const lesson = await db.lesson.findFirst({
     where: { id: data.lessonId, status: "published", kind: { in: ["lesson", "unit_test"] }, unit: { status: "published" } },
-    select: { id: true, unit: { select: { levelId: true, level: { select: { number: true } } } }, steps: { select: { wordId: true, questionId: true } } },
+    select: { id: true, unit: { select: { levelId: true, level: { select: { number: true } } } }, steps: { select: { wordId: true, questionId: true, activityType: true, config: true } } },
   });
   if (!lesson) throw new Error("Không tìm thấy bài học");
   const { levelId } = lesson.unit;
@@ -58,6 +58,12 @@ export async function completeLesson(userId: number, learnerId: number, input: u
   // Chỉ nhận kết quả của các từ và câu hỏi thuộc bài này.
   const lessonWordIds = new Set(lesson.steps.flatMap((s) => (s.wordId === null ? [] : [s.wordId])));
   const lessonQuestionIds = new Set(lesson.steps.flatMap((s) => (s.questionId === null ? [] : [s.questionId])));
+  // Câu hỏi xen giữa truyện thuộc bài qua bước `story` (config.storyId → story_pages.question_id).
+  const storyIds = lesson.steps.flatMap((s) => (s.activityType === "story" ? [parseLessonStepConfig("story", s.config)] : [])).flatMap((c) => (c && "storyId" in c ? [c.storyId] : []));
+  if (storyIds.length) {
+    const pages = await db.storyPage.findMany({ where: { storyId: { in: storyIds }, questionId: { not: null } }, select: { questionId: true } });
+    for (const p of pages) if (p.questionId !== null) lessonQuestionIds.add(p.questionId);
+  }
   const items = data.items.filter((i) => (i.questionId !== undefined ? lessonQuestionIds.has(i.questionId) : i.wordId !== null && lessonWordIds.has(i.wordId)));
   const scored = items.filter((i) => i.scored);
   const stars = starsFor(scored);

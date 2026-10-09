@@ -14,6 +14,7 @@ export const ACTIVITY_TYPES = [
   "sentence_order",
   "dictation",
   "fill_blank",
+  "story",
 ] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
@@ -36,6 +37,8 @@ export const lessonStepConfigSchemas = {
   sentence_order: z.object({}),
   dictation: z.object({}),
   fill_blank: z.object({}),
+  /** 8.6 Truyện tranh có đọc to (task 16): truyện nào lấy từ `stories`. */
+  story: z.object({ storyId: z.number().int().positive() }),
 } satisfies Record<ActivityType, z.ZodType>;
 
 export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;
