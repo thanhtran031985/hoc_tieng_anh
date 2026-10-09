@@ -63,22 +63,30 @@ Nếu Giai đoạn A không có gì cần sửa, sang thẳng Giai đoạn C.
 1. npx tsc --noEmit, npm run lint, npm run build — phải không lỗi.
 2. Nếu task.md có phần kiểm tra tự động: viết và chạy script tương ứng (không
    cài thêm thư viện nếu chưa hỏi), dọn dữ liệu test sau khi chạy.
-3. Ghi checklist test thủ công vào progress.md dưới dạng ô tích [ ], kèm lệnh
+3. **Tự test giao diện bằng Playwright trước khi báo hoàn thành** (bộ test ở `tests/e2e/`,
+   cách chạy ở `docs/test/README.md`). Task có giao diện (màn, route, thành phần nhìn thấy) thì bắt buộc:
+   - Thêm hoặc cập nhật test cho task trong `tests/e2e/NN-*.spec.ts` (tên test bằng tiếng Việt,
+     ghi dòng "Kiểm tra" của task.md đang kiểm), thêm màn mới vào danh sách của `chung.spec.ts`
+     (không cuộn, Tab + viền focus, trợ năng, 4 trạng thái) và `thiet-ke.spec.ts`.
+   - Tắt `npm run dev`, rồi chạy `npm run test:e2e` (hoặc ít nhất `npx playwright test NN- chung`).
+     Test hỏng vì lỗi của app: KHÔNG nới test cho qua; ghi lỗi vào progress.md, sửa trong
+     Giai đoạn B nếu thuộc phạm vi task, nếu không thì báo tôi quyết.
+   - Ghi kết quả (số đạt / hỏng, lỗi còn lại) vào progress.md và báo cáo cuối task.
+   Task không có giao diện (vd 03-db-core) thì ghi rõ "không có giao diện" và bỏ qua mục này.
+   Claude Code chạy lệnh có `prisma migrate reset` cần tôi đồng ý riêng (Prisma chặn); báo tôi khi gặp.
+4. Ghi checklist test thủ công vào progress.md dưới dạng ô tích [ ], kèm lệnh
    cần thiết (vd SQL/Prisma để tạo dữ liệu test). Chạy dashboard.
 DỪNG. Tôi tự test và báo kết quả. Nếu tôi báo lỗi, quay lại Giai đoạn B.
 
 ## Giai đoạn D — Đóng task (chỉ khi tôi báo "test ok")
 1. progress.md: mọi bước ✅, trạng thái chung ✅, tích hết checklist, mục
-   "Bước tiếp theo" ghi "Hoàn thành".
+   "Bước tiếp theo" ghi "Hoàn thành". Test giao diện Playwright của task đạt hết, hoặc
+   lỗi còn lại đã ghi trong decisions.md kèm quyết định của tôi.
 2. docs/tasks/README.md: dòng của task → ✅, nhánh đúng với nhánh thực tế.
 3. decisions.md: thêm mục tổng kết ngắn những gì khác với task.md gốc.
 4. Chạy npm run tasks:dashboard. Kết quả phải cho task này "x/x bước ✅ · README ✅"
    và "Cảnh báo: 0"; nếu không, sửa progress.md/README.md rồi chạy lại.
-5. Vẽ sơ đồ: làm theo .claude/commands/ve-so-do.md với đối số $ARGUMENTS (sơ đồ của
-   task, vẽ lại sơ đồ tổng quan, so-sanh.md, mục lục). Nếu chưa cài archify thì báo
-   một dòng và bỏ qua bước này, không chặn việc đóng task. Khác biệt quan trọng trong
-   so-sanh.md: báo tôi và DỪNG chờ quyết (sửa thì quay lại Giai đoạn B).
-6. Đề xuất commit "$ARGUMENTS: complete task" (gồm cả dashboard.html và docs/so-do/).
+5. Đề xuất commit "$ARGUMENTS: complete task" (gồm cả dashboard.html).
    Chỉ commit và push khi tôi đồng ý.
-7. Soạn tiêu đề và mô tả Pull Request (tóm tắt tính năng, sửa đổi sau rà soát,
+6. Soạn tiêu đề và mô tả Pull Request (tóm tắt tính năng, sửa đổi sau rà soát,
    cách test, biến môi trường cần thiết) để tôi dán lên GitHub. Không tự merge.

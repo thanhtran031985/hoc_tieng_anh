@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>So sánh màn thật với thiết kế</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:24px;background:#f4f4f6;color:#222}
+  h1{margin-top:0} section{background:#fff;border-radius:12px;padding:16px;margin:0 0 24px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .cap{display:grid;grid-template-columns:1fr 1fr;gap:16px} figure{margin:0} figcaption{font-weight:700;margin-bottom:6px}
+  img{width:100%;border:1px solid #ccc;border-radius:6px}
+  .muc{padding:8px 12px;border-radius:8px;background:#eef} .muc-quan-trong{background:#fde2e2} .muc-nho{background:#fff4d6} .muc-khop{background:#e3f6e8}
+</style></head><body>
+<h1>So sánh màn thật với bản thiết kế</h1>
+<p>31 màn. Trái: bản xem trước trong designs/ (trạng thái Bình thường, 1366×768). Phải: màn thật chụp bằng Playwright với dữ liệu seed cố định.</p>
+<section id="01-dang-nhap">
+  <h2>01-dang-nhap</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Bố cục, màu, chữ khớp. Khác chỗ: màn thật để trống ô khi mới vào (thiết kế điền sẵn dữ liệu mẫu) nên nút Đăng nhập đang mờ.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/01-dang-nhap.png" alt="Thiết kế 01-dang-nhap"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/01-dang-nhap.png" alt="Màn thật 01-dang-nhap"></figure>
+  </div>
+</section>
+<section id="02-chon-ho-so">
+  <h2>02-chon-ho-so</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp bố cục thẻ hồ sơ. Màn thật có thêm nút Đăng xuất ở góc phải (thiết kế không có); chữ tiêu đề đậm hơn.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/02-chon-ho-so.png" alt="Thiết kế 02-chon-ho-so"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/02-chon-ho-so.png" alt="Màn thật 02-chon-ho-so"></figure>
+  </div>
+</section>
+<section id="03-tao-ho-so">
+  <h2>03-tao-ho-so</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp cấu trúc 3 bước. Thẻ màn thật thấp hơn và nhãn 'Tên của bé' to hơn thiết kế; dải 'Bé sẽ bắt đầu ở Cấp N' chỉ hiện sau khi chọn lớp.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/03-tao-ho-so.png" alt="Thiết kế 03-tao-ho-so"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/03-tao-ho-so.png" alt="Màn thật 03-tao-ho-so"></figure>
+  </div>
+</section>
+<section id="04-trang-chu">
+  <h2>04-trang-chu</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp bố cục. Ô hình của thẻ 'Bài tiếp theo' để trống khi từ đầu tiên của bài chưa có hình (thiết kế luôn có hình).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/04-trang-chu.png" alt="Thiết kế 04-trang-chu"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/04-trang-chu.png" alt="Màn thật 04-trang-chu"></figure>
+  </div>
+</section>
+<section id="05-tong-quan-10-cap">
+  <h2>05-tong-quan-10-cap</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: đường 10 cấp, đảo, thành phố, chú giải.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/05-tong-quan-10-cap.png" alt="Thiết kế 05-tong-quan-10-cap"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/05-tong-quan-10-cap.png" alt="Màn thật 05-tong-quan-10-cap"></figure>
+  </div>
+</section>
+<section id="06-ban-do-dao">
+  <h2>06-ban-do-dao</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp phong cách. Bản đồ thật chia vùng thành nhóm 'Vùng 1–4 / 5–8' (thiết kế hiện 4 vùng cố định); hộp thông tin chặng liệt kê chữ cho từ chưa có hình, và rồng che một phần nhãn vùng.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/06-ban-do-dao.png" alt="Thiết kế 06-ban-do-dao"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/06-ban-do-dao.png" alt="Màn thật 06-ban-do-dao"></figure>
+  </div>
+</section>
+<section id="07-nghe-chon-hinh">
+  <h2>07-nghe-chon-hinh</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp. Màu thanh tiến độ theo cấp (cấp 3 xanh ngọc). Nhãn phím 1–4 có; 'Bấm loa hoặc Space' nằm dưới loa thay vì bên phải.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/07-nghe-chon-hinh.png" alt="Thiết kế 07-nghe-chon-hinh"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/07-nghe-chon-hinh.png" alt="Màn thật 07-nghe-chon-hinh"></figure>
+  </div>
+</section>
+<section id="08-the-tu">
+  <h2>08-the-tu</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp bố cục. Từ chưa có hình (khoảng 230 từ) hiện khối màu trống lớn ở bên trái thẻ, chưa có hình thay thế.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/08-the-tu.png" alt="Thiết kế 08-the-tu"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/08-the-tu.png" alt="Màn thật 08-the-tu"></figure>
+  </div>
+</section>
+<section id="09-noi-tu-voi-hinh">
+  <h2>09-noi-tu-voi-hinh</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: ô thả nét đứt, chip từ có số phím, số cặp đã nối. Rồng ở góc dưới bên phải (thiết kế ở góc trên).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/09-noi-tu-voi-hinh.png" alt="Thiết kế 09-noi-tu-voi-hinh"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/09-noi-tu-voi-hinh.png" alt="Màn thật 09-noi-tu-voi-hinh"></figure>
+  </div>
+</section>
+<section id="10-lat-the">
+  <h2>10-lat-the</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: lưới 12 thẻ, đếm cặp và lượt, không có đồng hồ. Màn thật có thêm thanh tiến độ bài học và màu thẻ theo cấp.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/10-lat-the.png" alt="Thiết kế 10-lat-the"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/10-lat-the.png" alt="Màn thật 10-lat-the"></figure>
+  </div>
+</section>
+<section id="12-ket-thuc-bai">
+  <h2>12-ket-thuc-bai</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp. Danh sách từ vừa học: nghĩa dài bị cắt (…) và 'get up' xuống dòng; từ chưa có hình lệch hàng so với từ có hình.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/12-ket-thuc-bai.png" alt="Thiết kế 12-ket-thuc-bai"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/12-ket-thuc-bai.png" alt="Màn thật 12-ket-thuc-bai"></figure>
+  </div>
+</section>
+<section id="13-so-tu">
+  <h2>13-so-tu</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: lưới thẻ, viền 5 mức thuộc, bộ lọc chủ đề.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/13-so-tu.png" alt="Thiết kế 13-so-tu"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/13-so-tu.png" alt="Màn thật 13-so-tu"></figure>
+  </div>
+</section>
+<section id="14-het-gio">
+  <h2>14-het-gio</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp phong cách. Màn thật không hiện 3 ô tóm tắt (phút, sao, từ mới) khi bé chưa học gì hôm nay; tiêu đề 'Đến giờ nghỉ rồi!' khác chữ 'Hết giờ học rồi!' của thiết kế.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/14-het-gio.png" alt="Thiết kế 14-het-gio"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/14-het-gio.png" alt="Màn thật 14-het-gio"></figure>
+  </div>
+</section>
+<section id="15-xep-lop-gioi-thieu">
+  <h2>15-xep-lop-gioi-thieu</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/15-xep-lop-gioi-thieu.png" alt="Thiết kế 15-xep-lop-gioi-thieu"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/15-xep-lop-gioi-thieu.png" alt="Màn thật 15-xep-lop-gioi-thieu"></figure>
+  </div>
+</section>
+<section id="16-xep-lop-cau-hoi">
+  <h2>16-xep-lop-cau-hoi</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: 12 ngôi sao tiến độ, 4 hình, nút Tớ chưa biết.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/16-xep-lop-cau-hoi.png" alt="Thiết kế 16-xep-lop-cau-hoi"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/16-xep-lop-cau-hoi.png" alt="Màn thật 16-xep-lop-cau-hoi"></figure>
+  </div>
+</section>
+<section id="17-xep-lop-ket-qua">
+  <h2>17-xep-lop-ket-qua</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: cấp đề xuất, các chủ đề sẽ học, nút Chọn cấp khác.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/17-xep-lop-ket-qua.png" alt="Thiết kế 17-xep-lop-ket-qua"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/17-xep-lop-ket-qua.png" alt="Màn thật 17-xep-lop-ket-qua"></figure>
+  </div>
+</section>
+<section id="18-chon-tu-dung">
+  <h2>18-chon-tu-dung</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/18-chon-tu-dung.png" alt="Thiết kế 18-chon-tu-dung"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/18-chon-tu-dung.png" alt="Màn thật 18-chon-tu-dung"></figure>
+  </div>
+</section>
+<section id="19-on-tap-bat-dau">
+  <h2>19-on-tap-bat-dau</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: 5 hộp màu theo mức thuộc, số từ đến hạn.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/19-on-tap-bat-dau.png" alt="Thiết kế 19-on-tap-bat-dau"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/19-on-tap-bat-dau.png" alt="Màn thật 19-on-tap-bat-dau"></figure>
+  </div>
+</section>
+<section id="20-on-tap-tong-ket">
+  <h2>20-on-tap-tong-ket</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: số sao, xu, danh sách từ lên hộp.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/20-on-tap-tong-ket.png" alt="Thiết kế 20-on-tap-tong-ket"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/20-on-tap-tong-ket.png" alt="Màn thật 20-on-tap-tong-ket"></figure>
+  </div>
+</section>
+<section id="21-dung-bai-hoc">
+  <h2>21-dung-bai-hoc</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp. Nút 'Dừng lại' không có nhãn phím Esc như thiết kế (đã ghi ở code: Esc = Học tiếp để bé không lỡ thoát).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/21-dung-bai-hoc.png" alt="Thiết kế 21-dung-bai-hoc"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/21-dung-bai-hoc.png" alt="Màn thật 21-dung-bai-hoc"></figure>
+  </div>
+</section>
+<section id="22-sap-co">
+  <h2>22-sap-co</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/22-sap-co.png" alt="Thiết kế 22-sap-co"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/22-sap-co.png" alt="Màn thật 22-sap-co"></figure>
+  </div>
+</section>
+<section id="a01-cong-bo-me">
+  <h2>a01-cong-bo-me</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp. Thiếu liên kết 'Quên mật khẩu?' ở chân thẻ (thiết kế có).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a01-cong-bo-me.png" alt="Thiết kế a01-cong-bo-me"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a01-cong-bo-me.png" alt="Màn thật a01-cong-bo-me"></figure>
+  </div>
+</section>
+<section id="a02-tong-quan">
+  <h2>a02-tong-quan</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: 5 thẻ số liệu, biểu đồ cột, hoạt động gần đây. Menu có nhãn 'Sắp có' cho mục giai đoạn sau.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a02-tong-quan.png" alt="Thiết kế a02-tong-quan"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a02-tong-quan.png" alt="Màn thật a02-tong-quan"></figure>
+  </div>
+</section>
+<section id="a07-cai-dat">
+  <h2>a07-cai-dat</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp khung 4 nhóm. Thiếu so với thiết kế: chọn 'Ngày được học', công tắc 'Nhắc con khi còn 5 phút', 'Cho thêm 10 phút khi đang làm bài thi' (task.md bước 3 không yêu cầu).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a07-cai-dat.png" alt="Thiết kế a07-cai-dat"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a07-cai-dat.png" alt="Màn thật a07-cai-dat"></figure>
+  </div>
+</section>
+<section id="a08-bang-dieu-khien">
+  <h2>a08-bang-dieu-khien</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp. Thiếu nút '+ Thêm từ mới' ở đầu trang; thẻ thứ 4 là 'Chủ đề' thay 'Chủ điểm ngữ pháp' (đã ghi ở decisions.md).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a08-bang-dieu-khien.png" alt="Thiết kế a08-bang-dieu-khien"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a08-bang-dieu-khien.png" alt="Màn thật a08-bang-dieu-khien"></figure>
+  </div>
+</section>
+<section id="a09-cay-lo-trinh">
+  <h2>a09-cay-lo-trinh</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp cây. Không có nút 'Xuất bản thay đổi (n)' (đã ghi ở decisions.md); tên chặng theo PRD (Khởi đầu, Tiểu học, THCS, Nâng cao).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a09-cay-lo-trinh.png" alt="Thiết kế a09-cay-lo-trinh"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a09-cay-lo-trinh.png" alt="Màn thật a09-cay-lo-trinh"></figure>
+  </div>
+</section>
+<section id="a10-ngan-hang-tu-vung">
+  <h2>a10-ngan-hang-tu-vung</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp bảng. Không có cột Lớp · Unit SGK và Trạng thái, ô 'Thiếu' thay cho lọc Lớp/Unit (schema không có; đã ghi ở decisions.md).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a10-ngan-hang-tu-vung.png" alt="Thiết kế a10-ngan-hang-tu-vung"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a10-ngan-hang-tu-vung.png" alt="Màn thật a10-ngan-hang-tu-vung"></figure>
+  </div>
+</section>
+<section id="a11-ngan-hang-cau-hoi">
+  <h2>a11-ngan-hang-cau-hoi</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Chụp ở trạng thái Trống (chưa có câu hỏi nào), có linh vật và nút Thêm câu hỏi đúng thiết kế trạng thái trống.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a11-ngan-hang-cau-hoi.png" alt="Thiết kế a11-ngan-hang-cau-hoi"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a11-ngan-hang-cau-hoi.png" alt="Màn thật a11-ngan-hang-cau-hoi"></figure>
+  </div>
+</section>
+<section id="a12-soan-bai">
+  <h2>a12-soan-bai</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp 3 cột. Cột giữa hẹp làm tiêu đề 'Các bước của bài (20)' xuống dòng; không có ô 'Mục tiêu bài' như thiết kế.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a12-soan-bai.png" alt="Thiết kế a12-soan-bai"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a12-soan-bai.png" alt="Màn thật a12-soan-bai"></figure>
+  </div>
+</section>
+<section id="a13-hinh-am-thanh">
+  <h2>a13-hinh-am-thanh</h2>
+  <p class="muc muc-nho"><b>Mức:</b> nho — Khớp lưới hình. Số đếm hình 670/Âm thanh (0) đúng dữ liệu; không hiện dung lượng tệp cho hình mẫu đi kèm (đã ghi ở decisions.md).</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a13-hinh-am-thanh.png" alt="Thiết kế a13-hinh-am-thanh"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a13-hinh-am-thanh.png" alt="Màn thật a13-hinh-am-thanh"></figure>
+  </div>
+</section>
+<section id="a14-nhap-xuat-excel">
+  <h2>a14-nhap-xuat-excel</h2>
+  <p class="muc muc-khop"><b>Mức:</b> khop — Khớp: 3 chức năng, 4 bước, vùng kéo thả. Chụp ở bước 2 (chưa chọn tệp); các bước xem trước đã kiểm bằng test chức năng.</p>
+  <div class="cap">
+    <figure><figcaption>Thiết kế (designs/)</figcaption><img loading="lazy" src="thiet-ke/a14-nhap-xuat-excel.png" alt="Thiết kế a14-nhap-xuat-excel"></figure>
+    <figure><figcaption>Màn thật (1366×768)</figcaption><img loading="lazy" src="anh-chup/a14-nhap-xuat-excel.png" alt="Màn thật a14-nhap-xuat-excel"></figure>
+  </div>
+</section>
+</body></html>

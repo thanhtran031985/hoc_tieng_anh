@@ -34,3 +34,10 @@ docs/so-do/**/*.delivery.json
 docs/so-do/**/*.delivery-pending.json
 docs/so-do/**/*.finalize.json
 docs/so-do/**/*.finalize-summary.json
+
+# Bộ test giao diện Playwright
+playwright-report/
+test-results/
+tests/e2e/.auth/
+.env.test
+!.env.test.example
