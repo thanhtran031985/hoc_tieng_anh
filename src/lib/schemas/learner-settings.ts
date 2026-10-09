@@ -35,6 +35,8 @@ export const learnerSettingsSchema = z.object({
   musicOn: z.boolean().default(true),
   /** Âm lượng nhạc nền và hiệu ứng, 0–100. Giọng đọc tiếng Anh không bị ảnh hưởng, luôn bật. */
   volume: z.number().int().min(0).max(100).default(70),
+  /** Chấm phát âm ở bài Luyện nói bằng nhận diện giọng nói của trình duyệt (gửi âm thanh tới Google/Microsoft). Tắt thì chỉ ghi âm và nghe lại. */
+  speechScoring: z.boolean().default(true),
   /** Mục tiêu phút học mỗi ngày (THCS chọn 10, 20 hoặc 30). */
   dailyGoalMinutes: z.union([z.literal(10), z.literal(20), z.literal(30)]).default(10),
 });

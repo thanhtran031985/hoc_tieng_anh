@@ -6,14 +6,16 @@ import type { BankWord } from "./admin-questions.ts";
 import { BLANK } from "./grading/fill-blank.ts";
 import { READING_CHOICES, READING_MAX_QUESTIONS, READING_MAX_SENTENCES, READING_MIN_QUESTIONS, READING_MIN_SENTENCES, splitPassage } from "./grading/reading.ts";
 import { sameWords, wordKey } from "./grading/sentence-order.ts";
+import { SPEAKING_MAX_WORDS, spokenWords, type Leniency } from "./speaking.ts";
 import { normalizeAnswer } from "./grading/text.ts";
 import { buildPlaySteps, type PhonicsSoundInfo, type PlayStep, type PlayWord } from "./lesson-play.ts";
 
-export const EXTRA_TYPE_INFO: Record<ExtraQuestionType, { code: string; label: string; hint: string; icon: "music" | "grammar" | "keyboard" | "pen" | "notebook"; skill: string; summary: string }> = {
+export const EXTRA_TYPE_INFO: Record<ExtraQuestionType, { code: string; label: string; hint: string; icon: "music" | "grammar" | "keyboard" | "pen" | "notebook" | "mic"; skill: string; summary: string }> = {
   phonics: { code: "8.5", label: "Ghép âm", hint: "Từ + ô âm + âm thanh", icon: "music", skill: "pronunciation", summary: "Ghép âm" },
   sentence_order: { code: "8.8", label: "Sắp xếp câu", hint: "Tự tách thẻ, từ nhiễu", icon: "grammar", skill: "writing", summary: "Xếp câu" },
   dictation: { code: "8.9", label: "Nghe và gõ", hint: "Âm thanh, đáp án chấp nhận", icon: "keyboard", skill: "listening", summary: "Nghe và gõ" },
   fill_blank: { code: "8.10", label: "Điền từ", hint: "Câu có ô trống, thẻ từ", icon: "pen", skill: "grammar", summary: "Điền" },
+  speaking: { code: "8.7", label: "Luyện nói", hint: "Câu mẫu, mức dễ tính", icon: "mic", skill: "speaking", summary: "Nói" },
   short_reading: { code: "8.11", label: "Đọc hiểu ngắn", hint: "Đoạn 3–6 câu, 2–3 câu hỏi", icon: "notebook", skill: "reading", summary: "Đọc hiểu" },
 };
 
@@ -43,6 +45,10 @@ export type ExtraForm = {
   /** Tối đa 4 thẻ từ (điền từ). */
   cards: string[];
   correct: number | null;
+  /** Âm thanh mẫu của câu luyện nói (đường dẫn `/audio/…`); null nếu chưa có. */
+  audio: string | null;
+  /** Mức chấm dễ tính của câu luyện nói. */
+  leniency: Leniency;
   /** Tiêu đề bài đọc (đọc hiểu ngắn). */
   title: string;
   /** 3 chỗ cho câu hỏi của bài đọc hiểu; chỗ để trống bị bỏ khi lưu. */
@@ -61,6 +67,8 @@ export const emptyExtraForm = (): ExtraForm => ({
   ignoreEndPunct: true,
   cards: ["", "", "", ""],
   correct: null,
+  audio: null,
+  leniency: "normal",
   title: "",
   questions: [emptyReadingQuestion(), emptyReadingQuestion(), emptyReadingQuestion()],
   picture: "",
@@ -71,7 +79,7 @@ export type ReadingQForm = { text: string; choices: string[]; correct: number | 
 
 export const emptyReadingQuestion = (): ReadingQForm => ({ text: "", choices: ["", "", ""], correct: null, evidence: 0 });
 
-export type ExtraField = "text" | "tiles" | "distractors" | "alternatives" | "title" | "questions" | "accepted" | "cards" | "picture";
+export type ExtraField = "text" | "tiles" | "distractors" | "alternatives" | "title" | "questions" | "audio" | "accepted" | "cards" | "picture";
 export type ExtraBuilt = { prompt: unknown; options: unknown; answer: unknown };
 export type ExtraBuildResult = { ok: true; data: ExtraBuilt } | { ok: false; field: ExtraField; message: string };
 
@@ -173,6 +181,14 @@ export function buildExtraData(type: ExtraQuestionType, form: ExtraForm, ctx: Ex
       if ("error" in picture) return fail("picture", picture.error);
       return { ok: true, data: { prompt: { text, ...withPicture }, options: { cards: indexed.map((c) => c.word) }, answer: { correct } } };
     }
+    case "speaking": {
+      if (!text) return fail("text", "Nhập câu mẫu.");
+      const words = spokenWords(text).length;
+      if (words === 0) return fail("text", "Câu mẫu cần có chữ.");
+      if (words > SPEAKING_MAX_WORDS) return fail("text", `Câu mẫu tối đa ${SPEAKING_MAX_WORDS} từ (đang có ${words}).`);
+      if ("error" in picture) return fail("picture", picture.error);
+      return { ok: true, data: { prompt: { text, ...(form.audio ? { audio: form.audio } : {}), ...withPicture }, options: { leniency: form.leniency }, answer: { expected: text } } };
+    }
     case "short_reading": {
       const title = clean(form.title);
       if (!title) return fail("title", "Nhập tiêu đề bài đọc.");
@@ -230,6 +246,9 @@ export function readExtraForm(type: string, prompt: unknown, options: unknown, a
     form.accepted = asStrings(a?.accepted).join("\n");
     form.ignoreCase = o?.ignoreCase !== false;
     form.ignoreEndPunct = o?.ignoreEndPunct !== false;
+  } else if (type === "speaking") {
+    form.audio = typeof p?.audio === "string" ? p.audio : null;
+    form.leniency = o?.leniency === "easy" || o?.leniency === "strict" ? o.leniency : "normal";
   } else if (type === "short_reading") {
     form.title = typeof p?.title === "string" ? p.title : "";
     const qs = Array.isArray(o?.questions) ? (o.questions as Record<string, unknown>[]) : [];

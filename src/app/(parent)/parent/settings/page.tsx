@@ -35,6 +35,7 @@ export default async function ParentSettingsPage({ searchParams }: { searchParam
           accent: current.settings.voice.accent,
           speed: current.settings.voice.speed,
           soundOn: current.settings.soundOn,
+          speechScoring: current.settings.speechScoring,
         }
       : null,
     kids: learners.map(toKid),

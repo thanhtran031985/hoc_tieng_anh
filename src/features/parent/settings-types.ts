@@ -19,6 +19,7 @@ export type SettingsSelected = SettingsKid & {
   accent: "en-US" | "en-GB";
   speed: "normal" | "slow";
   soundOn: boolean;
+  speechScoring: boolean;
 };
 
 export type SettingsData = {

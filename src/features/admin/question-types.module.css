@@ -35,7 +35,7 @@
 }
 .tiles {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--space-16) * 2.2), 1fr));
   gap: var(--space-3);
 }
 .tile {
@@ -83,7 +83,7 @@
 }
 .types {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--space-16) * 2.2), 1fr));
   gap: var(--space-2);
 }
 .type {
@@ -277,4 +277,28 @@
   padding: var(--space-2);
   border: var(--border-thin) solid var(--line);
   border-radius: var(--adm-radius-md);
+}
+
+/* Âm thanh mẫu của câu luyện nói */
+.aud {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.audChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-size: var(--text-adm-small);
+}
+.audMiss {
+  background: var(--field-error-bg);
+  border-color: var(--field-error);
+  color: var(--field-error);
 }

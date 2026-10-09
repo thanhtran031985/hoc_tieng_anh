@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AdultButton, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSegmented, AdultSelect, AdultTable, AdultTextarea, AdultToggle, Status, adultStyles, useToast, type AdultColumn } from "@/components/adult";
 import { Icon, LevelChip, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -23,9 +23,10 @@ import type { PlayStep } from "@/lib/rules/lesson-play";
 import { phonicsSay } from "@/lib/rules/phonics";
 import { saveExtraQuestionSchema } from "@/lib/schemas/admin-question-types";
 import { EXTRA_QUESTION_TYPES, type ExtraQuestionType } from "@/lib/schemas/question-extra";
+import { LENIENCY_LABEL, LENIENCY_LEVELS, SPEAKING_MAX_WORDS, spokenWords, type Leniency } from "@/lib/rules/speaking";
 import { playPronunciation } from "@/lib/speech";
 import type { ExtraQuestionRow, ExtraQuestionsData } from "@/server/admin/question-types";
-import { saveExtraQuestionAction } from "./question-type-actions";
+import { generateQuestionAudioAction, saveExtraQuestionAction } from "./question-type-actions";
 import { QuestionPreview } from "./QuestionPreview";
 import styles from "./question-types.module.css";
 
@@ -122,6 +123,10 @@ function QuestionTypeDrawer({ data, row, startType, onClose }: { data: ExtraQues
   const [form, setForm] = useState<ExtraForm>(row?.form ?? emptyExtraForm());
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
+  // Câu luyện nói mới chưa có mã: tạo/tải âm thanh mẫu thì lưu nháp trước, từ đó là câu đã lưu.
+  const [savedId, setSavedId] = useState<number | undefined>(row?.id);
+  const [audioBusy, setAudioBusy] = useState<"upload" | "generate" | null>(null);
+  const audioInput = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<{ step: PlayStep; level: number } | null>(null);
 
   const ctx = useMemo<ExtraContext>(
@@ -143,11 +148,11 @@ function QuestionTypeDrawer({ data, row, startType, onClose }: { data: ExtraQues
     setErrors((e) => ({ ...e, [field]: !built.ok && built.field === field ? built.message : "" }));
   }
 
-  function validate() {
+  function validate(statusOverride?: "draft" | "published") {
     const next: Errors = {};
     const built = buildExtraData(type, form, ctx);
     if (!built.ok) next[built.field] = built.message;
-    const parsed = saveExtraQuestionSchema.safeParse({ id: row?.id, type, levelId, status, ...form });
+    const parsed = saveExtraQuestionSchema.safeParse({ id: savedId, type, levelId, status: statusOverride ?? status, ...form });
     if (!parsed.success) for (const issue of parsed.error.issues) next[(typeof issue.path[0] === "string" ? issue.path[0] : "form") as ExtraField | "form"] ??= issue.message;
     setErrors(next);
     if (Object.keys(next).length > 0) {
@@ -158,18 +163,52 @@ function QuestionTypeDrawer({ data, row, startType, onClose }: { data: ExtraQues
     return parsed.success ? parsed.data : null;
   }
 
-  async function save() {
-    const payload = validate();
-    if (!payload) return;
+  /** Ghi câu hỏi (không đóng ngăn kéo); trả mã câu hoặc null nếu lỗi. `draft`: lưu nháp để tạo âm thanh mẫu cho câu mới. */
+  async function persist(draft = false): Promise<number | null> {
+    const payload = validate(draft ? "draft" : undefined);
+    if (!payload) return null;
     setBusy(true);
     const result = await saveExtraQuestionAction(payload);
     setBusy(false);
     if (!result.ok) {
       setErrors({ [result.field ?? "form"]: result.message });
-      return;
+      return null;
     }
+    if (result.id !== undefined) setSavedId(result.id);
+    return result.id ?? savedId ?? null;
+  }
+
+  async function save() {
+    if ((await persist()) === null) return;
     toast(row ? "Đã lưu câu hỏi." : "Đã thêm câu hỏi.");
     onClose();
+  }
+
+  /** Âm thanh mẫu của câu luyện nói: tải lên hoặc tạo giọng đọc; câu mới thì lưu nháp trước để có mã. */
+  async function sampleAudio(kind: "upload" | "generate", file?: File) {
+    const id = await persist(true);
+    if (id === null) return;
+    setAudioBusy(kind);
+    try {
+      let result: { ok: boolean; message?: string; audio?: string };
+      if (kind === "generate") result = await generateQuestionAudioAction({ questionId: id });
+      else {
+        const body = new FormData();
+        body.set("file", file as File);
+        body.set("questionId", String(id));
+        result = (await (await fetch("/admin/question-types/upload", { method: "POST", body })).json()) as typeof result;
+      }
+      if (!result.ok) {
+        setErrors((e) => ({ ...e, audio: result.message ?? "Chưa có được âm thanh mẫu." }));
+        return;
+      }
+      patch({ audio: result.audio ?? null }, "audio");
+      toast(kind === "generate" ? "Đã tạo giọng đọc cho câu mẫu." : "Đã tải âm thanh mẫu lên.");
+    } catch {
+      setErrors((e) => ({ ...e, audio: "Mạng chập chờn. Thử lại nhé." }));
+    } finally {
+      setAudioBusy(null);
+    }
   }
 
   function openPreview() {
@@ -434,6 +473,55 @@ function QuestionTypeDrawer({ data, row, startType, onClose }: { data: ExtraQues
               </div>
               <GroupError id="qt-cards-e" message={errors.cards} />
             </fieldset>
+            {pictureField}
+          </>
+        )}
+
+        {type === "speaking" && (
+          <>
+            <AdultInput
+              label="Câu mẫu"
+              lang="en"
+              value={form.text}
+              error={errors.text}
+              hint={`Từ hoặc câu bé sẽ nói theo, tối đa ${SPEAKING_MAX_WORDS} từ (đang có ${spokenWords(form.text).length}).`}
+              onChange={(e) => patch({ text: e.target.value, audio: null }, "text", "audio")}
+              onBlur={() => checkField("text")}
+            />
+            <AdultSegmented
+              label="Mức dễ tính"
+              value={form.leniency}
+              onChange={(v: Leniency) => patch({ leniency: v })}
+              options={LENIENCY_LEVELS.map((l) => [l, LENIENCY_LABEL[l].label] as const)}
+            />
+            <p className={cn(adultStyles.small, adultStyles.muted)}>{LENIENCY_LABEL[form.leniency].hint}; luôn được ít nhất 1 sao khi bé đã nói.</p>
+            <div className={adultStyles.field} id="qt-audio-f">
+              <span className={adultStyles.h3}>Âm thanh mẫu</span>
+              <div className={styles.aud}>
+                <span className={cn(styles.audChip, !form.audio && styles.audMiss)} data-audchip>
+                  <Icon name={form.audio ? "music" : "warn"} size={14} />
+                  {form.audio ? (form.audio.split("/").pop() ?? form.audio) : "Chưa có âm thanh mẫu"}
+                </span>
+                {form.audio && <AdultIconButton icon="speaker" label="Nghe âm thanh mẫu" onClick={() => playPronunciation(form.text, { audioUrl: form.audio })} />}
+                <AdultButton label="Tải lên" icon="upload" variant="secondary" size="s" loading={audioBusy === "upload"} disabled={!form.text.trim()} onClick={() => audioInput.current?.click()} />
+                <input
+                  ref={audioInput}
+                  type="file"
+                  hidden
+                  accept=".mp3,.wav,audio/mpeg,audio/wav"
+                  aria-label="Tệp âm thanh mẫu"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void sampleAudio("upload", f);
+                    e.target.value = "";
+                  }}
+                />
+                <AdultButton label="Tạo giọng đọc tự động" icon="wand" variant="secondary" size="s" loading={audioBusy === "generate"} disabled={!data.ttsAvailable || !form.text.trim()} onClick={() => void sampleAudio("generate")} />
+              </div>
+              {!data.ttsAvailable && <p className={cn(adultStyles.small, adultStyles.muted)}>Máy chủ này chưa cài công cụ tạo giọng đọc: hãy tải tệp .mp3 / .wav lên.</p>}
+              <p className={cn(adultStyles.small, adultStyles.muted)}>Câu mới sẽ được lưu nháp khi bạn tạo hoặc tải âm thanh. Cần có âm thanh mẫu trước khi xuất bản.</p>
+              <GroupError id="qt-audio-e" message={errors.audio} />
+            </div>
             {pictureField}
           </>
         )}

@@ -1,9 +1,10 @@
 // Dựng bộ câu hỏi của một bài học từ các bước đã lưu (hàm thuần, không đụng database).
 // Bước chỉ lưu dạng bài và từ; đáp án nhiễu chọn ở đây từ các từ cùng chủ đề, xáo theo hạt giống để tải lại trang vẫn ra đúng bộ cũ.
 // Import tương đối có đuôi .ts để Node chạy thẳng được (test).
-import { parseExtraQuestion, type DictationQuestionData, type FillBlankQuestionData, type PhonicsQuestionData, type SentenceOrderQuestionData, type ShortReadingQuestionData } from "../schemas/question-extra.ts";
+import { parseExtraQuestion, type DictationQuestionData, type FillBlankQuestionData, type PhonicsQuestionData, type SentenceOrderQuestionData, type ShortReadingQuestionData, type SpeakingQuestionData } from "../schemas/question-extra.ts";
 import { splitBlank } from "./grading/fill-blank.ts";
 import { splitPassage } from "./grading/reading.ts";
+import type { Leniency } from "./speaking.ts";
 import { splitSentence } from "./sentence-words.ts";
 import { isShortWord } from "./grading/dictation.ts";
 import { seededRandom, shuffled } from "./random.ts";
@@ -61,6 +62,21 @@ export type PlayStep =
   | ({ id: string; kind: "story" } & StoryPlay)
   | {
       id: string;
+      kind: "speak";
+      questionId: number | null;
+      /** Câu (hoặc từ) mẫu bé cần nói. */
+      text: string;
+      picture: PlayWord | null;
+      /** Âm thanh mẫu (mp3); chưa có thì đọc bằng giọng trình duyệt. */
+      audio: string | null;
+      leniency: Leniency;
+      /** Hồ sơ bật “Chấm phát âm” (Adult07): tắt thì chỉ ghi âm, không gọi nhận diện giọng nói. */
+      scoring: boolean;
+      /** Máy không có micro thì làm câu nghe và chọn hình này thay thế (có khi câu có hình). */
+      fallback: { target: PlayWord; options: PlayWord[] } | null;
+    }
+  | {
+      id: string;
       kind: "short_reading";
       questionId: number | null;
       title: string;
@@ -101,7 +117,7 @@ export type PlayStep =
 export type PlayStepKind = PlayStep["kind"];
 
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" }>;
 
 const DEFAULT_OPTIONS = 3;
 const DEFAULT_PAIRS = 4;
@@ -126,6 +142,8 @@ export type PlayExtras = {
   sounds?: ReadonlyMap<string, PhonicsSoundInfo>;
   /** Nghĩa ngắn theo chữ thường (đọc hiểu ngắn). */
   glossary?: ReadonlyMap<string, string>;
+  /** Hồ sơ đang chơi bật “Chấm phát âm” (mặc định bật). */
+  speechScoring?: boolean;
   /** Truyện đã nạp, theo mã truyện (bước `story`). */
   stories?: ReadonlyMap<number, StoryPlay>;
 };
@@ -185,9 +203,10 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
       case "phonics":
       case "sentence_order":
       case "dictation":
+      case "speaking":
       case "short_reading":
       case "fill_blank": {
-        const built = buildQuestionStep(step, id, random, extras);
+        const built = buildQuestionStep(step, id, random, extras, pictureWords);
         if (built) play.push(built);
         break;
       }
@@ -204,7 +223,7 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
 }
 
 /** Dựng bước từ câu hỏi gắn vào; câu hỏi thiếu, sai dạng hoặc hỏng dữ liệu thì bỏ qua bước (null). */
-function buildQuestionStep(step: StoredStep, id: string, random: () => number, extras: PlayExtras): PlayStep | null {
+function buildQuestionStep(step: StoredStep, id: string, random: () => number, extras: PlayExtras, pictureWords: readonly PlayWord[]): PlayStep | null {
   const q = step.question;
   if (!q || q.type !== step.activityType) return null;
   const data = parseExtraQuestion(q.type, { prompt: q.prompt, options: q.options, answer: q.answer });
@@ -260,6 +279,16 @@ function buildQuestionStep(step: StoredStep, id: string, random: () => number, e
         correct: d.options.cards[d.answer.correct],
         meanings,
       };
+    }
+    case "speaking": {
+      const d = data as SpeakingQuestionData;
+      let fallback: { target: PlayWord; options: PlayWord[] } | null = null;
+      if (withPicture) {
+        const pool = pictureWords.filter((w) => w.id !== withPicture.id);
+        const options = shuffled([withPicture, ...shuffled(pool, random).slice(0, 2)], random);
+        if (options.length >= 2) fallback = { target: withPicture, options };
+      }
+      return { id, kind: "speak", questionId: q.id, text: d.prompt.text, picture: withPicture, audio: d.prompt.audio ?? null, leniency: d.options.leniency, scoring: extras.speechScoring ?? true, fallback };
     }
     case "short_reading": {
       const d = data as ShortReadingQuestionData;

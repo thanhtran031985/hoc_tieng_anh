@@ -83,6 +83,7 @@ model Learner {
   lessonAttempts LessonAttempt[]
   answerLogs     AnswerLog[]
   reviewCards    ReviewCard[]
+  recordings     Recording[]
   studySessions  StudySession[]
 
   @@index([userId])
@@ -287,6 +288,7 @@ model Question {
   answerLogs  AnswerLog[]
   reviewCards ReviewCard[]
   storyPages  StoryPage[]
+  recordings  Recording[]
 
   @@index([levelId, type])
   @@map("questions")
@@ -514,4 +516,32 @@ model StoryPage {
   @@index([storyId, sortOrder])
   @@index([questionId])
   @@map("story_pages")
+}
+
+/// Bản ghi âm giọng bé ở bài Luyện nói (task 17). Tệp nằm ở `storage/recordings/<learner_id>/` (ngoài `public/`), trả về qua route kiểm quyền.
+/// Mỗi (bé, câu hỏi) giữ tối đa 3 bản gần nhất.
+model Recording {
+  id         Int      @id @default(autoincrement())
+  learnerId  Int      @map("learner_id")
+  /// Câu luyện nói; null nếu câu đã bị xóa (bản ghi vẫn giữ để bố mẹ nghe lại).
+  questionId Int?     @map("question_id")
+  /// Câu mẫu bé đã nói, chép lại lúc ghi để còn hiện khi câu hỏi đã đổi hoặc bị xóa.
+  sentence   String   @db.VarChar(255)
+  /// Tên tệp đã lưu (`rec-<id>-<mã>.webm`).
+  file       String   @db.VarChar(100)
+  durationMs Int      @map("duration_ms")
+  /// Số sao 1–3 (2 nếu không chấm).
+  stars      Int      @db.TinyInt
+  /// Chữ nhận diện được (null nếu không chấm).
+  transcript String?  @db.VarChar(500)
+  /// Có chấm bằng nhận diện giọng nói hay chỉ tính hoàn thành.
+  scored     Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  learner  Learner   @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: SetNull)
+
+  @@index([learnerId, questionId, createdAt])
+  @@index([learnerId, createdAt])
+  @@map("recordings")
 }

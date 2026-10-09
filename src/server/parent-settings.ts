@@ -49,9 +49,9 @@ export async function saveStudyTime(userId: number, input: unknown): Promise<Set
 export async function saveAppearance(userId: number, input: unknown): Promise<SettingsResult> {
   const parsed = appearanceInputSchema.safeParse(input);
   if (!parsed.success) return fail("Lựa chọn chưa hợp lệ.");
-  const { learnerId, uiTheme, accent, speed, soundOn } = parsed.data;
+  const { learnerId, uiTheme, accent, speed, soundOn, speechScoring } = parsed.data;
   const learner = await requireLearner(userId, learnerId);
-  const settings = learnerSettingsSchema.parse({ ...learner.settings, voice: { accent, speed }, soundOn });
+  const settings = learnerSettingsSchema.parse({ ...learner.settings, voice: { accent, speed }, soundOn, speechScoring });
   await db.learner.update({ where: { id: learnerId }, data: { uiTheme, settings } });
   return { ok: true };
 }

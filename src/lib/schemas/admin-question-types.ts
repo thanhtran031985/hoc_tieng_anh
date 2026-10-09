@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MAX_ACCEPTED, MAX_CARDS } from "../rules/admin-question-types.ts";
+import { LENIENCY_LEVELS } from "../rules/speaking.ts";
 import { extraQuestionTypeSchema } from "./question-extra.ts";
 
 // Dữ liệu ghi của màn Câu hỏi dạng mới (task 15, Adult18). Dùng chung giữa biểu mẫu ở client và server action.
@@ -24,6 +25,8 @@ export const saveExtraQuestionSchema = z.object({
   questions: z
     .array(z.object({ text: z.string().max(120), choices: z.array(z.string().max(30)).max(3), correct: z.number().int().min(0).max(2).nullable(), evidence: z.number().int().min(0).max(5) }))
     .max(3),
+  audio: z.string().max(255).nullable(),
+  leniency: z.enum(LENIENCY_LEVELS),
   picture: z.string().max(100),
 });
 

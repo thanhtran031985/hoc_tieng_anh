@@ -41,6 +41,7 @@ export function AppearancePanel({ kid }: { kid: SettingsSelected }) {
   const [accent, setAccent] = useState<Accent>(kid.accent);
   const [speed, setSpeed] = useState<Speed>(kid.speed);
   const [soundOn, setSoundOn] = useState(kid.soundOn);
+  const [speechScoring, setSpeechScoring] = useState(kid.speechScoring);
   const [error, setError] = useState<string | undefined>();
 
   const options: { value: Theme; title: string; text: string }[] = [
@@ -51,7 +52,7 @@ export function AppearancePanel({ kid }: { kid: SettingsSelected }) {
 
   async function submit() {
     setError(undefined);
-    const result = await save(() => saveAppearanceAction({ learnerId: kid.id, uiTheme: theme, accent, speed, soundOn }), `Đã lưu. ${kid.name} sẽ thấy thay đổi ở lần mở app tiếp theo.`);
+    const result = await save(() => saveAppearanceAction({ learnerId: kid.id, uiTheme: theme, accent, speed, soundOn, speechScoring }), `Đã lưu. ${kid.name} sẽ thấy thay đổi ở lần mở app tiếp theo.`);
     if (!result.ok) setError(result.message);
   }
 
@@ -80,6 +81,15 @@ export function AppearancePanel({ kid }: { kid: SettingsSelected }) {
       <div>
         <h3 className={adultStyles.h3}>Âm thanh</h3>
         <AdultToggle label="Hiệu ứng âm thanh" sub="Tiếng ting khi đúng, tiếng pháo sao khi hoàn thành bài" checked={soundOn} onChange={setSoundOn} />
+      </div>
+      <div>
+        <h3 className={adultStyles.h3}>Luyện nói</h3>
+        <AdultToggle
+          label="Chấm phát âm"
+          sub="Bông nghe và chấm 1–3 sao bằng nhận diện giọng nói của trình duyệt. Âm thanh được gửi tới máy chủ của Google hoặc Microsoft để nhận diện. Tắt thì Bông chỉ ghi âm, cho con nghe lại và tính là hoàn thành."
+          checked={speechScoring}
+          onChange={setSpeechScoring}
+        />
       </div>
       {error && (
         <p className={cn(adultStyles.err, adultStyles.small)} role="alert">

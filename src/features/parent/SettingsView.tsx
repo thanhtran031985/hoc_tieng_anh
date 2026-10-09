@@ -79,7 +79,7 @@ export function SettingsView({ data }: { data: SettingsData }) {
         ) : tab === "time" && selected ? (
           <TimePanel key={`${selected.id}-${selected.limitMinutes}-${selected.window?.from}-${selected.window?.to}`} kid={selected} />
         ) : tab === "ui" && selected ? (
-          <AppearancePanel key={`${selected.id}-${selected.uiTheme}-${selected.accent}-${selected.speed}-${selected.soundOn}`} kid={selected} />
+          <AppearancePanel key={`${selected.id}-${selected.uiTheme}-${selected.accent}-${selected.speed}-${selected.soundOn}-${selected.speechScoring}`} kid={selected} />
         ) : tab === "profiles" ? (
           <ProfilesPanel kids={kids} levels={levels} maxKids={family.maxKids} />
         ) : (

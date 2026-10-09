@@ -89,6 +89,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
     await getPlayExtras(
       lesson.steps.flatMap((s) => (s.question && s.question.status === "published" ? [s.question] : [])),
       lesson.steps.flatMap((s) => (s.activityType === "story" ? [parseLessonStepConfig("story", s.config)] : [])).flatMap((c) => (c && "storyId" in c ? [c.storyId] : [])),
+      learner.settings.speechScoring,
     ),
   );
 
@@ -112,7 +113,7 @@ async function getAudioMap(wordIds: number[]): Promise<Record<string, string>> {
 type QuestionRow = { id: number; type: string; prompt: unknown; options: unknown; answer: unknown };
 
 /** Tra thêm cho các dạng bài lấy nội dung từ câu hỏi: hình của từ tham chiếu, nghĩa của các thẻ điền từ, âm phonics. */
-async function getPlayExtras(questions: QuestionRow[], storyIds: number[]): Promise<PlayExtras> {
+async function getPlayExtras(questions: QuestionRow[], storyIds: number[], speechScoring: boolean): Promise<PlayExtras> {
   const wordIds = new Set<number>();
   const cardWords = new Set<string>();
   const graphemes = new Set<string>();
@@ -143,5 +144,6 @@ async function getPlayExtras(questions: QuestionRow[], storyIds: number[]): Prom
     glossary: meanings,
     sounds: new Map<string, PhonicsSoundInfo>(sounds.map((s) => [s.grapheme, { ipa: s.ipa, audio: s.audio }])),
     stories,
+    speechScoring,
   };
 }

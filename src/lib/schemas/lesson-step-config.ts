@@ -16,6 +16,7 @@ export const ACTIVITY_TYPES = [
   "fill_blank",
   "story",
   "short_reading",
+  "speaking",
 ] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
@@ -42,6 +43,8 @@ export const lessonStepConfigSchemas = {
   story: z.object({ storyId: z.number().int().positive() }),
   /** 8.11 Đọc hiểu ngắn (task 16): nội dung nằm trong câu hỏi gắn vào bước. */
   short_reading: z.object({}),
+  /** 8.7 Luyện nói (task 17): câu mẫu và mức chấm nằm trong câu hỏi gắn vào bước. */
+  speaking: z.object({}),
 } satisfies Record<ActivityType, z.ZodType>;
 
 export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;

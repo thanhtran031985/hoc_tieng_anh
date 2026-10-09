@@ -2,12 +2,13 @@ import { z } from "zod";
 import { BLANK } from "../rules/grading/fill-blank.ts";
 import { READING_CHOICES, READING_MAX_QUESTIONS, READING_MAX_SENTENCES, READING_MIN_QUESTIONS, READING_MIN_SENTENCES, splitPassage } from "../rules/grading/reading.ts";
 import { sameWords } from "../rules/grading/sentence-order.ts";
+import { LENIENCY_LEVELS, SPEAKING_MAX_WORDS, spokenWords } from "../rules/speaking.ts";
 import { normalizeAnswer } from "../rules/grading/text.ts";
 
 // Bốn dạng câu hỏi của task 15: nội dung nằm hẳn trong bảng `questions` (không dựng từ ngân hàng từ).
 // Hình dạng cột JSON `prompt`, `options`, `answer` của từng dạng.
 
-export const EXTRA_QUESTION_TYPES = ["phonics", "sentence_order", "dictation", "fill_blank", "short_reading"] as const;
+export const EXTRA_QUESTION_TYPES = ["phonics", "sentence_order", "dictation", "fill_blank", "short_reading", "speaking"] as const;
 export const extraQuestionTypeSchema = z.enum(EXTRA_QUESTION_TYPES);
 export type ExtraQuestionType = z.infer<typeof extraQuestionTypeSchema>;
 
@@ -86,12 +87,23 @@ export const shortReadingQuestionSchema = z
   .refine((q) => q.options.questions.every((x) => x.evidence < splitPassage(q.prompt.text).length), { message: "Câu chứa đáp án phải nằm trong đoạn văn", path: ["options"] })
   .refine((q) => q.options.questions.every((x) => new Set(x.choices.map((c) => c.toLowerCase())).size === x.choices.length), { message: "Có hai đáp án trùng nhau", path: ["options"] });
 
+// Luyện nói (8.7): câu mẫu ≤ 12 từ, `prompt.audio` là âm thanh mẫu (mp3 tạo tự động hoặc tải lên; thiếu thì chưa xuất bản được), `leniency` là mức chấm dễ tính.
+export const speakingQuestionSchema = z
+  .object({
+    prompt: z.object({ text: z.string().trim().min(1).max(120), audio: z.string().max(255).optional(), wordId: z.number().int().positive().optional() }),
+    options: z.object({ leniency: z.enum(LENIENCY_LEVELS) }),
+    answer: z.object({ expected: z.string().trim().min(1).max(120) }),
+  })
+  .refine((q) => spokenWords(q.prompt.text).length >= 1 && spokenWords(q.prompt.text).length <= SPEAKING_MAX_WORDS, { message: `Câu mẫu tối đa ${SPEAKING_MAX_WORDS} từ`, path: ["prompt"] })
+  .refine((q) => q.answer.expected === q.prompt.text, { message: "Câu cần nói phải trùng câu mẫu", path: ["answer"] });
+
 export const extraQuestionSchemas = {
   phonics: phonicsQuestionSchema,
   sentence_order: sentenceOrderQuestionSchema,
   dictation: dictationQuestionSchema,
   fill_blank: fillBlankQuestionSchema,
   short_reading: shortReadingQuestionSchema,
+  speaking: speakingQuestionSchema,
 } satisfies Record<ExtraQuestionType, z.ZodType>;
 
 export type PhonicsQuestionData = z.infer<typeof phonicsQuestionSchema>;
@@ -99,7 +111,8 @@ export type SentenceOrderQuestionData = z.infer<typeof sentenceOrderQuestionSche
 export type DictationQuestionData = z.infer<typeof dictationQuestionSchema>;
 export type FillBlankQuestionData = z.infer<typeof fillBlankQuestionSchema>;
 export type ShortReadingQuestionData = z.infer<typeof shortReadingQuestionSchema>;
-export type ExtraQuestionData = PhonicsQuestionData | SentenceOrderQuestionData | DictationQuestionData | FillBlankQuestionData | ShortReadingQuestionData;
+export type SpeakingQuestionData = z.infer<typeof speakingQuestionSchema>;
+export type ExtraQuestionData = PhonicsQuestionData | SentenceOrderQuestionData | DictationQuestionData | FillBlankQuestionData | ShortReadingQuestionData | SpeakingQuestionData;
 
 /** Kiểm tra bộ ba prompt/options/answer của một trong 4 dạng; ném ZodError nếu sai (dùng khi ghi). */
 export function validateExtraQuestion(type: string, data: unknown): ExtraQuestionData {

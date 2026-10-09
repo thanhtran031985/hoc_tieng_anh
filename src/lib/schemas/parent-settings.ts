@@ -29,6 +29,7 @@ export const appearanceInputSchema = z.object({
   accent: z.enum(["en-US", "en-GB"]),
   speed: z.enum(["normal", "slow"]),
   soundOn: z.boolean(),
+  speechScoring: z.boolean(),
 });
 
 const nameField = z.string().superRefine((value, ctx) => {
