@@ -65,7 +65,7 @@ Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
 - `src/server/music.ts`: `getMusicSrc()` lấy tệp âm thanh đầu tiên trong `public/media/music/` (đã tạo thư mục với `.gitkeep`); trang bài học truyền xuống `SoundProvider`. Chưa có tệp thì `musicAvailable` false: công tắc Nhạc nền mờ kèm "Chưa có nhạc nền".
 - Nối hiệu ứng: tiếng đúng cùng chỗ sao bay (`burstStars`); tiếng chưa đúng ở `ChoiceFeedback` (sai, xem đáp án), ghép cặp và lật thẻ; `RewardPopup` phát tiếng mở quà rồi tiếng xu. `/dev/ui` mục hộp quà bọc `SoundProvider` để nghe thử.
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 209/209 ✅ (thêm 7 test), `build` ✅. Edge không đầu ở `/lesson/220` (hồ sơ Mai Linh): chưa có tệp nhạc thì công tắc Nhạc nền mờ kèm chú thích, không phát nhạc; trả lời đúng thì tạo đúng 2 nốt (mỗi tiếng sai thêm 2 nốt); tắt Hiệu ứng thì không tạo nốt nào mà `speechSynthesis.speak` vẫn chạy khi bấm nút loa; thêm tệp WAV thử vào `public/media/music` thì nhạc phát lặp, âm lượng 0,098 (70%), giọng đọc chạy thì hạ còn 0,029 rồi nâng lại 0,098 khi xong, công tắc tắt thì nhạc dừng, bật lại thì phát tiếp; ở `/dev/ui` mở quà tạo 6 nốt (gift 4 + xu 2); không lỗi console. Đã xóa tệp WAV thử và khôi phục `settings` hồ sơ thử.
-- Bố/mẹ cần làm: bỏ tệp nhạc nền (mp3/ogg/wav/m4a, nhẹ nhàng, hợp lệ bản quyền) vào `public/media/music/`; chưa có thì công tắc Nhạc nền vẫn mờ.
+- Nhạc nền: xem mục "Nhạc nền đi kèm" bên dưới. Muốn đổi bài khác thì bỏ tệp mp3/ogg/wav/m4a vào `public/media/music/` (lấy tệp đầu tiên theo tên).
 
 ## Bước tiếp theo
 
@@ -75,4 +75,8 @@ Task đã xong. Việc bố/mẹ cần làm tay nằm ở mục "Kiểm tra cu�
 - `npx tsc --noEmit`, `npm run lint`, `npm run build` chạy không lỗi; `npm test` 209/209 (task này thêm 20 test: hằng số, tách câu, dáng rồng, dáng theo cấp, cài đặt âm thanh, hiệu ứng).
 - `/dev/ui` ở 1366×768 và 1920×1080: đủ 5 mục mới (rồng lớn lên, chữ bấm được + chân bài game, công cụ bài học, hộp quà, token GĐ2), không cuộn ngang, không lỗi console. `/dev/game` thử đủ luồng khung trò chơi.
 - Bài GĐ1 thật (`/lesson/220`, hồ sơ Mai Linh) bật học tập trung bằng F ở 1366×768 và 1920×1080: vừa màn hình không cuộn, ẩn thanh đường dẫn, nhãn "Đang học tập trung · Esc để thoát".
-- Việc cần bố/mẹ làm tay: (1) chạy `npm run test:e2e:db` rồi `npx playwright test` (cần đồng ý reset `hoc_tieng_anh_test`): test `01-` (token) phải hết đỏ, và các test bài học `07-` có thể cần chỉnh vì khung bài học nay có thêm thanh đường dẫn và 2 nút công cụ; (2) bỏ một tệp nhạc nền hợp bản quyền vào `public/media/music/`; (3) nghe thử tiếng hiệu ứng trên loa thật.
+- Việc cần bố/mẹ làm tay: (1) chạy `npm run test:e2e:db` rồi `npx playwright test` (cần đồng ý reset `hoc_tieng_anh_test`): test `01-` (token) phải hết đỏ, và các test bài học `07-` có thể cần chỉnh vì khung bài học nay có thêm thanh đường dẫn và 2 nút công cụ; (2) nghe thử nhạc nền và tiếng hiệu ứng trên loa thật (nhạc nền đã có sẵn, xem bên dưới).
+
+## Nhạc nền đi kèm — 09/10/2026
+- `public/media/music/nhac-nen-nhe.wav` (45,7 giây, mono 22,05 kHz, 1,9 MB): giai điệu hộp nhạc trên nền 4 hợp âm Am – F – C – G, 84 nhịp/phút, do tôi soạn bằng code nên không vướng bản quyền. Nốt ghi vòng quanh bộ đệm nên phần đuôi nối liền phần đầu, lặp lại không bị ngắt. Sinh lại bằng `node scripts/make-background-music.mjs <đường dẫn .wav>`.
+- Kiểm tra: công tắc Nhạc nền hết mờ và bật; nhạc phát lặp ở `/lesson/220`, giải mã được (không lỗi), âm lượng 0,098 ở mức 70%. Tôi chỉ kiểm bằng số liệu và trình duyệt, chưa nghe bằng tai: bố/mẹ nghe thử, nếu chưa vừa ý (nhanh, to, giai điệu) thì bảo tôi chỉnh hoặc thay tệp khác.
