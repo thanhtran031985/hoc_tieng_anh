@@ -458,6 +458,200 @@
   --dragon-hop: 16px;
   --dragon-breathe: 2px;
   --dragon-float: 6px;
+
+  /* ===== Token giai đoạn 2 (designs/components/Gd2Tokens, Gd3Tokens, Gd4Tokens; docs/DESIGN_SYSTEM.md mục 15) =====
+     Chỉ thêm mới, không đổi token GĐ1. Giá trị dạng {tên} trong tokens.json viết thành var(--tên). */
+
+  /* Đọc to, ghép âm, ghi âm (Gd2Tokens) */
+  --read-highlight: #ffe48c;
+  --phon-slot: #fffaf0;
+  --rec: #6a3fd6;
+  --rec-soft: #efe8ff;
+  --rec-track: #e6dccb;
+
+  /* Bong bóng */
+  --bubble-1: #bfe6ff;
+  --bubble-2: #ffd3e8;
+  --bubble-3: #d3f5c2;
+  --bubble-4: #ffe7a8;
+  --bubble-5: #e3d9ff;
+  --bubble-shine: #ffffff;
+  --game-sky: #d8f1ff;
+  --game-sky-2: #f4fbff;
+
+  /* Đập chuột */
+  --mole-ground: #a4da7c;
+  --mole-ground-shade: #7fbf57;
+  --mole-hole: #4a2f22;
+  --mole-hole-rim: #9a6a46;
+  --mole-fur: #b98a66;
+  --mole-belly: #f3d8bb;
+  --mole-tongue: #ff8fa8;
+
+  /* Đua xe */
+  --race-grass: #a8df82;
+  --race-track: #6f7889;
+  --race-track-edge: #ffffff;
+  --race-ghost: rgba(239, 232, 255, 0.5);
+  --race-ghost-line: #d9ccff;
+  --race-finish-a: #2b2440;
+  --race-finish-b: #ffffff;
+
+  /* Trùm và cổng thi lên cấp */
+  --boss-energy: #ffb703;
+  --boss-energy-shade: #e08e00;
+  --boss-energy-track: #efe3cd;
+  --boss-fur: #b07a4f;
+  --boss-face: #ffd9b0;
+  --gate-stone: #d2c1a4;
+  --gate-stone-shade: #a38f72;
+  --gate-glow: #fff1a8;
+  --gate-dark: #4a3f5c;
+
+  /* Rồng Bông lớn lên */
+  --dragon-egg: #fff6e3;
+  --dragon-egg-spot: #ffd59e;
+  --dragon-leaf: var(--level-2);
+  --dragon-scarf-4: var(--level-4);
+  --dragon-scarf-5: var(--level-5);
+
+  /* Sticker, huy hiệu, hộp quà (Gd3Tokens) */
+  --album-page: #fffdf7;
+  --album-spine: #c98b5a;
+  --album-ring: #b0a491;
+  --album-animals: #ffe6c7;
+  --album-vehicles: #d9eaff;
+  --album-dino: #dff2cf;
+  --album-fruits: #ffe0ea;
+  --sticker-frame: #ffffff;
+  --sticker-shadow: rgba(91, 66, 30, 0.18);
+  --sticker-slot: #f3ece0;
+  --sticker-slot-line: #d8c9b0;
+  --sticker-ghost: rgba(43, 36, 64, 0.14);
+  --sticker-new: #ff9f1c;
+  --badge-ring: var(--star);
+  --badge-ring-shade: var(--star-shade);
+  --badge-ribbon-a: #3f8cff;
+  --badge-ribbon-b: #2bb38a;
+  --badge-locked: #e6dccb;
+  --badge-locked-ink: #8f8370;
+  --gift-box: #9b5de5;
+  --gift-box-shade: #7a3fc4;
+  --gift-ribbon: #ffc531;
+  --gift-glow: #fff1a8;
+
+  /* Phòng của tớ, cửa hàng, trang phục */
+  --room-wall: #fde9c9;
+  --room-wall-pattern: #f9dcae;
+  --room-trim: #e9c08f;
+  --room-floor: #dcae7a;
+  --room-floor-line: #c48f5a;
+  --room-window-sky: #bfe9f7;
+  --room-item-select: var(--brand);
+  --room-drop: rgba(63, 140, 255, 0.14);
+  --room-shadow: rgba(91, 66, 30, 0.16);
+  --price-chip: #fff3cc;
+  --price-chip-ink: #7a5200;
+  --owned-chip: var(--success-soft);
+  --outfit-tee: #3f8cff;
+  --outfit-stripe-a: #ffffff;
+  --outfit-stripe-b: #2bb38a;
+  --outfit-raincoat: #ffd23f;
+  --outfit-cap: #3f8cff;
+  --outfit-cap-brim: #2a6fd6;
+  --outfit-beanie: #9b5de5;
+  --outfit-pompom: #ffffff;
+  --outfit-sunhat: #f2cf8a;
+  --outfit-ribbon: #2bb38a;
+
+  /* Chuỗi ngày, thẻ nghỉ phép, trang in, âm lượng, vườn */
+  --streak-day: var(--streak);
+  --streak-day-soft: #ffe9d6;
+  --freeze-card: #bfe6ff;
+  --freeze-card-ink: #1d5f8c;
+  --print-paper: #ffffff;
+  --print-ink: #000000;
+  --print-muted: #4d4d4d;
+  --print-rule: #9a9a9a;
+  --focus-scrim: rgba(43, 36, 64, 0.04);
+  --volume-track: var(--line);
+  --volume-fill: var(--brand);
+  --garden-sky: #cfeeff;
+  --garden-grass: #9fd67a;
+  --garden-grass-shade: #7fbf57;
+  --garden-flower: #ffb3c7;
+  --day-allowed: var(--success-soft);
+
+  /* Khu người lớn GĐ2 */
+  --adm-lock: var(--ink-soft);
+  --adm-unlocked-manual: #6a3fd6;
+  --adm-audio-missing: var(--field-error);
+
+  /* Khám phá từ, Họ vần, Ghép chữ đầu (Gd4Tokens) */
+  --rime-ink: #0a6e61;
+  --rime-bg: #d4f3eb;
+  --rime-hub: #0b7a6b;
+  --rime-hub-ink: #ffffff;
+  --rime-line: #8fd9c6;
+  --branch-line: #cbc2df;
+  --branch-line-open: #6cc48b;
+  --branch-line-active: var(--brand);
+  --branch-node: var(--surface);
+  --branch-node-open: var(--success-soft);
+  --branch-num: var(--brand-soft);
+  --q-mark-bg: #fff1c2;
+  --q-mark-ink: #7a5200;
+  --trap-bg: #fff4df;
+  --trap-line: #e5a23c;
+  --trap-ink: #8a4600;
+  --trans-ink: #655d7a;
+  --trans-rule: #e4dcf3;
+  --read-word-bg: #ffcd45;
+  --read-word-ink: var(--ink);
+  --links-bg: #e9f2ff;
+  --links-line: #c3d9fb;
+  --crumb-ink: var(--ink-soft);
+  --crumb-now: var(--ink);
+  --soon-bg: #eeeaf5;
+  --soon-ink: #5a536d;
+  --build-slot-bg: #f3f8ff;
+  --letter-tile: #fff9ee;
+  --found-chip: var(--success-soft);
+  --fake-word-bg: var(--retry-soft);
+
+  /* Kích thước GĐ2 */
+  --size-phon-tile: 104px;
+  --size-bubble: 150px;
+  --size-mole-hole: 150px;
+  --size-race-lane: 76px;
+  --size-test-dot: 14px;
+  --size-boss: 260px;
+  --size-sticker: 112px;
+  --size-sticker-frame: 6px;
+  --size-badge: 120px;
+  --size-shop-card: 220px;
+  --size-room-item: 120px;
+  --size-print-page-w: 210mm;
+  --size-print-page-h: 297mm;
+  --size-print-margin: 14mm;
+  --size-print-pic: 16mm;
+  --size-print-write: 48mm;
+  --size-word-card: 300px;
+  --size-branch-node: 72px;
+  --size-branch-line: 4px;
+  --size-family-card: 176px;
+  --size-rime-hub: 148px;
+  --size-letter-tile: 76px;
+  --size-links-strip: 56px;
+  --size-print-answer-line: 9mm;
+
+  /* Thời lượng GĐ2 (tốc độ chuyển động, không phải đồng hồ đếm ngược) */
+  --duration-rec-max: 10000ms;
+  --duration-read-word: 420ms;
+  --duration-bubble-rise: 11000ms;
+  --duration-mole-up: 3200ms;
+  --duration-branch-open: 360ms;
+  --duration-read-word-slow: 640ms;
 }
 
 /* ---- Màu theo cấp: đặt data-level="1..10" trên vùng chứa (từ designs/components/bundle.css) ---- */

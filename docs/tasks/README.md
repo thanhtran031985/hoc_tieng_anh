@@ -16,7 +16,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 10 | [10-time-limit](10-time-limit/task.md) — Giới hạn giờ học | ✅ | 04, 07 | `feat/10-time-limit` |
 | 11 | [11-parent-area](11-parent-area/task.md) — Khu vực bố mẹ: tổng quan và cài đặt | ✅ | 04, 08, 10 | `feat/11-parent-area` |
 | 12 | [12-admin-content](12-admin-content/task.md) — Quản trị nội dung, nhập chủ đề bằng Excel | ✅ | 03, 05 | `feat/12-admin-content` |
-| 13 | [13-gd2-ui-kit](13-gd2-ui-kit/task.md) — Bộ thành phần GĐ2 và khung bài học mới | ⬜ | 02, 07 | `feat/13-gd2-ui-kit` |
+| 13 | [13-gd2-ui-kit](13-gd2-ui-kit/task.md) — Bộ thành phần GĐ2 và khung bài học mới | 🔄 | 02, 07 | `feat/13-gd2-ui-kit` |
 | 14 | [14-tts-audio](14-tts-audio/task.md) — Giọng đọc mp3 và âm phonics | ⬜ | 12, 13 | `feat/14-tts-audio` |
 | 15 | [15-lesson-types-a](15-lesson-types-a/task.md) — Dạng bài mới: ghép âm, sắp xếp câu, nghe gõ, điền từ | ⬜ | 13, 14 | `feat/15-lesson-types-a` |
 | 16 | [16-story-reading](16-story-reading/task.md) — Truyện tranh đọc to và đọc hiểu ngắn | ⬜ | 15 | `feat/16-story-reading` |

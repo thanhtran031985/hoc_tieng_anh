@@ -20,6 +20,7 @@ import {
   type Expr,
   type MascotColor,
 } from "@/components/ui";
+import { Gd2Tokens } from "./gd2-tokens";
 import { HotkeysDemo } from "./hotkeys-demo";
 import { OverlaysDemo } from "./overlays-demo";
 import { TopbarDemo } from "./topbar-demo";
@@ -357,7 +358,11 @@ export default function DevUiPage() {
         <OverlaysDemo />
       </Section>
 
-      <Section id="sec-hotkeys" title="Phím tắt (useHotkeys)" note="Bấm 1–4, A–D, Enter, Space, ← →, Esc. Gõ trong ô nhập thì phím tắt không chạy.">
+      <Section id="sec-gd2-tokens" title="Token GĐ2" note="Gd2Tokens, Gd3Tokens, Gd4Tokens: màu hiện ô màu, kích thước và thời lượng hiện giá trị đọc từ trang.">
+        <Gd2Tokens />
+      </Section>
+
+      <Section id="sec-hotkeys"title="Phím tắt (useHotkeys)" note="Bấm 1–4, A–D, Enter, Space, ← →, Esc. Gõ trong ô nhập thì phím tắt không chạy.">
         <HotkeysDemo />
       </Section>
     </main>
