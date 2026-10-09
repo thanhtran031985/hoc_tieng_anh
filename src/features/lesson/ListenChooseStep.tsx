@@ -13,8 +13,10 @@ import lesson from "./lesson.module.css";
 import type { StepProps } from "./types";
 
 const KEYS = ["1", "2", "3", "4"] as const;
+// Phím chữ A–D chọn đáp án giống phím số (PRD Phần B).
+const LETTERS = ["a", "b", "c", "d"] as const;
 
-/** Nghe và chọn hình (Screen07): 1–4 chọn, Space nghe lại, H gợi ý, Enter kiểm tra; sai không phạt. */
+/** Nghe và chọn hình (Screen07): 1–4 (hoặc A–D) chọn, Space nghe lại, H gợi ý, Enter kiểm tra; sai không phạt. */
 export function ListenChooseStep({ step, active, onComplete }: StepProps<"listen_choose_picture">) {
   const { target, options } = step;
   const flow = useChoiceFlow(target, options);
@@ -38,7 +40,7 @@ export function ListenChooseStep({ step, active, onComplete }: StepProps<"listen
   const replay = () => speakerRef.current?.click();
   const keys: Record<string, () => void> = { Space: replay, h: flow.hint, Enter: flow.check };
   options.forEach((o, i) => {
-    keys[KEYS[i]] = () => flow.select(o.id);
+    keys[KEYS[i]] = keys[LETTERS[i]] = () => flow.select(o.id);
   });
   useHotkeys(keys, { enabled: active && !flow.feedbackOpen, captureNative: true });
 

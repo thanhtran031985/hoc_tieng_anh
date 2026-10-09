@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AdultButton } from "@/components/adult";
 import { LessonFrame } from "@/features/lesson/LessonFrame";
 import { StepView } from "@/features/lesson/StepView";
 import type { PlayStep } from "@/lib/rules/lesson-play";
+import { useHotkeys } from "@/lib/use-hotkeys";
 import styles from "./questions.module.css";
 
 type Props = {
@@ -22,6 +23,17 @@ type Props = {
 export function StepsPreview({ steps, level, onClose }: Props) {
   const [index, setIndex] = useState(0);
   const [round, setRound] = useState(0);
+  const overlay = useRef<HTMLDivElement>(null);
+  // Esc đóng bản xem thử (bước con như nối từ vẫn nhận Esc của nó trước).
+  useHotkeys({ Escape: onClose });
+  // Đưa focus vào lớp phủ để Enter/Space không rơi vào nút của ngăn kéo bên dưới; đóng thì trả focus về chỗ cũ.
+  useEffect(() => {
+    const before = document.activeElement;
+    overlay.current?.focus();
+    return () => {
+      if (before instanceof HTMLElement && before.isConnected) before.focus();
+    };
+  }, []);
   const step = steps[Math.min(index, steps.length - 1)];
   if (!step) return null;
   const go = (to: number) => {
@@ -29,7 +41,7 @@ export function StepsPreview({ steps, level, onClose }: Props) {
     setRound((r) => r + 1);
   };
   return createPortal(
-    <div className={styles.preview} data-theme={level <= 5 ? "tieu-hoc" : "thcs"} role="dialog" aria-modal="true" aria-label="Xem như học sinh">
+    <div ref={overlay} tabIndex={-1} className={styles.preview} data-theme={level <= 5 ? "tieu-hoc" : "thcs"} role="dialog" aria-modal="true" aria-label="Xem như học sinh">
       <LessonFrame level={level} mascot="ngoc" value={index} max={steps.length} onExit={onClose}>
         <StepView key={`${index}-${round}`} step={step} active unit={{ title: "Xem thử", titleVi: "Xem thử" }} onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)} />
       </LessonFrame>

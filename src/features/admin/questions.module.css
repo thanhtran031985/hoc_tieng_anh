@@ -146,6 +146,10 @@
   z-index: var(--z-burst);
   background: var(--bg);
 }
+/* Lớp phủ chỉ nhận focus bằng mã để giữ phím tắt; không vẽ viền quanh cả màn hình. */
+.preview:focus {
+  outline: none;
+}
 .previewBar {
   position: absolute;
   right: var(--space-6);

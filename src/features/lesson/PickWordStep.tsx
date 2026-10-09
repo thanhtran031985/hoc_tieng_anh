@@ -13,6 +13,8 @@ import styles from "./pick-word.module.css";
 import type { StepProps } from "./types";
 
 const KEYS = ["1", "2", "3", "4"] as const;
+// Phím chữ A–D chọn đáp án giống phím số (PRD Phần B).
+const LETTERS = ["a", "b", "c", "d"] as const;
 
 /** Chọn từ đúng cho hình (Screen18): như nghe-chọn nhưng đáp án là chữ; chọn thẻ nào thì Bông đọc từ đó. */
 export function PickWordStep({ step, active, onComplete }: StepProps<"choose_word_for_picture">) {
@@ -35,7 +37,7 @@ export function PickWordStep({ step, active, onComplete }: StepProps<"choose_wor
 
   const keys: Record<string, () => void> = { h: flow.hint, Enter: flow.check };
   options.forEach((o, i) => {
-    keys[KEYS[i]] = () => choose(o.id);
+    keys[KEYS[i]] = keys[LETTERS[i]] = () => choose(o.id);
   });
   useHotkeys(keys, { enabled: active && !flow.feedbackOpen, captureNative: true });
 
