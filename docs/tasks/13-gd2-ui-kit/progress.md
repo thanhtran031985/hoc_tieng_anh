@@ -1,6 +1,6 @@
 # Tiến độ — 13-gd2-ui-kit — Bộ thành phần GĐ2 và khung bài học mới
 
-Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -67,9 +67,33 @@ Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 209/209 ✅ (thêm 7 test), `build` ✅. Edge không đầu ở `/lesson/220` (hồ sơ Mai Linh): chưa có tệp nhạc thì công tắc Nhạc nền mờ kèm chú thích, không phát nhạc; trả lời đúng thì tạo đúng 2 nốt (mỗi tiếng sai thêm 2 nốt); tắt Hiệu ứng thì không tạo nốt nào mà `speechSynthesis.speak` vẫn chạy khi bấm nút loa; thêm tệp WAV thử vào `public/media/music` thì nhạc phát lặp, âm lượng 0,098 (70%), giọng đọc chạy thì hạ còn 0,029 rồi nâng lại 0,098 khi xong, công tắc tắt thì nhạc dừng, bật lại thì phát tiếp; ở `/dev/ui` mở quà tạo 6 nốt (gift 4 + xu 2); không lỗi console. Đã xóa tệp WAV thử và khôi phục `settings` hồ sơ thử.
 - Nhạc nền: xem mục "Nhạc nền đi kèm" bên dưới. Muốn đổi bài khác thì bỏ tệp mp3/ogg/wav/m4a vào `public/media/music/` (lấy tệp đầu tiên theo tên).
 
+## Rà soát khi /finish-task — 09/10/2026
+
+| Mục | Đánh giá | Bằng chứng |
+|---|---|---|
+| Quyết định kiến trúc (vị trí component, token chỉ thêm, âm thanh Web Audio, cài đặt trong `learners.settings`, Esc học tập trung trước) | ✅ | Xem bảng bước và `decisions.md` (ghi các khác biệt nhỏ: 165 thay vì 166 token, `GameFrame` ở `src/features/lesson/`) |
+| Bước 0–5 theo `task.md` | ✅ | 209/209 test đơn vị, kiểm bằng Edge không đầu từng bước |
+| Zod dùng chung cho ghi DB | ✅ | `soundSettingsSchema` ở `src/lib/schemas/learner-settings.ts`, dùng trong `src/features/sound/actions.ts` |
+| Kiểm quyền hồ sơ bé | ✅ | `saveSoundSettingsAction`: `requireUser` + `requireActiveLearner`, chỉ ghi 3 trường |
+| Không Prisma/secret trong client component | ✅ | `grep` ở `components/lesson`, `components/rewards`, `features/sound`: 0 kết quả |
+| Không hex/px cứng | ✅ | `grep` hex: 0. Còn `px` trong `@media (max-width/height)` (điểm ngắt, như phần còn lại của dự án) và `transform-origin` theo toạ độ SVG |
+| Nội dung học không viết cứng | ✅ | Tên, nghĩa, hình phần thưởng và nghĩa chữ bấm được truyền qua props |
+| `tsc`, `lint`, `build` | ✅ | cả ba chạy không lỗi |
+| Test Playwright | ❓ | Thêm `tests/e2e/13-gd2-ui-kit.spec.ts` (5 test, đã `--list` và `tsc`/`eslint` sạch); **chưa chạy** vì cần reset `hoc_tieng_anh_test` |
+
+Giai đoạn A không có mục nào cần sửa. Màn thật dùng lại các test bài học ở `07-`/`chung` (các test này không dựa vào thứ đã đổi: thanh đường dẫn không có chữ dạng `mm:ss`, nút "Thoát bài học" và Esc vẫn như cũ).
+
+## Kiểm tra thủ công (checklist)
+- [ ] `npm run test:e2e:db` rồi `npx playwright test 13- 01- 07- chung` (tắt `npm run dev` trước): `01-` hết đỏ, `13-` đạt, `07-`/`chung` không hỏng vì thanh đường dẫn mới. Hỏng thì báo tôi sửa.
+- [ ] Mở một bài học (bé đang đăng nhập): có thanh "Đảo › Chủ đề › Bài", hai nút tròn ở góc phải (Học tập trung, Âm thanh).
+- [ ] Bấm F: vào toàn màn hình, mất thanh đường dẫn, có nhãn "Đang học tập trung · Esc để thoát". Esc thoát; Esc lần nữa mới hỏi "Dừng bài học?".
+- [ ] Nút loa: bật/tắt Nhạc nền và Hiệu ứng, kéo Âm lượng bằng ← →; tải lại trang vẫn giữ. Nghe thử nhạc nền (45 giây, lặp) và tiếng đúng/chưa đúng/xu/mở quà: có vừa tai, không quá to không.
+- [ ] Giọng đọc tiếng Anh vẫn đọc khi tắt hết âm thanh.
+- [ ] (Chỉ khi chạy `npm run dev`) `/dev/ui` và `/dev/game`: xem rồng 5 dáng, hộp quà, chữ bấm được, khung trò chơi.
+
 ## Bước tiếp theo
 
-Task đã xong. Việc bố/mẹ cần làm tay nằm ở mục "Kiểm tra cuối task" bên dưới.
+Chờ bố/mẹ làm checklist "Kiểm tra thủ công" và báo "test ok" để đóng task.
 
 ## Kiểm tra cuối task — 09/10/2026
 - `npx tsc --noEmit`, `npm run lint`, `npm run build` chạy không lỗi; `npm test` 209/209 (task này thêm 20 test: hằng số, tách câu, dáng rồng, dáng theo cấp, cài đặt âm thanh, hiệu ứng).
