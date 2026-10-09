@@ -1,0 +1,39 @@
+<!-- @dsCard group="Màn Tiểu học · 40–43 Sổ từ, in, học tập trung, ngoài giờ" height=420 subtitle="42a. Nút học tập trung và âm thanh (LessonTools): 2 nút tròn trên đầu khung bài học — Toàn màn hình (F; đang bật thì nền tối, Esc để thoát) và Âm thanh (mở bảng: Nhạc nền, Hiệu ứng, Âm lượng)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nút học tập trung và âm thanh — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .p { padding: var(--space-5) var(--space-6); display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: var(--space-5); align-items: start; }
+  .cell { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); min-height: 330px; }
+  .cell h3 { margin: 0; font: 800 17px/22px var(--font-display); color: var(--ink); }
+  .row { display: flex; align-items: center; gap: var(--space-3); background: var(--bg); border-radius: var(--radius-lg); padding: var(--space-3); }
+  .row .b-progress { flex: 1; }
+  .row .count { font: 800 16px/20px var(--font-body); color: var(--ink-soft); }
+  code { font: 700 12px/16px var(--font-body); color: var(--ink-soft); }
+  ul { margin: 0; padding-left: 18px; font: 600 14px/20px var(--font-body); color: var(--ink); }
+  .demo3 .b-snd { position: static; width: auto; box-shadow: var(--shadow-card); }
+  .demo3 .b-snd::before { display: none; }
+</style></head>
+<body>
+<div class="p dsf-demo" id="p" data-level="3"></div>
+<script>
+(function () {
+  var B = window.Bong, R = B.R;
+  var bar = function (focus) { return '<div class="row">' + B.ProgressBar(6, 10) + '<span data-tools>' + R.tools({ focus: focus }) + '</span><span class="count">6/10</span></div>'; };
+  document.getElementById('p').innerHTML =
+    '<section class="cell"><h3>Bình thường</h3>' + bar(false) + '<ul><li>Nút toàn màn hình: biểu tượng mở rộng, phím <b>F</b>.</li><li>Nút âm thanh: loa (tắt hết thì loa gạch chéo).</li><li>Cả hai là <code>b-iconbtn</code> 52px, có viền focus khi Tab.</li></ul><code>Bong.LessonTools({ focus: false })</code></section>' +
+    '<section class="cell"><h3>Đang học tập trung</h3>' + bar(true) + '<ul><li>Nút nền tối (<code>aria-pressed="true"</code>), biểu tượng thu nhỏ.</li><li>Ẩn mọi thứ có lớp <code>b-nofocus</code> (đường dẫn, thông tin bé), nền <code>focus-scrim</code>.</li><li><b>Esc</b> thoát học tập trung trước, Esc lần sau mới hỏi “Dừng bài học?”.</li></ul><code>Bong.R.wireTools(scr, ctx).setFocus(true)</code></section>' +
+    '<section class="cell demo3"><h3>Bảng âm thanh</h3>' + '<div data-panel></div><code>volume-track · volume-fill · b-switch · b-range</code></section>';
+  var holder = document.querySelector('[data-panel]'); holder.innerHTML = R.soundPanel();
+  holder.querySelectorAll('.b-switch').forEach(function (sw) { sw.addEventListener('click', function () { sw.setAttribute('aria-checked', sw.getAttribute('aria-checked') !== 'true'); }); });
+  var rg = holder.querySelector('#snd-vol'), out = holder.querySelector('[data-volout]'); rg.addEventListener('input', function () { out.textContent = rg.value + '%'; rg.style.setProperty('--v', rg.value + '%'); });
+  document.querySelectorAll('[data-tools]').forEach(function (t) {
+    var fb = t.querySelector('[data-focusmode]'), sb = t.querySelector('[data-soundbtn]');
+    fb.addEventListener('click', function () { var on = fb.getAttribute('aria-pressed') !== 'true'; fb.setAttribute('aria-pressed', on); fb.innerHTML = B.icon(on ? 'shrink' : 'expand', 24); });
+    sb.addEventListener('click', function () { holder.querySelector('.b-switch').focus(); });
+  });
+})();
+</script>
+</body>
+</html>

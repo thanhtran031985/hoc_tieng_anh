@@ -1,0 +1,129 @@
+<!-- @dsCard group="Người lớn · Giai đoạn 2" height=760 subtitle="14. Soạn truyện tranh (Adult19-StoryEditor): danh sách trang bên trái (kéo thả / Alt+↑↓, thêm, xoá qua hộp thoại, chèn trang câu hỏi); khung giữa sửa trang (tranh, 1–2 câu, âm thanh đọc, “Tạo giọng đọc tự động”); thông tin truyện + Nháp/Xuất bản; xem trước bằng giao diện Tiểu học" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Soạn truyện tranh — preview</title>
+<style>
+  .pl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .pl li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: 6px; background: var(--surface); }
+  .pl li.is-sel { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); background: var(--brand-soft); }
+  .pl .pick { flex: 1; min-width: 0; border: 0; background: none; padding: 0; display: flex; gap: 8px; align-items: center; text-align: left; cursor: pointer; font: inherit; color: var(--ink); }
+  .th { width: 64px; height: 48px; border-radius: 6px; flex: none; position: relative; overflow: hidden; background: linear-gradient(var(--garden-sky) 62%, var(--garden-grass) 62%); display: grid; place-items: center; }
+  .th .b-pic { width: 34px; height: 34px; }
+  .th.q { background: var(--info-soft); color: var(--brand-shade); }
+  .pl b { display: block; font: 600 13px/18px var(--font-thcs); } .pl small { display: block; font: 400 12px/16px var(--font-thcs); color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+  .pl .pick > span:last-child { min-width: 0; overflow: hidden; }
+  .pl small { max-width: 100% !important; }
+  .gen[hidden] { display: none; }
+  .pl .warn { color: var(--field-error); display: inline-flex; }
+  .pact { display: flex; gap: 6px; margin-top: var(--space-3); flex-wrap: wrap; }
+  .art { height: 230px; border-radius: var(--adm-radius-lg); background: linear-gradient(var(--garden-sky) 64%, var(--garden-grass) 64%); position: relative; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--line); }
+  .art .b-pic { width: 140px; height: 140px; }
+  .art .ab { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 6px; }
+  .aud { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--adm-radius-md); background: var(--surface-soft); border: 1px solid var(--line); font: 500 13px/20px var(--font-thcs); color: var(--ink); }
+  .chip.is-miss { background: var(--field-error-bg); border-color: var(--field-error); color: var(--field-error); }
+  .gen { display: inline-flex; align-items: center; gap: 8px; font: 500 13px/18px var(--font-thcs); color: var(--ink-soft); }
+  .gen .bar { width: 120px; height: 6px; border-radius: 99px; background: var(--surface-sunk); overflow: hidden; } .gen .bar span { display: block; height: 100%; background: var(--brand); width: 0; transition: width 1.2s linear; }
+  .words { display: flex; gap: 6px; flex-wrap: wrap; }
+  .words .chip button { border: 0; background: none; padding: 0; color: var(--ink-soft); cursor: pointer; display: grid; }
+  .qopt { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+  .qopt label { border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; font: 500 13px/18px var(--font-thcs); }
+  .qopt label.ok { border-color: var(--success); box-shadow: inset 0 0 0 1px var(--success); }
+  .qopt .sw { width: 44px; height: 30px; border-radius: 6px; border: 1px solid var(--line-strong); }
+  .stu-art { width: 100%; height: 220px; border-radius: 16px; background: linear-gradient(var(--garden-sky) 64%, var(--garden-grass) 64%); display: grid; place-items: center; }
+  .stu-lines { font: 700 26px/1.5 var(--font-display); color: var(--ink); margin: 0; text-align: left; }
+  .stu-lines .b-kw.is-lit { background: var(--read-highlight); }
+  .pubmsg { margin: 0; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var SCR, CTX, uid = 0;
+  function P(t, pic, audio) { return { id: 'pg' + (++uid), kind: 'page', t: t, pic: pic, audio: audio }; }
+  var PAGES, INFO, SEL;
+  function reset() {
+    PAGES = [P(['This is Tom.', 'He has a red kite.'], 'kite', 'tom-p1.mp3 · 3,1 giây'), P(['Tom and Dad go to the park.'], 'sun', 'tom-p2.mp3 · 2,4 giây'), P(['The wind is strong.', 'The kite flies up, up, up!'], 'kite', 'tom-p3.mp3 · 3,6 giây'),
+      { id: 'pg' + (++uid), kind: 'q', q: 'What colour is Tom’s kite?', mode: 'pic', opts: [['blue', '#3f8cff'], ['red', '#ff5a4f'], ['yellow', '#ffd23f']], ok: 1 },
+      P(['Oh no!', 'The kite is in the tree.'], 'plant', ''), P(['Dad helps Tom.', 'He gets the kite.'], 'teddy', 'tom-p5.mp3 · 2,9 giây'), P(['Tom is happy.', 'Thank you, Dad!'], 'kite', 'tom-p6.mp3 · 2,7 giây')];
+    INFO = { name: 'Tom’s Red Kite', level: 3, topic: 'Đồ chơi & vui chơi', words: ['kite', 'park', 'wind', 'tree', 'help', 'happy'], status: 'draft' }; SEL = PAGES[4].id;
+  }
+  reset();
+  function num(p) { var n = 0; for (var i = 0; i < PAGES.length; i++) { if (PAGES[i].kind === 'page') n++; if (PAGES[i] === p) return n; } return n; }
+  function cur() { return PAGES.filter(function (p) { return p.id === SEL; })[0] || PAGES[0]; }
+  function list() {
+    return '<section class="a-card a-s3" aria-labelledby="pl-t"><h2 class="adm-h3" id="pl-t" style="margin:0 0 8px">Các trang (' + PAGES.length + ')</h2><ul class="pl" data-plist aria-describedby="pl-h">' + PAGES.map(function (p) {
+      var isQ = p.kind === 'q', miss = !isQ && !p.audio;
+      return '<li data-sort-item="' + p.id + '" data-name="' + (isQ ? 'Trang câu hỏi' : 'Trang ' + num(p)) + '" class="' + (p.id === SEL ? 'is-sel' : '') + '"><button type="button" class="a-grip" aria-label="Kéo để đổi thứ tự ' + (isQ ? 'trang câu hỏi' : 'trang ' + num(p)) + ' (hoặc Alt + ↑/↓)">' + B.icon('grip', 16) + '</button>' +
+        '<button type="button" class="pick" data-pick="' + p.id + '"' + (p.id === SEL ? ' aria-current="true"' : '') + '><span class="th' + (isQ ? ' q' : '') + '">' + (isQ ? B.icon('exam', 22) : B.pic(p.pic, 34).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"')) + '</span><span><b>' + (isQ ? 'Câu hỏi giữa truyện' : 'Trang ' + num(p)) + (miss ? ' <span class="warn" title="Chưa có âm thanh">' + B.icon('warn', 13) + '</span>' : '') + '</b><small lang="en">' + B.esc(isQ ? p.q : p.t.join(' ')) + '</small></span></button>' +
+        '<button type="button" class="a-iconbtn" data-del="' + p.id + '" aria-label="Xoá ' + (isQ ? 'trang câu hỏi' : 'trang ' + num(p)) + '">' + B.icon('trash', 16) + '</button></li>';
+    }).join('') + '</ul><p class="adm-small b-muted" id="pl-h" style="margin:8px 0 0">Kéo tay nắm hoặc Alt + ↑/↓ để đổi thứ tự.</p><div class="pact">' + A.btn({ label: 'Thêm trang', icon: 'plus', variant: 'secondary', size: 's', attrs: 'data-addp' }) + A.btn({ label: 'Chèn câu hỏi', icon: 'exam', variant: 'secondary', size: 's', attrs: 'data-addq' }) + '</div></section>';
+  }
+  function editor() {
+    var p = cur();
+    if (p.kind === 'q') return '<section class="a-card a-s6" aria-labelledby="ed-t"><h2 class="adm-h2" id="ed-t" style="margin:0 0 12px">Trang câu hỏi giữa truyện</h2><div class="a-form" style="grid-template-columns:1fr">' + A.field({ id: 'e-q', label: 'Câu hỏi', value: p.q, required: true, en: true }) +
+      A.field({ id: 'e-mode', label: 'Kiểu trả lời', type: 'seg', value: p.mode, options: [['pic', 'Chọn hình'], ['sent', 'Chọn câu đúng']] }) +
+      '<div class="a-field"><span class="adm-h3" id="e-o-l">3 lựa chọn · chọn đáp án đúng</span><div class="qopt" role="radiogroup" aria-labelledby="e-o-l">' + p.opts.map(function (o, i) { return '<label class="' + (p.ok === i ? 'ok' : '') + '"><span class="sw" style="background:' + o[1] + '" aria-hidden="true"></span><input class="t-input a-input a-en" value="' + o[0] + '" aria-label="Lựa chọn ' + (i + 1) + '"><span><input type="radio" name="e-ok" value="' + i + '"' + (p.ok === i ? ' checked' : '') + ' style="accent-color:var(--success)"> Đúng</span></label>'; }).join('') + '</div></div>' +
+      '<p class="adm-small b-muted" style="margin:0">Trang câu hỏi dùng loa đọc câu hỏi tự động; bé chọn bằng phím 1–3 hoặc chuột.</p></div></section>';
+    var miss = !p.audio;
+    return '<section class="a-card a-s6" aria-labelledby="ed-t"><h2 class="adm-h2" id="ed-t" style="margin:0 0 12px">Trang ' + num(p) + '</h2><div class="a-form" style="grid-template-columns:1fr">' +
+      '<div class="a-field"><span class="adm-h3">Tranh</span><div class="art">' + B.pic(p.pic, 140) + '<div class="ab">' + A.btn({ label: 'Chọn từ thư viện', icon: 'image', variant: 'secondary', size: 's' }) + A.btn({ label: 'Tải tranh lên', icon: 'upload', variant: 'secondary', size: 's' }) + '</div></div></div>' +
+      A.field({ id: 'e-s1', label: 'Câu 1', value: p.t[0] || '', required: true, en: true }) + A.field({ id: 'e-s2', label: 'Câu 2 (tuỳ chọn)', value: p.t[1] || '', en: true, hint: 'Mỗi trang 1–2 câu, tổng không quá 16 từ.' }) +
+      '<div class="a-field" id="e-aud-f"><span class="adm-h3">Âm thanh đọc</span><div class="aud"><span class="chip' + (miss ? ' is-miss' : '') + '" data-audchip>' + B.icon(miss ? 'warn' : 'music', 14) + (miss ? 'Chưa có âm thanh' : p.audio) + '</span>' + (miss ? '' : A.btn({ label: '', icon: 'speaker', variant: 'ghost', size: 's', attrs: 'data-play aria-label="Nghe âm thanh trang"' })) + A.btn({ label: 'Tải lên', icon: 'upload', variant: 'secondary', size: 's' }) + A.btn({ label: 'Tạo giọng đọc tự động', icon: 'wand', variant: 'secondary', size: 's', attrs: 'data-tts' }) + '<span class="gen" data-gen hidden role="status"><span class="bar"><span></span></span><span>Đang tạo giọng đọc…</span></span></div>' +
+      '<p class="a-err adm-small" id="e-aud-e" role="alert"' + (miss ? '' : ' hidden') + '>' + B.icon('warn', 14) + '<span>Trang này cần âm thanh đọc trước khi xuất bản.</span></p></div></div></section>';
+  }
+  function info() {
+    return '<aside class="a-s3" style="display:flex;flex-direction:column;gap:var(--space-4)"><section class="a-card" aria-labelledby="in-t"><h2 class="adm-h3" id="in-t" style="margin:0 0 8px">Thông tin truyện</h2><div class="a-form" style="grid-template-columns:1fr">' +
+      A.field({ id: 'i-name', label: 'Tên truyện', value: INFO.name, required: true, en: true }) + A.field({ id: 'i-lv', label: 'Cấp', type: 'select', value: INFO.level, options: [1, 2, 3, 4, 5].map(function (n) { return [n, 'Cấp ' + n + ' · ' + B.levels[n - 1].name]; }) }) +
+      A.field({ id: 'i-topic', label: 'Chủ đề', type: 'select', value: INFO.topic, options: ['Đồ chơi & vui chơi', 'Trường lớp', 'Cơ thể', 'Quần áo', 'Nhà của em'] }) +
+      '<div class="a-field"><label class="adm-h3" for="i-word">Từ mới (' + INFO.words.length + ')</label><div class="words">' + INFO.words.map(function (w) { return '<span class="chip" lang="en">' + w + '<button type="button" data-rmw="' + w + '" aria-label="Bỏ từ ' + w + '">' + B.icon('close', 12) + '</button></span>'; }).join('') + '</div><div class="a-inrow"><input class="t-input a-input a-en" id="i-word" placeholder="Thêm từ, Enter"></div></div>' +
+      A.field({ id: 'i-st', label: 'Trạng thái', type: 'seg', value: INFO.status, options: [['draft', 'Nháp'], ['live', 'Xuất bản']] }) + '<p class="a-err adm-small pubmsg" id="i-st-e2" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div></section>' +
+      '<section class="a-card" style="display:flex;flex-direction:column;gap:8px">' + A.btn({ label: 'Xem trước như bé', icon: 'eye', variant: 'secondary', attrs: 'data-prev' }) + A.btn({ label: 'Lưu truyện', icon: 'check', attrs: 'data-save' }) + '</section></aside>';
+  }
+  function page(m) { return A.shell2({ area: 'admin', active: 'stories', title: 'Soạn truyện tranh', crumb: 'Truyện tranh › ' + INFO.name, actions: A.btn({ label: 'Tất cả truyện', icon: 'back', variant: 'secondary' }), main: m }); }
+  function saveEditor() { var p = cur(), w = SCR; if (!w.querySelector('#e-s1') && !w.querySelector('#e-q')) return; if (p.kind === 'q') { p.q = w.querySelector('#e-q').value; var r = w.querySelector('input[name="e-ok"]:checked'); p.ok = r ? +r.value : p.ok; } else { p.t = [w.querySelector('#e-s1').value.trim(), w.querySelector('#e-s2').value.trim()].filter(Boolean); } }
+  function validate() {
+    var p = cur(), bad = null;
+    if (p.kind === 'page') { var s1 = SCR.querySelector('#e-s1').value.trim(), s2 = SCR.querySelector('#e-s2').value.trim(), n = (s1 + ' ' + s2).trim().split(/\s+/).filter(Boolean).length; A.setErr(SCR, 'e-s1', s1 ? '' : 'Trang cần ít nhất một câu.'); if (!s1) bad = '#e-s1'; A.setErr(SCR, 'e-s2', n > 16 ? 'Trang đang có ' + n + ' từ — tối đa 16 từ để bé đọc kịp.' : ''); if (n > 16) bad = bad || '#e-s2'; }
+    var nm = SCR.querySelector('#i-name').value.trim(); A.setErr(SCR, 'i-name', nm ? '' : 'Nhập tên truyện.'); if (!nm) bad = bad || '#i-name';
+    return bad;
+  }
+  A.screen({
+    labels: { empty: 'Trống (truyện mới)' },
+    notes: { normal: 'Trái: các trang (kéo tay nắm hoặc Alt+↑/↓; Xoá → hộp thoại; Thêm trang; Chèn câu hỏi sau trang đang chọn). Giữa: sửa trang — tranh, 1–2 câu (≤ 16 từ), âm thanh đọc (tải lên / “Tạo giọng đọc tự động” có thanh tiến trình). Trang 4 chưa có âm thanh: báo dưới ô; chọn Xuất bản sẽ bị chặn kèm lý do. Phải: tên, cấp, chủ đề, từ mới (thêm bằng Enter, bỏ bằng ×), Nháp / Xuất bản, Xem trước bằng giao diện Tiểu học.', loading: 'Khung xương 3 cột.', empty: 'Truyện mới chưa có trang.', error: 'Không tải được truyện.' },
+    states: {
+      normal: function () { return page('<div class="a-grid">' + list() + editor() + info() + '</div>'); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s3">' + A.skel('420px') + '</div><div class="a-s6">' + A.skel('520px') + '</div><div class="a-s3">' + A.skel('380px') + '</div></div>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Truyện chưa có trang nào', text: 'Thêm trang đầu tiên: một tranh lớn và 1–2 câu ngắn. Có thể chèn trang câu hỏi giữa truyện.', action: A.btn({ label: 'Thêm trang đầu tiên', icon: 'plus' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'STY-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx; if (ctx.state !== 'normal') return;
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      A.sortable(scr.querySelector('[data-plist]'), { onChange: function (ids) { PAGES = ids.map(function (id) { return PAGES.filter(function (p) { return p.id === id; })[0]; }); scr.querySelectorAll('.pl li').forEach(function (li) { var p = PAGES.filter(function (x) { return x.id === li.dataset.sortItem; })[0]; var b = li.querySelector('.pick b'); if (p.kind === 'page') b.firstChild.textContent = 'Trang ' + num(p); }); } });
+      scr.querySelectorAll('[data-pick]').forEach(function (b) { b.addEventListener('click', function () { saveEditor(); SEL = b.dataset.pick; re('[data-pick="' + SEL + '"]'); }); });
+      scr.querySelectorAll('[data-del]').forEach(function (b) { b.addEventListener('click', function () { var p = PAGES.filter(function (x) { return x.id === b.dataset.del; })[0], nm = p.kind === 'q' ? 'trang câu hỏi' : 'trang ' + num(p);
+        A.dialog(scr, { title: 'Xoá ' + nm + '?', body: 'Tranh, câu và âm thanh của ' + nm + ' sẽ bị xoá khỏi truyện “' + INFO.name + '”. Không hoàn tác được.', actions: [{ label: 'Xoá trang', variant: 'danger', icon: 'trash', onClick: function () { var i = PAGES.indexOf(p); PAGES.splice(i, 1); if (SEL === p.id) SEL = (PAGES[Math.max(0, i - 1)] || {}).id; re('[data-pick="' + SEL + '"]'); A.toast(ctx.scr, 'Đã xoá ' + nm + '.'); } }, { label: 'Huỷ', variant: 'secondary' }] }); }); });
+      scr.querySelector('[data-addp]').addEventListener('click', function () { saveEditor(); var p = P([''], 'book', ''); PAGES.splice(PAGES.indexOf(cur()) + 1, 0, p); SEL = p.id; re('#e-s1'); });
+      scr.querySelector('[data-addq]').addEventListener('click', function () { saveEditor(); var q = { id: 'pg' + (++uid), kind: 'q', q: '', mode: 'pic', opts: [['', '#3f8cff'], ['', '#2bb38a'], ['', '#ffd23f']], ok: null }; PAGES.splice(PAGES.indexOf(cur()) + 1, 0, q); SEL = q.id; re('#e-q'); });
+      var tts = scr.querySelector('[data-tts]'); tts && tts.addEventListener('click', function () { var g = scr.querySelector('[data-gen]'), bar = g.querySelector('.bar span'); g.hidden = false; tts.disabled = true; requestAnimationFrame(function () { bar.style.width = '100%'; }); ctx.later(function () { var p = cur(); saveEditor(); p.audio = 'tom-p' + num(p) + '.mp3 · ' + (1.5 + p.t.join(' ').split(' ').length * 0.25).toFixed(1).replace('.', ',') + ' giây (giọng tự động)'; re('[data-tts]'); A.toast(ctx.scr, 'Đã tạo giọng đọc cho trang ' + num(p) + '.'); }, 1300); });
+      var pl = scr.querySelector('[data-play]'); pl && pl.addEventListener('click', function () { B.L.say(cur().t.join(' '), .8, pl); });
+      scr.querySelectorAll('.qopt input[type="radio"]').forEach(function (r) { r.addEventListener('change', function () { scr.querySelectorAll('.qopt label').forEach(function (l) { l.classList.toggle('ok', l.contains(r)); }); }); });
+      var iw = scr.querySelector('#i-word'); iw.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); var v = iw.value.trim().toLowerCase(); if (v && INFO.words.indexOf(v) < 0) { saveEditor(); INFO.words.push(v); re('#i-word'); } } });
+      scr.querySelectorAll('[data-rmw]').forEach(function (b) { b.addEventListener('click', function () { saveEditor(); INFO.words.splice(INFO.words.indexOf(b.dataset.rmw), 1); re('#i-word'); }); });
+      var st = scr.querySelector('#i-st'); st.addEventListener('segchange', function (e) { var miss = PAGES.filter(function (p) { return p.kind === 'page' && !p.audio; }), er = scr.querySelector('#i-st-e2');
+        if (e.detail === 'live' && miss.length) { er.hidden = false; er.querySelector('span').textContent = 'Chưa xuất bản được: trang ' + miss.map(num).join(', ') + ' chưa có âm thanh đọc.'; st.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x.dataset.v === 'draft'); x.setAttribute('aria-pressed', x.dataset.v === 'draft'); }); }
+        else { er.hidden = true; INFO.status = e.detail; } });
+      scr.querySelector('[data-save]').addEventListener('click', function () { var b = validate(); if (b) { scr.querySelector(b).focus(); return; } saveEditor(); A.toast(ctx.scr, 'Đã lưu truyện “' + INFO.name + '” (' + (INFO.status === 'live' ? 'đã xuất bản' : 'nháp') + ').'); });
+      scr.querySelector('[data-prev]').addEventListener('click', function () { var b = validate(); if (b) { scr.querySelector(b).focus(); return; } saveEditor(); var p = cur();
+        var inner = p.kind === 'q' ? '<p class="stu-lines" style="text-align:center" lang="en">' + B.esc(p.q) + '</p><div style="display:flex;gap:12px;justify-content:center">' + p.opts.map(function (o, i) { return '<span class="b-choice" style="width:110px;height:110px;position:relative">' + B.key(String(i + 1), 'b-key--corner') + '<span style="width:60px;height:40px;border-radius:8px;background:' + o[1] + ';border:3px solid var(--dragon-line)"></span></span>'; }).join('') + '</div>'
+          : '<div class="stu-art">' + B.pic(p.pic, 150) + '</div><p class="stu-lines" lang="en">' + p.t.map(function (s) { return B.L.words(s, {}); }).join('<br>') + '</p>';
+        A.dialog(scr, { title: 'Xem trước · ' + INFO.name + ' · ' + (p.kind === 'q' ? 'trang câu hỏi' : 'trang ' + num(p)), wide: 680, body: '<div class="a-stu" data-theme="tieu-hoc" style="align-items:stretch">' + inner + '</div><p class="adm-small" style="margin:8px 0 0">Giống màn Truyện tranh có đọc to (Screen24-Story) của bé: chữ sáng theo giọng đọc, bấm từ để nghe.</p>', actions: [{ label: 'Đóng', variant: 'primary' }] });
+        var ovs = scr.querySelectorAll('.b-overlay'), w = ovs[ovs.length - 1], kws = w.querySelectorAll('.b-kw'), i = 0; (function step() { if (i > 0 && kws[i - 1]) kws[i - 1].classList.remove('is-lit'); if (i < kws.length) { kws[i].classList.add('is-lit'); i++; setTimeout(step, 420); } })(); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

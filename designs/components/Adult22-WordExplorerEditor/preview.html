@@ -1,0 +1,185 @@
+<!-- @dsCard group="Người lớn · Đợt 6 · Khám phá từ, Họ vần" height=760 subtitle="8. Soạn Khám phá từ (Adult22-WordExplorerEditor): tab “Khám phá” trong ngăn kéo biểu mẫu của Ngân hàng từ vựng — bộ câu hỏi mẫu theo nhóm, 4–6 nhánh kéo thả (câu hỏi Anh/Việt, đáp án từ kho hoặc gõ mới kèm hình, hình nhiễu), Đoạn văn ghép từ câu trả lời + dịch + “Tạo giọng đọc tự động”, cảnh báo thiếu hình/âm thanh/bản dịch, báo lỗi dưới ô, “Xem như học sinh”, Nháp/Xuất bản" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Soạn Khám phá từ — preview</title>
+<style>
+  .th { width: 40px; height: 40px; border-radius: 10px; background: var(--surface-soft); display: grid; place-items: center; } .th .b-pic { width: 32px; height: 32px; }
+  .nm b { font-weight: 600; } .nm small { display: block; color: var(--ink-soft); font-size: 12px; }
+  .ed-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px 0 0; }
+  .ed-tabs [role="tab"] { border: 0; background: none; padding: 8px 12px; font: 600 14px/20px var(--font-thcs); color: var(--ink-soft); cursor: pointer; border-bottom: 3px solid transparent; display: inline-flex; gap: 6px; align-items: center; }
+  .ed-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brand); }
+  .ed-sec { display: flex; flex-direction: column; gap: 10px; }
+  .ed-sec > h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 700 15px/20px var(--font-thcs); color: var(--ink); }
+  .ed-sec > h3 .n { font-weight: 600; color: var(--ink-soft); font-size: 13px; }
+  .ed-sec > h3 .sp { margin-left: auto; }
+  .ed-warn { border: 1px solid var(--warn, var(--field-error)); background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 10px 12px; }
+  .ed-warn h3 { margin: 0 0 6px; font: 700 14px/18px var(--font-thcs); display: flex; gap: 6px; align-items: center; color: var(--ink); }
+  .ed-warn ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .ed-warn button { border: 0; background: none; padding: 2px 4px; font: 500 13px/18px var(--font-thcs); color: var(--ink); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; text-align: left; border-radius: 4px; }
+  .ed-warn button:hover { background: var(--surface-sunk); text-decoration: underline; }
+  .ed-warn .b-ico { color: var(--field-error); flex: none; }
+  .ed-tpl { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
+  .ed-br { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .ed-br > li { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); background: var(--surface); }
+  .ed-br > li.is-drag { box-shadow: var(--adm-shadow-pop); position: relative; z-index: 2; } .ed-br > li.is-over { border-top: 3px solid var(--brand); } .ed-br > li.is-over-after { border-top: 1px solid var(--line-strong); border-bottom: 3px solid var(--brand); }
+  .ed-h { display: flex; align-items: center; gap: 8px; padding: 6px 8px; }
+  .ed-h .num { width: 24px; height: 24px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font: 700 13px/1 var(--font-thcs); flex: none; }
+  .ed-h b { font: 600 14px/20px var(--font-thcs); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ed-h .meta { font: 500 12px/16px var(--font-thcs); color: var(--ink-soft); white-space: nowrap; }
+  .ed-b { border-top: 1px solid var(--line); padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+  .ed-b[hidden] { display: none; }
+  .ed-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ed-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); border-radius: 99px; padding: 2px 4px 2px 3px; font: 500 13px/18px var(--font-thcs); background: var(--surface); }
+  .ed-chip .ph { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-soft); display: grid; place-items: center; overflow: hidden; } .ed-chip .ph .b-pic { width: 26px; height: 26px; }
+  .ed-chip .ph.miss { border: 1px dashed var(--field-error); color: var(--field-error); }
+  .ed-chip small { color: var(--ink-soft); } .ed-chip .wi { color: var(--field-error); display: inline-flex; }
+  .ed-chip button { border: 0; background: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--ink-soft); }
+  .ed-chip button:hover { background: var(--surface-sunk); }
+  .ed-chip.is-warn { border-color: var(--field-error); }
+  .ed-add { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; align-items: center; }
+  .ed-lbl { font: 600 13px/18px var(--font-thcs); color: var(--ink); display: flex; gap: 6px; align-items: center; }
+  .ed-lbl small { font-weight: 500; color: var(--ink-soft); }
+  .ed-s { display: grid; grid-template-columns: 24px 1fr 1fr; gap: 8px; align-items: start; }
+  .ed-s .num { margin-top: 30px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface-sunk); display: grid; place-items: center; font: 700 12px/1 var(--font-thcs); }
+  .ed-audio { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: 8px 10px; }
+  .ed-audio .t { flex: 1; font: 500 13px/18px var(--font-thcs); }
+  .ed-audio .bar { flex: 1; height: 8px; border-radius: 99px; background: var(--surface-sunk); overflow: hidden; } .ed-audio .bar span { display: block; height: 100%; background: var(--brand); width: 0; transition: width .3s; }
+  .a-stu-wx { width: 100%; padding: 12px; background: var(--bg); border-radius: 12px; box-sizing: border-box; text-align: left; }
+  .a-stu-wx .b-wx { --size-word-card: 200px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, W = B.W;
+  function unscroll() { var n = SCR; while (n && n !== document.body) { if (n.scrollTop) n.scrollTop = 0; if (n.scrollLeft) n.scrollLeft = 0; n = n.parentElement; } }
+  function scrollDrawer(el) { var b = dr.el.querySelector('.a-drawer__b'), y = 0, n = el; while (n && n !== b) { y += n.offsetTop; n = n.offsetParent; } b.scrollTop = Math.max(0, y - 12); unscroll(); }
+  var SCR, CTX, dr = null;
+  var GROUPS = [['animals', 'Con vật'], ['food', 'Đồ ăn'], ['things', 'Đồ vật'], ['jobs', 'Nghề nghiệp'], ['places', 'Nơi chốn']];
+  var TPL = {
+    animals: [['What’s this?', 'Đây là gì?'], ['What color is a {w}?', '{v} có màu gì?'], ['What does a {w} like to eat?', '{v} thích ăn gì?'], ['What does a {w} have?', '{v} có những gì?'], ['What can a {w} do?', '{v} làm được gì?'], ['Where does a {w} live?', '{v} sống ở đâu?']],
+    food: [['What’s this?', 'Đây là gì?'], ['What color is it?', 'Nó có màu gì?'], ['What does it taste like?', 'Nó có vị thế nào?'], ['Where does it come from?', 'Nó từ đâu mà có?'], ['When do you eat it?', 'Cậu ăn nó khi nào?']],
+    things: [['What’s this?', 'Đây là gì?'], ['What color is it?', 'Nó có màu gì?'], ['What is it made of?', 'Nó làm bằng gì?'], ['What do you use it for?', 'Cậu dùng nó để làm gì?'], ['Where do you keep it?', 'Cậu để nó ở đâu?']],
+    jobs: [['Who is this?', 'Đây là ai?'], ['Where does a {w} work?', '{v} làm việc ở đâu?'], ['What does a {w} wear?', '{v} mặc gì?'], ['What does a {w} use?', '{v} dùng những gì?'], ['What does a {w} do?', '{v} làm gì?']],
+    places: [['What is this place?', 'Đây là nơi nào?'], ['Where is it?', 'Nó ở đâu?'], ['What can you see there?', 'Ở đó cậu thấy gì?'], ['What can you do there?', 'Ở đó cậu làm được gì?'], ['Who goes there?', 'Ai đến đó?']]
+  };
+  var BANK = ['seeds', 'insects', 'berries', 'wings', 'feathers', 'beak', 'claws', 'nest', 'tree', 'brown', 'yellow', 'blue', 'flysky', 'cat', 'fish', 'book', 'ball', 'wheel', 'stripes', 'fishtank', 'girlbook', 'run', 'milk'];
+  var EN = Object.assign({}, W.opt, { beak: 'a beak', claws: 'claws', feathers: 'feathers', insects: 'insects', berries: 'berries', nest: 'a nest', yellow: 'yellow', milk: 'milk' });
+  var MISSING = { claws: { pic: true }, berries: { audio: true } };
+  function fresh() {
+    var d = W.wx.bird;
+    return { group: 'animals', status: 'draft', open: 3, audio: 'none', branches: d.branches.map(function (b) { return { q: b.q, qvi: b.qvi, ans: b.ans.map(function (a) { return { k: a[0], en: a[1], vi: a[2] }; }), nz: b.opts.filter(function (_, j) { return j !== b.a; }) }; }),
+      sents: d.branches.map(function (b, i) { return { en: b.sent[0], vi: i === 4 ? '' : b.sent[1] }; }) };
+  }
+  var ED = fresh();
+  function warns() {
+    var w = [];
+    ED.branches.forEach(function (b, i) { b.ans.forEach(function (a) { var m = MISSING[a.k]; if (m && m.pic) w.push(['Nhánh ' + (i + 1) + ': đáp án “' + a.en + '” chưa có hình', '#br-' + i]); if (m && m.audio) w.push(['Nhánh ' + (i + 1) + ': đáp án “' + a.en + '” chưa có âm thanh', '#br-' + i]); }); });
+    ED.sents.forEach(function (s, i) { if (!s.vi.trim()) w.push(['Đoạn văn: câu ' + (i + 1) + ' chưa có bản dịch', '#s-vi-' + i]); });
+    if (ED.audio !== 'done') w.push(['Đoạn văn chưa có âm thanh đọc', '[data-tts]']);
+    return w;
+  }
+  function chip(a, bi, ai, kind) {
+    var m = MISSING[a.k || a] || {}, k = a.k || a, en = a.en || EN[k] || k;
+    return '<span class="ed-chip' + (m.pic || m.audio ? ' is-warn' : '') + '"><span class="ph' + (m.pic ? ' miss' : '') + '">' + (m.pic ? B.icon('image', 16) : W.pic(k, 26)) + '</span><span lang="en">' + en + '</span>' + (a.vi ? '<small>' + a.vi + '</small>' : '') +
+      (m.pic ? '<span class="wi" title="Chưa có hình">' + B.icon('warn', 14) + '<span class="b-sr">chưa có hình</span></span>' : '') + (m.audio ? '<span class="wi" title="Chưa có âm thanh">' + B.icon('warn', 14) + '<span class="b-sr">chưa có âm thanh</span></span>' : '') +
+      '<button type="button" data-rm="' + kind + '-' + bi + '-' + ai + '" aria-label="Bỏ ' + en + '">' + B.icon('close', 14) + '</button></span>';
+  }
+  function branch(b, i) {
+    var op = ED.open === i, wc = b.ans.filter(function (a) { return MISSING[a.k]; }).length;
+    return '<li data-sort-item="' + i + '" data-name="Nhánh ' + (i + 1) + '" id="br-' + i + '"><div class="ed-h"><button type="button" class="a-grip" aria-label="Kéo hoặc dùng ↑ ↓ để sắp xếp nhánh ' + (i + 1) + '">' + B.icon('grip', 18) + '</button><span class="num">' + (i + 1) + '</span><b lang="en">' + B.esc(b.q) + '</b>' +
+      '<span class="meta">' + b.ans.length + ' đáp án · ' + b.nz.length + ' hình nhiễu</span>' + (wc ? A.status('warn', wc + ' thiếu') : '') +
+      '<button type="button" class="a-iconbtn" data-tog="' + i + '" aria-expanded="' + op + '" aria-controls="brb-' + i + '" aria-label="' + (op ? 'Thu gọn' : 'Mở') + ' nhánh ' + (i + 1) + '">' + B.icon(op ? 'sortup' : 'sortdown', 16) + '</button>' +
+      '<button type="button" class="a-iconbtn" data-del="' + i + '" aria-label="Xoá nhánh ' + (i + 1) + '"' + (ED.branches.length <= 4 ? ' disabled' : '') + '>' + B.icon('trash', 16) + '</button></div>' +
+      '<div class="ed-b" id="brb-' + i + '"' + (op ? '' : ' hidden') + '><div class="a-form">' + A.field({ id: 'q-en-' + i, label: 'Câu hỏi tiếng Anh', value: b.q, required: true, en: true }) + A.field({ id: 'q-vi-' + i, label: 'Câu hỏi tiếng Việt', value: b.qvi, required: true }) + '</div>' +
+      '<div><div class="ed-lbl">Đáp án <small>· hình + từ, bé nghe được từng đáp án</small></div><div class="ed-chips" data-ans="' + i + '">' + b.ans.map(function (a, ai) { return chip(a, i, ai, 'a'); }).join('') + '</div>' +
+      '<div class="ed-add" style="margin-top:6px"><input class="t-input a-input a-en" list="bank" id="add-a-' + i + '" placeholder="Chọn từ trong kho, ví dụ: seeds" aria-label="Thêm đáp án từ kho cho nhánh ' + (i + 1) + '">' + A.btn({ label: 'Thêm', icon: 'plus', variant: 'secondary', size: 's', attrs: 'data-adda="' + i + '"' }) + A.btn({ label: 'Gõ mới kèm hình', icon: 'image', variant: 'ghost', size: 's', attrs: 'data-newa="' + i + '"' }) + '</div>' +
+      '<p class="a-err adm-small" id="ans-e-' + i + '" role="alert" hidden>' + B.icon('warn', 14) + '<span></span></p></div>' +
+      '<div><div class="ed-lbl">Hình nhiễu <small>· hình sai cho lúc bé đoán (1–2 hình)</small></div><div class="ed-chips">' + b.nz.map(function (k, ai) { return chip(k, i, ai, 'n'); }).join('') + '</div>' +
+      '<p class="a-err adm-small" id="nz-e-' + i + '" role="alert"' + (b.nz.length ? ' hidden' : '') + '>' + B.icon('warn', 14) + '<span>' + (b.nz.length ? '' : 'Cần ít nhất 1 hình nhiễu.') + '</span></p></div></div></li>';
+  }
+  function body() {
+    var w = warns(), n = ED.branches.length;
+    return '<div class="ed-tabs" role="tablist" aria-label="Biểu mẫu từ"><button type="button" role="tab" aria-selected="false" tabindex="-1" data-etab="info">' + B.icon('book', 16) + 'Thẻ từ</button><button type="button" role="tab" aria-selected="true" data-etab="wx">' + B.icon('branch', 16) + 'Khám phá</button></div>' +
+      (w.length ? '<section class="ed-warn" aria-labelledby="ew-t"><h3 id="ew-t">' + B.icon('warn', 16) + 'Cần bổ sung trước khi xuất bản (' + w.length + ')</h3><ul>' + w.map(function (x) { return '<li><button type="button" data-goto="' + x[1] + '">' + B.icon('warn', 14) + x[0] + '</button></li>'; }).join('') + '</ul></section>' : '') +
+      '<section class="ed-sec"><h3>Bộ câu hỏi mẫu</h3><div class="ed-tpl">' + A.field({ id: 'tpl', label: 'Nhóm từ', type: 'select', value: ED.group, options: GROUPS, hint: 'Điền sẵn chỉ thay câu hỏi; đáp án đã nhập được giữ nguyên.' }) + A.btn({ label: 'Điền sẵn câu hỏi', icon: 'wand', variant: 'secondary', attrs: 'data-fill' }) + '</div></section>' +
+      '<section class="ed-sec"><h3>Nhánh <span class="n">' + n + ' / 6 · cần 4–6 nhánh, kéo tay nắm hoặc ↑ ↓ để sắp xếp</span><span class="sp">' + A.btn({ label: 'Thêm nhánh', icon: 'plus', variant: 'secondary', size: 's', attrs: 'data-addbr', disabled: n >= 6 }) + '</span></h3><ol class="ed-br" data-sortlist>' + ED.branches.map(branch).join('') + '</ol></section>' +
+      '<section class="ed-sec" id="sec-para"><h3>Đoạn văn <span class="n">bé đọc ở khung “Đọc cả đoạn”</span><span class="sp">' + A.btn({ label: 'Ghép đoạn từ các câu trả lời', icon: 'wand', variant: 'secondary', size: 's', attrs: 'data-join' }) + '</span></h3>' +
+      ED.sents.map(function (s, i) { return '<div class="ed-s"><span class="num">' + (i + 1) + '</span>' + A.field({ id: 's-en-' + i, label: 'Câu tiếng Anh', value: s.en, required: true, en: true }) + A.field({ id: 's-vi-' + i, label: 'Bản dịch tiếng Việt', value: s.vi, required: true, error: s.vi ? '' : (ED.showErr ? 'Câu này chưa có bản dịch.' : '') }) + '</div>'; }).join('') +
+      '<div class="ed-audio" data-audiorow>' + B.icon('music', 18) + (ED.audio === 'gen' ? '<span class="t">Đang tạo giọng đọc…</span><span class="bar" role="progressbar" aria-label="Tiến độ tạo giọng đọc" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"><span style="width:40%"></span></span>' : ED.audio === 'done' ? '<span class="t">Đã có giọng đọc cả đoạn (0:21) · giọng Anh, tốc độ 0.82</span>' + A.btn({ label: 'Nghe', icon: 'speaker', variant: 'secondary', size: 's', attrs: 'data-say="' + B.esc(ED.sents.map(function (s) { return s.en; }).join(' ')) + '"' }) : '<span class="t">Đoạn văn chưa có âm thanh.</span>' + A.btn({ label: 'Tạo giọng đọc tự động', icon: 'wand', size: 's', attrs: 'data-tts' })) + '</div></section>' +
+      '<datalist id="bank">' + BANK.map(function (k) { return '<option value="' + (EN[k] || k) + '">'; }).join('') + '</datalist>';
+  }
+  function foot() { return '<div class="t-seg a-seg" role="radiogroup" aria-label="Trạng thái" data-st><button type="button" role="radio" data-v="draft" aria-checked="' + (ED.status === 'draft') + '" aria-pressed="' + (ED.status === 'draft') + '">Nháp</button><button type="button" role="radio" data-v="live" aria-checked="' + (ED.status === 'live') + '" aria-pressed="' + (ED.status === 'live') + '">Xuất bản</button></div><span style="flex:1"></span>' + A.btn({ label: 'Xem như học sinh', icon: 'eye', variant: 'secondary', attrs: 'data-stu' }) + A.btn({ label: 'Lưu', icon: 'check', attrs: 'data-save' }); }
+  function rules() { var r = {}; ED.branches.forEach(function (b, i) { r['q-en-' + i] = function (v) { return v.trim() ? (/\?$/.test(v.trim()) ? '' : 'Câu hỏi nên kết thúc bằng dấu “?”.') : 'Nhập câu hỏi tiếng Anh.'; }; r['q-vi-' + i] = function (v) { return v.trim() ? '' : 'Nhập câu hỏi tiếng Việt.'; }; });
+    ED.sents.forEach(function (s, i) { r['s-en-' + i] = function (v) { return v.trim() ? '' : 'Nhập câu tiếng Anh.'; }; r['s-vi-' + i] = function (v) { return v.trim() ? '' : 'Câu này chưa có bản dịch.'; }; }); return r; }
+  function sync() { if (!dr) return; var el = dr.el; ED.branches.forEach(function (b, i) { var a = el.querySelector('#q-en-' + i), v = el.querySelector('#q-vi-' + i); if (a) b.q = a.value; if (v) b.qvi = v.value; }); ED.sents.forEach(function (s, i) { var a = el.querySelector('#s-en-' + i), v = el.querySelector('#s-vi-' + i); if (a) s.en = a.value; if (v) s.vi = v.value; }); }
+  function redraw(focusSel, keepScroll) { var b = dr.el.querySelector('.a-drawer__b'), y = b.scrollTop; b.innerHTML = body(); wire(); if (keepScroll !== false) b.scrollTop = y; var f = focusSel && dr.el.querySelector(focusSel); f && f.focus({ preventScroll: keepScroll !== false }); }
+  function wire() {
+    var el = dr.el; A.wireValidate(el, rules());
+    A.sortable(el.querySelector('[data-sortlist]'), { onChange: function (ids) { sync(); var old = ED.branches.slice(); ED.branches = ids.map(function (i) { return old[+i]; }); ED.open = -1; redraw(); } });
+    el.querySelectorAll('[data-tog]').forEach(function (b) { b.addEventListener('click', function () { sync(); var i = +b.dataset.tog; ED.open = ED.open === i ? -1 : i; redraw('[data-tog="' + i + '"]'); }); });
+    el.querySelectorAll('[data-del]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.del; A.dialog(SCR, { title: 'Xoá nhánh ' + (i + 1) + '?', body: '“' + B.esc(ED.branches[i].q) + '” và các đáp án của nhánh này sẽ bị xoá. Câu tương ứng trong đoạn văn giữ nguyên để cậu tự sửa.', actions: [{ label: 'Xoá nhánh', variant: 'danger', icon: 'trash', onClick: function () { sync(); ED.branches.splice(i, 1); ED.open = -1; redraw('[data-addbr]'); A.toast(SCR, 'Đã xoá nhánh ' + (i + 1) + '.'); } }, { label: 'Huỷ', variant: 'secondary' }] }); }); });
+    el.querySelectorAll('[data-rm]').forEach(function (b) { b.addEventListener('click', function () { sync(); var p = b.dataset.rm.split('-'), br = ED.branches[+p[1]]; if (p[0] === 'a') { if (br.ans.length <= 1) { var e = el.querySelector('#ans-e-' + p[1]); e.hidden = false; e.querySelector('span').textContent = 'Mỗi nhánh cần ít nhất 1 đáp án.'; return; } br.ans.splice(+p[2], 1); } else br.nz.splice(+p[2], 1); redraw('#add-a-' + p[1]); }); });
+    el.querySelectorAll('[data-adda]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.adda, inp = el.querySelector('#add-a-' + i), v = inp.value.trim(), e = el.querySelector('#ans-e-' + i);
+      var k = Object.keys(EN).filter(function (x) { return EN[x] === v || x === v; })[0];
+      if (!v) { e.hidden = false; e.querySelector('span').textContent = 'Chọn một từ trong kho hoặc bấm “Gõ mới kèm hình”.'; inp.focus(); return; }
+      if (!k) { e.hidden = false; e.querySelector('span').textContent = '“' + v + '” chưa có trong kho. Bấm “Gõ mới kèm hình” để thêm.'; inp.focus(); return; }
+      sync(); ED.branches[i].ans.push({ k: k, en: EN[k], vi: '' }); redraw('#add-a-' + i); }); });
+    el.querySelectorAll('[data-newa]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.newa; A.dialog(SCR, { title: 'Đáp án mới cho nhánh ' + (i + 1), body: '<div class="a-form" style="text-align:left">' + A.field({ id: 'na-en', label: 'Từ / cụm từ tiếng Anh', required: true, en: true, placeholder: 'ví dụ: worms' }) + A.field({ id: 'na-vi', label: 'Nghĩa tiếng Việt', required: true, placeholder: 'ví dụ: con giun' }) + A.field({ id: 'na-pic', label: 'Hình (PNG/SVG, vuông, ≤ 1 MB)', type: 'file', cls: 'a-full', attrs: 'accept="image/png,image/svg+xml"', hint: 'Chưa có hình thì đáp án vẫn lưu được nhưng có cảnh báo, chưa xuất bản được.' }) + '</div>',
+      actions: [{ label: 'Thêm vào nhánh', variant: 'primary', icon: 'plus', onClick: function (w) { var r = { 'na-en': function (v) { return v.trim() ? (/^[A-Za-z ’'-]+$/.test(v.trim()) ? '' : 'Chỉ gồm chữ cái tiếng Anh.') : 'Nhập từ tiếng Anh.'; }, 'na-vi': function (v) { return v.trim() ? '' : 'Nhập nghĩa tiếng Việt.'; } }; if (A.validate(w, r)) return false; sync(); var en = w.querySelector('#na-en').value.trim(); MISSING[en] = { pic: !w.querySelector('#na-pic').value, audio: true }; ED.branches[i].ans.push({ k: en, en: en, vi: w.querySelector('#na-vi').value.trim() }); redraw('#add-a-' + i); } }, { label: 'Huỷ', variant: 'secondary' }] }); }); });
+    var ab = el.querySelector('[data-addbr]'); ab && ab.addEventListener('click', function () { sync(); var t = TPL[ED.group][ED.branches.length] || ['', '']; ED.branches.push({ q: t[0].replace('{w}', 'bird'), qvi: t[1].replace('{v}', 'Chim'), ans: [], nz: [] }); ED.open = ED.branches.length - 1; redraw('#q-en-' + ED.open); });
+    el.querySelector('[data-fill]').addEventListener('click', function () { sync(); ED.group = el.querySelector('#tpl').value; var t = TPL[ED.group]; ED.branches.forEach(function (b, i) { if (t[i]) { b.q = t[i][0].replace('{w}', 'bird'); b.qvi = t[i][1].replace('{v}', 'Chim'); } }); redraw('[data-fill]'); A.toast(SCR, 'Đã điền ' + Math.min(t.length, ED.branches.length) + ' câu hỏi mẫu nhóm “' + GROUPS.filter(function (g) { return g[0] === ED.group; })[0][1] + '”.'); });
+    el.querySelector('[data-join]').addEventListener('click', function () { sync(); var d = W.wx.bird; ED.sents = ED.branches.map(function (b, i) { var o = d.branches.filter(function (x) { return x.q === b.q; })[0]; var old = ED.sents[i] || {}; return { en: o ? o.sent[0] : 'It ' + b.ans.map(function (a) { return a.en; }).join(', ') + '.', vi: o && old.vi ? old.vi : (o ? (i === 4 ? '' : o.sent[1]) : '') }; }); redraw('[data-join]'); A.toast(SCR, 'Đã ghép ' + ED.sents.length + ' câu từ các câu trả lời. Kiểm tra bản dịch nhé.'); });
+    var tts = el.querySelector('[data-tts]'); tts && tts.addEventListener('click', function () { ED.audio = 'gen'; redraw(); var n = 40; var t = setInterval(function () { n += 20; var bar = dr.el.querySelector('[data-audiorow] .bar'); if (bar) { bar.setAttribute('aria-valuenow', n); bar.firstChild.style.width = n + '%'; } if (n >= 100) { clearInterval(t); ED.audio = 'done'; redraw('[data-audiorow] button'); A.toast(SCR, 'Đã tạo giọng đọc cho đoạn văn.'); } }, 350); });
+    el.querySelectorAll('[data-goto]').forEach(function (b) { b.addEventListener('click', function () { var sel = b.dataset.goto, m = sel.match(/^#br-(\d+)/); if (m) { sync(); ED.open = +m[1]; redraw(null, false); } var t = el.querySelector(sel); if (t) { scrollDrawer(t); var f = t.matches('input,button') ? t : t.querySelector('input, button'); f && f.focus({ preventScroll: true }); } }); });
+    el.querySelectorAll('[data-etab]').forEach(function (b) { b.addEventListener('click', function () { if (b.dataset.etab === 'info') A.toast(SCR, 'Tab “Thẻ từ” là biểu mẫu cũ của Ngân hàng từ vựng (giữ nguyên).'); }); b.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); var o = el.querySelector('[data-etab]:not([data-etab="' + b.dataset.etab + '"])'); o.focus(); } }); });
+  }
+  function student() {
+    sync(); var d = JSON.parse(JSON.stringify(W.wx.bird)); d.branches = ED.branches.map(function (b) { var o = d.branches.filter(function (x) { return x.q === b.q; })[0] || d.branches[0]; return Object.assign({}, o, { q: b.q, qvi: b.qvi, ans: b.ans.map(function (a) { return [MISSING[a.k] && MISSING[a.k].pic ? '' : a.k, a.en, a.vi]; }) }); });
+    var keep = W.wx.__prev; W.wx.__prev = d; var html = W.explorer('__prev', { open: d.branches.map(function () { return true; }), compact: true });
+    A.dialog(SCR, { title: 'Xem như học sinh · Khám phá từ “bird” (giao diện Tiểu học)', wide: 1080, body: '<div class="a-stu-wx" data-theme="tieu-hoc">' + html + '</div><p class="adm-small" style="margin:8px 0 0;text-align:left">Bản xem trước: mọi nhánh đã mở. Bé thật sẽ mở từng nhánh bằng cách chọn hình; đáp án chưa có hình hiện tạm hình trống. Bấm đáp án để nghe.</p>', actions: [{ label: 'Đóng', variant: 'primary' }], onOpen: function (w) { requestAnimationFrame(function () { W.lines(w); }); } });
+  }
+  function open(state) {
+    if (state === 'errors') { ED.status = 'live'; ED.showErr = true; }
+    dr = A.drawer(SCR, { wide: true, title: 'Sửa từ “bird” · Khám phá', body: body(), foot: foot() });
+    wire();
+    var seg = dr.el.querySelector('[data-st]'); seg.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { seg.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); ED.status = b.dataset.v; }); });
+    dr.el.querySelector('[data-stu]').addEventListener('click', student);
+    dr.el.querySelector('[data-save]').addEventListener('click', function () { sync(); var bad = A.validate(dr.el, ED.status === 'live' ? rules() : Object.keys(rules()).filter(function (k) { return k.indexOf('s-vi') < 0; }).reduce(function (o, k) { o[k] = rules()[k]; return o; }, {})); unscroll(); if (bad) return;
+      var w = warns(); if (ED.status === 'live' && w.length) { A.dialog(SCR, { title: 'Chưa xuất bản được', body: 'Còn ' + w.length + ' mục cần bổ sung: ' + w.map(function (x) { return x[0]; }).join('; ') + '. Lưu thành Nháp để làm tiếp sau?', actions: [{ label: 'Lưu thành Nháp', variant: 'primary', onClick: function () { ED.status = 'draft'; dr.close(); A.toast(SCR, 'Đã lưu Khám phá “bird” ở trạng thái Nháp.'); } }, { label: 'Ở lại sửa', variant: 'secondary' }] }); return; }
+      dr.close(); A.toast(SCR, ED.status === 'live' ? 'Đã xuất bản Khám phá “bird”.' : 'Đã lưu Khám phá “bird” (Nháp, ' + w.length + ' cảnh báo).'); });
+    if (state === 'paragraph') setTimeout(function () { var s = dr.el.querySelector('#sec-para'); s && scrollDrawer(s); var f = dr.el.querySelector('#s-vi-4'); f && f.focus({ preventScroll: true }); unscroll(); }, 80);
+    if (state === 'errors') setTimeout(function () { A.validate(dr.el, rules()); unscroll(); }, 80);
+  }
+  var ROWS = [['bird', 'con chim', 2, 'Con vật', '6 nhánh', 'draft'], ['cat', 'con mèo', 1, 'Con vật', '5 nhánh', 'live'], ['shirt', 'áo sơ mi', 3, 'Quần áo', '4 nhánh', 'live'], ['dog', 'con chó', 1, 'Con vật', '', 'live'], ['fish', 'con cá', 1, 'Con vật', '', 'live'], ['duck', 'con vịt', 1, 'Con vật', '', 'live'], ['apple', 'quả táo', 1, 'Trái cây', '', 'live'], ['banana', 'quả chuối', 1, 'Trái cây', '', 'live'], ['kite', 'cái diều', 2, 'Đồ chơi', '', 'live'], ['ball', 'quả bóng', 1, 'Đồ chơi', '', 'live']]
+    .map(function (r, i) { return { id: 'w' + i, k: r[0], vi: r[1], lv: r[2], topic: r[3], wx: r[4], status: r[5] }; });
+  var TABLE = A.table({ id: 't-vocab', rows: ROWS, pageSize: 8, searchKeys: ['k', 'vi'], placeholder: 'Tìm từ…', sort: { key: 'k', dir: 'asc' }, filters: [{ key: 'wx', label: 'Khám phá', options: [['has', 'Đã có'], ['none', 'Chưa có']], match: function (r, v) { return v === 'has' ? !!r.wx : !r.wx; } }],
+    columns: [{ key: 'k', label: 'Hình', render: function (x) { return '<span class="th">' + W.pic(x.k, 32) + '</span>'; } }, { key: 'k', label: 'Từ', sort: true, render: function (x) { return '<span class="nm"><b lang="en">' + x.k + '</b><small>' + x.vi + '</small></span>'; } }, { key: 'lv', label: 'Cấp', sort: true }, { key: 'topic', label: 'Chủ đề', sort: true },
+      { key: 'wx', label: 'Khám phá', sort: true, render: function (x) { return x.wx ? A.status(x.status === 'live' ? 'live' : 'draft', x.wx + (x.status === 'live' ? '' : ' · nháp')) : A.status('none', 'Chưa có'); } }],
+    actions: function (x) { return A.btn({ label: x.wx ? 'Sửa Khám phá' : 'Thêm Khám phá', variant: 'ghost', size: 's', icon: 'branch', attrs: 'data-edit="' + x.k + '"' }); } });
+  function page(m) { return A.shell3({ area: 'admin', active: 'vocab', title: 'Ngân hàng từ vựng', crumb: 'Từ vựng · tab mới “Khám phá” trong biểu mẫu từ', actions: A.btn({ label: 'Thêm từ', icon: 'plus' }), main: m }); }
+  A.screen({
+    order: ['normal', 'paragraph', 'errors', 'loading', 'empty', 'error'], labels: { normal: 'Ngăn kéo · Nhánh', paragraph: 'Đoạn văn', errors: 'Bấm Lưu khi Xuất bản' },
+    notes: {
+      normal: 'Bấm “Sửa Khám phá” ở một từ → ngăn kéo rộng, tab “Khám phá”. Cảnh báo ở đầu (bấm để nhảy tới chỗ cần sửa). Bộ câu hỏi mẫu theo nhóm (Con vật, Đồ ăn, Đồ vật, Nghề nghiệp, Nơi chốn) → “Điền sẵn câu hỏi”. 4–6 nhánh: kéo tay nắm hoặc ↑ ↓ trên tay nắm để sắp xếp, mở/thu từng nhánh, xoá qua hộp thoại (ít nhất 4). Mỗi nhánh: câu hỏi Anh + Việt, đáp án (chọn từ kho hoặc “Gõ mới kèm hình”), hình nhiễu. Đáp án thiếu hình / âm thanh có dấu cảnh báo cam.',
+      paragraph: 'Đoạn văn: “Ghép đoạn từ các câu trả lời”, mỗi câu Anh kèm ô dịch Việt; câu 5 chưa có bản dịch. “Tạo giọng đọc tự động” có thanh tiến trình rồi nút Nghe.',
+      errors: 'Chọn Xuất bản rồi Lưu: lỗi hiện ngay dưới ô (câu chưa có bản dịch), cảnh báo còn lại chặn xuất bản kèm lý do và gợi ý lưu Nháp. Báo lỗi cả khi rời ô.',
+      loading: 'Khung xương bảng từ vựng.', empty: 'Ngân hàng từ vựng trống.', error: 'Không tải được ngân hàng từ vựng.' },
+    states: {
+      normal: function () { return page(TABLE.html()); }, paragraph: function () { return page(TABLE.html()); }, errors: function () { return page(TABLE.html()); },
+      loading: function () { return page(A.skel('420px')); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có từ nào trong kho', text: 'Thêm từ trước, rồi mở tab “Khám phá” để soạn câu hỏi quanh từ đó.', action: A.btn({ label: 'Thêm từ', icon: 'plus' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'VOC-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx;
+      if (['normal', 'paragraph', 'errors'].indexOf(ctx.state) < 0) return;
+      ED = fresh(); TABLE.mount(scr, bind); bind();
+      function bind() { scr.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { if (b.dataset.edit === 'bird') open(); else A.toast(scr, 'Bản xem trước chỉ soạn sẵn cho “bird”.'); }; }); }
+      open(ctx.state);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

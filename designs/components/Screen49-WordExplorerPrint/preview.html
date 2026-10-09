@@ -1,0 +1,107 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=760 subtitle="45. Bản in Khám phá từ (Screen49-WordExplorerPrint): trang A4 dọc in trắng đen, bố cục như sơ đồ — thẻ từ ở giữa, 6 câu hỏi kèm hình và đáp án, dòng trống để bé tự viết câu trả lời, đoạn văn tiếng Anh; tuỳ chọn in kèm bản dịch tiếng Việt" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bản in Khám phá từ — preview</title>
+<style>
+  .pv { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px 24px 16px; background: var(--surface-sunk); }
+  .tool { display: flex; align-items: center; gap: var(--space-3); width: 100%; max-width: 1100px; }
+  .tool .t { flex: 1; font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+  .tool .sw { display: inline-flex; align-items: center; gap: 10px; font: 800 16px/20px var(--font-body); color: var(--ink); cursor: pointer; }
+  /* Trang A4: mọi kích thước theo em (1em = 1/80 chiều cao trang) */
+  .page { --H: calc(100cqh - 96px); height: var(--H); aspect-ratio: 210 / 297; font-size: calc(var(--H) / 80); background: var(--print-paper); color: var(--print-ink); box-shadow: 0 6px 24px rgba(0, 0, 0, .18); padding: 3.4em 3.8em 2.4em; box-sizing: border-box; display: flex; flex-direction: column; gap: 1.1em; font-family: var(--font-body); }
+  .ph { display: grid; grid-template-columns: 1fr auto; gap: 1em; align-items: end; border-bottom: .3em solid var(--print-ink); padding-bottom: .8em; }
+  .ph h1 { margin: 0; font: 800 2.9em/1.1 var(--font-display); }
+  .ph .meta { font-size: 1.3em; line-height: 1.45; } .ph .meta b { font-weight: 800; }
+  .ph .who { text-align: right; font-size: 1.2em; line-height: 1.5; } .ph .who .ln { display: inline-block; width: 8em; border-bottom: .1em solid var(--print-ink); }
+  .tip { margin: 0; font-size: 1.15em; color: var(--print-muted); }
+  .dg { position: relative; display: grid; grid-template-columns: 17em 1fr 17em; grid-template-rows: repeat(3, auto); column-gap: 2.6em; row-gap: .8em; }
+  .dg > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .dg > svg path { fill: none; stroke: var(--print-ink); stroke-width: .13; }
+  .dg > svg circle { fill: var(--print-paper); stroke: var(--print-ink); stroke-width: .13; }
+  .wc { grid-column: 2; grid-row: 1 / 4; align-self: center; position: relative; border: .2em solid var(--print-ink); border-radius: 1em; padding: 1em .6em; display: flex; flex-direction: column; align-items: center; gap: .3em; text-align: center; background: var(--print-paper); }
+  .wc .b-pic { width: 7.2em; height: 7.2em; }
+  .wc b { font: 800 3.4em/1 var(--font-display); } .wc .ipa { font-size: 1.15em; color: var(--print-muted); }
+  .wc .ex { font: 700 1.25em/1.3 var(--font-display); } .wc .exv { font-size: 1em; color: var(--print-muted); }
+  .bx { position: relative; border: .12em solid var(--print-ink); border-radius: .8em; padding: .5em .7em .55em; display: flex; flex-direction: column; gap: .25em; background: var(--print-paper); min-height: 0; }
+  .bx .q { display: flex; gap: .45em; align-items: flex-start; font: 800 1.2em/1.2 var(--font-display); }
+  .bx .q i { font-style: normal; flex: none; width: 1.35em; height: 1.35em; border-radius: 50%; border: .1em solid var(--print-ink); display: grid; place-items: center; font: 800 .8em/1 var(--font-body); }
+  .bx .qv { font-size: .95em; color: var(--print-muted); margin: -.2em 0 0 1.95em; }
+  .bx .an { display: flex; gap: .55em; flex-wrap: wrap; margin-left: 1.6em; }
+  .bx .an span { display: inline-flex; align-items: center; gap: .25em; font: 700 1em/1 var(--font-display); }
+  .bx .an .b-pic { width: 2em; height: 2em; }
+  .bx .an > span { white-space: nowrap; }
+  .bx .an small { font: 600 .82em/1 var(--font-body); color: var(--print-muted); }
+  .bx .wl { margin: auto 0 0 1.6em; height: 1.6em; border-bottom: .09em dashed var(--print-rule); }
+  .pic-g .b-pic, .wc .b-pic { filter: grayscale(1) contrast(1.15); }
+  .para { border: .12em solid var(--print-ink); border-radius: .8em; padding: .7em 1em; }
+  .para h2, .wr h2 { margin: 0 0 .35em; font: 800 1.35em/1.2 var(--font-body); }
+  .para p { margin: 0; font: 700 1.2em/1.45 var(--font-display); }
+  .para p span { display: block; font: 600 .78em/1.35 var(--font-body); color: var(--print-muted); margin: -.1em 0 .25em; }
+  .wr .ln { height: var(--al, 2.42em); border-bottom: .09em solid var(--print-rule); }
+  .pf { margin-top: auto; display: flex; justify-content: space-between; font-size: 1.05em; color: var(--print-muted); padding-top: .7em; border-top: .08em solid var(--print-ink); } .pf b { color: var(--print-ink); }
+  .page.is-tr { gap: .75em; padding-top: 3em; }
+  .page.is-tr .ph h1 { font-size: 2.6em; } .page.is-tr .tip { font-size: 1.05em; }
+  .page.is-tr .dg { row-gap: .6em; }
+  .page.is-tr .para { padding: .55em 1em; } .page.is-tr .para p { font-size: 1.12em; line-height: 1.32; } .page.is-tr .para p span { margin-bottom: .12em; }
+  .page.is-tr .bx { padding-bottom: .4em; } .page.is-tr .bx .wl { height: 1.4em; }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body { background: var(--print-paper) !important; }
+    .dsf-bar, .dsf-note, .tool { display: none !important; }
+    .dsf-stage, .dsf-vp, .scr, .pv { all: unset; display: block; }
+    .page { width: var(--size-print-page-w); height: var(--size-print-page-h); font-size: calc(var(--size-print-page-h) / 80); box-shadow: none; padding: var(--size-print-margin); }
+    .wr .ln { height: var(--size-print-answer-line); }
+  }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, W = B.W, d = W.wx.bird, TR = false;
+  function tool(off) { return '<div class="tool"><span class="t">Bản xem trước khổ A4 dọc · trắng đen · Khám phá từ “bird”</span>' +
+    '<label class="sw"><button type="button" class="b-switch" role="switch" aria-checked="' + TR + '" aria-label="In kèm bản dịch tiếng Việt" data-tr' + (off ? ' disabled' : '') + '><i></i></button>In kèm bản dịch tiếng Việt</label>' +
+    B.btn({ label: 'Quay lại', variant: 'secondary', size: 'm', icon: 'back' }) + B.btn({ label: 'In', size: 'm', icon: 'print', key: 'Ctrl P', attrs: 'data-doprint', disabled: off }) + '</div>'; }
+  function head() { return '<header class="ph"><div><h1>Khám phá từ: <span lang="en">bird</span></h1><div class="meta">Minh · Lớp 4 · <b>Cấp 3 · Lá xanh</b> · Chủ đề: <b>Con vật</b></div></div><div class="who">Ngày in: 09/10/2026<br>Bố mẹ ký: <span class="ln"></span></div></header>'; }
+  function box(b, i) {
+    var col = i < 3 ? 1 : 3, row = (i % 3) + 1;
+    return '<div class="bx pic-g" style="grid-column:' + col + ';grid-row:' + row + '"><div class="q" lang="en"><i>' + (i + 1) + '</i>' + B.esc(b.q) + '</div>' + (TR ? '<div class="qv" lang="vi">' + b.qvi + '</div>' : '') +
+      '<div class="an">' + b.ans.map(function (a) { return '<span>' + W.pic(a[0], 28) + '<span lang="en">' + a[1] + '</span></span>'; }).join('') + '</div><div class="wl" aria-label="Dòng trống để viết câu trả lời ' + (i + 1) + '"></div></div>';
+  }
+  function lines() { return '<svg aria-hidden="true" data-lines></svg>'; }
+  function drawLines(root) {
+    var pg = root.querySelector('.page'), dg = root.querySelector('.dg'); if (!pg || !dg) return;
+    var em = parseFloat(getComputedStyle(pg).fontSize), W = dg.offsetWidth / em, H = dg.offsetHeight / em, wc = dg.querySelector('.wc'), p = '';
+    var cx0 = wc.offsetLeft / em, cx1 = (wc.offsetLeft + wc.offsetWidth) / em, cy = (wc.offsetTop + wc.offsetHeight / 2) / em;
+    dg.querySelectorAll('.bx').forEach(function (bx, i) { var left = i < 3, x = (left ? bx.offsetLeft + bx.offsetWidth : bx.offsetLeft) / em, y = (bx.offsetTop + bx.offsetHeight / 2) / em, sx = left ? cx0 : cx1, d = left ? -1.6 : 1.6;
+      p += '<path d="M' + sx + ' ' + cy + ' C' + (sx + d) + ' ' + cy + ' ' + (x - d * .6) + ' ' + y + ' ' + x + ' ' + y + '"/><circle cx="' + x + '" cy="' + y + '" r=".35"/>'; });
+    var svg = dg.querySelector('[data-lines]'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('preserveAspectRatio', 'none'); svg.innerHTML = p;
+  }
+  function page() {
+    return '<article class="page' + (TR ? ' is-tr' : '') + '" aria-label="Trang in A4: Khám phá từ bird của Minh">' + head() + '<p class="tip">Đọc câu hỏi, nhìn hình, đọc to câu trả lời rồi tự viết câu trả lời vào dòng trống.</p>' +
+      '<div class="dg">' + lines() + d.branches.map(box).join('') + '<div class="wc">' + W.pic('bird', 80) + '<b lang="en">bird</b><span class="ipa">' + d.ipa + (TR ? ' · ' + d.vi : '') + '</span><span class="ex" lang="en">' + d.ex + '</span>' + (TR ? '<span class="exv">' + d.exVi + '</span>' : '') + '</div></div>' +
+      '<section class="para"><h2>Đọc cả đoạn</h2>' + W.para('bird').map(function (s) { return '<p lang="en">' + s[0] + (TR ? '<span lang="vi">' + s[1] + '</span>' : '') + '</p>'; }).join('') + '</section>' +
+      '<section class="wr"><h2>Viết 2 câu về con chim của cậu:</h2><div class="ln"></div><div class="ln"></div></section>' +
+      '<footer class="pf"><span><b>Học cùng Bông</b> · Khám phá từ</span><span>Trang 1/1</span></footer></article>';
+  }
+  B.screen({
+    level: 3, fit: true, order: ['normal', 'translated', 'loading', 'empty', 'error'], labels: { translated: 'Kèm bản dịch' },
+    notes: { normal: 'Chỉ dùng `print-ink`, `print-muted`, `print-rule` trên `print-paper`; hình chuyển xám. Bố cục như sơ đồ: thẻ từ ở giữa, 3 câu hỏi mỗi bên nối bằng đường cong, mỗi ô có hình + đáp án và một dòng trống để viết. Dưới là đoạn văn tiếng Anh và 3 dòng tập viết (`size-print-answer-line` 9mm). Kích thước theo em nên bản xem và bản in A4 (`size-print-page-w/h`, lề `size-print-margin`) cùng bố cục. Công tắc “In kèm bản dịch tiếng Việt” (role=switch, Space bật/tắt).', translated: 'Bật in kèm bản dịch: câu hỏi, đáp án và từng câu trong đoạn có thêm dòng tiếng Việt nhỏ, màu `print-muted`.', loading: 'Đang chuẩn bị bản in.', empty: 'Từ này chưa có Khám phá để in.', error: 'Không tạo được bản in.' },
+    states: {
+      normal: function () { TR = false; return '<div class="pv">' + tool() + page() + '</div>'; },
+      translated: function () { TR = true; return '<div class="pv">' + tool() + page() + '</div>'; },
+      loading: function () { TR = false; return '<div class="pv">' + tool(true) + '<article class="page">' + head() + '<div class="dg">' + [0, 1, 2, 3, 4, 5].map(function (i) { return '<div class="bx" style="grid-column:' + (i < 3 ? 1 : 3) + ';grid-row:' + (i % 3 + 1) + '">' + B.sk('80%', '1.2em') + B.sk('60%', '2.4em') + '</div>'; }).join('') + '<div class="wc">' + B.sk('7em', '7em', '.6em') + B.sk('5em', '2.4em') + '</div></div><div class="para">' + B.sk('90%', '1.2em') + '<br>' + B.sk('70%', '1.2em') + '</div></article></div>'; },
+      empty: function () { return '<div class="pv">' + tool(true) + '<article class="page">' + head() + '<div style="flex:1;display:grid;place-items:center;text-align:center;font-size:1.6em"><div><b>Chưa có Khám phá để in</b><br><span style="color:var(--print-muted)">Từ “bird” chưa có câu hỏi Khám phá.</span></div></div></article></div>'; },
+      error: function () { return '<div class="pv">' + tool(true) + B.stateBlock({ kind: 'error', title: 'Chưa tạo được bản in', text: 'Mạng chập chờn một chút. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: { all: function (scr, ctx) {
+      if (ctx.state !== 'normal' && ctx.state !== 'translated') return;
+      var p = scr.querySelector('[data-doprint]'); p.addEventListener('click', function () { try { window.print(); } catch (e) {} });
+      var t = scr.querySelector('[data-tr]'); t.addEventListener('click', function () { TR = !TR; scr.querySelector('.page').outerHTML = page(); t.setAttribute('aria-checked', TR); drawLines(scr); });
+      drawLines(scr); window.addEventListener('beforeprint', function () { setTimeout(function () { drawLines(scr); }, 0); });
+      t.focus({ preventScroll: true });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

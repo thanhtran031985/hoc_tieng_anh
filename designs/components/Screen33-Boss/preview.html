@@ -1,0 +1,157 @@
+<!-- @dsCard group="Màn Tiểu học · 28–32 Trùm & thi lên cấp" height=700 subtitle="28. Trận trùm cuối vùng (Screen33-Boss): Vua Khỉ Lém của vùng Con vật — mở đầu thách thức vui, 6 câu trộn dạng bài với thanh “năng lượng của trùm” giảm khi đúng, kết thúc trùm làm bạn, sao + xu, Về bản đồ" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Trận trùm cuối vùng — preview</title>
+<style>
+  .scr { background: radial-gradient(120% 70% at 50% 0%, var(--level-1-soft), var(--bg) 70%); }
+  /* mở đầu */
+  .intro { display: grid; grid-template-columns: auto 1fr; gap: var(--space-10); align-items: center; width: 100%; max-width: 1120px; }
+  .intro__boss { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .intro__boss .b-boss-svg { width: min(var(--size-boss), 40cqh); height: auto; animation: b-bob 2.4s ease-in-out infinite; }
+  .say { position: relative; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-3) var(--space-5); font: 800 min(24px, 3.1cqh)/1.35 var(--font-display); color: var(--ink); display: flex; align-items: center; gap: var(--space-3); }
+  .say small { display: block; font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+  .say--up::after { content: ""; position: absolute; left: 50%; bottom: -12px; border: 12px solid transparent; border-bottom: 0; border-top-color: var(--surface); transform: translateX(-50%); }
+  .card { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: min(var(--space-6), 3cqh) var(--space-8); display: flex; flex-direction: column; gap: min(var(--space-4), 2cqh); }
+  .card h1 { margin: 0; }
+  .card .b-lvchip { align-self: flex-start; }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-sunk); border-radius: var(--radius-pill); padding: 6px 14px; font: 800 16px/20px var(--font-body); color: var(--ink); }
+  .chip .b-ico { color: var(--brand); }
+  /* trận đấu */
+  .arena { width: 100%; max-width: 1180px; display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-6); align-items: center; background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: min(var(--space-3), 1.4cqh) var(--space-6); }
+  .arena .b-boss-svg { width: min(120px, 15cqh); height: auto; display: block; }
+  .arena .b-dragon { width: min(96px, 12cqh); height: auto; }
+  .en-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .en-top { display: flex; justify-content: space-between; align-items: baseline; font: 800 16px/20px var(--font-body); color: var(--ink-soft); }
+  .en-top b { font: 800 22px/26px var(--font-display); color: var(--ink); }
+  .taunt { font: 700 16px/20px var(--font-body); color: var(--ink-soft); margin: 0; min-height: 20px; }
+  .qz { width: 100%; max-width: 1180px; display: flex; flex-direction: column; align-items: center; gap: min(var(--space-4), 2cqh); }
+  .picks { display: grid; grid-template-columns: repeat(3, min(190px, 22cqh)); gap: var(--space-6); }
+  .picks .b-choice { aspect-ratio: 1; width: 100%; }
+  .picks .b-pic { width: 72%; height: auto; }
+  .wq { display: grid; grid-template-columns: auto 1fr; gap: var(--space-8); align-items: center; }
+  .wq__pic { width: min(200px, 23cqh); aspect-ratio: 1; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-card); display: grid; place-items: center; }
+  .wq__pic .b-pic { width: 80%; height: auto; }
+  .wq__r { display: flex; flex-direction: column; gap: var(--space-4); }
+  .sent { font: 800 min(40px, 5cqh)/1.2 var(--font-display); color: var(--ink); display: flex; gap: var(--space-3); align-items: center; margin: 0; }
+  .opts { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .an { position: relative; }
+  .opt { height: min(68px, 8.6cqh); min-width: 170px; border-radius: var(--radius-md); border: var(--border-thick) solid var(--line); background: var(--surface); box-shadow: 0 5px 0 var(--line); display: flex; align-items: center; gap: var(--space-3); padding: 0 56px 0 var(--space-3); font: 800 min(30px, 3.8cqh)/1 var(--font-display); color: var(--ink); cursor: pointer; }
+  .opt:hover:not(:disabled) { border-color: var(--brand-soft-shade); transform: translateY(-2px); }
+  .an .b-speak { position: absolute; right: 10px; top: 50%; transform: translateY(-58%); }
+  .opt.is-selected { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 5px 0 var(--brand); }
+  .opt.is-correct { border-color: var(--success); background: var(--success-soft); color: var(--success-shade); box-shadow: 0 5px 0 var(--success); }
+  .opt.is-retry { border-color: var(--retry); background: var(--retry-soft); color: var(--retry-shade); box-shadow: 0 5px 0 var(--retry); animation: b-shake .45s ease; }
+  .opt.is-dim { opacity: .35; }
+  .row { min-height: min(84px, 10.6cqh); min-width: 560px; border-radius: var(--radius-lg); background: var(--phon-slot); border: var(--border-thick) dashed var(--line-strong); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); }
+  .row .ph { color: var(--ink-soft); font: 700 18px/22px var(--font-body); }
+  .row.is-ok { border-color: var(--success); border-style: solid; background: var(--success-soft); }
+  .row.is-bad { border-color: var(--retry); border-style: solid; background: var(--retry-soft); }
+  .bank { display: flex; gap: var(--space-3); min-height: min(72px, 9cqh); }
+  .wc { height: min(68px, 8.6cqh); padding: 0 var(--space-5) 0 var(--space-3); border-radius: var(--radius-md); border: var(--border-thick) solid var(--line); background: var(--surface); box-shadow: 0 5px 0 var(--line); font: 800 min(32px, 4cqh)/1 var(--font-display); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); }
+  .wc.in { padding-left: var(--space-5); }
+  .wc:hover { border-color: var(--brand-soft-shade); transform: translateY(-2px); }
+  .wc.is-hint { border-color: var(--star); box-shadow: 0 5px 0 var(--star-shade); }
+  /* kết thúc */
+  .win { display: grid; grid-template-columns: auto 1fr; gap: var(--space-10); align-items: center; width: 100%; max-width: 1120px; }
+  .pair { display: flex; align-items: flex-end; gap: 0; }
+  .pair .b-boss-svg { width: min(220px, 28cqh); height: auto; }
+  .pair .b-dragon { width: min(190px, 24cqh); height: auto; margin-left: -30px; }
+  .rew { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+  .rew > div { background: var(--surface-sunk); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); display: flex; align-items: center; gap: var(--space-3); font: 800 16px/20px var(--font-body); color: var(--ink-soft); }
+  .rew b { display: block; font: 800 28px/32px var(--font-display); color: var(--ink); }
+  .badge { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--level-1-soft); box-shadow: inset 0 0 0 4px var(--level-1); }
+  .badge .b-boss-svg { width: 44px; height: 44px; }
+  @media (prefers-reduced-motion: reduce) { .intro__boss .b-boss-svg { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var VI = { fly: 'bay', swim: 'bơi', eat: 'ăn' };
+  function vi(w) { return VI[w] || (B.words[w] || {}).vi || w; }
+  var QS = [
+    { k: 'pic', t: 'Nghe và chọn hình', say: 'cat', o: ['dog', 'cat', 'bird'], a: 1 },
+    { k: 'word', t: 'Chọn từ đúng cho hình', p: 'rabbit', q: 'What is this?', o: ['duck', 'rabbit', 'fish'], a: 1 },
+    { k: 'word', t: 'Điền từ vào chỗ trống', p: 'bird', q: 'The bird can ___.', full: 'The bird can fly.', o: ['swim', 'eat', 'fly'], a: 2 },
+    { k: 'order', t: 'Sắp xếp thành câu', p: 'dog', w: ['have', 'dog.', 'I', 'a'], ans: ['I', 'have', 'a', 'dog.'] },
+    { k: 'pic', t: 'Nghe và chọn hình', say: 'duck', o: ['fish', 'rabbit', 'duck'], a: 2 },
+    { k: 'pic', t: 'Con nào bắt đầu bằng âm /f/?', say: 'f. f. fish', o: ['cat', 'fish', 'dog'], a: 1, ph: true }
+  ];
+  var N = QS.length, TAUNT = ['Hí hí! Câu này khó lắm đó!', 'Ối! Cậu giỏi quá vậy?', 'Ta vẫn còn sức… một chút!', 'Khỉ con hơi chóng mặt rồi…', 'Ta sắp hết năng lượng rồi!', 'Câu cuối! Ta xin thua mất…'];
+  var S = { q: 0, sel: -1, tries: 0, hint: false, row: [], done: false };
+  function rs() { S.sel = -1; S.tries = 0; S.hint = false; S.row = []; S.done = false; }
+  function energy(left) { return '<div class="en-wrap"><div class="en-top"><span>Năng lượng của trùm</span><b data-en-n>' + left + '/' + N + '</b></div><div class="b-energy"><div class="b-energy__bar" role="meter" aria-label="Năng lượng của trùm" aria-valuemin="0" aria-valuemax="' + N + '" aria-valuenow="' + left + '"><span data-en style="width:' + (100 * left / N) + '%"></span></div></div><p class="taunt" aria-live="polite" data-taunt>' + TAUNT[Math.min(S.q, N - 1)] + '</p></div>'; }
+  function question() {
+    var q = QS[S.q], dim = -1;
+    if (S.hint && q.o) dim = q.o.map(function (_, i) { return i; }).filter(function (i) { return i !== q.a; })[0];
+    if (q.k === 'pic') return '<div class="instr"><h1 class="title">' + q.t + '</h1>' + (q.ph ? '' : B.speak(q.say, 'm', 'Nghe từ')) + (q.ph ? B.speak(q.say, 'm', 'Nghe âm /f/') : '') + '</div><div class="picks" role="radiogroup" aria-label="Chọn hình">' +
+      q.o.map(function (w, i) { var d = i === dim; return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + (d ? ' is-dim' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-label="' + vi(w) + '" aria-keyshortcuts="' + (i + 1) + '"' + (d ? ' disabled' : '') + '>' + B.key(String(i + 1), 'b-key--corner') + B.pic(w, 150).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '</button>'; }).join('') + '</div>';
+    if (q.k === 'word') return '<div class="instr"><h1 class="title">' + q.t + '</h1></div><div class="wq"><div class="wq__pic">' + B.pic(q.p, 160).replace(/aria-label="[^"]*"/, 'aria-label="Hình gợi ý"') + '</div><div class="wq__r"><p class="sent" lang="en">' + q.q + B.speak(q.full || q.q, 's', 'Nghe câu') + '</p><div class="opts" role="radiogroup" aria-label="Đáp án">' +
+      q.o.map(function (w, i) { var d = i === dim; return '<div class="an"><button type="button" role="radio" class="opt' + (S.sel === i ? ' is-selected' : '') + (d ? ' is-dim' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-keyshortcuts="' + (i + 1) + '" lang="en"' + (d ? ' disabled' : '') + '>' + B.key(String(i + 1)) + w + '</button>' + B.speak(w, 's', 'Nghe: ' + w) + '</div>'; }).join('') + '</div></div></div>';
+    var bank = q.w.map(function (w, i) { return { w: w, i: i }; }).filter(function (x) { return S.row.indexOf(x.i) < 0; }), next = q.ans[S.row.length];
+    return '<div class="instr"><h1 class="title">' + q.t + '</h1>' + B.speak(q.ans.join(' '), 'm', 'Nghe câu') + '</div><div class="wq"><div class="wq__pic">' + B.pic(q.p, 160).replace(/aria-label="[^"]*"/, 'aria-label="Hình gợi ý: con chó"') + '</div><div class="wq__r">' +
+      '<div class="row" data-row aria-label="Câu của cậu" lang="en">' + (S.row.length ? S.row.map(function (i, j) { return '<button type="button" class="wc in" data-out="' + j + '">' + q.w[i] + '</button>'; }).join('') : '<span class="ph">Bấm thẻ (hoặc phím 1–4) để xếp câu</span>') + '</div>' +
+      '<div class="bank" role="group" aria-label="Thẻ từ" lang="en">' + bank.map(function (x) { return '<button type="button" class="wc' + (S.hint && x.w === next ? ' is-hint' : '') + '" data-in="' + x.i + '" aria-keyshortcuts="' + (x.i + 1) + '">' + B.key(String(x.i + 1)) + x.w + '</button>'; }).join('') + '</div></div></div>';
+  }
+  function ready() { var q = QS[S.q]; return q.k === 'order' ? S.row.length === q.w.length : S.sel >= 0; }
+  B.screen({
+    fit: true, level: 1, defaultState: 'intro', order: ['intro', 'normal', 'win', 'loading', 'empty', 'error'],
+    labels: { intro: 'Mở đầu', normal: 'Trận đấu', win: 'Kết thúc' },
+    notes: { intro: 'Trùm theo chủ đề vùng (Con vật → Vua Khỉ Lém, `boss-fur`, `boss-face`, `size-boss`). Lời thách thức vui có loa, thẻ luật chơi, Bắt đầu (Enter).', normal: '6 câu trộn: nghe chọn hình, chọn từ, điền từ, sắp xếp câu, âm đầu. Đúng: trùm trúng chiêu (lắc), thanh “năng lượng của trùm” (`boss-energy`) giảm 1 nấc, sao bay vào thanh tiến độ. Chưa đúng: trùm trêu nhẹ, cho làm lại; sai 2 lần tự bật gợi ý. Trùm không bao giờ thắng.', win: 'Trùm hết năng lượng → làm bạn với bé. Phần thưởng: 3 sao, +30 xu, huy hiệu “Bạn của Vua Khỉ”. Về bản đồ (Enter).', loading: 'Khung xương.', empty: 'Vùng chưa có câu cho trận trùm.', error: 'Không tải được trận trùm.' },
+    states: {
+      intro: function () { return L.head({ n: 0, total: N, count: 'Trùm' }) + '<main class="lesson-main"><div class="intro"><div class="intro__boss"><div class="say say--up" lang="en"><span>Hello! I am the Monkey King!<br>Can you beat me?</span>' + B.speak('Hello! I am the Monkey King! Can you beat me?', 's', 'Nghe lời thách') + '</div>' + L.monkey('tease', 260) + '</div>' +
+        '<div class="card"><span class="b-lvchip" data-level="1">Trùm vùng Con vật · đảo Hạt giống</span><h1 class="display-l">Vua Khỉ Lém thách đấu!</h1><p class="body-l" style="margin:0">“Hí hí! Ta giấu hết tên các bạn thú rồi. Cậu trả lời đúng <b>6 câu</b> là ta chịu thua, làm bạn với cậu luôn!”</p>' +
+        '<div class="chips"><span class="chip">' + B.icon('star', 18) + '6 câu trộn dạng bài</span><span class="chip">' + B.icon('clock', 18) + 'Không đếm giờ</span><span class="chip">' + B.icon('replay', 18) + 'Sai thì làm lại</span><span class="chip">' + B.icon('coin', 18) + 'Thưởng 30 xu</span></div></div></div></main>' +
+        L.foot({ replayLabel: 'Nghe lời thách', hint: false, main: { label: 'Bắt đầu', icon: 'next' } }); },
+      normal: function () { var left = N - S.q; return L.head({ n: S.q, total: N }) + '<main class="lesson-main"><div class="arena"><div data-boss>' + L.monkey('tease', 120) + '</div>' + energy(left) + B.dragon('chao', 96) + '</div><div class="qz">' + question() + '</div></main>' + L.foot({ hintOff: S.hint, main: { disabled: !ready() } }); },
+      win: function () { return L.head({ n: N, total: N }) + '<main class="lesson-main"><div class="win"><div class="pair">' + L.monkey('friend', 220) + B.dragon('chucmung', 190) + '</div><div class="card"><h1 class="display-l">Vua Khỉ Lém làm bạn với cậu rồi!</h1>' +
+        '<div class="say" lang="en">You win! Let’s be friends!' + B.speak('You win! Let’s be friends!', 's', 'Nghe lời chúc') + '</div><p class="body-l b-muted" style="margin:0">Vùng <b>Con vật</b> đã xong. Cậu trả lời đúng cả 6 câu!</p>' +
+        '<div class="rew"><div>' + B.stars(3, 30) + '<span><b>3 sao</b>trận trùm</span></div><div>' + B.icon('coin', 36) + '<span><b>+30</b>xu</span></div><div><span class="badge">' + L.monkey('friend', 44) + '</span><span><b>Huy hiệu</b>Bạn của Vua Khỉ</span></div></div></div></div></main>' +
+        L.foot({ replayLabel: 'Nghe lời chúc', hint: false, main: { label: 'Về bản đồ', icon: 'map' } }); },
+      loading: function () { return L.head({ n: 0, total: N }) + '<main class="lesson-main"><div class="arena">' + B.sk('min(120px, 15cqh)', 'min(120px, 15cqh)', '50%') + '<div class="en-wrap">' + B.sk('40%', '20px', 'var(--radius-pill)') + B.sk('100%', '24px', 'var(--radius-pill)') + '</div>' + B.sk('96px', '96px', '50%') + '</div><div class="picks">' + B.sk('100%', 'min(190px, 22cqh)', 'var(--radius-xl)') + B.sk('100%', 'min(190px, 22cqh)', 'var(--radius-xl)') + B.sk('100%', 'min(190px, 22cqh)', 'var(--radius-xl)') + '</div></main>' + L.foot({ off: true }); },
+      empty: function () { return L.head({ n: 0, total: N, count: 'Trùm' }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Trùm vùng này chưa sẵn sàng', text: 'Vua Khỉ Lém đang chuẩn bị câu hỏi. Cậu học tiếp các bài trong vùng nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + L.foot({ off: true, hint: false, main: { label: 'Bắt đầu' } }); },
+      error: function () { return L.head({ n: 0, total: N, count: 'Trùm' }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Chưa gọi được trùm ra', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' }) + '</main>' + L.foot({ off: true, hint: false, main: { label: 'Bắt đầu' } }); }
+    },
+    mount: {
+      intro: function (scr, ctx) { L.wire(scr, ctx, { left: N, onReplay: function (b) { L.say('Hello! I am the Monkey King! Can you beat me?', .8, b); }, onMain: function () { S.q = 0; rs(); ctx.setState('normal'); } }); },
+      win: function (scr, ctx) { ctx.later(function () { ctx.burst(scr.querySelector('.rew'), null, 14); }, 300); L.wire(scr, ctx, { left: 0, onReplay: function (b) { L.say('You win! Let’s be friends!', .8, b); }, onMain: function () { S.q = 0; rs(); ctx.setState('intro'); } }); },
+      normal: function (scr, ctx) {
+        var q = QS[S.q];
+        function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+        function pick(i) { if (S.done) return; var b = scr.querySelector('[data-i="' + i + '"]'); if (!b || b.disabled) return; S.sel = i; if (q.k === 'word') L.say(q.o[i], .85); re('[data-i="' + i + '"]'); }
+        function put(i) { if (S.done || S.row.indexOf(i) >= 0) return; S.row.push(i); L.say(q.w[i].replace('.', ''), .85); re(S.row.length === q.w.length ? '[data-main]' : '[data-in]'); }
+        scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { pick(+b.dataset.i); }); });
+        scr.querySelectorAll('[data-in]').forEach(function (b) { b.addEventListener('click', function () { put(+b.dataset.in); }); });
+        scr.querySelectorAll('[data-out]').forEach(function (b) { b.addEventListener('click', function () { if (S.done) return; S.row.splice(+b.dataset.out, 1); re('[data-in]'); }); });
+        function check() {
+          if (!ready() || S.done) return;
+          var ok = q.k === 'order' ? S.row.map(function (i) { return q.w[i]; }).join(' ') === q.ans.join(' ') : S.sel === q.a;
+          var card = q.k === 'order' ? null : scr.querySelector('[data-i="' + S.sel + '"]'), row = scr.querySelector('[data-row]');
+          if (ok) { S.done = true; if (row) row.classList.add('is-ok'); var bs = scr.querySelector('[data-boss]'); bs.innerHTML = L.monkey('hit', 120); var left = N - S.q - 1;
+            ctx.later(function () { scr.querySelector('[data-en]').style.width = (100 * left / N) + '%'; scr.querySelector('[data-en-n]').textContent = left + '/' + N; scr.querySelector('.b-energy__bar').setAttribute('aria-valuenow', left); scr.querySelector('[data-taunt]').textContent = left ? 'Á á! Trúng chiêu rồi!' : 'Ta hết năng lượng rồi…'; }, 200);
+            var word = q.k === 'order' ? q.ans.join(' ') : q.full || q.o[q.a];
+            L.ok(scr, ctx, { card: card, from: card || row, n: S.q + 1, total: N, say: word, title: left ? 'Trúng chiêu! Trùm còn ' + left + '/' + N + ' năng lượng.' : 'Trùm hết năng lượng rồi!', detail: B.speak(word, 's') + '<b class="en" style="font-size:24px">' + word + '</b>' + (q.k === 'order' ? '<span class="b-muted">Tớ có một con chó.</span>' : q.full ? '<span class="b-muted">Con chim biết bay.</span>' : '<span class="b-muted">' + vi(q.o[q.a]) + '</span>'),
+              onNext: function () { if (left) { S.q++; rs(); re(); } else ctx.setState('win'); } });
+          } else { S.tries++; if (row) row.classList.add('is-bad'); scr.querySelector('[data-taunt]').textContent = 'Hí hí! Chưa trúng đâu, thử lại nào!';
+            L.retry(scr, ctx, { card: card, tries: S.tries, title: 'Trùm né được rồi! Thử lại nhé!', detail: q.k === 'order' ? 'Câu bắt đầu bằng chữ viết hoa <b class="en">I</b>.' : q.k === 'word' ? '<b class="en">' + q.o[S.sel] + '</b> là “' + vi(q.o[S.sel]) + '”.' : 'Đây là <b class="en">' + q.o[S.sel] + '</b> (' + vi(q.o[S.sel]) + ').',
+              onRetry: function () { S.sel = -1; S.row = []; if (S.tries >= 2) S.hint = true; re(q.k === 'order' ? '[data-in]' : '[data-i]:not([disabled])'); } }); }
+        }
+        L.wire(scr, ctx, { left: N - S.q,
+          onReplay: function (b) { L.say(q.k === 'pic' ? q.say : q.k === 'order' ? q.ans.join(' ') : q.q.replace('___', 'blank'), .8, b); },
+          onHint: function () { S.hint = true; if (q.k === 'order') { S.row = S.row.filter(function (i, j) { return q.w[i] === q.ans[j]; }); } else if (S.sel >= 0 && S.sel !== q.a) S.sel = -1; re(q.k === 'order' ? '.wc.is-hint' : '[data-i]:not([disabled])'); },
+          onMain: check,
+          onKey: function (e) {
+            if (/^[1-4]$/.test(e.key)) { e.preventDefault(); var i = +e.key - 1; if (q.k === 'order') put(i); else pick(i); return true; }
+            if (e.key === 'Backspace' && q.k === 'order' && S.row.length && !S.done) { e.preventDefault(); S.row.pop(); re('[data-in]'); return true; }
+          }
+        });
+        if (q.k === 'pic') ctx.later(function () { L.say(q.say, .8); }, 400);
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

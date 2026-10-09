@@ -1,0 +1,41 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=700 subtitle="47. Ghép chữ đầu (Screen51-BuildFamily): vần “at” cố định bên phải, hàng chữ đầu b, c, h, f, m, s, r, z bên trái; kéo một chữ vào ô trống trước vần hoặc gõ chữ đó; từ thật thì hình hiện ra, Bông đọc, từ bay vào “Đã tìm được”; từ không có thật (zat) thì Bông nói nhẹ; tìm đủ 5 từ là xong, có sao" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Ghép chữ đầu — preview</title></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L, W = B.W;
+  function shell() { return '<div class="b-wl" data-wapp></div>'; }
+  function skel() { return '<div class="b-bd"><div class="b-bd__row"><div class="b-bd__letters">' + [1, 2, 3, 4, 5, 6, 7, 8].map(function () { return B.sk('var(--size-letter-tile)', 'var(--size-letter-tile)', 'var(--radius-md)'); }).join('') + '</div><span class="b-bd__arrow"></span><div class="b-bd__eq">' + B.sk('114px', '114px', 'var(--radius-lg)') + B.sk('144px', '114px', 'var(--radius-lg)') + '</div>' + B.sk('270px', '160px', 'var(--radius-lg)') + '</div><div class="b-bd__found">' + B.sk('160px', '24px', 'var(--radius-pill)') + [1, 2, 3, 4, 5].map(function () { return B.sk('112px', '50px', 'var(--radius-pill)'); }).join('') + '</div></div>'; }
+  function lessonWrap(body) { return L.head({ n: 0, total: 5 }) + '<main class="lesson-main b-wl__main">' + body + '</main>' + L.foot({ off: true, hintKey: '?' }); }
+  var CFG = {
+    normal: { mode: 'lesson', stack: [{ v: 'build', k: 'at', found: ['cat', 'bat'] }] },
+    ok: { mode: 'lesson', stack: [{ v: 'build', k: 'at', found: ['cat', 'bat', 'hat'], slot: 'h', state: 'ok' }], noFocus: true },
+    fake: { mode: 'lesson', stack: [{ v: 'build', k: 'at', found: ['cat', 'bat', 'hat'], slot: 'z', state: 'fake' }], noFocus: true },
+    target: { mode: 'explore', stack: [{ v: 'wx', k: 'cat' }, { v: 'fam', k: 'at', hl: 'cat' }, { v: 'build', k: 'at', target: 'hat', found: ['cat'] }], focus: '[data-letter="h"]' },
+    done: { mode: 'explore', stack: [{ v: 'fam', k: 'at' }, { v: 'build', k: 'at', found: ['cat', 'bat', 'hat', 'mat', 'rat'] }], focus: '[data-fopen="cat"]' }
+  };
+  B.screen({
+    fit: true, level: 2, order: ['normal', 'ok', 'fake', 'target', 'done', 'loading', 'empty', 'error'],
+    labels: { normal: 'Trong bài học', ok: 'Ra từ thật', fake: 'Từ không có (zat)', target: 'Mở từ Họ vần (hat)', done: 'Đủ 5 từ · tự khám phá' },
+    notes: {
+      normal: 'Hàng chữ đầu (`letter-tile`, `size-letter-tile`) bên trái, ô thả nét đứt (`build-slot-bg`) và vần “at” cố định (`rime-bg`, `rime-ink`) bên phải. Kéo chữ vào ô, bấm chữ, hoặc gõ chữ trên bàn phím (s rồi h = “sh” ở vần khác); Enter = Kiểm tra; Backspace / Delete xoá ô. Space nghe vần, ? = Gợi ý (H là một chữ cái nên không dùng làm phím gợi ý). “Đã tìm được” 2/5.',
+      ok: 'Ra từ thật “hat”: ô xanh, hình hiện ra, Bông đọc, từ bay vào “Đã tìm được” (`found-chip`), thanh tiến độ 3/5.',
+      fake: '“zat” không có thật: ô cam nhẹ (`fake-word-bg`), Bông nói “Từ này không có trong tiếng Anh, thử chữ khác nhé”. Không trừ điểm; ô tự xoá để thử tiếp.',
+      target: 'Mở từ nút “Ghép” trên thẻ “hat” ở Họ vần: “hat” là từ cần ghép đầu tiên (khung nét đứt, chữ “h” có viền sáng). Đường dẫn cat › họ -at › Ghép chữ; nút “Về họ vần -at”.',
+      done: 'Đủ 5 từ (tự khám phá, không sao, không xu): mỗi từ trong “Đã tìm được” có Khám phá thì bấm được (cat → Khám phá từ cat). Trong bài học, đủ 5 từ mở bảng kết thúc có 3 sao.',
+      loading: 'Khung xương hàng chữ, ô ghép và danh sách.', empty: 'Vần này chưa có chữ đầu để ghép.', error: 'Không tải được trò Ghép chữ đầu.' },
+    states: {
+      normal: shell, ok: shell, fake: shell, target: shell, done: shell,
+      loading: function () { return lessonWrap(skel()); },
+      empty: function () { return lessonWrap(B.stateBlock({ kind: 'empty', title: 'Vần “-at” chưa có chữ để ghép', text: 'Bông đang chuẩn bị các chữ đầu. Cậu thử Họ vần trước nhé!', action: B.btn({ label: 'Mở Họ vần', icon: 'book', size: 'l' }) })); },
+      error: function () { return lessonWrap(B.stateBlock({ kind: 'error', title: 'Chưa tải được trò Ghép chữ đầu', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' })); }
+    },
+    mount: { all: function (scr, ctx) { var c = CFG[ctx.state]; if (!c) return; W.app(scr.querySelector('[data-wapp]'), ctx, JSON.parse(JSON.stringify(c))); } }
+  });
+})();
+</script>
+</body>
+</html>

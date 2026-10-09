@@ -1,0 +1,33 @@
+<!-- @dsCard group="Màn Tiểu học · 33–36 Phần thưởng" height=700 subtitle="35. Nhận phần thưởng mới (RewardPopup): hộp quà lắc nhẹ → bấm / Enter mở → sticker hoặc huy hiệu mới, rồng Bông chúc mừng, tên tiếng Anh có loa, xu thưởng (huy hiệu +50 xu), nút “Cho vào bộ sưu tập”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Nhận phần thưởng mới — preview</title>
+<style>
+  .bgp { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-5); }
+  .bgp .row { display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center; }
+  .bgp .b-dragon { width: 200px; height: auto; }
+  .log { font: 700 16px/22px var(--font-body); color: var(--ink-soft); min-height: 22px; margin: 0; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, R = B.R;
+  var DEMO = { gift: { kind: 'sticker', key: 'dog', coins: 10 }, sticker: { kind: 'sticker', key: 'dog', coins: 10, skipGift: true }, badge: { kind: 'badge', en: '7-day streak', vi: '7 ngày liên tiếp', cond: 'Học 7 ngày liền nhau', icon: 'flame', lv: 6, coins: 50, skipGift: true } };
+  function page(t) { return B.topbar({ kid: { name: 'Minh', grade: 4, level: 3, hair: 'short' }, coins: t === 'done' ? 350 : 340 }) + '<div class="bgp">' + B.dragon('vui', 200) + '<div class="row">' +
+    B.btn({ label: 'Mở quà sticker', icon: 'gift', size: 'l', attrs: 'data-demo="gift"' }) + B.btn({ label: 'Sticker (đã mở)', variant: 'secondary', size: 'l', attrs: 'data-demo="sticker"' }) + B.btn({ label: 'Huy hiệu mới', variant: 'secondary', size: 'l', icon: 'medal', attrs: 'data-demo="badge"' }) + '</div><p class="log" aria-live="polite" data-log></p></div>'; }
+  B.screen({
+    fit: true, level: 3, defaultState: 'gift', order: ['gift', 'sticker', 'badge'], labels: { gift: 'Hộp quà', sticker: 'Sticker mới', badge: 'Huy hiệu mới' },
+    notes: { gift: 'Bước 1: hộp quà (`gift-box`, `gift-ribbon`) lắc nhẹ; bấm hộp, nút Mở quà hoặc Enter. Esc cũng mở (không bỏ lỡ quà).', sticker: 'Bước 2 · sticker: nắp bật, tia sáng `gift-glow`, sticker cắt bế, Bông chúc mừng, tên tiếng Anh + loa (tự đọc 1 lần), nghĩa, +10 xu (`coin-sticker-lesson`). Enter = Cho vào bộ sưu tập.', badge: 'Bước 2 · huy hiệu: huy hiệu vàng, tên tiếng Anh + loa, điều kiện đã đạt, +50 xu (`coin-badge`).' },
+    states: { gift: function () { return page(); }, sticker: function () { return page(); }, badge: function () { return page(); } },
+    mount: { all: function (scr, ctx) {
+      var log = scr.querySelector('[data-log]');
+      function open(k) { R.reward(scr, Object.assign({}, DEMO[k], { onAdd: function () { log.textContent = DEMO[k].kind === 'badge' ? 'Đã cất huy hiệu “7 ngày liên tiếp” vào bộ sưu tập, +50 xu.' : 'Đã dán sticker “dog” vào album Con vật, +10 xu.'; var c = scr.querySelector('[data-stat="coins"] .stat'); if (c) c.textContent = 340 + DEMO[k].coins; } })); }
+      scr.querySelectorAll('[data-demo]').forEach(function (b) { b.addEventListener('click', function () { open(b.dataset.demo); }); });
+      ctx.later(function () { open(ctx.state); }, 120);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

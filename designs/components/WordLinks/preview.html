@@ -1,0 +1,57 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=700 subtitle="49. Liên kết qua lại (WordLinks): dải nút liên kết ở đầu Khám phá từ, Họ vần, Ghép chữ đầu — chỉ hiện ở chế độ tự khám phá; nút Quay lại (Backspace), đường dẫn tối đa 4 bậc (bird › họ -ir › Ghép chữ), nút sang màn liên quan; trong khung bài học thì ẩn" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Liên kết qua lại — preview</title>
+<style>
+  .wlk { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; padding: 18px 48px; overflow: hidden; }
+  .wlk h2 { margin: 0; font: 800 18px/24px var(--font-body); color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .wlk h2 small { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .wlk .row { display: flex; flex-direction: column; gap: 6px; }
+  .wlk .b-links { width: 100%; max-width: none; margin: 0; }
+  .wlk .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 4px; }
+  .wlk .rules div { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 12px 14px; font: 600 15px/21px var(--font-body); color: var(--ink); }
+  .wlk .rules b { display: block; font: 800 16px/22px var(--font-body); margin-bottom: 4px; }
+  .wlk .rules code { font: 700 13px/18px var(--font-body); background: var(--surface-soft); border-radius: 4px; padding: 0 4px; }
+  .wlk .log { margin: 0; min-height: 22px; font: 700 15px/22px var(--font-body); color: var(--brand-shade); }
+  .wlk .lesson { display: flex; align-items: center; gap: 10px; background: var(--surface-soft); border-radius: var(--radius-lg); padding: 10px 14px; font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, W = B.W;
+  function st(a) { return a.map(function (e) { return W.entry(e); }); }
+  var ROWS = [
+    ['Ở Khám phá từ', 'chỉ hiện nút khi từ thuộc một họ vần', st([{ v: 'wx', k: 'bird' }]), W.linkBtn('Họ vần của bird: -ir', 'family', 'data-demo="fam"')],
+    ['Ở Họ vần', 'nút Ghép · Khám phá nằm trên từng thẻ', st([{ v: 'wx', k: 'bird' }, { v: 'fam', k: 'ir' }]), '<span class="b-links__tip">' + B.icon('bulb', 18) + 'Mỗi thẻ: bấm để nghe · <b>Ghép</b> · <b>Khám phá</b></span>'],
+    ['Ở Ghép chữ đầu', 'bấm từ trong “Đã tìm được” để khám phá', st([{ v: 'wx', k: 'bird' }, { v: 'fam', k: 'ir' }, { v: 'build', k: 'irt' }]), W.linkBtn('Về họ vần -ir', 'family', 'data-demo="back"')],
+    ['Đủ 4 bậc', 'bậc thứ 5 đẩy bậc đầu ra, Quay lại về bậc trước', st([{ v: 'wx', k: 'bird' }, { v: 'fam', k: 'ir' }, { v: 'build', k: 'irt' }, { v: 'wx', k: 'shirt' }]), W.linkBtn('Họ vần của shirt: -ir', 'family', 'data-demo="fam"')]
+  ];
+  function page() {
+    return '<div class="wlk">' + ROWS.map(function (r, i) { return '<div class="row"><h2>' + r[0] + ' <small>· ' + r[1] + '</small></h2><div data-row="' + i + '">' + W.links(r[2], r[3]) + '</div></div>'; }).join('') +
+      '<p class="log" aria-live="polite" data-log>Bấm Quay lại, một bậc trong đường dẫn hoặc một nút liên kết để thử.</p>' +
+      '<div class="lesson">' + B.icon('lock', 18) + 'Trong khung bài học (thanh tiến độ, chân bài Nghe lại · Gợi ý · Kiểm tra) dải này ẩn hẳn để bé không rời bài giữa chừng.</div>' +
+      '<div class="rules"><div><b>Quay lại · Backspace</b>Về màn trước trong lượt đi; ở bậc đầu thì nút mờ. Ở Ghép chữ, Backspace xoá chữ trong ô trước, ô trống mới quay lại.</div><div><b>Đường dẫn</b>Bậc đã qua là nút (<code>crumb-ink</code>), bậc đang ở đậm trên nền trắng (<code>crumb-now</code>), mũi tên “›” giữa các bậc. Tối đa 4 bậc (<code>links-max-depth</code>).</div><div><b>Dải liên kết</b>Nền <code>links-bg</code>, viền <code>links-line</code>, cao <code>size-links-strip</code> 56px; nút liên kết viền <code>brand</code>, chữ <code>brand-shade</code>. Đóng (Esc) về Sổ từ.</div></div></div>';
+  }
+  B.screen({
+    fit: true, level: 2,
+    notes: { normal: 'Bốn ví dụ dải liên kết ở chế độ tự khám phá. Tab đi qua Quay lại → các bậc → nút liên kết; Enter để bấm. Xem cả lượt đi ở Screen53-WordJourney.', loading: 'Khung xương dải liên kết.', empty: 'Chưa có liên kết (từ không thuộc họ nào và chưa có Khám phá): dải chỉ còn Quay lại và đường dẫn.', error: 'Không tải được liên kết.' },
+    states: {
+      normal: page,
+      loading: function () { return '<div class="wlk">' + [1, 2, 3, 4].map(function () { return '<div class="row">' + B.sk('260px', '22px', 'var(--radius-pill)') + B.sk('100%', 'var(--size-links-strip)', 'var(--radius-lg)') + '</div>'; }).join('') + '</div>'; },
+      empty: function () { return '<div class="wlk"><div class="row"><h2>Từ “apple” <small>· chưa có Khám phá, không thuộc họ vần nào</small></h2>' + W.links(st([{ v: 'wx', k: 'bird' }]).map(function (e) { e.k = 'bird'; return e; }), '') .replace('>bird<', '>apple<') + '</div>' + B.stateBlock({ kind: 'empty', title: 'Chưa có liên kết nào', text: 'Từ này chưa có Khám phá và chưa thuộc họ vần nào, nên dải chỉ có Quay lại và đường dẫn.', size: 140 }) + '</div>'; },
+      error: function () { return '<div class="wlk">' + B.stateBlock({ kind: 'error', title: 'Chưa tải được liên kết', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' }) + '</div>'; }
+    },
+    mount: { normal: function (scr, ctx) {
+      var log = scr.querySelector('[data-log]');
+      scr.querySelectorAll('[data-wback]').forEach(function (b) { b.addEventListener('click', function () { log.textContent = 'Quay lại: về bậc “' + b.closest('.b-links').querySelectorAll('.b-crumb')[b.closest('.b-links').querySelectorAll('.b-crumb').length - 2].textContent + '”.'; }); });
+      scr.querySelectorAll('[data-crumb]').forEach(function (b) { b.addEventListener('click', function () { log.textContent = 'Nhảy về bậc “' + b.textContent + '”; các bậc sau nó được bỏ đi.'; }); });
+      scr.querySelectorAll('[data-demo]').forEach(function (b) { b.addEventListener('click', function () { log.textContent = b.dataset.demo === 'back' ? 'Về họ vần: vì bậc trước là họ -ir nên quay lại đúng màn đó.' : 'Mở Họ vần -ir, từ đang xem được tô sáng.'; }); });
+      ctx.onKey(function (e) { if (e.key === 'Backspace' && !B.L.typing()) { e.preventDefault(); log.textContent = 'Backspace = Quay lại về màn trước.'; } });
+      var f = scr.querySelector('[data-wback]:not([disabled])'); f && f.focus({ preventScroll: true });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

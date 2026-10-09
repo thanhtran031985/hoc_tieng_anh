@@ -1,0 +1,121 @@
+<!-- @dsCard group="Màn Tiểu học · 28–32 Trùm & thi lên cấp" height=700 subtitle="29. Bản đồ đảo có cổng thi lên cấp (Screen34-IslandMapGate + LevelGate): đảo Lá xanh của Bảo Ngọc, cổng ở cuối đường đảo — khoá khi còn vùng chưa xong (hiện số vùng còn lại), mở khi xong hết, bấm để vào bài thi" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bản đồ đảo có cổng lên cấp — preview</title>
+<style>
+  .scr { background: var(--bg-sea); }
+  .scr .b-lvchip--plain { color: var(--ink); } /* chữ cấp dưới tên bé: đủ tương phản trên nền biển */
+  .imw { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding-bottom: var(--space-4); }
+  .imap { position: relative; width: min(1376px, calc(100cqw - 48px), calc((100cqh - 72px - 24px) * 1.895)); aspect-ratio: 1440 / 760; }
+  .imap > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .nd { position: absolute; transform: translate(-50%, -50%); width: 4.6%; aspect-ratio: 1; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; padding: 0; transition: transform var(--duration-fast); font: 800 22px/1 var(--font-display); }
+  .nd:hover { transform: translate(-50%, -54%); }
+  .nd.done { background: var(--lv); color: var(--on-lv); box-shadow: 0 6px 0 var(--lv-shade); }
+  .nd.cur { width: 6.2%; background: var(--brand); color: var(--ink-on-dark); box-shadow: 0 7px 0 var(--brand-shade), 0 0 0 8px rgba(255,255,255,.7); }
+  .nd.locked { background: var(--surface-sunk); color: var(--ink-soft); box-shadow: 0 6px 0 var(--star-empty); }
+  .nd .st { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; display: flex; }
+  .nd .st .b-ico { width: 18px; height: 18px; }
+  .nd.boss { width: 7%; border-radius: 32%; }
+  .nd.boss.locked { background: var(--surface); color: var(--ink-soft); box-shadow: 0 7px 0 var(--star-empty), inset 0 0 0 3px var(--star-empty); }
+  .nd.boss.beaten { background: var(--star); color: var(--ink); box-shadow: 0 7px 0 var(--star-shade); }
+  .nd .bl { position: absolute; top: 100%; margin-top: 8px; white-space: nowrap; font: 800 13px/18px var(--font-body); color: var(--ink); background: var(--surface); padding: 2px 10px; border-radius: var(--radius-pill); }
+  .zl { position: absolute; transform: translate(-50%, -50%); background: var(--surface); border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 6px 14px; display: flex; align-items: center; gap: var(--space-2); white-space: nowrap; }
+  .zl .n { width: 28px; height: 28px; border-radius: 50%; background: var(--lv); color: var(--on-lv); display: grid; place-items: center; font: 800 16px/1 var(--font-display); }
+  .zl.ok .n { background: var(--success); color: var(--ink-on-dark); }
+  .zl .vi { font: 800 18px/22px var(--font-display); }
+  .zl .sc { font: 800 14px/18px var(--font-body); color: var(--ink-soft); display: flex; align-items: center; gap: 3px; }
+  .gw { position: absolute; transform: translate(-50%, -62%); width: 9%; }
+  .gw .b-gate { width: 100%; }
+  .pinme { position: absolute; transform: translate(-50%, -100%); pointer-events: none; }
+  .pinme > span { display: block; animation: b-hop 1.4s ease-in-out infinite; }
+  .pop { position: absolute; z-index: 5; width: 360px; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); }
+  .pop.right { transform: translate(64px, -50%); }
+  .gw + .pop.right, .pop.at-gate { transform: translate(calc(4.5cqw + 24px), -56%); width: 400px; }
+  .pop .ws { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .pop .w { background: var(--surface-soft); border-radius: var(--radius-pill); padding: 4px 12px 4px 4px; display: inline-flex; align-items: center; gap: 6px; }
+  .pop .w b { font: 700 18px/22px var(--font-display); }
+  .pop .left { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+  .pop .left li { display: flex; align-items: center; gap: var(--space-2); font: 700 16px/22px var(--font-body); color: var(--ink); }
+  .pop .left li .b-ico { color: var(--success); } .pop .left li.todo .b-ico { color: var(--ink-soft); }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .facts span { background: var(--surface-sunk); border-radius: var(--radius-md); padding: 6px 10px; font: 800 15px/20px var(--font-body); color: var(--ink); display: flex; gap: 6px; align-items: center; }
+  @media (prefers-reduced-motion: reduce) { .pinme > span { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L, kid = B.kids[1];
+  var Z = [
+    { vi: 'Trường lớp', en: 'School', tint: 'var(--level-2-soft)', boss: 'Cú Bút Chì', words: ['book', 'pen', 'ruler', 'bag', 'desk'],
+      pts: [[300, 250], [390, 170], [490, 215], [585, 150], [675, 205]], bp: [735, 305], lab: [490, 88] },
+    { vi: 'Cơ thể', en: 'My body', tint: 'var(--level-6-soft)', boss: 'Gấu Nhảy Dây', words: ['head', 'hand', 'eye', 'nose', 'leg'],
+      pts: [[850, 300], [935, 205], [1035, 250], [1130, 175], [1225, 225]], bp: [1300, 320], lab: [1080, 88] },
+    { vi: 'Quần áo', en: 'Clothes', tint: 'var(--level-4-soft)', boss: 'Mèo Tất Lệch', words: ['shirt', 'hat', 'shoes', 'dress', 'socks'],
+      pts: [[1290, 470], [1200, 560], [1100, 500], [1000, 590], [905, 525]], bp: [820, 620], lab: [1080, 694] },
+    { vi: 'Nhà của em', en: 'My home', tint: 'var(--level-5-soft)', boss: 'Chuột Dọn Nhà', words: ['bed', 'chair', 'door', 'window', 'kitchen'],
+      pts: [[690, 500], [600, 585], [505, 515], [410, 600], [320, 525]], bp: [235, 620], lab: [500, 694] }
+  ];
+  var GATE = [140, 400], NEXT = 'đảo Cành cây';
+  var PROG_LOCK = [[3, 3, 3, 2, 3, 'beaten'], [3, 3, 2, 3, 3, 'beaten'], [3, 2, 3, 3, 3, 'beaten'], [3, 3, 'cur', 0, 0, 'locked']];
+  var PROG_OPEN = [[3, 3, 3, 2, 3, 'beaten'], [3, 3, 2, 3, 3, 'beaten'], [3, 2, 3, 3, 3, 'beaten'], [3, 3, 2, 3, 3, 'beaten']];
+  function zoneDone(pr) { return pr[5] === 'beaten'; }
+  function islandSvg(skel) {
+    var all = []; Z.forEach(function (z) { all = all.concat(z.pts, [z.bp]); }); all.push(GATE);
+    var d = 'M' + all.map(function (p) { return p[0] + ' ' + p[1]; }).join(' L');
+    var patches = Z.map(function (z, i) { var x = i === 0 || i === 3 ? 230 : 770, w = i === 0 || i === 3 ? 520 : 590, y = i < 2 ? 110 : 410; return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="270" rx="80" fill="' + (skel ? 'var(--surface)' : z.tint) + '"' + (skel ? ' opacity=".6"' : '') + '/>'; }).join('');
+    return '<svg viewBox="0 0 1440 760" aria-hidden="true">' +
+      '<path d="M120 80 C360 20 600 70 720 50 C900 20 1160 40 1330 80 C1440 120 1420 330 1400 400 C1430 520 1420 700 1300 730 C1060 770 820 720 700 745 C520 770 240 760 120 720 C20 690 30 520 50 400 C20 300 10 120 120 80Z" fill="var(--bg-sea-deep)" transform="translate(0 6)"/>' +
+      '<path d="M130 70 C360 14 600 62 720 42 C900 14 1160 32 1320 70 C1420 110 1405 330 1385 400 C1415 520 1405 690 1290 718 C1060 752 820 706 700 730 C520 752 240 746 130 708 C40 680 46 520 64 400 C36 300 30 120 130 70Z" fill="var(--dragon-belly)" stroke="var(--dragon-line)" stroke-width="3"/>' +
+      '<path d="M150 92 C370 40 600 84 720 66 C900 40 1150 58 1300 92 C1388 128 1375 330 1358 400 C1385 520 1376 670 1276 694 C1050 726 820 684 700 706 C520 728 250 722 150 688 C70 662 76 520 92 400 C68 300 64 136 150 92Z" fill="var(--level-3-soft)"/>' +
+      patches + (skel ? '' : '<path d="' + d + '" fill="none" stroke="var(--surface)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><path d="' + d + '" fill="none" stroke="var(--line-strong)" stroke-width="4" stroke-dasharray="1 16" stroke-linecap="round"/>') +
+      '<circle cx="' + GATE[0] + '" cy="' + (GATE[1] + 46) + '" r="70" fill="var(--gate-glow)" opacity="' + (skel ? 0 : .5) + '"/></svg>';
+  }
+  function pos(p) { return 'left:' + p[0] / 14.4 + '%;top:' + p[1] / 7.6 + '%'; }
+  function nodes(PROG) {
+    var o = '';
+    Z.forEach(function (z, zi) {
+      var pr = PROG[zi], ok = zoneDone(pr), sum = pr.slice(0, 5).reduce(function (a, v) { return a + (typeof v === 'number' ? v : 0); }, 0);
+      o += '<div class="zl' + (ok ? ' ok' : '') + '" data-level="3" style="' + pos(z.lab) + '"><span class="n">' + (ok ? B.icon('check', 18) : zi + 1) + '</span><span class="vi">' + z.vi + '</span><span class="en label b-muted" lang="en">' + z.en + '</span><span class="sc">' + B.icon('star', 18) + sum + '/15</span></div>';
+      z.pts.forEach(function (p, i) { var v = pr[i], cls = v === 'cur' ? 'cur' : v > 0 ? 'done' : 'locked';
+        o += '<button type="button" class="nd ' + cls + '" data-level="3" data-z="' + zi + '" data-i="' + i + '" style="' + pos(p) + '" aria-label="Chặng ' + (i + 1) + ' vùng ' + z.vi + (cls === 'done' ? ', ' + v + ' sao' : cls === 'cur' ? ', đang học' : ', còn khoá') + '">' + (cls === 'locked' ? B.icon('lock', 22) : String(i + 1)) + (cls === 'done' ? '<span class="st">' + B.stars(v, 18) + '</span>' : '') + '</button>';
+        if (cls === 'cur') o += '<span class="pinme" style="left:' + p[0] / 14.4 + '%;top:' + (p[1] - 44) / 7.6 + '%"><span>' + L.grow(3, 'chao', 70) + '</span></span>'; });
+      o += '<button type="button" class="nd boss ' + pr[5] + '" data-level="3" data-z="' + zi + '" data-boss style="' + pos(z.bp) + '" aria-label="Trận trùm ' + z.boss + (pr[5] === 'locked' ? ', còn khoá' : ', đã thắng') + '">' + B.icon('crown', 32) + '<span class="bl">' + z.boss + '</span></button>';
+    });
+    return o;
+  }
+  function gate(PROG) { var left = PROG.filter(function (p) { return !zoneDone(p); }).length; return '<div class="gw" style="' + pos(GATE) + '">' + L.gate({ locked: left > 0, left: left, next: NEXT }) + '</div>'; }
+  function page(inner) { return B.topbar({ back: true, backLabel: 'Về tổng quan 10 cấp', kid: kid, title: '<span data-level="3" class="b-lvchip" style="font-size:18px;padding:6px 16px">Đảo 3 · Lá xanh</span>' }) + '<div class="imw">' + inner + '</div>'; }
+  function full(PROG) { return page('<div class="imap" data-level="3">' + islandSvg() + nodes(PROG) + gate(PROG) + '</div>'); }
+  B.screen({
+    fit: true, level: 3, order: ['normal', 'open', 'loading', 'empty', 'error'], labels: { normal: 'Cổng khoá', open: 'Cổng mở' },
+    notes: { normal: 'Cổng (LevelGate) ở cuối đường đảo. Còn vùng chưa xong: cổng khoá (`gate-dark`, ổ khoá), nhãn “Còn 1 vùng”; bấm cổng mở thẻ liệt kê vùng còn thiếu. Bản đồ đảo cũ (Screen06) giữ nguyên.', open: 'Xong cả 4 vùng: cổng mở, sáng nhẹ (`gate-glow`). Bấm cổng → thẻ bài thi (20 câu, không đếm giờ, cần 80%) và nút Vào bài thi (Enter).', loading: 'Hình đảo hiện ngay; chặng và cổng là khung xương.', empty: 'Đảo chưa có bài.', error: 'Không tải được bản đồ.' },
+    states: {
+      normal: function () { return full(PROG_LOCK); }, open: function () { return full(PROG_OPEN); },
+      loading: function () { var o = ''; Z.forEach(function (z) { z.pts.concat([z.bp]).forEach(function (p) { o += '<span class="b-sk" style="position:absolute;' + pos(p) + ';width:4.6%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%)"></span>'; }); }); o += '<span class="b-sk" style="position:absolute;' + pos(GATE) + ';width:8%;aspect-ratio:.9;border-radius:40% 40% 8px 8px;transform:translate(-50%,-62%)"></span>'; return page('<div class="imap">' + islandSvg(true) + o + '</div>'); },
+      empty: function () { return page('<div class="imap">' + islandSvg(true) + '<div class="b-state" style="position:absolute;inset:12% 20%;background:var(--surface);border-radius:var(--radius-xl);box-shadow:var(--shadow-card)">' + B.dragon('xaydung', 150) + '<h2 class="title">Đảo Lá xanh đang được xây</h2><p class="body-l b-muted">Các bài học sắp xong rồi. Cậu ôn lại từ cũ trong lúc chờ nhé!</p><div class="b-state__actions">' + B.btn({ label: 'Mở Sổ từ', icon: 'book', size: 'l' }) + '</div></div></div>'); },
+      error: function () { return page(B.stateBlock({ kind: 'error', title: 'Bông lạc đường mất rồi', text: 'Không tải được bản đồ đảo. Mình thử lại nhé!' })); }
+    },
+    mount: { all: function (scr, ctx) {
+      var map = scr.querySelector('.imap'); if (!map || !map.querySelector('.nd')) return;
+      var PROG = ctx.state === 'open' ? PROG_OPEN : PROG_LOCK;
+      function close() { var p = map.querySelector('.pop'); if (p) p.remove(); }
+      function open(anchor, html, right) { close(); var pop = document.createElement('div'); pop.className = 'b-card pop' + (right ? ' right' : '') + (anchor.classList.contains('gw') ? ' at-gate' : ''); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Thông tin'); pop.style.left = anchor.style.left; pop.style.top = anchor.style.top; pop.innerHTML = html; map.appendChild(pop); pop.addEventListener('click', function (e) { e.stopPropagation(); }); var f = pop.querySelector('.b-btn'); f && f.focus({ preventScroll: true }); return pop; }
+      map.querySelectorAll('.nd').forEach(function (b) { b.addEventListener('click', function (e) { e.stopPropagation(); var z = Z[+b.dataset.z], i = +b.dataset.i;
+        if (b.hasAttribute('data-boss')) return open(b, '<div class="title">Trùm ' + z.boss + '</div><p class="body b-muted" style="margin:0">' + (b.classList.contains('locked') ? 'Xong 5 chặng của vùng ' + z.vi + ' là mở trận trùm nhé!' : 'Cậu đã thắng! Đấu lại để nhận thêm xu.') + '</p>', +b.dataset.z !== 1 && +b.dataset.z !== 2);
+        if (b.classList.contains('locked')) return open(b, '<div class="title">Chặng ' + (i + 1) + ' · ' + z.vi + '</div><p class="body b-muted" style="margin:0">Học xong bài trước là mở được bài này.</p>', true);
+        open(b, '<div class="label b-muted">Chặng ' + (i + 1) + ' · Vùng ' + z.vi + '</div><div class="title" lang="en">' + z.en + '</div><div class="ws">' + [z.words[i], z.words[(i + 1) % 5]].map(function (w) { return '<span class="w">' + B.speak(w, 's') + '<b lang="en">' + w + '</b></span>'; }).join('') + '</div>' + B.btn({ label: b.classList.contains('cur') ? 'Bắt đầu' : 'Học lại', variant: b.classList.contains('cur') ? 'primary' : 'secondary', size: 'l', block: true, key: 'Enter' }), +b.dataset.z !== 1 && +b.dataset.z !== 2); }); });
+      var g = map.querySelector('[data-gate]'), gw = map.querySelector('.gw');
+      g.addEventListener('click', function (e) { e.stopPropagation(); var left = PROG.filter(function (p) { return !zoneDone(p); }).length;
+        if (left) open(gw, '<div class="title">Cổng lên ' + NEXT + '</div><p class="body b-muted" style="margin:0">Còn <b>' + left + ' vùng</b> nữa là cổng mở. Cố lên nhé!</p><ul class="left">' + Z.map(function (z, zi) { var ok = zoneDone(PROG[zi]); return '<li class="' + (ok ? '' : 'todo') + '">' + B.icon(ok ? 'check' : 'lock', 20) + z.vi + (ok ? '' : ' · còn ' + PROG[zi].slice(0, 5).filter(function (v) { return !(v > 0); }).length + ' chặng + trùm') + '</li>'; }).join('') + '</ul>' + B.btn({ label: 'Học tiếp', size: 'l', block: true, icon: 'next', key: 'Enter', attrs: 'data-go' }), true);
+        else { var p = open(gw, '<div class="title">Bài thi lên ' + NEXT + '</div><p class="body b-muted" style="margin:0">Cậu đã xong cả 4 vùng của đảo Lá xanh!</p><div class="facts"><span>' + B.icon('star', 18) + '20 câu</span><span>' + B.icon('clock', 18) + 'Không đếm giờ</span><span>' + B.icon('check', 18) + 'Cần đúng 80%</span><span>' + B.icon('replay', 18) + 'Thi lại được</span></div>' + B.btn({ label: 'Vào bài thi', size: 'l', block: true, icon: 'next', key: 'Enter', attrs: 'data-go' }), true);
+          p.querySelector('[data-go]').addEventListener('click', function (ev) { ctx.burst(ev.currentTarget, null, 10); }); } });
+      scr.addEventListener('click', close);
+      ctx.onKey(function (e) { if (e.key === 'Escape') close(); });
+      ctx.later(function () { g.click(); }, 60);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

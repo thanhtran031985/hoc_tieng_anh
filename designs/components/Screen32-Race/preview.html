@@ -1,0 +1,139 @@
+<!-- @dsCard group="Màn Tiểu học · 25–27 Mini game" height=700 subtitle="27. Đua xe trả lời (Screen32-Race): đường đua ngang, xe của bé và “xe ma” mờ (lần trước của chính bé, đi theo số câu chứ không theo giờ); câu hỏi 3–4 đáp án có phím, đúng thì xe chạy thêm một đoạn" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Đua xe trả lời — preview</title>
+<style>
+  .scr { background: linear-gradient(var(--game-sky), var(--game-sky-2) 45%); }
+  .lesson-foot { background: var(--game-sky-2); }
+  .rc { flex: 1; min-height: 0; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: 0 var(--space-12); box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: min(var(--space-5), 2.4cqh); }
+  .qc { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: min(var(--space-4), 2cqh) var(--space-6); display: grid; grid-template-columns: auto 1fr; gap: var(--space-6); align-items: center; }
+  .qc__pic { width: min(150px, 18cqh); aspect-ratio: 1; border-radius: var(--radius-lg); background: var(--surface-sunk); display: grid; place-items: center; }
+  .qc__pic .b-pic { width: 82%; height: auto; } .qc__pic .two { display: flex; } .qc__pic .two .b-pic { width: 48%; }
+  .qc__pic .ear { color: var(--brand); }
+  .qc__r { display: flex; flex-direction: column; gap: min(var(--space-3), 1.6cqh); }
+  .qc__q { display: flex; align-items: center; gap: var(--space-3); font: 800 min(30px, 3.9cqh)/1.2 var(--font-display); color: var(--ink); margin: 0; }
+  .qc__q small { font: 700 16px/20px var(--font-body); color: var(--ink-soft); display: block; }
+  .ans { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: var(--space-3); }
+  .an { position: relative; }
+  .an .opt { width: 100%; height: min(64px, 8.2cqh); border-radius: var(--radius-md); border: var(--border-thick) solid var(--line); background: var(--surface); box-shadow: 0 5px 0 var(--line); display: flex; align-items: center; gap: var(--space-3); padding: 0 52px 0 var(--space-3); font: 800 min(28px, 3.6cqh)/1 var(--font-display); color: var(--ink); cursor: pointer; }
+  .an .opt:hover:not(:disabled) { border-color: var(--brand-soft-shade); transform: translateY(-2px); box-shadow: 0 7px 0 var(--brand-soft-shade); }
+  .an .b-speak { position: absolute; right: 10px; top: 50%; transform: translateY(-58%); }
+  .an .opt.is-correct { border-color: var(--success); background: var(--success-soft); color: var(--success-shade); box-shadow: 0 5px 0 var(--success); }
+  .an .opt.is-retry { border-color: var(--retry); background: var(--retry-soft); color: var(--retry-shade); box-shadow: 0 5px 0 var(--retry); animation: b-shake .45s ease; }
+  .an .opt.is-dim { opacity: .35; }
+  /* đường đua */
+  .track { position: relative; background: var(--race-grass); border-radius: var(--radius-xl); padding: 14px 0; box-shadow: inset 0 -6px 0 rgba(0,0,0,.06); }
+  .road { position: relative; margin: 0 22px; background: var(--race-track); border-radius: 14px; box-shadow: inset 0 4px 0 var(--race-track-edge), inset 0 -4px 0 var(--race-track-edge); }
+  .lane { --lane: min(var(--size-race-lane), 9.6cqh); position: relative; height: var(--lane); }
+  .lane + .lane { background-image: linear-gradient(90deg, var(--race-track-edge) 50%, transparent 0); background-size: 34px 3px; background-repeat: repeat-x; background-position: 0 0; }
+  .lane__tag { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font: 800 13px/16px var(--font-body); color: var(--ink-on-dark); opacity: .9; width: 64px; }
+  .ticks { position: absolute; inset: 0 var(--fin) 0 var(--st); pointer-events: none; }
+  .ticks span { position: absolute; top: 4px; bottom: 4px; width: 2px; background: rgba(255,255,255,.22); }
+  .ticks b { position: absolute; bottom: -24px; transform: translateX(-50%); font: 800 13px/16px var(--font-body); color: var(--ink-soft); }
+  .finish { position: absolute; right: 0; top: 0; bottom: 0; width: 28px; border-radius: 0 14px 14px 0; background: repeating-conic-gradient(var(--race-finish-a) 0 25%, var(--race-finish-b) 0 50%) 0 0 / 14px 14px; }
+  .flag { position: absolute; right: -6px; top: -36px; display: flex; align-items: center; gap: 2px; font: 800 13px/16px var(--font-body); color: var(--ink); background: var(--surface); border-radius: var(--radius-pill); padding: 2px 8px 2px 4px; }
+  .car { position: absolute; top: 50%; width: calc(var(--lane) * 1.55); transform: translate(-50%, -54%); transition: left .7s cubic-bezier(.3, 1.3, .5, 1); }
+  .car svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .car .b-dragon { position: absolute; left: 30%; top: -48%; width: 46%; height: auto; }
+  .car--ghost svg { opacity: 1; }
+  .car__lab { position: absolute; left: 50%; top: -20px; transform: translateX(-50%); background: var(--surface); color: var(--rec); border: 2px dashed var(--rec); border-radius: var(--radius-pill); padding: 0 8px; font: 800 12px/18px var(--font-body); white-space: nowrap; }
+  .first { font: 700 15px/20px var(--font-body); color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
+  .demo { display: flex; align-items: center; gap: 8px; } .demo svg { width: 150px; height: auto; }
+  @media (prefers-reduced-motion: reduce) { .car { transition: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var QS = [
+    { k: 'pic', p: 'apple', a: 'apple', o: ['orange', 'apple', 'pear'] },
+    { k: 'listen', a: 'dog', o: ['duck', 'fish', 'dog'] },
+    { k: 'pic', p: 'rabbit', a: 'rabbit', o: ['cat', 'rabbit', 'bird', 'duck'] },
+    { k: 'sent', s: 'The sun is ___.', p: 'sun', a: 'yellow', o: ['blue', 'yellow', 'green'] },
+    { k: 'pic', p: 'two', q: 'How many apples?', a: 'two', o: ['one', 'two', 'three'] },
+    { k: 'listen', a: 'banana', o: ['banana', 'grapes', 'orange'] },
+    { k: 'pic', p: 'kite', a: 'kite', o: ['ball', 'teddy', 'kite'] },
+    { k: 'sent', s: 'I hug my ___.', p: 'teddy', a: 'teddy', o: ['kite', 'teddy', 'ball', 'apple'] }
+  ];
+  var N = QS.length;
+  // lần trước: về đích sau 10 câu. PREV[k] = số câu đúng sau k+1 lượt trả lời
+  var PREV = [1, 1, 2, 3, 3, 4, 5, 6, 7, 8];
+  var S;
+  function reset(first) { S = { q: 0, pos: 0, att: 0, tries: 0, hint: false, first: !!first, wrong: -1, ok: -1, busy: false }; }
+  reset(false);
+  function ghost() { return S.first ? null : (S.att === 0 ? 0 : PREV[Math.min(S.att, PREV.length) - 1]); }
+  function car(ghostCar) {
+    var ln = ghostCar ? 'stroke="var(--race-ghost-line)" stroke-width="3" stroke-dasharray="6 5" stroke-linejoin="round"' : 'stroke="var(--dragon-line)" stroke-width="3.5" stroke-linejoin="round"';
+    var body = ghostCar ? 'var(--race-ghost)' : 'var(--brand)', win = ghostCar ? 'transparent' : 'var(--surface)', wh = ghostCar ? 'var(--race-ghost)' : 'var(--dragon-line)';
+    return '<svg viewBox="0 0 120 56" aria-hidden="true"><path d="M8 38 C8 28 14 24 24 24 L38 24 L48 10 C50 7 53 6 56 6 L80 6 C84 6 87 8 89 11 L97 24 L106 26 C112 27 114 31 114 36 L114 40 C114 43 112 44 109 44 L11 44 C9 44 8 42 8 40 Z" fill="' + body + '" ' + ln + '/>' +
+      '<path d="M52 12 L46 24 L66 24 L66 12 Z M71 12 L71 24 L91 24 L86 13 Z" fill="' + win + '" ' + ln + '/>' + (ghostCar ? '' : '<path d="M100 31 h8" stroke="var(--star)" stroke-width="5" stroke-linecap="round"/>') +
+      '<circle cx="30" cy="44" r="10" fill="' + wh + '" ' + ln + '/><circle cx="92" cy="44" r="10" fill="' + wh + '" ' + ln + '/>' + (ghostCar ? '' : '<circle cx="30" cy="44" r="4" fill="var(--surface)"/><circle cx="92" cy="44" r="4" fill="var(--surface)"/>') + '</svg>';
+  }
+  function at(n) { return 'calc(var(--st) + (100% - var(--st) - var(--fin)) * ' + (n / N) + ')'; }
+  function track() {
+    var g = ghost(), ticks = ''; for (var i = 0; i <= N; i++) ticks += '<span style="left:' + (100 * i / N) + '%"></span>';
+    var lane = function (who) { var gh = who === 'g';
+      return '<div class="lane"><span class="lane__tag">' + (gh ? 'Lần trước' : 'Cậu') + '</span>' + (gh && g == null ? '' : '<div class="car' + (gh ? ' car--ghost' : '') + '" data-car="' + who + '" style="left:' + at(gh ? g : S.pos) + '">' + car(gh) + (gh ? '<span class="car__lab">Lần trước · ' + g + ' câu</span>' : B.dragon('vui', 60)) + '</div>') + '</div>'; };
+    return '<div class="track" role="img" aria-label="Đường đua: xe của cậu ở đoạn ' + S.pos + ' trên ' + N + (g == null ? '' : ', xe lần trước ở đoạn ' + g) + '" style="--st:96px;--fin:56px"><div class="road">' + (S.first ? '' : lane('g')) + lane('k') + '<span class="finish"></span><span class="flag">' + B.icon('flag', 22) + 'Đích</span><div class="ticks">' + ticks + '</div></div></div>';
+  }
+  function qcard() {
+    var q = QS[S.q], dim = S.hint ? q.o.filter(function (w) { return w !== q.a; })[0] : null;
+    var pic = q.k === 'listen' ? '<span class="ear">' + B.speak(q.a, 'l', 'Nghe từ') + '</span>' : q.p === 'two' ? '<div class="two">' + B.pic('apple', 70) + B.pic('apple', 70) + '</div>' : B.pic(q.p, 130).replace(/aria-label="[^"]*"/, 'aria-label="Hình gợi ý"');
+    var txt = q.k === 'listen' ? 'Nghe rồi chọn từ đúng<small>Bấm loa to để nghe lại</small>' : q.k === 'sent' ? '<span lang="en">' + q.s + '</span>' + B.speak(q.s.replace('___', q.a), 's', 'Nghe câu') : '<span lang="en">' + (q.q || 'What is this?') + '</span>' + B.speak(q.q || 'What is this?', 's', 'Nghe câu hỏi');
+    return '<section class="qc" aria-label="Câu ' + (S.q + 1) + '"><div class="qc__pic">' + pic + '</div><div class="qc__r"><p class="qc__q">' + txt + '</p><div class="ans" role="group" aria-label="Đáp án" style="--n:' + q.o.length + '">' +
+      q.o.map(function (w, i) { var d = w === dim; return '<div class="an"><button type="button" class="opt' + (i === S.ok ? ' is-correct' : '') + (i === S.wrong ? ' is-retry' : '') + (d ? ' is-dim' : '') + '" data-o="' + i + '" aria-keyshortcuts="' + (i + 1) + '" lang="en"' + (d || S.busy ? ' disabled' : '') + '>' + B.key(String(i + 1)) + w + '</button>' + B.speak(w, 's', 'Nghe: ' + w) + '</div>'; }).join('') + '</div></div></section>';
+  }
+  function view(off, msg) {
+    return L.head({ n: S.pos, total: N, pause: true, count: S.pos + '/' + N }) + '<div class="rc">' + qcard() + track() + (S.first ? '<p class="first">' + B.icon('star', 18) + 'Lần đầu chơi: chưa có xe “Lần trước”. Lần sau cậu sẽ đua với chính mình!</p>' : '') + '</div>' +
+      L.gfoot({ msg: msg || off ? (msg || 'Xe đang chờ ở vạch xuất phát…') : (S.first ? 'Trả lời đúng, xe chạy thêm một đoạn!' : 'Đua với chính cậu lần trước nào!'), score: S.pos, total: N, unit: 'câu', hintOff: S.hint, off: off });
+  }
+  function endInfo() { var d = PREV.length - S.att; if (S.first) return { t: 'Về đích rồi!', n: 'Cậu về đích sau <b>' + S.att + '</b> câu. Lần sau xe “Lần trước” sẽ chạy cùng cậu!' };
+    return d > 0 ? { t: 'Cậu nhanh hơn lần trước ' + d + ' câu!', n: 'Lần này <b>' + S.att + '</b> câu, lần trước <b>' + PREV.length + '</b> câu. Giỏi quá!' } : d === 0 ? { t: 'Bằng đúng lần trước!', n: 'Cả hai lần đều về đích sau <b>' + S.att + '</b> câu. Lần sau vượt lên nhé!' } : { t: 'Về đích rồi! Cố lên nhé!', n: 'Lần này <b>' + S.att + '</b> câu, lần trước <b>' + PREV.length + '</b> câu. Ôn thêm chút là cậu vượt xe ma ngay!' }; }
+  B.screen({
+    fit: true, level: 2, defaultState: 'start', order: ['start', 'normal', 'first', 'pause', 'end', 'loading', 'empty', 'error'],
+    labels: { start: 'Bắt đầu', normal: 'Đang chơi', first: 'Lần đầu chơi', pause: 'Tạm dừng', end: 'Về đích' },
+    notes: { start: 'Lớp phủ bắt đầu: 1 dòng cách chơi có hình, Bắt đầu (Enter).', normal: 'Phím 1–4 hoặc bấm đáp án (trả lời ngay, không cần Kiểm tra). Đúng: xe chạy thêm 1 đoạn, sao bay vào thanh tiến độ. Chưa đúng: đáp án cam, xe đứng yên, làm lại câu đó; sai 2 lần tự làm mờ một đáp án. Xe ma (`race-ghost`) đi theo số câu đúng của lần trước sau cùng số lượt trả lời — không chạy theo thời gian. Esc / ⏸ tạm dừng.', first: 'Lần đầu chơi: không có làn xe ma, có dòng giải thích.', pause: 'Tạm dừng: Chơi tiếp hoặc Thoát.', end: 'Về đích: “Cậu nhanh hơn lần trước 2 câu!” (hoặc lời động viên nếu chậm hơn), sao, xu, Tiếp tục.', loading: 'Khung xương câu hỏi và đường đua.', empty: 'Chưa có câu hỏi cho trò đua.', error: 'Không tải được trò chơi.' },
+    states: {
+      start: function () { reset(false); return view(true); }, normal: function () { return view(false); }, pause: function () { return view(true); },
+      first: function () { if (!S.first) reset(true); return view(false); },
+      end: function () { if (S.pos < N) { S.pos = N; S.att = 8; } return view(true, 'Về đích rồi!'); },
+      loading: function () { return L.head({ n: 0, total: N, pause: true, count: '0/' + N }) + '<div class="rc"><div class="qc">' + B.sk('min(150px, 18cqh)', 'min(150px, 18cqh)', 'var(--radius-lg)') + '<div class="qc__r">' + B.sk('46%', '34px', 'var(--radius-pill)') + '<div class="ans" style="--n:3">' + B.sk('100%', 'min(64px, 8.2cqh)') + B.sk('100%', 'min(64px, 8.2cqh)') + B.sk('100%', 'min(64px, 8.2cqh)') + '</div></div></div>' + B.sk('100%', '190px', 'var(--radius-xl)') + '</div>' + L.gfoot({ msg: 'Đang đổ xăng cho xe…', expr: 'suynghi', off: true, total: N, unit: 'câu' }); },
+      empty: function () { return L.head({ n: 0, total: N, pause: true, count: '—' }) + '<div class="rc">' + B.stateBlock({ kind: 'empty', title: 'Chưa có câu hỏi để đua', text: 'Học thêm 1 bài là đường đua mở ngay!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</div>' + L.gfoot({ off: true, total: N, unit: 'câu' }); },
+      error: function () { return L.head({ n: 0, total: N, pause: true, count: '—' }) + '<div class="rc">' + B.stateBlock({ kind: 'error', title: 'Đường đua chưa sẵn sàng', text: 'Trò chơi chưa tải xong. Không phải lỗi của cậu đâu!' }) + '</div>' + L.gfoot({ off: true, total: N, unit: 'câu' }); }
+    },
+    mount: {
+      start: function (scr, ctx) { L.gameStart(scr, { title: 'Đua xe trả lời', art: '<div class="demo">' + car(false).replace('<svg', '<svg style="width:150px"') + '</div>', how: 'Trả lời đúng (phím 1–4) thì xe chạy thêm một đoạn. Đua với chính cậu lần trước!', onStart: function () { ctx.setState('normal'); } }); },
+      pause: function (scr, ctx) { L.gamePause(scr, { onResume: function () { ctx.setState('normal'); }, onExit: function () { L.exit(ctx, N - S.pos, 'trò chơi'); } }); },
+      end: function (scr, ctx) { var e = endInfo(), st = S.att <= 9 ? 3 : S.att <= 11 ? 2 : 1; L.gameEnd(scr, { title: e.t, unit: 'câu', correct: N, total: N, stars: st, coins: 10 + st * 2, note: e.n, onNext: function () { reset(false); ctx.setState('start'); } }); },
+      first: function (scr, ctx) { play(scr, ctx); }, normal: function (scr, ctx) { play(scr, ctx); }
+    }
+  });
+  function play(scr, ctx) {
+    var q = QS[S.q], paused = false;
+    function moveCars() { var k = scr.querySelector('[data-car="k"]'), g = scr.querySelector('[data-car="g"]'), gv = ghost(); if (k) k.style.left = at(S.pos); if (g && gv != null) { g.style.left = at(gv); g.querySelector('.car__lab').textContent = 'Lần trước · ' + gv + ' câu'; } }
+    function answer(i) {
+      if (paused || S.busy) return; var b = scr.querySelector('[data-o="' + i + '"]'); if (!b || b.disabled) return;
+      S.att++; L.say(q.o[i], .85);
+      if (q.o[i] === q.a) { S.busy = true; S.ok = i; S.wrong = -1; b.classList.add('is-correct'); S.pos++; moveCars(); ctx.burst(b, scr.querySelector('.b-progress span'), 8);
+        ctx.later(function () { L.setProg(scr, S.pos, N); scr.querySelector('[data-gscore] b').textContent = S.pos; }, 500);
+        var g = ghost(); L.gmsg(scr, (g != null && S.pos > g ? 'Vượt xe lần trước rồi! ' : 'Đúng rồi! ') + '<b class="en">' + q.a + '</b> = ' + B.words[q.a].vi, 'vui');
+        ctx.later(function () { S.busy = false; S.ok = -1; S.tries = 0; S.hint = false; if (S.pos >= N) { ctx.setState('end'); return; } S.q++; ctx.setState(ctx.state); }, 1100);
+      } else { S.tries++; S.wrong = i; b.classList.remove('is-retry'); void b.offsetWidth; b.classList.add('is-retry'); moveCars();
+        if (S.tries >= 2 && !S.hint) { S.hint = true; ctx.later(function () { ctx.setState(ctx.state); }, 700); }
+        L.gmsg(scr, '<b class="en">' + q.o[i] + '</b> là “' + B.words[q.o[i]].vi + '”. Xe đứng chờ, cậu thử lại nhé!' + (S.tries >= 2 ? ' Bông làm mờ một đáp án rồi.' : ''), 'dongvien'); }
+    }
+    scr.querySelectorAll('[data-o]').forEach(function (b) { b.addEventListener('click', function () { answer(+b.dataset.o); }); });
+    function pause() { if (paused) return; paused = true; L.gamePause(scr, { onResume: function () { paused = false; }, onExit: function () { L.exit(ctx, N - S.pos, 'trò chơi'); } }); }
+    scr.querySelector('[data-pause]').addEventListener('click', pause);
+    L.wire(scr, ctx, { left: N - S.pos, onEsc: pause,
+      onReplay: function (btn) { L.say(q.k === 'sent' ? q.s.replace('___', 'blank') : q.k === 'listen' ? q.a : (q.q || 'What is this?'), .8, btn); },
+      onHint: function () { S.hint = true; ctx.setState(ctx.state); },
+      onKey: function (e) { if (/^[1-4]$/.test(e.key)) { e.preventDefault(); answer(+e.key - 1); return true; } if (e.key === 'Enter') return true; }
+    });
+    ctx.later(function () { if (q.k === 'listen') L.say(q.a, .8); var a = document.activeElement; if (!a || a === document.body || !scr.contains(a)) { var f = scr.querySelector('[data-o]:not([disabled])'); f && f.focus({ preventScroll: true }); } }, 300);
+  }
+})();
+</script>
+</body>
+</html>

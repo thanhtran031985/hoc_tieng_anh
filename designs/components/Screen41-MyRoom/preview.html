@@ -1,0 +1,141 @@
+<!-- @dsCard group="Màn Tiểu học · 37–39 Phòng của tớ" height=700 subtitle="37. Phòng của tớ (Screen41-MyRoom): phòng của rồng Bông nhìn chính diện; chế độ Xem (bấm đồ để nghe tên tiếng Anh) và Trang trí (kéo thả, xoay, cất vào kho; bàn phím: Tab chọn, mũi tên di chuyển, R xoay, Delete cất); ngăn Tủ đồ mặc mũ, áo cho Bông; thanh trên có xu + Cửa hàng" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Phòng của tớ — preview</title>
+<style>
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: 0 0 var(--space-3); }
+  .bar h1 { margin: 0; }
+  .seg { display: inline-flex; background: var(--surface-sunk); border-radius: var(--radius-pill); padding: 5px; gap: 4px; }
+  .seg button { height: 48px; border: 0; background: none; border-radius: var(--radius-pill); padding: 0 var(--space-5); font: 800 18px/22px var(--font-body); color: var(--ink-soft); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); }
+  .seg button[aria-checked="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+  .wrap { flex: 1; min-height: 0; display: flex; gap: var(--space-4); }
+  .room { position: relative; flex: 1; min-width: 0; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-card), inset 0 0 0 3px var(--dragon-line); background:
+    radial-gradient(circle, var(--room-wall-pattern) 3px, transparent 4px) 0 0 / 34px 34px, var(--room-wall); }
+  .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: repeating-linear-gradient(90deg, transparent 0 118px, var(--room-floor-line) 118px 121px), var(--room-floor); border-top: 10px solid var(--room-trim); }
+  .win { position: absolute; left: 50%; top: 9%; width: 22%; aspect-ratio: 1.15; transform: translateX(-50%); background: linear-gradient(var(--room-window-sky), var(--surface) 140%); border: 10px solid var(--room-trim); border-radius: 12px; box-shadow: inset 0 0 0 3px var(--dragon-line), 0 0 0 3px var(--dragon-line); }
+  .win::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 8px; transform: translateX(-50%); background: var(--room-trim); }
+  .win::after { content: ""; position: absolute; left: 14%; top: 22%; width: 26%; height: 14%; border-radius: 99px; background: var(--surface); opacity: .9; box-shadow: 70px 18px 0 -2px var(--surface); }
+  .it { position: absolute; transform: translateX(-50%); border: 0; background: none; padding: 0; cursor: pointer; border-radius: 16px; touch-action: none; }
+  .it .b-pic { display: block; width: 100%; height: auto; transform: scaleX(var(--flip, 1)); filter: drop-shadow(0 6px 0 var(--room-shadow)); }
+  .it:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
+  .room.is-edit .it { outline: 2px dashed var(--line-strong); outline-offset: 4px; cursor: grab; }
+  .room.is-edit .it.is-sel { outline: 4px solid var(--room-item-select); outline-offset: 5px; }
+  .room.is-edit .it.is-drag { cursor: grabbing; }
+  .room.is-edit::after { content: ""; position: absolute; inset: 0; background: var(--room-drop); pointer-events: none; opacity: 0; transition: opacity .15s; }
+  .room.is-dragging::after { opacity: 1; }
+  .bong { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); border: 0; background: none; padding: 0; cursor: pointer; border-radius: 30px; z-index: 50; }
+  .bong .b-dragon { width: min(210px, 27cqh); height: auto; display: block; }
+  .say { position: absolute; z-index: 80; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); display: flex; align-items: center; gap: var(--space-2); transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; }
+  .say b { font: 800 24px/28px var(--font-display); } .say span { font: 700 15px/18px var(--font-body); color: var(--ink-soft); }
+  .tools { position: absolute; z-index: 90; display: flex; gap: 6px; background: var(--surface); border-radius: var(--radius-pill); padding: 6px; box-shadow: var(--shadow-raised); transform: translate(-50%, calc(-100% - 14px)); }
+  .tools .b-btn { height: 44px; }
+  .hint { position: absolute; left: 16px; top: 14px; z-index: 60; background: var(--surface); border-radius: var(--radius-pill); padding: 6px 14px; font: 700 14px/18px var(--font-body); color: var(--ink); box-shadow: var(--shadow-card); display: flex; gap: 8px; align-items: center; }
+  .tray { width: 250px; flex: none; background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; }
+  .tray h2 { margin: 0; display: flex; align-items: center; gap: var(--space-2); }
+  .tray .grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); overflow: auto; }
+  .ti { border: 2px solid var(--line); background: var(--surface-soft); border-radius: var(--radius-lg); padding: var(--space-2); display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; font: 800 14px/18px var(--font-body); color: var(--ink); }
+  .ti .b-pic { width: 64px; height: 64px; }
+  .ti[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); }
+  .ti.is-lock { cursor: default; color: var(--ink-soft); }
+  .ti.is-lock .b-dragon, .ti.is-lock .b-pic { opacity: .45; }
+  .ti .b-dragon { width: 72px; height: auto; }
+  .wtabs { display: flex; gap: 6px; }
+  .wtabs button { flex: 1; height: 42px; border-radius: var(--radius-pill); border: 2px solid var(--line); background: var(--surface); font: 800 15px/18px var(--font-body); color: var(--ink-soft); cursor: pointer; }
+  .wtabs button[aria-selected="true"] { border-color: var(--ink); color: var(--ink); }
+  .ti .pr { font: 800 13px/16px var(--font-body); color: var(--price-chip-ink); background: var(--price-chip); border-radius: 99px; padding: 1px 8px; display: inline-flex; align-items: center; gap: 2px; }
+  .tray .empty { font: 700 14px/20px var(--font-body); color: var(--ink-soft); }
+  @container (max-height: 800px) { .tray .grid { grid-template-columns: 1fr 1fr; } .ti .b-pic { width: 54px; height: 54px; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, R = B.R;
+  var kid = { id: 'minh', name: 'Minh', grade: 4, level: 3, hair: 'short' };
+  var W = R.roomWords;
+  var EN = { bookshelf: 'bookshelf', lamp: 'lamp', bed: 'bed', rug: 'rug', plant: 'plant', clock: 'clock', picture: 'picture', chair: 'chair', desk: 'desk', toybox: 'toy box' };
+  var START = [{ k: 'rug', x: 50, y: 3, w: 2.2 }, { k: 'bookshelf', x: 12, y: 26, w: 1.5 }, { k: 'lamp', x: 28, y: 26, w: 1 }, { k: 'bed', x: 78, y: 22, w: 1.9 }, { k: 'plant', x: 94, y: 26, w: .9 }, { k: 'picture', x: 24, y: 60, w: 1.1 }, { k: 'clock', x: 77, y: 64, w: .75 }];
+  var STORE0 = ['chair', 'desk', 'toybox'];
+  var HATS = [['', 'Không đội', null], ['cap', 'cap', 'mũ lưỡi trai'], ['beanie', 'beanie', 'mũ len'], ['sunhat', 'sun hat', 'mũ rơm']], TOPS = [['', 'Không mặc', null], ['tee', 'T-shirt', 'áo phông'], ['stripe', 'striped shirt', 'áo sọc'], ['raincoat', 'raincoat', 'áo mưa']];
+  var OWN = { cap: 1, sunhat: 1, tee: 1, stripe: 1 }, PRICE = { beanie: 50, raincoat: 60 };
+  var S;
+  function reset() { S = { items: START.map(function (o) { return Object.assign({ flip: 1 }, o); }), store: STORE0.slice(), sel: -1, hat: 'cap', top: 'tee', wtab: 'hat' }; }
+  reset();
+  function itemHtml(o, i) { return '<button type="button" class="it" data-i="' + i + '" style="left:' + o.x + '%;bottom:' + o.y + '%;width:calc(var(--size-room-item) * ' + o.w + ');--flip:' + o.flip + ';z-index:' + (o.k === 'rug' ? 1 : 40 - Math.round(o.y / 3)) + '" aria-label="' + EN[o.k] + ', ' + W[o.k] + '">' + B.pic(o.k, 120).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '</button>'; }
+  function room(mode, emptyRoom) {
+    return '<div class="room' + (mode === 'edit' ? ' is-edit' : '') + '" aria-label="Phòng của Bông">' + '<div class="win" aria-hidden="true"></div><div class="floor" aria-hidden="true"></div>' +
+      (mode === 'edit' ? '<p class="hint" aria-live="polite">' + B.icon('bulb', 18) + 'Kéo đồ để đặt chỗ · Tab chọn · mũi tên di chuyển · R xoay · Delete cất</p>' : '') +
+      (emptyRoom ? '' : S.items.map(itemHtml).join('')) + '<button type="button" class="bong" data-bong aria-label="Rồng Bông">' + B.dragon(mode === 'edit' ? 'xaydung' : 'chao', 210, { top: S.top || null, hat: mode === 'edit' ? null : (S.hat || null) }) + '</button></div>';
+  }
+  function tray(mode) {
+    if (mode === 'wardrobe') {
+      var list = S.wtab === 'hat' ? HATS : TOPS, cur = S.wtab === 'hat' ? S.hat : S.top;
+      return '<aside class="tray" aria-labelledby="tr-t"><h2 class="title" id="tr-t">' + B.icon('shirt', 24) + 'Tủ đồ</h2><div class="wtabs" role="tablist"><button type="button" role="tab" data-wt="hat" aria-selected="' + (S.wtab === 'hat') + '">Mũ</button><button type="button" role="tab" data-wt="top" aria-selected="' + (S.wtab === 'top') + '">Áo</button></div><div class="grid">' +
+        list.map(function (h) { var own = !h[0] || OWN[h[0]], o = S.wtab === 'hat' ? { hat: h[0] || null } : { top: h[0] || null };
+          return '<button type="button" class="ti' + (own ? '' : ' is-lock') + '" data-wear="' + h[0] + '" aria-pressed="' + (cur === h[0]) + '"' + (own ? '' : ' aria-disabled="true"') + ' aria-label="' + (h[2] ? h[1] + ', ' + h[2] : h[1]) + (own ? '' : ', chưa có, giá ' + PRICE[h[0]] + ' xu') + '">' + B.dragon('chao', 72, o).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '<span lang="' + (h[2] ? 'en' : 'vi') + '">' + h[1] + '</span>' + (own ? '' : '<span class="pr">' + B.icon('coin', 14) + PRICE[h[0]] + '</span>') + '</button>'; }).join('') + '</div><p class="caption b-muted" style="margin:0">Món có giá xu: mua ở Cửa hàng.</p></aside>';
+    }
+    if (mode === 'edit') return '<aside class="tray" aria-labelledby="tr-t"><h2 class="title" id="tr-t">' + B.icon('box', 24) + 'Kho đồ</h2>' + (S.store.length ? '<div class="grid">' + S.store.map(function (k) { return '<button type="button" class="ti" data-store="' + k + '" aria-label="Đặt ' + EN[k] + ' (' + W[k] + ') vào phòng">' + B.pic(k, 64).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '<span lang="en">' + EN[k] + '</span></button>'; }).join('') + '</div>' : '<p class="empty">Kho trống. Mọi đồ đều đang ở trong phòng.</p>') + '<p class="caption b-muted" style="margin:0">Bấm một món (hoặc Enter) để đặt vào giữa phòng.</p></aside>';
+    return '';
+  }
+  function bar(mode, off) {
+    return '<div class="bar"><h1 class="display-l">Phòng của tớ</h1><div class="seg" role="radiogroup" aria-label="Chế độ"><button type="button" role="radio" data-mode="view" aria-checked="' + (mode === 'view') + '"' + (off ? ' disabled' : '') + '>' + B.icon('eye', 20) + 'Xem</button><button type="button" role="radio" data-mode="edit" aria-checked="' + (mode === 'edit') + '"' + (off ? ' disabled' : '') + '>' + B.icon('house', 20) + 'Trang trí</button><button type="button" role="radio" data-mode="wardrobe" aria-checked="' + (mode === 'wardrobe') + '"' + (off ? ' disabled' : '') + '>' + B.icon('shirt', 20) + 'Tủ đồ</button></div></div>';
+  }
+  function top(coins) { return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid, stats: false, right: B.stat('coins', coins == null ? 340 : coins, 'xu') + B.btn({ label: 'Cửa hàng', icon: 'bag', size: 'm', variant: 'secondary', attrs: 'data-shop' }) }); }
+  function page(mode) { return top() + '<div class="scr__body">' + bar(mode) + '<div class="wrap">' + room(mode) + tray(mode) + '</div></div>'; }
+  B.screen({
+    fit: true, level: 3, order: ['normal', 'edit', 'wardrobe', 'loading', 'empty', 'error'], labels: { normal: 'Xem', edit: 'Trang trí', wardrobe: 'Tủ đồ' },
+    notes: { normal: 'Chế độ Xem: bấm đồ vật (hoặc Tab + Enter) để nghe tên tiếng Anh (lamp, bookshelf…) kèm nghĩa; bấm Bông để Bông chào. Tường `room-wall`, sàn `room-floor`, cửa sổ `room-window-sky`.', edit: 'Trang trí: đồ có viền nét đứt; chọn đồ → vòng `room-item-select` + thanh Xoay (R) / Cất vào kho (Delete). Kéo thả bằng chuột; bàn phím: Tab chọn, mũi tên di chuyển (Shift = bước lớn). Kho đồ bên phải: bấm để đặt vào phòng. Bông đội mũ thợ xây.', wardrobe: 'Tủ đồ: tab Mũ / Áo, bấm để mặc cho Bông (tên tiếng Anh của món đồ được đọc). Món chưa có hiện mờ + giá xu, mua ở Cửa hàng.', loading: 'Khung xương phòng.', empty: 'Phòng chưa có đồ: Bông đứng giữa phòng trống, gợi ý ghé Cửa hàng.', error: 'Không tải được phòng.' },
+    states: {
+      normal: function () { return page('view'); }, edit: function () { return page('edit'); }, wardrobe: function () { return page('wardrobe'); },
+      loading: function () { return top('··') + '<div class="scr__body">' + bar('view', true) + '<div class="wrap">' + B.sk('100%', '100%', 'var(--radius-xl)') + '</div></div>'; },
+      empty: function () { return top(120) + '<div class="scr__body">' + bar('view') + '<div class="wrap">' + room('view', true).replace('</div></div><button', '</div></div><div class="b-bubble b-bubble--left body-l" style="position:absolute;left:58%;top:22%;max-width:340px;z-index:60">Phòng còn trống trơn! Mình ghé <b>Cửa hàng</b> chọn món đồ đầu tiên nhé.</div><button') + '</div></div>'; },
+      error: function () { return top() + '<div class="scr__body">' + bar('view', true) + B.stateBlock({ kind: 'error', title: 'Chưa mở được phòng', text: 'Đồ đạc của cậu vẫn còn nguyên. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: { all: function (scr, ctx) {
+      if (['normal', 'edit', 'wardrobe', 'empty'].indexOf(ctx.state) < 0) return;
+      var mode = ctx.state === 'edit' ? 'edit' : ctx.state === 'wardrobe' ? 'wardrobe' : 'view', rm = scr.querySelector('.room');
+      function re(sel) { ctx.setState(ctx.state); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function say(el, en, vi) { var o = scr.querySelector('.say'); if (o) o.remove(); var r = el.getBoundingClientRect(), sr = rm.getBoundingClientRect(), sc = (scr.closest('.dsf-vp') || {}).__scale || 1; var d = document.createElement('div'); d.className = 'say'; d.setAttribute('role', 'status'); d.innerHTML = B.speak(en, 's', 'Nghe: ' + en) + '<span><b lang="en">' + en + '</b><br><span>' + vi + '</span></span>'; d.style.left = ((r.left + r.width / 2 - sr.left) / sc) + 'px'; d.style.top = ((r.top - sr.top) / sc) + 'px'; rm.appendChild(d); B.L.say(en, .85); ctx.later(function () { d.remove(); }, 2600); }
+      scr.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { S.sel = -1; ctx.setState(b.dataset.mode === 'view' ? 'normal' : b.dataset.mode); var f = ctx.scr.querySelector('[data-mode="' + b.dataset.mode + '"]'); f && f.focus(); }); });
+      var shop = scr.querySelector('[data-shop]'); shop && shop.addEventListener('click', function () { say(shop, 'shop', 'cửa hàng (màn Screen42-Shop)'); });
+      var bong = scr.querySelector('[data-bong]'); bong.addEventListener('click', function () { say(bong, 'Hello, Minh!', 'Chào Minh!'); });
+      var items = scr.querySelectorAll('.it');
+      if (mode !== 'edit') items.forEach(function (el) { el.addEventListener('click', function () { var o = S.items[+el.dataset.i]; say(el, EN[o.k], W[o.k]); }); });
+      if (mode === 'edit') {
+        var tools = null;
+        function showTools(el) { if (tools) tools.remove(); tools = null; if (!el) return; var r = el.getBoundingClientRect(), sr = rm.getBoundingClientRect(), sc = (scr.closest('.dsf-vp') || {}).__scale || 1; tools = document.createElement('div'); tools.className = 'tools'; tools.setAttribute('role', 'toolbar'); tools.setAttribute('aria-label', 'Thao tác với đồ');
+          tools.innerHTML = B.btn({ label: 'Xoay', icon: 'rotate', variant: 'secondary', size: 's', key: 'R', attrs: 'data-rot' }) + B.btn({ label: 'Cất vào kho', icon: 'box', variant: 'secondary', size: 's', key: 'Del', attrs: 'data-stow' });
+          tools.style.left = ((r.left + r.width / 2 - sr.left) / sc) + 'px'; tools.style.top = Math.max(60, (r.top - sr.top) / sc) + 'px'; rm.appendChild(tools);
+          tools.querySelector('[data-rot]').addEventListener('click', function () { rot(+el.dataset.i); }); tools.querySelector('[data-stow]').addEventListener('click', function () { stow(+el.dataset.i); }); }
+        function select(i, focus) { S.sel = i; items.forEach(function (x) { x.classList.toggle('is-sel', +x.dataset.i === i); x.setAttribute('aria-pressed', +x.dataset.i === i); }); var el = scr.querySelector('.it[data-i="' + i + '"]'); showTools(el); if (focus && el) el.focus({ preventScroll: true }); }
+        function rot(i) { S.items[i].flip *= -1; re('.it[data-i="' + i + '"]'); select(i); }
+        function stow(i) { var o = S.items.splice(i, 1)[0]; S.store.push(o.k); S.sel = -1; re('[data-store="' + o.k + '"]'); }
+        function move(i, dx, dy) { var o = S.items[i]; o.x = Math.max(5, Math.min(95, o.x + dx)); o.y = Math.max(0, Math.min(o.k === 'rug' ? 12 : 72, o.y + dy)); var el = scr.querySelector('.it[data-i="' + i + '"]'); el.style.left = o.x + '%'; el.style.bottom = o.y + '%'; el.style.zIndex = o.k === 'rug' ? 1 : 40 - Math.round(o.y / 3); showTools(el); }
+        items.forEach(function (el) {
+          var i = +el.dataset.i;
+          el.addEventListener('focus', function () { select(i); });
+          el.addEventListener('keydown', function (e) {
+            var st = e.shiftKey ? 6 : 2;
+            if (e.key === 'ArrowLeft') { e.preventDefault(); move(i, -st, 0); } else if (e.key === 'ArrowRight') { e.preventDefault(); move(i, st, 0); } else if (e.key === 'ArrowUp') { e.preventDefault(); move(i, 0, st); } else if (e.key === 'ArrowDown') { e.preventDefault(); move(i, 0, -st); }
+            else if (e.key === 'r' || e.key === 'R') { e.preventDefault(); rot(i); } else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); stow(i); }
+          });
+          el.addEventListener('pointerdown', function (e) {
+            e.preventDefault(); el.focus({ preventScroll: true }); select(i); var sc = (scr.closest('.dsf-vp') || {}).__scale || 1, r = rm.getBoundingClientRect(), o = S.items[i], sx = e.clientX, sy = e.clientY, ox = o.x, oy = o.y, moved = false; el.setPointerCapture(e.pointerId);
+            function mv(ev) { var dx = (ev.clientX - sx) / r.width * 100, dy = -(ev.clientY - sy) / r.height * 100; if (!moved && Math.abs(dx) + Math.abs(dy) > 1) { moved = true; rm.classList.add('is-dragging'); el.classList.add('is-drag'); if (tools) tools.remove(); } if (moved) { o.x = ox; o.y = oy; move(i, dx, dy); if (tools) tools.remove(); } }
+            function up() { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); rm.classList.remove('is-dragging'); el.classList.remove('is-drag'); showTools(el); }
+            el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up);
+          });
+        });
+        scr.querySelectorAll('[data-store]').forEach(function (b) { b.addEventListener('click', function () { var k = b.dataset.store; S.store.splice(S.store.indexOf(k), 1); S.items.push({ k: k, x: 40, y: 20, w: k === 'desk' ? 1.4 : 1, flip: 1 }); var i = S.items.length - 1; re('.it[data-i="' + i + '"]'); }); });
+        if (S.sel > -1) select(S.sel);
+      }
+      if (mode === 'wardrobe') {
+        scr.querySelectorAll('[data-wt]').forEach(function (b) { b.addEventListener('click', function () { S.wtab = b.dataset.wt; re('[data-wt="' + S.wtab + '"]'); }); });
+        scr.querySelectorAll('[data-wear]').forEach(function (b) { b.addEventListener('click', function () { var v = b.dataset.wear; if (b.classList.contains('is-lock')) { say(b, 'Cần ' + PRICE[v] + ' xu', 'Ghé Cửa hàng để mua nhé!'); return; } if (S.wtab === 'hat') S.hat = v; else S.top = v; var list = S.wtab === 'hat' ? HATS : TOPS, h = list.filter(function (x) { return x[0] === v; })[0]; re('[data-wear="' + v + '"]'); if (h[2]) { B.L.say(h[1], .85); ctx.burst(ctx.scr.querySelector('[data-bong]'), null, 6); } }); });
+      }
+    } }
+  });
+})();
+</script>
+</body>
+</html>

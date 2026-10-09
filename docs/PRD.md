@@ -54,6 +54,8 @@ Chặng
 
 - Bài học Tiểu học dài 10–15 phút. Bài học THCS dài 15–25 phút, có thêm phần ngữ pháp và luyện kỹ năng.
 - Mỗi từ, câu hỏi và bài học đều được gắn nhãn: **cấp, chủ đề, kỹ năng, chủ điểm ngữ pháp, độ khó**, và nếu có thì **lớp + Unit SGK**. Nhờ vậy, cùng một kho nội dung phục vụ được cả 4 cách học bên dưới.
+- **Khung chương trình** có sẵn cho cả 10 cấp: mỗi cấp có danh sách chủ đề và **từ mục tiêu** của từng chủ đề. Cấp 1–5 dựa trên danh sách từ Cambridge Starters (cấp 1–2), Movers (cấp 3–4), Flyers (cấp 5). Cấp 6–9 theo các chủ đề của chương trình tiếng Anh THCS (tự đặt lời, không chép SGK). Cấp 10 theo A2 Key và B1 Preliminary. Chủ đề trong khung mà chưa soạn chi tiết thì ở trạng thái "Chưa có bài", học sinh không thấy.
+- **Tạo bài tự động từ danh sách từ:** khi một chủ đề đã có từ vựng đầy đủ (nghĩa, câu ví dụ, hình), web tự chia thành các bài 5–8 từ, mỗi bài gồm các dạng 8.1–8.4, cuối chủ đề có trận trùm. Bố mẹ không cần tự soạn từng bài.
 
 ### A3. Bốn cách học
 
@@ -221,6 +223,8 @@ Mỗi dạng bài là một mẫu giao diện riêng, đặt trong khung C7.
 | 8.9 | Nghe và gõ (chính tả) | TH, THCS | 2 | Nghe từ hoặc câu, gõ bằng bàn phím thật. Gợi ý: hiện chữ cái đầu. |
 | 8.10 | Điền từ vào câu | TH, THCS | 2 | Câu có ô trống, kéo thẻ từ vào hoặc gõ. |
 | 8.11 | Đọc hiểu ngắn | TH | 2 | Đoạn 3–6 câu có hình minh họa và 2–3 câu hỏi chọn đáp án. |
+| 8.27 | Khám phá từ | TH | 2 | Từ ở giữa, 4–6 nhánh câu hỏi WH (What's this? What color? What does it eat/have? What can it do? Where does it live?). Bé đoán từng nhánh bằng chọn hình, nhánh mở ra đáp án có loa; xong thì nói theo một câu và in được. Có ở bài học, Sổ từ và ôn tập. Chỉ cho danh từ cụ thể. Có đoạn văn đọc to (chữ sáng theo giọng) và nút Dịch nghĩa hiện bản tiếng Việt dưới từng câu; ở chế độ tự khám phá có liên kết sang Họ vần. |
+| 8.28 | Họ vần và Ghép chữ đầu | TH | 2 | Vần ở giữa (-at), các từ cùng vần cùng âm xung quanh, phần vần tô màu; ô "Bẫy chính tả" cho từ cùng chữ khác âm (eat). Trò Ghép chữ đầu: b + at = bat. Có câu vui đọc to kèm dịch; mỗi thẻ từ có nút sang Ghép chữ đầu và Khám phá từ. Họ từ gốc (art → artist) để GĐ3 cùng 8.17. |
 
 **Nhóm THCS**
 
@@ -447,6 +451,9 @@ Trả lời đúng thì lên một hộp, sai thì về hộp 1.
 
 | Bảng | Dùng để | Cột chính |
 |---|---|---|
+| word_questions | Nhánh câu hỏi Khám phá từ (8.27) | word_id, sort_order, kind, question_en, question_vi, answers (JSON), distractors (JSON), status |
+| word_readings | Đoạn văn đọc to có dịch của Khám phá từ và Họ vần | owner_type (word, family), owner_id, sentences (JSON: en, vi), audio, status |
+| word_families, word_family_members | Họ vần (8.28), họ từ gốc ở GĐ3 | pattern, kind (rhyme, root), sound_ipa, level_id, status / family_id, word_id, same_sound, sort_order |
 | stories, story_pages | Truyện tranh đọc to (8.6) | level_id, unit_id, title, title_vi, cover, new_words (JSON), status, sort_order / story_id, sort_order, kind (page, question), image, sentences (JSON: en, vi), audio, question_id |
 | phonics_sounds | Âm phonics (8.5) | grapheme, kind (single, consonant_digraph, vowel_digraph), ipa, examples (JSON), audio, sort_order, status |
 | words | Từ vựng | word, ipa, part_of_speech, meaning_vi, example_en, example_vi, image, audio, example_audio, level_id, extra (JSON: họ từ, cụm từ đi kèm) |
@@ -641,4 +648,143 @@ Khu quản trị nội dung:
 11. Ngân hàng câu hỏi: bộ lọc theo dạng bài, cấp, kỹ năng, độ khó; biểu mẫu thay đổi theo dạng bài; nút xem trước như học sinh.
 12. Tạo đề thi theo ma trận: số câu mỗi dạng, độ khó, thời gian.
 13. Nhập Excel: tải tệp mẫu, xem trước và báo lỗi từng dòng trước khi lưu.
+```
+
+### Prompt 4: Bổ sung GĐ1 (màn Tiểu học còn thiếu, nhập chủ đề bằng Excel)
+
+Dùng sau Prompt 3, trong cùng dự án. Bổ sung những màn GĐ1 mà Prompt 1 chưa có, và phần nhập chủ đề mới, khung chương trình trong khu quản trị.
+
+```text
+Tiếp tục hệ thống giao diện "Học cùng Bông" đã có trong dự án này. Hãy bổ sung các màn còn thiếu cho giai đoạn đầu, gồm phần A cho bộ Tiểu học và phần B cho khu quản trị nội dung. Mỗi phần dùng đúng phong cách và thành phần đã có của khu đó. Thêm vào cùng thư viện, cùng cách xem trước như các màn đã có, không sửa các màn đã có.
+
+A. Bộ Tiểu học (phong cách vui tươi, có rồng Bông):
+1. Bài xếp lớp, gồm 3 màn. Màn giới thiệu: rồng Bông chào và rủ bé "Mình cùng chơi vài câu để biết cậu bắt đầu từ đâu nhé!", nút Bắt đầu và nút "Bỏ qua, bắt đầu theo lớp". Màn câu hỏi: dạng nghe và chọn hình, không hiện đúng hay sai sau mỗi câu, thanh tiến độ dạng 12 ngôi sao nhỏ. Màn kết quả: cấp đề xuất (ví dụ "Cấp 2 · Mầm non"), một nhận xét ngắn, nút "Bắt đầu học" và nút "Chọn cấp khác".
+2. Bài học "Chọn từ đúng cho hình": một hình lớn, 3 thẻ chữ có nhãn phím 1–3, bấm vào chữ để nghe đọc, cùng khung bài học và dải phản hồi như màn "Nghe và chọn hình".
+3. Ôn tập hôm nay, gồm 2 màn. Màn bắt đầu: số từ đến hạn ôn, 5 hộp ghi nhớ hiện bằng màu theo mức thuộc, nút Bắt đầu ôn. Màn tổng kết: "Hôm nay cậu đã ôn 12 từ, 3 từ được chuyển lên hộp vàng!", phần thưởng sao và xu, nút Về trang chủ.
+4. Hộp thoại "Dừng bài học?" khi bấm thoát giữa bài: rồng Bông hơi buồn, nút "Học tiếp" (nút chính) và "Dừng lại".
+5. Màn "Sắp có" cho các nút chưa làm như Bộ sưu tập, Phòng của tớ: rồng Bông đang xây dựng, lời nhắn ngắn và nút Về trang chủ.
+
+B. Khu quản trị nội dung (người quản trị là phụ huynh, không phải giáo viên):
+6. Nhập chủ đề mới bằng Excel (thêm vào màn Nhập và xuất Excel đã có): nút tải tệp mẫu "Chủ đề mới" gồm 2 trang (Chủ đề: cấp, tên tiếng Anh, tên tiếng Việt; Từ vựng: từ, phiên âm, loại từ, nghĩa, câu ví dụ tiếng Anh, câu ví dụ tiếng Việt). Sau khi chọn tệp: bảng xem trước báo lỗi từng dòng, nhãn cảnh báo "Từ đã có" và "Chưa có hình"; tùy chọn "Tự tạo bài học" (số từ mỗi bài 5–8) kèm danh sách các bài sẽ được tạo; nút "Nhập" (lưu dạng Nháp), chỉ bật khi hết lỗi.
+7. Khung chương trình trong cây lộ trình đã có: chủ đề có sẵn trong khung mà chưa có bài hiện nhãn "Chưa có bài" (màu trung tính, khác Nháp và Xuất bản) kèm số từ mục tiêu; bấm vào thì mở bảng danh sách từ mục tiêu, có nút "Xuất Excel để điền" và "Nhập Excel". Ví dụ cấp 5 · Cây lớn: "Holidays and travel" (42 từ mục tiêu), "Feelings" (35 từ).
+Ngoài ra, trên Bảng điều khiển quản trị đã có, thêm thẻ "Chủ đề chưa có bài" theo từng cấp.
+
+Yêu cầu thêm: mọi màn có dữ liệu thiết kế đủ 4 trạng thái (bình thường, đang tải dạng khung xương, trống, lỗi có nút thử lại). Có viền focus rõ khi dùng phím Tab. Dùng nội dung thật (cat, dog, apple…), không dùng lorem ipsum. Mọi giá trị mới đều đặt tên thành token và có trong trang tổng hợp hệ thống giao diện.
+```
+
+### Prompt 5A: GĐ2 Tiểu học, dạng bài mới, trò chơi, trận trùm, bài thi lên cấp
+
+Dùng sau Prompt 4, trong cùng dự án. Chạy 5A xong rồi mới chạy 5B. Bảng đối chiếu từng mục GĐ2: `y-tuong/doi-chieu-prompt-dac-ta.md`.
+
+```text
+Tiếp tục hệ thống giao diện "Học cùng Bông" đã có trong dự án này. Lần này hãy thiết kế giai đoạn 2 cho bộ Tiểu học (cấp 1–5): 7 dạng bài mới, 3 mini game, trận trùm cuối vùng và bài thi lên cấp. Dùng đúng phong cách, token và thành phần đã có của bộ Tiểu học (lớp `b-`, rồng Bông, khung bài học của màn "Nghe và chọn hình", dải phản hồi, nhãn phím, nút loa). Thêm vào cùng thư viện, cùng cách xem trước. KHÔNG sửa các màn đã có; khi cần một biến thể của màn cũ thì tạo màn mới.
+
+Đặt đúng tên thành phần như trong ngoặc ở mỗi mục để đối chiếu với code.
+
+Quy tắc chung cho mọi dạng bài và trò chơi bên dưới:
+- Đặt trong khung bài học đã có: nút thoát (mở hộp thoại "Dừng bài học?" đã có), thanh tiến độ, chân bài có Nghe lại (Space), Gợi ý (H), Kiểm tra hoặc Tiếp tục (Enter).
+- Đúng: hiệu ứng xanh, sao bay vào thanh tiến độ. Chưa đúng: cam nhẹ, rồng Bông động viên, cho làm lại; sai 2 lần tự bật gợi ý. Không bao giờ có màn thua, không trừ điểm, không đếm ngược.
+- Mọi từ và câu tiếng Anh có nút loa. Làm được hoàn toàn bằng bàn phím và bằng chuột.
+- Vừa màn 1366×768 không cuộn; xem được ở 1440×900 và 1920×1080.
+- Đủ 4 trạng thái dữ liệu: bình thường, đang tải (khung xương), trống, lỗi có nút Thử lại.
+
+A. Dạng bài mới
+1. Ghép âm phonics (Screen23-Phonics): hình lớn (ví dụ con mèo), các ô chữ rời c, a, t xáo trộn và các ô trống theo số chữ cái. Bấm ô chữ để nghe âm của chữ đó (/k/, /æ/, /t/). Kéo ô chữ vào ô trống theo thứ tự, hoặc dùng phím chữ cái để điền. Ghép xong thì Bông đọc âm nối dần rồi đọc cả từ, các ô sáng lên theo. Ví dụ thêm: dog, sun, fish (ô "sh" là một ô ghép).
+2. Truyện tranh có đọc to (Screen24-Story): mỗi trang một tranh lớn và 1–2 câu. Giọng đọc chạy, từng chữ sáng lên theo giọng đọc. Bấm từ bất kỳ để nghe riêng từ đó kèm nghĩa ngắn. Nút trang trước, trang sau (← →), Đọc lại trang, Tự đọc / Đọc cho tớ nghe. Có trang câu hỏi xen giữa truyện (chọn hình hoặc chọn câu đúng). Trang cuối: "Hết truyện", danh sách từ mới trong truyện có loa. Truyện mẫu: "Tom's Red Kite" 6 trang, cấp 3.
+3. Luyện nói từ và câu (Screen25-Speak): hình, từ hoặc câu mẫu ("I like apples."), nút nghe mẫu, nút micro lớn (phím R). Thiết kế đủ các bước: sẵn sàng; đang ghi âm (sóng âm, vạch thời lượng đầy dần tối đa 10 giây, bấm lại hoặc R để dừng); đang chấm; kết quả 1–3 sao chấm dễ tính, câu khen của Bông, nút Nghe giọng tớ và Nghe giọng mẫu, Nói lại, Tiếp tục. Thêm 2 trạng thái riêng: trình duyệt chưa cho dùng micro (hướng dẫn bố mẹ bấm Cho phép + Thử lại) và máy không có micro (thông báo nhẹ, bài được thay bằng câu nghe và chọn, nút Tiếp tục).
+4. Sắp xếp từ thành câu (Screen26-SentenceOrder): hình gợi ý, các thẻ từ xáo trộn, hàng ô để kéo vào cho thành câu ("She / is / reading / a / book"). Bấm thẻ để chuyển xuống hàng, bấm lại để trả lên; phím 1–9 chọn thẻ, Backspace bỏ thẻ cuối. Đúng thì đọc cả câu.
+5. Nghe và gõ (Screen27-Dictation): loa lớn đọc từ hoặc câu ngắn, ô gõ chữ to bằng bàn phím thật, mỗi chữ cái một ô cho từ ngắn, một dòng cho câu. Gợi ý: hiện chữ cái đầu, rồi phát chậm. Chưa đúng: tô cam chữ cái sai, giữ phần đúng.
+6. Điền từ vào câu (Screen28-FillBlank): câu có 1 ô trống kèm hình ("The cat is ___ the box."), 3–4 thẻ từ có nhãn phím để kéo vào ô hoặc gõ thẳng vào ô.
+7. Đọc hiểu ngắn (Screen29-ShortReading): đoạn 3–6 câu có hình minh họa, nút nghe cả đoạn, bấm từ để nghe; bên cạnh là 2–3 câu hỏi chọn đáp án có nhãn phím; câu hỏi đã trả lời hiện dấu tick.
+
+B. Mini game (đều là một bước trong bài học)
+Mỗi game có: lớp phủ bắt đầu (1 dòng cách chơi có hình, nút Bắt đầu, Enter), tạm dừng bằng Esc hoặc nút ⏸ (Chơi tiếp, Thoát), bảng kết thúc (số từ đúng, sao, nút Tiếp tục). Không đếm ngược, không mất mạng.
+8. Bong bóng từ vựng (Screen30-Bubbles): nghe một từ, các bong bóng chứa hình bay lên chậm; bấm đúng bong bóng (hoặc phím số in trên bong bóng) để nổ. Bong bóng bay mất thì sẽ bay lại sau.
+9. Đập chuột chữ cái (Screen31-WhackLetters): lưới 3×3 hang, chuột chui lên mang chữ cái hoặc hình; Bông đọc một âm, bé đập đúng con bằng chuột hoặc phím 1–9 (bố trí như bàn phím số). Đập sai thì chuột lè lưỡi vui, không trừ điểm.
+10. Đua xe trả lời (Screen32-Race): đường đua ngang, xe của bé và "xe ma" mờ (thành tích lần trước của chính bé). Câu hỏi ở trên với 3–4 đáp án có nhãn phím; mỗi câu đúng xe chạy thêm một đoạn. Xe ma đi theo số câu đúng của lần trước sau cùng số câu, không chạy theo thời gian. Về đích: "Cậu nhanh hơn lần trước 2 câu!" hoặc lời động viên. Lần đầu chơi thì không có xe ma.
+
+C. Trận trùm và bài thi lên cấp
+11. Trận trùm cuối vùng (Screen33-Boss): màn mở đầu có "trùm" là một nhân vật dễ thương theo chủ đề vùng (ví dụ Vua Khỉ của vùng Con vật), lời thách thức vui và nút Bắt đầu. Trong trận: 5–8 câu trộn các dạng đã học, thanh "năng lượng của trùm" giảm khi bé trả lời đúng; trả lời sai chỉ cho làm lại, trùm không bao giờ thắng. Kết thúc: trùm làm bạn với bé, sao và xu, nút Về bản đồ.
+12. Cổng bài thi lên cấp (LevelGate, và màn Screen34-IslandMapGate là bản đồ đảo có cổng ở cuối đảo): cổng khóa khi chưa xong mọi vùng (hiện số vùng còn lại), mở khi đã xong, bấm vào thì vào bài thi. Tạo màn mới, không sửa bản đồ đảo đã có.
+13. Giới thiệu bài thi lên cấp (Screen35-LevelTestIntro): Bông nói "Thử thách lên đảo Cành cây!", thẻ thông tin (20 câu, trộn các dạng bài của cấp, không đếm giờ, cần đúng 80%), nút Bắt đầu và Để sau. Các câu hỏi dùng khung bài học, thanh tiến độ 20 chấm.
+14. Đạt bài thi lên cấp (Screen36-LevelUp): màn chúc mừng lớn, rồng Bông lớn lên (trước và sau), mở đảo mới trên bản đồ, phần thưởng sao, xu, huy hiệu, nút "Đến đảo mới".
+15. Chưa đạt bài thi lên cấp (Screen37-LevelTestRetry): Bông động viên, số câu đúng, 2–3 chủ đề nên ôn lại mỗi chủ đề có nút "Ôn chủ đề này", nút Thi lại sau.
+16. Rồng Bông lớn lên (MascotGrowth): 5 dáng của Bông theo cấp 1–5 (Hạt giống bé xíu đến Cây lớn gần tuổi teen), cùng nét vẽ, cùng 4 màu cho bé chọn; mọi biểu cảm đã có và 2 biểu cảm bổ sung đều dùng được cho từng dáng.
+
+Yêu cầu thêm: nội dung thật theo đúng cấp (cat, dog, apple, "She is reading a book."), không dùng lorem ipsum. Mọi giá trị mới (màu bong bóng, đường đua, hang chuột, năng lượng trùm, sóng âm ghi âm…) đều đặt tên thành token và có trong trang tổng hợp hệ thống giao diện. Viền focus rõ khi dùng Tab. Cuối cùng, liệt kê lại tên 16 thành phần vừa thêm theo đúng số thứ tự ở trên để tôi đối chiếu.
+```
+
+### Prompt 5B: GĐ2 phần thưởng, phòng của Bông, chi tiết còn thiếu, khu người lớn
+
+Dùng sau Prompt 5A, trong cùng dự án.
+
+```text
+Tiếp tục hệ thống giao diện "Học cùng Bông" đã có trong dự án này, sau phần dạng bài và trò chơi giai đoạn 2 vừa làm. Lần này gồm 3 phần: A là phần thưởng và phòng của Bông cho bộ Tiểu học; B là các chi tiết Tiểu học còn thiếu; C là các màn người lớn cho giai đoạn 2. Mỗi phần dùng đúng phong cách và thành phần đã có của khu đó (Tiểu học: lớp `b-`, rồng Bông; người lớn: `Bong.A`, lớp `a-`, theme `thcs` sáng, không linh vật trừ màn trống). Thêm vào cùng thư viện, cùng cách xem trước. KHÔNG sửa các màn đã có; khi cần một biến thể của màn cũ thì tạo màn mới.
+
+Đặt đúng tên thành phần như trong ngoặc ở mỗi mục để đối chiếu với code. Mọi màn có dữ liệu đủ 4 trạng thái (bình thường, đang tải dạng khung xương, trống, lỗi có nút Thử lại), xem được ở 1366×768, 1440×900 và 1920×1080, dùng được hoàn toàn bằng bàn phím.
+
+A. Phần thưởng và Phòng của tớ (Tiểu học)
+1. Bộ sưu tập, tab Sticker (Screen38-Stickers): album chia theo chủ đề (Con vật, Xe cộ, Khủng long, Trái cây…), mỗi trang một lưới ô; sticker đã có hiện màu kèm tên tiếng Anh và loa, ô chưa có hiện bóng mờ. Trên cùng: số sticker đã có trên tổng số, chuyển trang album bằng ← →.
+2. Bộ sưu tập, tab Huy hiệu (Screen39-Badges): lưới huy hiệu như "7 ngày liên tiếp", "100 từ đầu tiên", "Qua đảo Hạt giống", "Thắng 5 trận trùm"; huy hiệu chưa đạt hiện mờ kèm điều kiện và thanh tiến độ (ví dụ 63/100 từ). Bấm vào huy hiệu mở thẻ chi tiết.
+3. Nhận phần thưởng mới (RewardPopup): hộp thoại mở quà khi bé nhận sticker hoặc huy hiệu mới, rồng Bông chúc mừng, tên tiếng Anh có loa, số xu thưởng (huy hiệu +50 xu), nút "Cho vào bộ sưu tập".
+4. Kết thúc bài có sticker bất ngờ (Screen40-LessonEndSticker): biến thể mới của màn Kết thúc bài, thêm hộp quà mở ra sticker bất ngờ. Không sửa màn Kết thúc bài cũ.
+5. Phòng của tớ (Screen41-MyRoom): căn phòng nơi rồng Bông sống, nhìn chính diện. Chế độ xem và chế độ Trang trí: kéo thả đồ đạc để đặt chỗ, xoay, cất vào kho; có cách làm bằng bàn phím (Tab chọn đồ, phím mũi tên di chuyển, Delete cất đi). Bấm vào đồ vật để nghe tên tiếng Anh ("lamp", "bookshelf"). Ngăn Tủ đồ để mặc mũ, áo cho Bông. Thanh trên hiện số xu, nút Cửa hàng.
+6. Cửa hàng (Screen42-Shop): 3 nhóm Nội thất, Quần áo, Mũ; thẻ món đồ có hình, tên tiếng Anh có loa, giá bằng xu, trạng thái Đã có. Hộp thoại xác nhận mua; không đủ xu thì nút mờ và Bông nói còn thiếu bao nhiêu xu, gợi ý học thêm một bài. Không có tiền thật, không có quảng cáo.
+7. Trang chủ có Bông mặc đồ (Screen43-HomeDressed): biến thể của trang chủ, Bông mặc mũ áo bé đã chọn, 4 nút lớn đều dẫn tới màn thật. Kèm thẻ nổi Chuỗi ngày khi bấm vào số chuỗi ngày: 7 ngày trong tuần đánh dấu ngày đã học, "thẻ nghỉ phép" của tuần (còn hoặc đã dùng) và lời giải thích ngắn.
+
+B. Chi tiết Tiểu học còn thiếu
+8. Sổ từ bổ sung (Screen44-NotebookPlus): màn Sổ từ mới có thêm: trên cùng số từ đã gặp và số từ đã thuộc; lọc theo cấp ngoài lọc theo chủ đề; bấm thẻ thì mở thẻ phóng to (hình lớn, từ, nghĩa, câu ví dụ, nút nghe từ và nghe câu, mức thuộc); nút "In danh sách từ".
+9. Bản in danh sách từ (Screen45-WordListPrint): trang khổ A4 dọc in được trắng đen: tên bé, cấp, chủ đề, bảng gồm hình nhỏ, từ, nghĩa, câu ví dụ, ô trống để bé tự viết lại từ.
+10. Nút học tập trung và âm thanh (LessonTools, và màn Screen46-LessonFocus): nút toàn màn hình trên đầu khung bài học (ẩn mọi thứ ngoài bài, Esc để thoát chế độ này), nút âm thanh mở bảng nhỏ bật tắt nhạc nền và hiệu ứng âm thanh, kéo âm lượng. Screen46 là một màn bài học ở chế độ toàn màn hình có 2 nút này.
+11. Chưa đến giờ học (Screen47-OutsideHours): khi bé mở web ngoài khung giờ bố mẹ cho phép: rồng Bông đang chơi ngoài vườn, lời nhắn "Giờ học của cậu bắt đầu lúc 17:00 nhé!", các ngày được học trong tuần, nút "Bố mẹ mở" (nhập PIN). Cùng họ với màn Hết giờ học nhưng ban ngày.
+
+C. Khu người lớn
+12. Tiến độ của con và mở khóa thủ công (Adult17-Progress): khu bố mẹ, chọn con ở thanh trên; cây Cấp → Chủ đề → Bài với trạng thái khóa, đang học, đã xong (số sao); bố mẹ chọn bài hoặc chủ đề để mở khóa thủ công qua hộp thoại xác nhận; có lọc và tìm.
+13. Câu hỏi dạng mới (Adult18-QuestionTypes2): ngăn kéo biểu mẫu trong Ngân hàng câu hỏi cho 7 dạng: Ghép âm phonics (từ, tách thành các ô âm, chọn âm thanh cho từng ô), Luyện nói (câu mẫu, âm thanh mẫu, mức dễ tính), Sắp xếp câu (câu gốc tự tách thẻ, thêm từ nhiễu), Nghe và gõ (âm thanh, các đáp án chấp nhận), Điền từ (câu có ô trống, các thẻ từ), Đọc hiểu ngắn (đoạn văn, hình, 2–3 câu hỏi), Truyện (chọn truyện có sẵn). Mỗi dạng có báo lỗi dưới ô và nút "Xem như học sinh".
+14. Soạn truyện tranh (Adult19-StoryEditor): danh sách trang bên trái (kéo thả sắp xếp, thêm, xóa qua hộp thoại); khung giữa sửa trang (tranh, 1–2 câu, âm thanh đọc, nút "Tạo giọng đọc tự động"); chèn trang câu hỏi giữa truyện; thông tin truyện (tên, cấp, chủ đề, từ mới) và Nháp/Xuất bản; nút xem trước bằng giao diện Tiểu học.
+15. Âm phonics (Adult20-PhonicsSounds): bảng các âm (chữ đơn a–z, âm ghép sh, ch, th, ee, oo…) có ví dụ từ, nút nghe, tải lên hoặc tạo âm thanh, lọc âm còn thiếu âm thanh.
+16. Danh mục phần thưởng (Adult21-Rewards): 3 thẻ Sticker (theo album), Huy hiệu (điều kiện chọn từ danh sách như số ngày liên tiếp, số từ đã thuộc, qua cấp, số trận trùm; kèm xu thưởng), Đồ trong phòng (nhóm, giá xu, hình). Bảng có tìm, lọc, sắp xếp, phân trang; ngăn kéo biểu mẫu; Nháp/Xuất bản.
+
+Yêu cầu thêm: nội dung thật (cat, dog, apple, lamp, bookshelf, tên bé như "Minh, lớp 4, cấp 3 Lá xanh"), không dùng lorem ipsum. Mọi giá trị mới (màu album, khung sticker, sàn và tường phòng, giá xu, bản in…) đều đặt tên thành token và có trong trang tổng hợp hệ thống giao diện. Viền focus rõ khi dùng Tab. Cuối cùng, liệt kê lại tên 16 thành phần vừa thêm theo đúng số thứ tự ở trên để tôi đối chiếu.
+```
+
+### Prompt 5C: Khám phá từ và Họ vần (bổ sung GĐ2)
+
+Dùng sau Prompt 5B, trong cùng dự án. Đề xuất: `y-tuong/de-xuat-kham-pha-tu-ho-van.md`.
+
+```text
+Tiếp tục hệ thống giao diện "Học cùng Bông" đã có trong dự án này, sau các màn giai đoạn 2 vừa làm. Lần này thêm 2 chức năng học từ vựng cho bộ Tiểu học: "Khám phá từ" (sơ đồ câu hỏi quanh một từ) và "Họ vần" (mạng các từ cùng vần), kèm trò "Ghép chữ đầu", phần đọc to đoạn văn có dịch nghĩa, liên kết qua lại giữa các màn này, và 2 màn quản trị để soạn nội dung. Dùng đúng phong cách, token và thành phần đã có (Tiểu học: lớp `b-`, rồng Bông, khung bài học, dải phản hồi, nhãn phím, nút loa, hình minh họa từ vựng; người lớn: `Bong.A`, lớp `a-`, theme `thcs` sáng). Thêm vào cùng thư viện, cùng cách xem trước. KHÔNG sửa các màn đã có; khi cần một biến thể của màn cũ thì tạo màn mới.
+
+Đặt đúng tên thành phần như trong ngoặc ở mỗi mục để đối chiếu với code. Mọi màn có dữ liệu đủ 4 trạng thái (bình thường, đang tải dạng khung xương, trống, lỗi có nút Thử lại), vừa màn 1366×768 không cuộn, xem được ở 1440×900 và 1920×1080, dùng được hoàn toàn bằng bàn phím và bằng chuột. Làm sai không bị phạt, không đếm ngược. Bấm vào bất kỳ từ hay câu tiếng Anh nào cũng nghe được.
+
+Mỗi màn học của bé (mục 1, 3, 4) có 2 cách hiện: trong khung bài học (thanh tiến độ, nút thoát mở hộp thoại "Dừng bài học?", chân bài Nghe lại · Gợi ý · Kiểm tra) và mở từ Sổ từ (chế độ tự khám phá, chỉ có nút Đóng, không tính điểm).
+
+A. Bộ Tiểu học
+1. Khám phá từ (Screen48-WordExplorer): thẻ từ lớn ở bên trái (hình, từ "bird", phiên âm, loa, câu "A bird can fly."), từ thẻ tỏa ra 6 nhánh đường cong đánh số 1–6, mỗi nhánh một câu hỏi: What's this? · What color is a bird? · What does a bird like to eat? · What does a bird have? · What can a bird do? · Where does a bird live? Thiết kế đủ các trạng thái của nhánh:
+   - Chưa mở: câu hỏi và dấu "?" ở chỗ đáp án.
+   - Đang hỏi: Bông đọc câu hỏi, bé đoán bằng cách chọn 1 trong 2–3 hình (phím 1–3).
+   - Đã mở: đáp án là hình kèm từ hoặc cụm từ, mỗi cái có loa (brown / yellow / blue; seeds, insects, berries; wings, feathers, beak, claws; fly in the sky, build a nest; in the nest, on the tree).
+   - Hoàn thành cả 6 nhánh: Bông chúc mừng, hiện khung "Đọc cả đoạn" (mục 6) gom các câu trả lời thành đoạn văn, nút "Nói theo" để nói lại 1 câu ("A bird can fly."), nút In.
+   Phím 1–6 chọn nhánh, Space nghe lại câu hỏi. Ví dụ thêm: "cat" (5 nhánh) để thấy sơ đồ co giãn theo số nhánh 4–6.
+2. Bản in Khám phá từ (Screen49-WordExplorerPrint): trang A4 dọc in được trắng đen, bố cục như sơ đồ: thẻ từ, 6 câu hỏi, hình và đáp án, đoạn văn tiếng Anh, thêm dòng trống để bé tự viết câu trả lời; tùy chọn in kèm bản dịch tiếng Việt.
+3. Họ vần (Screen50-WordFamily): vần ở giữa ("-at" /æt/), xung quanh là các từ cùng vần: bat, cat, hat, fat, mat, flat, chat, that. Mỗi thẻ từ có hình, từ (phần vần tô cùng một màu nổi bật ở mọi từ), phiên âm, loại từ, nghĩa tiếng Việt. Bấm vào thẻ thì nghe từ. Từ bé chưa học hiện mờ với nhãn "Sắp học". Có ô riêng "Bẫy chính tả" cho từ cùng chữ nhưng khác âm (eat /iːt/, what /wɒt/), có lời giải thích ngắn của Bông. Bấm vần ở giữa để nghe lần lượt cả họ. Bên dưới có khung "Đọc cả đoạn" (mục 6) với một câu vui dùng các từ trong họ: "The fat cat sat on a mat. It has a hat." Ví dụ thứ hai: họ "-ir" /ɜː/ (bird, girl, shirt, skirt, first, third) để thấy họ theo âm.
+4. Ghép chữ đầu (Screen51-BuildFamily): vần "at" cố định bên phải, hàng ô chữ đầu b, c, h, f, m, s, r, z bên trái. Kéo một chữ vào trước vần, hoặc gõ chữ đó trên bàn phím. Thành từ thật thì hình hiện ra, Bông đọc, từ bay vào danh sách "Đã tìm được". Không phải từ thật (zat) thì Bông nói nhẹ "Từ này không có trong tiếng Anh, thử chữ khác nhé". Tìm đủ 5 từ là xong, có sao. Khi mở từ một thẻ từ ở màn Họ vần, từ đó được tô sẵn là từ cần ghép đầu tiên.
+5. Thẻ từ trong Sổ từ có thêm tab (Screen52-NotebookWordTabs): thẻ phóng to của Sổ từ có 3 tab Thẻ từ · Khám phá · Họ vần; tab nào chưa có dữ liệu thì ẩn. Đây là biến thể mới, không sửa màn Sổ từ đã có.
+6. Đọc cả đoạn và dịch nghĩa (ReadAloudParagraph): khung đoạn văn dùng chung, đặt trong màn 1 và 3. Ví dụ với bird: "This is a bird. It is brown, yellow or blue. It likes to eat seeds, insects and berries. It has wings, feathers, a beak and claws. It can fly in the sky and build a nest. It lives in a nest on a tree."
+   - Nút "Đọc cả đoạn" (phím P): giọng đọc chạy, từng chữ sáng lên theo; nút tạm dừng, đọc chậm.
+   - Bấm một câu để nghe riêng câu đó. Bấm một từ để nghe từ đó và hiện nghĩa ngắn trong bong bóng nhỏ.
+   - Nút "Dịch nghĩa" (phím T): mặc định ẩn bản dịch để bé tự nghe hiểu trước. Bấm thì bản dịch tiếng Việt hiện ngay dưới từng câu, chữ nhỏ hơn và màu nhạt hơn câu tiếng Anh; bấm lại để ẩn. Có thể bấm biểu tượng dịch ở đầu một câu để chỉ dịch câu đó.
+   - Thiết kế 3 trạng thái: chưa dịch, đang đọc (chữ sáng theo giọng), đã dịch.
+7. Liên kết qua lại (WordLinks, và màn Screen53-WordJourney cho thấy một lượt đi): dải nút liên kết ở đầu mỗi màn 1, 3, 4, chỉ hiện ở chế độ tự khám phá:
+   - Ở Khám phá từ: nút "Họ vần của bird: -ir" mở màn Họ vần của từ đó, với "bird" được tô sáng trong họ. Từ không thuộc họ nào thì không hiện nút.
+   - Ở Họ vần: mỗi thẻ từ có 2 nút nhỏ "Ghép" (mở Ghép chữ đầu với vần này, từ đó là từ cần ghép đầu tiên) và "Khám phá" (mở Khám phá từ, chỉ hiện khi từ có dữ liệu). Bấm vào thẻ vẫn là nghe từ.
+   - Ở Ghép chữ đầu: mỗi từ trong danh sách "Đã tìm được" bấm vào thì mở Khám phá từ của từ đó (nếu có), nút "Về họ vần" quay lại.
+   - Một đường dẫn nhỏ (bird › họ -ir › Ghép chữ) cho bé biết mình đang ở đâu, nút Quay lại (Backspace) về màn trước, tối đa 4 bậc. Trong khung bài học thì ẩn các liên kết để bé không rời bài giữa chừng.
+   Screen53 trình bày cả lượt đi bird → họ -ir → Ghép chữ đầu → shirt → Khám phá shirt dạng các khung nối nhau.
+
+B. Khu quản trị nội dung
+8. Soạn Khám phá từ (Adult22-WordExplorerEditor): tab "Khám phá" trong ngăn kéo biểu mẫu của Ngân hàng từ vựng. Chọn bộ câu hỏi mẫu theo nhóm (Con vật, Đồ ăn, Đồ vật, Nghề nghiệp, Nơi chốn) để điền sẵn câu hỏi. Danh sách 4–6 nhánh kéo thả để sắp xếp; mỗi nhánh có câu hỏi Anh và Việt, các đáp án (chọn từ có sẵn trong kho hoặc gõ mới kèm hình), các hình nhiễu cho lúc bé đoán. Phần "Đoạn văn": nút "Ghép đoạn từ các câu trả lời", từng câu tiếng Anh kèm ô dịch tiếng Việt, âm thanh có nút "Tạo giọng đọc tự động". Cảnh báo đáp án chưa có hình hoặc âm thanh, câu chưa có bản dịch; báo lỗi dưới ô, nút "Xem như học sinh", Nháp/Xuất bản.
+9. Họ vần (Adult23-WordFamilies): bảng các họ vần (vần, âm IPA, cấp, số từ, trạng thái) có tìm, lọc theo cấp, sắp xếp, phân trang. Ngăn kéo sửa một họ: vần, âm, cấp; danh sách từ thành viên lấy từ kho; nút "Gợi ý từ trong kho" liệt kê các từ có chứa vần để tick chọn; mỗi từ đánh dấu "Cùng âm" hoặc "Bẫy: khác âm"; danh sách chữ đầu không thành từ cho màn Ghép chữ đầu; đoạn văn vui của họ (từng câu Anh kèm dịch Việt, âm thanh); nút "Xem như học sinh", Nháp/Xuất bản.
+
+Yêu cầu thêm: nội dung thật theo đúng cấp (bird, cat, bat, hat, shirt, seeds, wings…), bản dịch tiếng Việt tự nhiên cho trẻ lớp 4, không dùng lorem ipsum. Mọi giá trị mới (màu vần, đường nhánh, khung bẫy chính tả, chữ bản dịch, chữ đang đọc, dải liên kết…) đều đặt tên thành token và có trong trang tổng hợp hệ thống giao diện. Viền focus rõ khi dùng Tab. Cuối cùng, liệt kê lại tên 9 thành phần vừa thêm theo đúng số thứ tự ở trên để tôi đối chiếu.
 ```

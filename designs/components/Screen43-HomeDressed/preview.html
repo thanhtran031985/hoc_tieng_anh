@@ -1,0 +1,114 @@
+<!-- @dsCard group="Màn Tiểu học · 37–39 Phòng của tớ" height=700 subtitle="39. Trang chủ có Bông mặc đồ (Screen43-HomeDressed): biến thể trang chủ — Bông đội mũ lưỡi trai, mặc áo phông bé đã chọn; 4 nút lớn dẫn tới màn thật; bấm số chuỗi ngày mở thẻ nổi Chuỗi ngày (7 ngày trong tuần, thẻ nghỉ phép còn / đã dùng, giải thích ngắn)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Trang chủ có Bông mặc đồ — preview</title>
+<style>
+
+  .hm { flex: 1; min-height: 0; display: grid; grid-template-columns: 440px 1fr 360px; gap: var(--space-8); align-items: center; }
+  .mis { display: flex; flex-direction: column; gap: var(--space-4); }
+  .mis h2 { display: flex; justify-content: space-between; align-items: baseline; }
+  .task { display: grid; grid-template-columns: 72px 1fr; gap: var(--space-4); align-items: center; background: var(--surface-soft); border-radius: var(--radius-lg); padding: var(--space-4); }
+  .task .ic { width: 72px; height: 72px; border-radius: var(--radius-md); display: grid; place-items: center; background: var(--surface); }
+  .task .t { font: 800 22px/28px var(--font-display); }
+  .task .s { display: flex; align-items: center; gap: var(--space-2); margin-top: 2px; }
+  .task .act { grid-column: 1 / -1; display: flex; justify-content: flex-end; align-items: center; gap: var(--space-3); }
+  .task .act .b-progress { max-width: 160px; }
+  .minis { display: flex; margin-right: 10px; } .minis .b-pic { width: 32px; height: 32px; margin-right: -6px; background: var(--surface); border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-soft); }
+  .mid { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+  .mid .b-dragon { width: min(320px, 38cqh); height: auto; }
+  .mid .b-bubble { text-align: center; }
+  .lvcard { display: flex; flex-direction: column; gap: var(--space-4); }
+  .isle { height: min(150px, 17cqh); border-radius: var(--radius-lg); background: var(--bg-sea); position: relative; overflow: hidden; }
+  .isle::before { content: ""; position: absolute; left: 14%; right: 14%; bottom: -36%; height: 90%; border-radius: 50%; background: var(--lv); box-shadow: inset 0 10px 0 var(--lv-soft), 0 0 0 10px var(--bg-sea-deep); }
+  .isle .sprout { position: absolute; left: 50%; bottom: 34%; transform: translateX(-50%); }
+  .goal { display: flex; align-items: center; gap: var(--space-3); }
+  .nav { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); padding-top: var(--space-4); }
+  .navb { height: min(128px, 15cqh); border: 0; border-radius: var(--radius-xl); background: var(--surface); box-shadow: 0 8px 0 var(--line), 0 14px 28px rgba(91,66,30,.08); display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-6); cursor: pointer; transition: transform var(--duration-fast), box-shadow var(--duration-fast); }
+  .navb:hover { transform: translateY(-3px); box-shadow: 0 11px 0 var(--line), 0 18px 32px rgba(91,66,30,.1); }
+  .navb:active { transform: translateY(6px); box-shadow: 0 2px 0 var(--line); }
+  .navb .ci { width: min(80px, 10cqh); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: var(--lv); color: var(--on-lv); box-shadow: inset 0 -5px 0 var(--lv-shade); flex: none; }
+  .navb .ci .b-ico { width: 44%; height: 44%; }
+  .navb { text-align: left; } .navb .nm { font: 800 24px/30px var(--font-display); color: var(--ink); white-space: nowrap; }
+  .navb .sub { font: 700 14px/18px var(--font-body); color: var(--ink-soft); text-align: left; }
+  .mis .b-state { padding: var(--space-4) 0; } .mis .b-state .b-dragon { width: 120px; height: auto; }
+  @container (max-height: 800px) { .task { padding: var(--space-3); } .hm { gap: var(--space-6); } .mis { gap: var(--space-3); } }
+  @container (max-width: 1400px) { .hm { grid-template-columns: 420px 1fr 330px; } }
+  .stk { border: 0; background: var(--surface); border-radius: var(--radius-pill); box-shadow: var(--shadow-card); height: 52px; padding: 0 16px 0 10px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font: 800 26px/30px var(--font-display); color: var(--ink); }
+  .stk[aria-expanded="true"] { box-shadow: 0 0 0 3px var(--streak-day), var(--shadow-card); }
+  .sp { position: absolute; right: var(--space-12); top: calc(var(--size-topbar) - 6px); z-index: 60; width: 430px; background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-raised); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+  .sp::before { content: ""; position: absolute; right: 40px; top: -9px; width: 18px; height: 18px; background: var(--surface); transform: rotate(45deg); border-radius: 3px; }
+  .sp h2 { margin: 0; display: flex; align-items: center; gap: var(--space-2); }
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .day { display: flex; flex-direction: column; align-items: center; gap: 4px; font: 800 14px/18px var(--font-body); color: var(--ink-soft); }
+  .day i { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-sunk); color: var(--ink-soft); font-style: normal; box-shadow: inset 0 0 0 2px var(--line); }
+  .day.done i { background: var(--streak-day); color: var(--surface); box-shadow: none; }
+  .day.today i { background: var(--streak-day-soft); color: var(--ink); box-shadow: inset 0 0 0 3px var(--streak-day); }
+  .day.freeze i { background: var(--freeze-card); color: var(--freeze-card-ink); box-shadow: none; }
+  .day.today { color: var(--ink); }
+  .fz { display: flex; gap: var(--space-3); align-items: center; border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); background: var(--freeze-card); color: var(--freeze-card-ink); }
+  .fz.used { background: var(--surface-sunk); color: var(--ink-soft); }
+  .fz b { display: block; font: 800 17px/22px var(--font-body); }
+  .fz span { font: 700 14px/19px var(--font-body); }
+  .fz .card { width: 46px; height: 58px; flex: none; border-radius: 10px; background: var(--surface); display: grid; place-items: center; box-shadow: inset 0 0 0 3px currentColor; }
+  .navb .go { font: 700 12px/16px var(--font-body); color: var(--ink-soft); display: block; text-align: left; margin-top: 2px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var kid = { id: 'minh', name: 'Minh', grade: 4, level: 3, hair: 'short' };
+  var DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+  var S = { open: false };
+  function week(used) { var st = used ? ['done', 'done', 'freeze', 'done', 'done', 'today', ''] : ['done', 'done', 'done', 'done', 'done', 'today', ''];
+    return '<ul class="week" aria-label="Tuần này">' + DAYS.map(function (d, i) { var s = st[i]; return '<li class="day ' + s + '"><i aria-hidden="true">' + (s === 'done' ? B.icon('check', 22) : s === 'freeze' ? B.icon('snow', 22) : s === 'today' ? B.icon('flame', 24) : '') + '</i>' + d + '<span class="b-sr">' + (s === 'done' ? ' đã học' : s === 'freeze' ? ' dùng thẻ nghỉ phép' : s === 'today' ? ' hôm nay, chưa học xong' : ' chưa tới') + '</span></li>'; }).join('') + '</ul>'; }
+  function pop(used) {
+    return '<div class="sp" role="dialog" aria-labelledby="sp-t" data-pop><h2 class="title" id="sp-t">' + B.icon('flame', 28) + 'Chuỗi 5 ngày</h2>' + week(used) +
+      '<div class="fz' + (used ? ' used' : '') + '"><span class="card">' + B.icon('snow', 26) + '</span><div><b>' + (used ? 'Thẻ nghỉ phép tuần này: đã dùng (thứ Tư)' : 'Thẻ nghỉ phép tuần này: còn 1 thẻ') + '</b><span>' + (used ? 'Hôm thứ Tư cậu nghỉ nên chuỗi vẫn được giữ. Thẻ mới có vào thứ Hai.' : 'Lỡ quên 1 ngày trong tuần, chuỗi vẫn được giữ. Thẻ mới có mỗi thứ Hai.') + '</span></div></div>' +
+      '<p class="body" style="margin:0">Học ít nhất <b>1 bài</b> mỗi ngày để giữ ngọn lửa. Hôm nay còn 1 bài là thành <b>6 ngày</b>!</p>' + B.btn({ label: 'Đóng', variant: 'secondary', size: 'm', attrs: 'data-close' }) + '</div>';
+  }
+  var tb = function (o) { return B.topbar(Object.assign({ kid: kid, stats: false, right: B.stat('stars', 212, 'sao') + B.stat('coins', 340, 'xu') + '<button type="button" class="stk" data-streak aria-haspopup="dialog" aria-expanded="' + S.open + '" aria-label="Chuỗi 5 ngày học liên tiếp. Bấm để xem tuần này">' + B.icon('flame', 28) + '5</button><button type="button" class="b-iconbtn" aria-label="Cài đặt">' + B.icon('gear', 26) + '</button>' }, o || {})); };
+  function missions() {
+    return '<section class="b-card mis" aria-labelledby="mt"><h2 class="title" id="mt">Nhiệm vụ hôm nay <span class="label b-muted">1/2</span></h2>' +
+      '<div class="task"><div class="ic" style="color:var(--success)">' + B.icon('check', 40) + '</div><div><div class="t">Ôn tập</div><div class="s"><div class="minis">' + B.pic('book', 32) + B.pic('kite', 32) + B.pic('teddy', 32) + '</div><span class="body b-muted">Xong 6 từ</span></div></div><div class="act"><span class="b-owned">' + B.icon('check', 18) + 'Đã xong</span></div></div>' +
+      '<div class="task" data-level="3"><div class="ic">' + B.pic('bed', 60) + '</div><div><div class="t">Bài tiếp theo</div><div class="s"><span class="body"><b class="en">My home</b> · Bài 3 · Nhà của em</span></div></div>' +
+      '<div class="act"><span class="caption b-muted">2/5 chặng</span>' + B.btn({ label: 'Học tiếp', variant: 'level', size: 'm', key: 'Enter', attrs: 'data-go' }) + '</div></div></section>';
+  }
+  function right() {
+    return '<section class="b-card lvcard" data-level="3"><div style="display:flex;justify-content:space-between;align-items:center">' + B.levelChip(3) + '<span class="caption b-muted">Đảo 3/5</span></div>' +
+      '<div class="isle" aria-hidden="true">' + '<svg class="sprout" width="60" height="60" viewBox="0 0 60 60"><path d="M30 58 V24" stroke="var(--level-3-shade)" stroke-width="5" stroke-linecap="round"/><path d="M30 30 C10 30 6 8 14 4 C30 4 34 20 30 30Z M30 26 C46 26 56 10 52 2 C36 2 30 14 30 26Z M30 40 C18 40 10 30 12 24 C24 24 30 32 30 40Z" fill="var(--level-3)" stroke="var(--dragon-line)" stroke-width="3" stroke-linejoin="round"/></svg></div>' +
+      '<div><div class="label" style="display:flex;justify-content:space-between"><span>Chặng đã qua</span><span>17/20</span></div><div style="margin-top:8px;display:flex">' + B.ProgressBar(17, 20) + '</div></div>' +
+      '<div class="goal"><span style="color:var(--brand)">' + B.icon('clock', 28) + '</span><div style="flex:1"><div class="label">Hôm nay: 12/20 phút</div><div class="b-progress b-progress--s" style="margin-top:6px"><span style="width:60%;background:var(--brand)"></span></div></div></div></section>';
+  }
+  function nav() {
+    var items = [['map', 'Bản đồ', 'Đảo Lá xanh', 3, 'Screen34-IslandMapGate'], ['book', 'Sổ từ', '186 từ đã gặp', 4, 'Screen44-NotebookPlus'], ['gem', 'Bộ sưu tập', '15/24 sticker', 6, 'Screen38-Stickers'], ['house', 'Phòng của tớ', 'Có 2 đồ mới', 5, 'Screen41-MyRoom']];
+    return '<nav class="nav" aria-label="Đi tới">' + items.map(function (x) { return '<button type="button" class="navb" data-level="' + x[3] + '" data-to="' + x[4] + '"><span class="ci">' + B.icon(x[0], 40) + '</span><span><span class="nm" style="display:block">' + x[1] + '</span><span class="sub">' + x[2] + '</span><span class="go">→ ' + x[4] + '</span></span></button>'; }).join('') + '</nav>';
+  }
+  function page(misHtml, bubble, expr, used) {
+    return tb() + '<div class="scr__body"><div class="hm">' + misHtml + '<div class="mid">' + B.bubble(bubble) + B.dragon(expr || 'chao', 320, { top: 'tee', hat: 'cap' }) + '</div>' + right() + '</div>' + nav() + '</div>' + (S.open ? pop(used) : '');
+  }
+  var skMis = '<section class="b-card mis"><span class="b-sk" style="width:220px;height:30px;border-radius:var(--radius-pill)"></span>' + [1, 2].map(function () { return '<div class="task"><span class="b-sk" style="width:72px;height:72px;border-radius:var(--radius-md)"></span><div style="display:flex;flex-direction:column;gap:8px">' + B.sk('140px', '24px', 'var(--radius-pill)') + B.sk('180px', '16px', 'var(--radius-pill)') + '</div><div class="act">' + B.sk('140px', '52px') + '</div></div>'; }).join('') + '</section>';
+  B.screen({
+    fit: true, level: 3, order: ['normal', 'streak', 'streakUsed', 'loading', 'empty', 'error'], labels: { streak: 'Thẻ Chuỗi ngày', streakUsed: 'Thẻ nghỉ phép đã dùng', empty: 'Trống (bé mới)' },
+    notes: { normal: 'Bông mặc đồ bé chọn trong Tủ đồ (mũ lưỡi trai `outfit-cap`, áo phông `outfit-tee`). 4 nút lớn dẫn tới màn thật: Bản đồ → Screen34, Sổ từ → Screen44, Bộ sưu tập → Screen38, Phòng của tớ → Screen41. Số chuỗi ngày là nút (mở thẻ nổi, Esc đóng).', streak: 'Thẻ nổi Chuỗi ngày: 7 ngày T2–CN (đã học: lửa cam `streak-day` + tick; hôm nay viền cam; chưa tới: xám), thẻ nghỉ phép còn 1 (`freeze-card`), lời giải thích ngắn.', streakUsed: 'Thẻ nghỉ phép đã dùng vào thứ Tư: ô thứ Tư hình bông tuyết, thẻ chuyển xám “đã dùng”.', loading: 'Thanh trên, Bông mặc đồ và 4 nút vẫn hiện; phần dữ liệu là khung xương.', empty: 'Bé mới: chưa có đồ mới, Bông vẫn mặc bộ mặc định.', error: 'Không tải được nhiệm vụ.' },
+    states: {
+      normal: function () { S.open = false; return page(missions(), 'Chào Minh! Mũ mới hợp với Bông không? Học tiếp <b class="en">My home</b> nhé!'); },
+      streak: function () { S.open = true; return page(missions(), 'Chào Minh! Còn 1 bài là được 6 ngày liền rồi!'); },
+      streakUsed: function () { S.open = true; return page(missions(), 'Chào Minh! Còn 1 bài là được 6 ngày liền rồi!', 'chao', true); },
+      loading: function () { S.open = false; return B.topbar({ kid: kid, stars: '··', coins: '··', streak: '··' }) + '<div class="scr__body"><div class="hm">' + skMis + '<div class="mid">' + B.dragon('suynghi', 320, { top: 'tee', hat: 'cap' }) + '</div><section class="b-card lvcard">' + B.sk('160px', '26px', 'var(--radius-pill)') + B.sk('100%', '150px', 'var(--radius-lg)') + B.sk('100%', '20px', 'var(--radius-pill)') + B.sk('100%', '28px', 'var(--radius-pill)') + '</section></div>' + nav() + '</div>'; },
+      empty: function () { S.open = false; return page('<section class="b-card mis"><h2 class="title">Nhiệm vụ hôm nay</h2><div class="task" data-level="3"><div class="ic">' + B.pic('book', 60) + '</div><div><div class="t">Bài đầu tiên của đảo!</div><div class="s"><span class="body"><b class="en">School</b> · Trường lớp</span></div></div><div class="act">' + B.btn({ label: 'Bắt đầu', variant: 'level', size: 'm', key: 'Enter' }) + '</div></div><p class="body b-muted">Chưa có từ nào cần ôn. Học xong bài đầu, Bông sẽ nhắc cậu ôn đúng lúc.</p></section>', 'Chào Minh! Chào mừng tới đảo Lá xanh!'); },
+      error: function () { S.open = false; return page('<section class="b-card mis">' + B.stateBlock({ kind: 'error', size: 120, title: 'Chưa tải được nhiệm vụ', text: 'Cậu vẫn vào Bản đồ để học được nhé.' }).replace('b-btn--l', 'b-btn--m') + '</section>', 'Ối, Bông chưa lấy được nhiệm vụ. Mình thử lại nha!', 'dongvien'); }
+    },
+    mount: { all: function (scr, ctx) {
+      var st = scr.querySelector('[data-streak]'), used = ctx.state === 'streakUsed';
+      function toggle() { if (ctx.state === 'loading') return; var p = scr.querySelector('[data-pop]'); if (p) { p.remove(); st.setAttribute('aria-expanded', 'false'); st.focus(); return; } var w = document.createElement('div'); w.innerHTML = pop(used); scr.appendChild(w.firstChild); st.setAttribute('aria-expanded', 'true'); wirePop(); }
+      function wirePop() { var p = scr.querySelector('[data-pop]'); if (!p) return; var c = p.querySelector('[data-close]'); c.addEventListener('click', toggle); setTimeout(function () { c.focus({ preventScroll: true }); }, 30); p.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); toggle(); } }); }
+      st && st.addEventListener('click', toggle); wirePop();
+      scr.querySelectorAll('[data-to]').forEach(function (b) { b.addEventListener('click', function () { ctx.burst(b, null, 6); b.querySelector('.go').textContent = '→ đang mở ' + b.dataset.to + '…'; }); });
+      var g = scr.querySelector('[data-go]'); ctx.onKey(function (e) { if (e.key === 'Enter' && g && document.activeElement.tagName !== 'BUTTON') { g.focus(); ctx.burst(g); } });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

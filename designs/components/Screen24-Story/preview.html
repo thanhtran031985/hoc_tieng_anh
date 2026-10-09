@@ -1,0 +1,120 @@
+<!-- @dsCard group="Màn Tiểu học · 18–24 Dạng bài mới" height=700 subtitle="19. Truyện tranh có đọc to (Screen24-Story): “Tom’s Red Kite” 6 trang, chữ sáng theo giọng đọc, bấm từ để nghe + nghĩa, trang câu hỏi xen giữa, trang Hết truyện" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Truyện tranh có đọc to — preview</title>
+<style>
+  .book { display: grid; grid-template-columns: min(640px, 52cqw) 1fr; gap: var(--space-8); align-items: center; width: 100%; }
+  .art { aspect-ratio: 4 / 3; border-radius: var(--radius-xl); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-card); position: relative; max-height: 58cqh; }
+  .art svg { width: 100%; height: 100%; display: block; }
+  .pg { position: absolute; left: 14px; top: 12px; background: var(--surface); border-radius: var(--radius-pill); padding: 4px 12px; font: 800 14px/18px var(--font-body); color: var(--ink-soft); box-shadow: var(--shadow-card); }
+  .txt { display: flex; flex-direction: column; gap: var(--space-5); }
+  .lines { font: 700 min(38px, 4.8cqh)/1.5 var(--font-display); color: var(--ink); margin: 0; }
+  .ctl { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+  .nav { display: flex; gap: var(--space-3); align-items: center; }
+  .mode { display: inline-flex; background: var(--surface-sunk); border-radius: var(--radius-pill); padding: 4px; gap: 4px; }
+  .mode button { border: 0; background: none; height: 44px; padding: 0 16px; border-radius: var(--radius-pill); font: 800 16px/20px var(--font-body); color: var(--ink-soft); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .mode button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+  .pop { position: absolute; z-index: 20; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); padding: var(--space-3) var(--space-4); display: flex; align-items: center; gap: var(--space-3); transform: translate(-50%, calc(-100% - 14px)); white-space: nowrap; }
+  .pop b { font: 800 26px/30px var(--font-display); } .pop span { font: 700 18px/22px var(--font-body); color: var(--ink-soft); }
+  .opts { display: grid; grid-template-columns: repeat(3, min(220px, 26cqh)); gap: var(--space-6); }
+  .opts .b-choice { aspect-ratio: 1; width: 100%; }
+  .opts svg { width: 76%; height: auto; }
+  .end { display: grid; grid-template-columns: auto 1fr; gap: var(--space-10); align-items: center; }
+  .end .b-dragon { width: min(240px, 28cqh); height: auto; }
+  .nw { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-top: var(--space-3); }
+  .nw div { background: var(--surface); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); display: flex; align-items: center; gap: var(--space-2); box-shadow: var(--shadow-card); }
+  .nw b { font: 700 24px/28px var(--font-display); } .nw small { display: block; font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var GL = { this: 'đây là', is: 'là / thì', tom: 'Tom (tên bạn nhỏ)', he: 'cậu ấy', has: 'có', a: 'một', red: 'màu đỏ', kite: 'cái diều', and: 'và', dad: 'bố', go: 'đi', to: 'đến', the: '(đứng trước danh từ)', park: 'công viên', wind: 'gió', strong: 'mạnh', flies: 'bay', up: 'lên cao', oh: 'ôi', no: 'không', in: 'ở trong', tree: 'cái cây', helps: 'giúp', gets: 'lấy', happy: 'vui', thank: 'cảm ơn', you: 'bạn', 'tom’s': 'của Tom', "tom's": 'của Tom', what: 'cái gì', colour: 'màu' };
+  var PAGES = [
+    { t: ['This is Tom.', 'He has a red kite.'], art: 1 }, { t: ['Tom and Dad go to the park.'], art: 2 }, { t: ['The wind is strong.', 'The kite flies up, up, up!'], art: 3 },
+    { q: true }, { t: ['Oh no!', 'The kite is in the tree.'], art: 4 }, { t: ['Dad helps Tom.', 'He gets the kite.'], art: 5 }, { t: ['Tom is happy.', 'Thank you, Dad!'], art: 6 }, { end: true }
+  ];
+  var S = { p: 0, auto: true, lit: -1, sel: -1, tries: 0, hint: false, qdone: false };
+  // ----- tranh -----
+  var LN = 'stroke="#2b2440" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+  function kite(x, y, c, s) { s = s || 1; return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M0 -34 L26 0 L0 40 L-26 0 Z" fill="' + c + '" ' + LN + '/><path d="M0 -34 V40 M-26 0 H26" stroke="#2b2440" stroke-width="2"/><path d="M0 40 q-10 14 4 24 q12 10 -2 22" fill="none" ' + LN + '/><path d="M-6 56 l12 -6 M-4 76 l12 -4" stroke="#ffd23f" stroke-width="6" stroke-linecap="round"/></g>'; }
+  function tree(x, y, s) { s = s || 1; return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><rect x="-10" y="0" width="20" height="70" rx="6" fill="#9a6a46" ' + LN + '/><circle cx="0" cy="-20" r="48" fill="#5bbf6a" ' + LN + '/><circle cx="-30" cy="6" r="26" fill="#4daa5c" ' + LN + '/><circle cx="32" cy="4" r="28" fill="#4daa5c" ' + LN + '/></g>'; }
+  function kid(x, y, s, mood, arm) { s = s || 1; var mouth = mood === 'oh' ? '<ellipse cx="0" cy="-40" rx="4" ry="5" fill="#8a2d3d"/>' : '<path d="M-7 -42 q7 7 14 0" fill="none" ' + LN + '/>';
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-10 30 v34 M10 30 v34" ' + LN + ' stroke-width="7"/><path d="M-22 -14 C-22 -24 22 -24 22 -14 V34 H-22 Z" fill="#3f8cff" ' + LN + '/><path d="M-22 -8 L-36 ' + (arm === 'up' ? '-44' : '16') + ' M22 -8 L36 ' + (arm === 'up' ? '-44' : arm === 'out' ? '-20' : '16') + '" ' + LN + ' stroke-width="7"/>' +
+      '<circle cx="0" cy="-50" r="22" fill="#ffd9b8" ' + LN + '/><path d="M-22 -54 C-22 -78 22 -80 22 -56 C14 -64 -10 -66 -22 -54 Z" fill="#3a2a28"/><circle cx="-8" cy="-52" r="3" fill="#2b2440"/><circle cx="8" cy="-52" r="3" fill="#2b2440"/>' + mouth + '</g>'; }
+  function dad(x, y, s, arm) { s = s || 1; return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-12 40 v50 M12 40 v50" ' + LN + ' stroke-width="9"/><path d="M-28 -20 C-28 -32 28 -32 28 -20 V44 H-28 Z" fill="#2bb38a" ' + LN + '/><path d="M-28 -12 L-44 24 M28 -12 L' + (arm === 'up' ? '44 -62' : '44 24') + '" ' + LN + ' stroke-width="9"/>' +
+      '<circle cx="0" cy="-58" r="26" fill="#f2c79e" ' + LN + '/><path d="M-26 -62 C-24 -90 24 -90 26 -64 C16 -72 -14 -74 -26 -62 Z" fill="#2c2420"/><circle cx="-9" cy="-60" r="3" fill="#2b2440"/><circle cx="9" cy="-60" r="3" fill="#2b2440"/><path d="M-9 -48 q9 8 18 0" fill="none" ' + LN + '/></g>'; }
+  function scene(n) {
+    var sky = '<rect width="400" height="300" fill="#cdeeff"/><circle cx="350" cy="50" r="24" fill="#ffd23f" ' + LN + '/><path d="M0 220 C80 200 160 214 240 206 C310 200 360 210 400 204 V300 H0 Z" fill="#9edb7a" ' + LN + '/>';
+    var str = function (x1, y1, x2, y2) { return '<path d="M' + x1 + ' ' + y1 + ' Q' + ((x1 + x2) / 2 + 30) + ' ' + ((y1 + y2) / 2 + 30) + ' ' + x2 + ' ' + y2 + '" fill="none" stroke="#2b2440" stroke-width="2"/>'; };
+    var c = { 1: str(236, 194, 300, 120) + kite(300, 110, '#ff5a4f', .9) + kid(200, 200, 1.1, 'smile', 'out'),
+      2: tree(70, 160, .9) + tree(340, 150, 1) + dad(170, 175, 1) + kid(240, 205, .95, 'smile', 'down') + kite(280, 222, '#ff5a4f', .5),
+      3: '<path d="M30 60 q30 -20 60 0 t60 0 M60 100 q30 -20 60 0 t60 0" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>' + str(150, 200, 300, 60) + kite(300, 50, '#ff5a4f', .8) + kid(130, 212, .9, 'smile', 'up'),
+      4: tree(260, 150, 1.4) + kite(300, 110, '#ff5a4f', .6) + kid(110, 212, .95, 'oh', 'up'),
+      5: tree(270, 150, 1.4) + kite(300, 110, '#ff5a4f', .6) + dad(220, 170, 1, 'up') + kid(120, 212, .9, 'smile', 'down'),
+      6: tree(350, 160, .8) + dad(150, 170, 1) + kid(230, 205, 1, 'smile', 'up') + kite(270, 90, '#ff5a4f', .8) + '<path d="M300 30 c0 -8 12 -8 12 0 c0 -8 12 -8 12 0 c0 10 -12 16 -12 18 c0 -2 -12 -8 -12 -18z" fill="#ff8fa8" ' + LN + '/>' };
+    return '<svg viewBox="0 0 400 300" role="img" aria-label="Tranh trang ' + n + '">' + sky + c[n] + '</svg>';
+  }
+  function kiteCard(cname, c) { return '<svg viewBox="0 0 120 120" aria-hidden="true"><g transform="translate(60 48)"><path d="M0 -38 L30 0 L0 44 L-30 0 Z" fill="' + c + '" ' + LN + '/><path d="M0 -38 V44 M-30 0 H30" stroke="#2b2440" stroke-width="2"/><path d="M0 44 q-10 14 4 24" fill="none" ' + LN + '/></g></svg>'; }
+  function storyPages() { return PAGES.filter(function (p) { return p.t; }).length; }
+  function storyIdx(p) { var n = 0; for (var i = 0; i <= p; i++) if (PAGES[i].t) n++; return n; }
+  function body() {
+    var P = PAGES[S.p], total = PAGES.length;
+    var head = L.head({ n: S.p, total: total - 1, count: P.end ? 'Hết' : P.q ? 'Câu hỏi' : 'Trang ' + storyIdx(S.p) + '/6' });
+    if (P.q) return head + '<main class="lesson-main"><div class="instr"><h1 class="title">Câu hỏi giữa truyện</h1></div><p class="lines" style="text-align:center">' + L.words('What colour is Tom’s kite?', GL) + ' ' + B.speak('What colour is Tom’s kite?', 'm', 'Nghe câu hỏi') + '</p>' +
+      '<div class="opts" role="radiogroup" aria-label="Chọn diều">' + [['blue', '#3f8cff'], ['red', '#ff5a4f'], ['yellow', '#ffd23f']].map(function (k, i) { var dim = S.hint && k[0] === 'yellow'; return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + (dim ? ' is-dim' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-label="Diều màu ' + (['xanh', 'đỏ', 'vàng'][i]) + '" aria-keyshortcuts="' + (i + 1) + '"' + (dim ? ' disabled' : '') + '>' + B.key(String(i + 1), 'b-key--corner') + kiteCard(k[0], k[1]) + '</button>'; }).join('') + '</div></main>' +
+      L.foot({ replayLabel: 'Nghe câu hỏi', hintOff: S.hint, main: { disabled: S.sel < 0 || S.qdone } });
+    if (P.end) { var NW = [['kite', 'cái diều'], ['park', 'công viên'], ['wind', 'gió'], ['tree', 'cái cây'], ['help', 'giúp đỡ'], ['happy', 'vui']];
+      return head + '<main class="lesson-main"><div class="end">' + B.dragon('chucmung', 240) + '<div><h1 class="display-l">Hết truyện!</h1><p class="body-l b-muted" style="margin:4px 0 0"><b class="en">Tom’s Red Kite</b> · 6 trang · cấp 3</p><h2 class="title" style="margin-top:20px">Từ mới trong truyện</h2><div class="nw">' + NW.map(function (w) { return '<div>' + B.speak(w[0], 's') + '<span><b lang="en">' + w[0] + '</b><small>' + w[1] + '</small></span></div>'; }).join('') + '</div></div></div></main>' +
+        L.foot({ replayLabel: 'Đọc lại từ đầu', hint: false, main: { label: 'Tiếp tục', icon: 'next' } }); }
+    var k = 0;
+    return head + '<main class="lesson-main"><div class="book"><div class="art">' + scene(P.art) + '<span class="pg">Trang ' + storyIdx(S.p) + ' / 6</span></div><div class="txt">' +
+      '<p class="lines" lang="en" aria-live="off">' + P.t.map(function (s) { var h = L.words(s, GL, k); k += s.split(' ').length; return h; }).join('<br>') + '</p>' +
+      '<div class="ctl"><div class="mode" role="group" aria-label="Cách đọc"><button type="button" data-mode="auto" aria-pressed="' + S.auto + '">' + B.icon('speaker', 20) + 'Đọc cho tớ nghe</button><button type="button" data-mode="self" aria-pressed="' + !S.auto + '">' + B.icon('book', 20) + 'Tự đọc</button></div></div>' +
+      '<div class="nav">' + B.btn({ label: 'Trang trước', variant: 'secondary', icon: 'back', key: '←', attrs: 'data-prev', disabled: S.p === 0 }) + '</div>' +
+      '<p class="caption b-muted" style="margin:0">Bấm vào từ bất kỳ để nghe riêng từ đó và xem nghĩa.</p></div></div></main>' +
+      L.foot({ replayLabel: 'Đọc lại trang', hint: true, main: { label: 'Trang sau', icon: 'next' } });
+  }
+  B.screen({
+    fit: true, level: 3,
+    notes: { normal: '“Đọc cho tớ nghe”: giọng đọc chạy, từng chữ sáng (`read-highlight`). Bấm từ = nghe từ + nghĩa ngắn. ← → đổi trang, Space đọc lại trang, H hiện nghĩa từ khó. Sau trang 3 có câu hỏi chọn hình (1–3, Enter). Trang cuối “Hết truyện” có danh sách từ mới.', loading: 'Khung xương tranh và chữ.', empty: 'Truyện chưa có trang nào.', error: 'Không tải được tranh / giọng đọc.' },
+    states: {
+      normal: body,
+      loading: function () { return L.head({ n: 0, total: 7, count: 'Trang 1/6' }) + '<main class="lesson-main"><div class="book">' + B.sk('100%', 'min(480px, 58cqh)', 'var(--radius-xl)') + '<div class="txt">' + B.sk('90%', '44px', 'var(--radius-pill)') + B.sk('70%', '44px', 'var(--radius-pill)') + B.sk('320px', '52px', 'var(--radius-pill)') + '</div></div></main>' + L.foot({ off: true, main: { label: 'Trang sau' } }); },
+      empty: function () { return L.head({ n: 0, total: 7, count: '—' }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Truyện này chưa có trang nào', text: 'Bông đang vẽ tranh cho truyện. Mình đọc truyện khác nhé!', action: B.btn({ label: 'Về giá truyện', icon: 'book', size: 'l' }) }) + '</main>' + L.foot({ off: true, main: { label: 'Trang sau' } }); },
+      error: function () { return L.head({ n: S.p, total: 7, count: 'Trang 1/6' }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Tranh chưa hiện ra', text: 'Bông chưa tải được trang truyện. Không phải lỗi của cậu đâu!' }) + '</main>' + L.foot({ off: true, main: { label: 'Trang sau' } }); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var P = PAGES[S.p];
+      function go(p, sel) { S.p = Math.max(0, Math.min(PAGES.length - 1, p)); S.lit = -1; S.sel = -1; S.tries = 0; S.hint = false; S.qdone = false; ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function read() { var kws = scr.querySelectorAll('[data-kw]'); kws.forEach(function (k) { k.classList.remove('is-lit'); }); L.say(P.t.join(' '), .8); var i = 0;
+        (function step() { if (i > 0) kws[i - 1].classList.remove('is-lit'); if (i < kws.length) { kws[i].classList.add('is-lit'); i++; ctx.later(step, 420); } })(); }
+      function pop(el) { var old = scr.querySelector('.pop'); if (old) old.remove(); var w = el.dataset.w, r = el.getBoundingClientRect(), sr = scr.getBoundingClientRect(), sc = (scr.closest('.dsf-vp') || {}).__scale || 1;
+        var p = document.createElement('div'); p.className = 'pop'; p.setAttribute('role', 'status'); p.innerHTML = B.speak(w, 's') + '<b lang="en">' + w + '</b><span>' + (GL[w] || '') + '</span>'; p.style.left = ((r.left + r.width / 2 - sr.left) / sc) + 'px'; p.style.top = ((r.top - sr.top) / sc) + 'px'; scr.appendChild(p); L.say(w, .8); el.classList.add('is-lit'); ctx.later(function () { el.classList.remove('is-lit'); }, 900); ctx.later(function () { p.remove(); }, 2600); }
+      scr.querySelectorAll('[data-kw]').forEach(function (k) { k.addEventListener('click', function (e) { e.stopPropagation(); pop(k); }); });
+      var pv = scr.querySelector('[data-prev]'); pv && pv.addEventListener('click', function () { go(S.p - 1, '[data-prev]'); });
+            scr.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { S.auto = b.dataset.mode === 'auto'; go(S.p, '[data-mode="' + b.dataset.mode + '"]'); }); });
+      if (P.t && S.auto) ctx.later(read, 500);
+      if (P.q) scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { if (b.disabled || S.qdone) return; S.sel = +b.dataset.i; ctx.setState('normal'); ctx.scr.querySelector('[data-i="' + S.sel + '"]').focus(); }); });
+      L.wire(scr, ctx, { left: 0,
+        onReplay: function (b) { if (P.t) read(); else if (P.q) L.say('What colour is Tom’s kite?', .8, b); else go(0); },
+        onHint: function () { if (P.q) { S.hint = true; ctx.setState('normal'); } else { var kw = scr.querySelector('[data-w="kite"],[data-w="park"],[data-w="wind"],[data-w="tree"],[data-w="helps"],[data-w="happy"]'); kw && pop(kw); } },
+        onMain: function () {
+          if (P.q) { if (S.sel < 0 || S.qdone) return; var card = scr.querySelector('[data-i="' + S.sel + '"]');
+            if (S.sel === 1) { S.qdone = true; L.ok(scr, ctx, { card: card, title: 'Đúng rồi! Diều của Tom màu đỏ.', detail: B.speak('red', 's') + '<b class="en" style="font-size:26px">red</b><span class="b-muted">màu đỏ</span>', onNext: function () { go(S.p + 1); } }); }
+            else { S.tries++; L.retry(scr, ctx, { card: card, tries: S.tries, detail: 'Nhìn lại tranh trang 1 nhé: <b class="en">He has a red kite.</b>', onRetry: function () { S.sel = -1; if (S.tries >= 2) S.hint = true; ctx.setState('normal'); } }); }
+          } else if (P.end) { ctx.burst(scr.querySelector('[data-main]'), null, 10); } else go(S.p + 1);
+        },
+        onKey: function (e) {
+          if (e.key === 'ArrowRight' && !P.q) { e.preventDefault(); if (!P.end) go(S.p + 1); return true; }
+          if (e.key === 'ArrowLeft') { e.preventDefault(); go(S.p - 1, '[data-prev]'); return true; }
+          if (P.q && /^[1-3]$/.test(e.key)) { e.preventDefault(); var b = scr.querySelector('[data-i="' + (+e.key - 1) + '"]'); b && b.click(); return true; }
+        }
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

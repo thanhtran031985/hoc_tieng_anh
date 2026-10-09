@@ -71,7 +71,45 @@ export declare function FeedbackBar(container: HTMLElement, props: FeedbackBarPr
 
 export interface MascotProps { expr: Expr; size?: number; }
 /** Rồng Bông SVG: Bong.dragon(expr, size). Đổi màu bằng lớp dragon-dao | dragon-nang | dragon-tim trên vùng chứa. */
-export declare function Mascot(expr: Expr, size?: number): string;
+/** Đợt 5B: opts.top / opts.hat mặc đồ cho Bông (không truyền thì rồng y như cũ; có mũ thì bỏ mũ tiệc của biểu cảm chucmung). */
+export declare function Mascot(expr: Expr, size?: number, opts?: { stage?: 1 | 2 | 3 | 4 | 5; cls?: string; top?: OutfitTop; hat?: OutfitHat }): string;
+export type OutfitTop = 'tee' | 'stripe' | 'raincoat';
+export type OutfitHat = 'cap' | 'beanie' | 'sunhat';
+
+/** Giai đoạn 2 · Rồng Bông lớn lên: dáng cấp 1–5 (3 = dáng gốc). Mọi biểu cảm, mọi màu. */
+export declare function MascotGrowth(stage: 1 | 2 | 3 | 4 | 5, expr?: Expr, size?: number, cls?: string): string;
+
+export interface LevelGateProps { /** mặc định true */ locked?: boolean; /** số vùng còn lại khi khoá */ left?: number; /** tên đảo kế tiếp, vd “đảo Cành cây” */ next?: string; }
+/** Giai đoạn 2 · Cổng bài thi lên cấp: trả về <button data-gate>. */
+export declare function LevelGate(props: LevelGateProps): string;
+
+/** Giai đoạn 2 · Khung bài học dùng chung: Bong.L */
+export interface LessonKit {
+  head(o: { n: number; total: number; dots?: boolean; pause?: boolean; count?: string; extra?: string }): string;
+  foot(o?: { replay?: false; replayLabel?: string; replayKey?: string; hint?: boolean; hintKey?: string; hintOff?: boolean; left?: string; off?: boolean; main?: { label?: string; icon?: string; attrs?: string; disabled?: boolean } }): string;
+  /** Chân bài mini game: Bông + lời nhắn, Nghe lại, Gợi ý, điểm */
+  gfoot(o?: { msg?: string; expr?: Expr; score?: number; total?: number; unit?: string; replayLabel?: string; hintOff?: boolean; off?: boolean }): string;
+  gmsg(scr: HTMLElement, html: string, expr?: Expr): void;
+  dots(n: number, total: number): string;
+  setProg(scr: HTMLElement, n: number, total: number): void;
+  /** Space nghe lại · H gợi ý · Enter kiểm tra · Esc dừng; onKey trả true để chặn mặc định */
+  wire(scr: HTMLElement, ctx: any, h: { left?: number; onReplay?(btn: HTMLElement): void; onHint?(): void; onMain?(): void; onExit?(): void; onEsc?(): void; onKey?(e: KeyboardEvent): boolean | void }): void;
+  ok(scr: HTMLElement, ctx: any, o: { card?: HTMLElement; from?: HTMLElement; n?: number; total?: number; title?: string; detail?: string; say?: string; action?: string; onNext?(): void }): void;
+  retry(scr: HTMLElement, ctx: any, o: { card?: HTMLElement; title?: string; detail?: string; tries: number; onRetry?(): void }): void;
+  exit(ctx: any, left?: number, what?: string): void;
+  say(text: string, rate?: number, btn?: HTMLElement): void;
+  /** Mỗi chữ là nút .b-kw (data-kw, data-w) để nghe riêng + nghĩa */
+  words(text: string, gloss?: Record<string, string>, startIdx?: number): string;
+  overlay(scr: HTMLElement, o: { title: string; mascot?: string; body?: string; actions: { label: string; variant?: string; key?: string; icon?: string; onClick?(): void }[]; onEsc?(): void }): { close(): void; el: HTMLElement };
+  gameStart(scr: HTMLElement, o: { title: string; art?: string; how: string; onStart(): void; onEsc?(): void }): any;
+  gamePause(scr: HTMLElement, o: { onResume(): void; onExit(): void }): any;
+  gameEnd(scr: HTMLElement, o: { correct: number; total: number; stars: 0 | 1 | 2 | 3; coins?: number; note?: string; title?: string; unit?: string; onNext(): void }): any;
+  grow: typeof MascotGrowth;
+  /** Trùm Vua Khỉ Lém: 'tease' | 'hit' | 'friend' */
+  monkey(mood?: 'tease' | 'hit' | 'friend', size?: number): string;
+  gate: typeof LevelGate;
+  typing(): boolean;
+}
 
 export interface StatChipProps { kind: 'stars' | 'coins' | 'streak'; value: number | string; label: string; }
 /** Chip thống kê: Bong.stat(kind, value, label). Thanh trên cùng: Bong.topbar({ back, kid, stars, coins, streak, right }). */
@@ -183,3 +221,77 @@ export interface AdultDialogProps { title: string; body?: string; wide?: boolean
 
 /** Khung chương trình mẫu: Bong.A.data.framework[cấp] = chủ đề chưa có bài. */
 export interface FrameworkTopic { id: string; name: string; vi: string; target: number; unit: string; words?: { n: number; word: string; vi: string; bank: string }[]; }
+
+/* ---------- Đợt 5B · Phần thưởng, phòng của tớ, học tập trung (Bong.R) ---------- */
+/** Sticker cắt bế. owned=false → ô trống bóng mờ nét đứt. Trả về <button class="b-stk" data-stk>. */
+export declare function Sticker(key: string, opts?: { owned?: boolean; size?: number; isNew?: boolean; tilt?: number }): string;
+/** Huy hiệu tròn vành vàng (badge-ring) + ruy băng; earned=false → xám kem badge-locked. */
+export declare function Medal(badge: { icon: string; lv?: Level; earned?: boolean }, opts?: { size?: number }): string;
+/** Hộp quà SVG (gift-box, gift-ribbon); open=true → nắp bật. */
+export declare function Gift(open?: boolean, size?: number): string;
+
+export interface RewardPopupProps {
+  kind: 'sticker' | 'badge';
+  key?: string; en: string; vi?: string;
+  /** Điều kiện đã đạt (huy hiệu) */
+  cond?: string; icon?: string; lv?: Level;
+  /** Xu thưởng — mặc định coin-sticker-lesson (10) / coin-badge (50) */
+  coins?: number;
+  /** Bỏ bước hộp quà, hiện phần thưởng ngay */
+  skipGift?: boolean;
+  /** Bấm “Cho vào bộ sưu tập” (Enter) */
+  onAdd?: () => void;
+}
+/** Bong.RewardPopup(scr, props) = Bong.R.reward: hộp quà lắc → mở (bấm / Enter / Esc) → sticker hoặc huy hiệu + Bông chúc mừng + tên tiếng Anh có loa + xu. */
+export declare function RewardPopup(container: HTMLElement, props: RewardPopupProps): { close(): void; el: HTMLElement };
+
+/** Bong.LessonTools(opts) = Bong.R.tools: 2 nút tròn Toàn màn hình (F) + Âm thanh, đặt trên đầu khung bài học. */
+export declare function LessonTools(opts?: { focus?: boolean }): string;
+/** Bong.R.wireTools: gắn F (học tập trung, Esc thoát trước), bảng âm thanh (Nhạc nền, Hiệu ứng, Âm lượng). Phần “ngoài bài” cần ẩn mang lớp b-nofocus. */
+export declare function wireLessonTools(scr: HTMLElement, ctx: unknown, opts?: { realFullscreen?: boolean; onFocus?: (on: boolean) => void }): { setFocus(on: boolean): void; isFocus(): boolean; openPanel(): void; closePanel(): void };
+
+export interface RewardKit {
+  sticker: typeof Sticker; stickerName(key: string): string; stickerVi(key: string): string;
+  medal: typeof Medal; gift: typeof Gift; reward: typeof RewardPopup;
+  tools: typeof LessonTools; wireTools: typeof wireLessonTools; soundPanel(): string;
+  sound: { music: boolean; sfx: boolean; vol: number };
+  roomWords: Record<string, string>; stickerWords: Record<string, string>;
+}
+
+/** Bong.A.shell2(props): như Bong.A.shell, thêm mục giai đoạn 2 có nhãn “Mới” — parent: 'progress' · admin: 'stories' | 'phonics' | 'rewards'. Menu cũ giữ nguyên. */
+export declare function AdultShell2(props: AdultShellProps): string;
+
+/* ---------- Đợt 6 · Khám phá từ, Họ vần, Ghép chữ đầu (Bong.W) ---------- */
+export interface WxBranch { q: string; qvi: string; /** [hình, chữ Anh, nghĩa] */ ans: [string, string, string][]; /** 2–3 hình để bé đoán */ opts: string[]; a: number; /** câu ghép vào đoạn văn [Anh, Việt] */ sent: [string, string]; }
+export interface WxWord { word: string; ipa: string; vi: string; ex: string; exVi: string; /** khoá họ vần, ví dụ 'ir' */ fam?: string; topic: string; lv: Level; /** 4–6 nhánh */ branches: WxBranch[]; }
+/** Bong.W.explorer(key, opts): sơ đồ Khám phá từ. Vẽ đường cong sau khi gắn vào trang: Bong.W.lines(root). */
+export declare function WordExplorer(key: string, opts?: { open?: boolean[]; ask?: number; sel?: number; dim?: number; wrong?: number; hl?: number; compact?: boolean }): string;
+/** Bong.W.family(key, opts): Họ vần. Đường nối: Bong.W.famLines(root). */
+export declare function WordFamily(key: string, opts?: { heard?: Record<string, boolean>; hl?: string; next?: string; mode?: 'lesson' | 'explore'; compact?: boolean; noTrap?: boolean }): string;
+/** Bong.W.builder(key, opts): Ghép chữ đầu. */
+export declare function BuildFamily(key: string, opts?: { slot?: string | null; found?: string[]; target?: string; state?: 'idle' | 'ok' | 'again' | 'fake'; hint?: string; mode?: 'lesson' | 'explore' }): string;
+
+export interface ReadAloudParagraphProps {
+  /** Các câu [tiếng Anh, bản dịch tiếng Việt] */
+  sents: [string, string][];
+  title?: string;
+  /** Hiện bản dịch cả đoạn (mặc định ẩn) */
+  tr?: boolean;
+  /** Dịch riêng từng câu */
+  one?: boolean[];
+  /** Trạng thái đang đọc: câu s, chữ thứ w (tính trên cả đoạn) */
+  reading?: { s: number; w: number };
+  compact?: boolean;
+}
+/** Bong.ReadAloudParagraph(props) = Bong.W.paragraph: khung Đọc cả đoạn + Dịch nghĩa. Gắn hành vi: Bong.W.wireParagraph(el) → { toggle, setTr, stop, key(e) } (P đọc/tạm dừng, T dịch). */
+export declare function ReadAloudParagraph(props: ReadAloudParagraphProps): string;
+
+export interface WordLinkStep { v: 'wx' | 'fam' | 'build'; k: string; }
+/** Bong.WordLinks(stack, buttonsHtml) = Bong.W.links: Quay lại (Backspace) + đường dẫn tối đa 4 bậc + nút liên kết. Chỉ dùng ở chế độ tự khám phá. */
+export declare function WordLinks(stack: WordLinkStep[], buttonsHtml?: string): string;
+/** Bong.W.app(host, ctx, cfg): bộ điều khiển một lượt đi (dựng màn, phím tắt, liên kết, tối đa 4 bậc). */
+export declare function WordApp(host: HTMLElement, ctx: unknown, cfg: { mode: 'lesson' | 'explore'; stack: (WordLinkStep & Record<string, unknown>)[]; focus?: string; onClose?(): void; onNext?(): void }): { push(step: WordLinkStep): void; back(): void; render(focusSel?: string): void };
+
+/** Bong.A.shell3(props): như shell2, thêm mục “Họ vần” (active: 'families') sau “Ngân hàng từ vựng”. */
+export declare function AdultShell3(props: AdultShellProps): string;
+

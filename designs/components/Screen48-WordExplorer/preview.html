@@ -1,0 +1,44 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=700 subtitle="44. Khám phá từ (Screen48-WordExplorer): thẻ từ lớn bên trái (bird, phiên âm, loa, “A bird can fly.”) tỏa ra 6 nhánh đường cong đánh số 1–6, mỗi nhánh một câu hỏi; nhánh chưa mở có “?”, đang hỏi thì bé đoán bằng 2–3 hình (phím 1–3), đã mở hiện hình + từ có loa; mở đủ thì Bông chúc mừng và hiện “Đọc cả đoạn”, Nói theo, In. 2 cách hiện: trong khung bài học và tự khám phá từ Sổ từ" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Khám phá từ — preview</title></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L, W = B.W;
+  function shell() { return '<div class="b-wl" data-wapp></div>'; }
+  function skel() {
+    return '<div class="b-wx" style="--n:6"><div class="b-wx__card">' + B.sk('min(160px, 21cqh)', 'min(160px, 21cqh)', 'var(--radius-lg)') + B.sk('120px', '44px', 'var(--radius-pill)') + B.sk('150px', '20px', 'var(--radius-pill)') + B.sk('200px', '36px') + '</div>' +
+      '<ol class="b-wx__br">' + [0, 1, 2, 3, 4, 5].map(function (i) { return '<li class="b-wx__node" style="--ind:' + Math.round(Math.sin(Math.PI * (i + .5) / 6) * 44) + 'px">' + B.sk('220px', '30px', 'var(--radius-pill)') + '<span></span>' + B.sk('120px', '44px') + '</li>'; }).join('') + '</ol></div>';
+  }
+  function lessonWrap(body, n) { return L.head({ n: n || 0, total: 6 }) + '<main class="lesson-main b-wl__main">' + body + '</main>' + L.foot({ off: true }); }
+  var CFG = {
+    normal: { mode: 'lesson', stack: [{ v: 'wx', k: 'bird', open: [true, true] }] },
+    asking: { mode: 'lesson', stack: [{ v: 'wx', k: 'bird', open: [true, true], ask: 2, sel: 1 }], focus: '[data-opt="1"]' },
+    done: { mode: 'lesson', stack: [{ v: 'wx', k: 'bird', open: [true, true, true, true, true, true], done: true }], focus: '[data-rap-play]' },
+    cat: { mode: 'lesson', stack: [{ v: 'wx', k: 'cat', open: [true, false, true] }] },
+    explore: { mode: 'explore', stack: [{ v: 'wx', k: 'bird', open: [true, true, true, false, true] }], focus: '[data-wl-fam]' }
+  };
+  B.screen({
+    fit: true, level: 2, order: ['normal', 'asking', 'done', 'cat', 'explore', 'loading', 'empty', 'error'],
+    labels: { normal: 'Trong bài học', asking: 'Đang hỏi', done: 'Mở đủ 6 nhánh', cat: 'cat · 5 nhánh', explore: 'Tự khám phá (Sổ từ)' },
+    notes: {
+      normal: 'Trong khung bài học: thanh tiến độ = số nhánh đã mở, × mở “Dừng bài học?”, chân bài Nghe lại (Space) · Gợi ý (H) · Kiểm tra (Enter). Nhánh chưa mở: số trên nền `branch-num`, ô “?” (`q-mark-bg`), đường cong `branch-line`. Nhánh đã mở: nền `branch-node-open`, đường `branch-line-open`, đáp án là hình + từ có loa. Phím 1–6 chọn nhánh, ↑ ↓ đi giữa các nhánh.',
+      asking: 'Đang hỏi nhánh 3: Bông đọc câu hỏi, đường cong đậm `branch-line-active`, bé chọn 1 trong 2–3 hình bằng phím 1–3 rồi Kiểm tra (Enter). Sai: cam nhẹ, Bông động viên, chọn lại; sai 2 lần thì một hình sai mờ đi. Esc thôi hỏi nhánh này. Không trừ điểm, không đếm ngược.',
+      done: 'Mở đủ 6 nhánh: Bông chúc mừng, khung “Đọc cả đoạn” (ReadAloudParagraph) gom 6 câu trả lời thành đoạn văn — P đọc cả đoạn, T dịch nghĩa. “Nói theo” mở ô nói lại câu “A bird can fly.” (micro tím `rec`), “In” mở bản in (Screen49), “Xem lại sơ đồ”. Enter = Tiếp tục.',
+      cat: 'Ví dụ “cat” có 5 nhánh: sơ đồ co giãn theo số nhánh 4–6 (ô nhánh cao hơn, đường cong giãn đều).',
+      explore: 'Mở từ Sổ từ (chế độ tự khám phá): chỉ có nút Đóng (Esc), không thanh tiến độ, không tính điểm; bấm câu hỏi (1–6) là thấy ngay câu trả lời. Dải liên kết WordLinks: Quay lại (Backspace), đường dẫn, nút “Họ vần của bird: -ir” mở Họ vần với bird được tô sáng.',
+      loading: 'Khung xương thẻ từ và 6 nhánh.', empty: 'Từ này chưa có câu hỏi Khám phá.', error: 'Không tải được Khám phá từ.' },
+    states: {
+      normal: shell, asking: shell, done: shell, cat: shell, explore: shell,
+      loading: function () { return lessonWrap(skel()); },
+      empty: function () { return lessonWrap(B.stateBlock({ kind: 'empty', title: 'Từ “bird” chưa có câu hỏi Khám phá', text: 'Bông đang chuẩn bị các câu hỏi. Cậu xem thẻ từ trong Sổ từ trước nhé!', action: B.btn({ label: 'Mở Sổ từ', icon: 'book', size: 'l' }) })); },
+      error: function () { return lessonWrap(B.stateBlock({ kind: 'error', title: 'Chưa tải được Khám phá từ', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' })); }
+    },
+    mount: { all: function (scr, ctx) { var c = CFG[ctx.state]; if (!c) return; W.app(scr.querySelector('[data-wapp]'), ctx, JSON.parse(JSON.stringify(c))); } }
+  });
+})();
+</script>
+</body>
+</html>

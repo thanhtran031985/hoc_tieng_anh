@@ -1,0 +1,107 @@
+<!-- @dsCard group="Màn Tiểu học · 33–36 Phần thưởng" height=700 subtitle="33. Bộ sưu tập · tab Sticker (Screen38-Stickers): album theo chủ đề (Con vật, Xe cộ, Khủng long, Trái cây), mỗi trang một lưới ô; sticker đã có hiện màu + tên tiếng Anh + loa, ô chưa có hiện bóng mờ; đã có / tổng ở trên, đổi trang bằng ← →" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bộ sưu tập · Sticker — preview</title>
+<style>
+  .ch { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding: var(--space-2) 0 var(--space-4); flex-wrap: wrap; }
+  .ch h1 { margin: 0; }
+  .tabs { display: inline-flex; background: var(--surface-sunk); border-radius: var(--radius-pill); padding: 5px; gap: 4px; }
+  .tabs button { height: 48px; border: 0; background: none; border-radius: var(--radius-pill); padding: 0 var(--space-5); font: 800 18px/22px var(--font-body); color: var(--ink-soft); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); }
+  .tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+  .total { display: flex; align-items: center; gap: var(--space-3); min-width: 300px; }
+  .total b { font: 800 26px/30px var(--font-display); color: var(--ink); white-space: nowrap; }
+  .total .b-progress { flex: 1; }
+  .book { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px 1fr; background: var(--album-spine); border-radius: var(--radius-xl); padding: 12px; gap: 0; box-shadow: 0 8px 0 rgba(91, 66, 30, .18); position: relative; }
+  .idx, .page { background: var(--album-page); min-height: 0; }
+  .idx { border-radius: 18px 4px 4px 18px; padding: var(--space-5) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); box-shadow: inset -10px 0 14px -10px rgba(91, 66, 30, .25); }
+  .idx h2 { margin: 0 0 4px; }
+  .al { border: 0; text-align: left; border-radius: var(--radius-lg); padding: var(--space-3); display: grid; grid-template-columns: 52px 1fr; gap: var(--space-3); align-items: center; background: var(--a); cursor: pointer; box-shadow: inset 0 0 0 2px transparent; }
+  .al[aria-selected="true"] { box-shadow: inset 0 0 0 3px var(--ink); }
+  .al .ic { width: 52px; height: 52px; border-radius: 14px; background: var(--surface); display: grid; place-items: center; }
+  .al .ic .b-pic { width: 44px; height: 44px; }
+  .al b { display: block; font: 800 18px/22px var(--font-display); color: var(--ink); }
+  .al small { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .al .mini { height: 6px; border-radius: 99px; background: rgba(43, 36, 64, .1); margin-top: 6px; overflow: hidden; } .al .mini span { display: block; height: 100%; background: var(--ink); border-radius: 99px; }
+  .rings { position: absolute; left: 306px; top: 30px; bottom: 30px; width: 16px; display: flex; flex-direction: column; justify-content: space-around; pointer-events: none; z-index: 2; }
+  .rings i { display: block; width: 22px; height: 12px; margin-left: -3px; border-radius: 6px; background: var(--album-ring); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5); }
+  .page { border-radius: 4px 18px 18px 4px; display: flex; flex-direction: column; overflow: hidden; }
+  .band { background: var(--a); padding: var(--space-3) var(--space-6); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+  .band h2 { margin: 0; display: flex; align-items: baseline; gap: var(--space-3); }
+  .band .en { font: 700 18px/22px var(--font-display); color: var(--ink-soft); }
+  .nav { display: flex; align-items: center; gap: var(--space-2); }
+  .nav .pn { font: 800 15px/20px var(--font-body); color: var(--ink-soft); min-width: 86px; text-align: center; }
+  .grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: var(--space-4) var(--space-6); padding: var(--space-5) var(--space-8); align-items: center; justify-items: center; }
+  .cell { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  .cell .b-stk { --size-sticker: min(120px, 15cqh); }
+  .lab { display: flex; align-items: center; gap: 6px; min-height: 40px; }
+  .lab b { font: 800 22px/26px var(--font-display); color: var(--ink); }
+  .lab small { display: block; font: 700 13px/16px var(--font-body); color: var(--ink-soft); }
+  .lab.q { color: var(--ink-soft); font: 700 15px/20px var(--font-body); }
+  .tip { position: absolute; z-index: 20; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); padding: var(--space-3) var(--space-4); max-width: 280px; font: 700 15px/20px var(--font-body); color: var(--ink); transform: translate(-50%, calc(-100% - 12px)); }
+  .gk { font: 700 14px/18px var(--font-body); color: var(--ink-soft); display: flex; gap: var(--space-2); align-items: center; padding: 0 var(--space-6) var(--space-3); }
+  @container (max-width: 1400px) { .book { grid-template-columns: 270px 1fr; } .rings { left: 276px; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, R = B.R;
+  var kid = { id: 'minh', name: 'Minh', grade: 4, level: 3, hair: 'short' };
+  var AL = [{ id: 'animals', vi: 'Con vật', en: 'Animals', tint: 'var(--album-animals)', items: ['cat', 'dog', 'fish', 'bird', 'duck', 'rabbit'], own: ['cat', 'dog', 'fish', 'bird', 'rabbit'], from: 'vùng Con vật' },
+    { id: 'vehicles', vi: 'Xe cộ', en: 'Vehicles', tint: 'var(--album-vehicles)', items: ['car', 'bus', 'bike', 'train', 'plane', 'boat'], own: ['car', 'bus', 'boat'], from: 'chủ đề Xe cộ (đảo Lá xanh)' },
+    { id: 'dino', vi: 'Khủng long', en: 'Dinosaurs', tint: 'var(--album-dino)', items: ['trex', 'stegosaurus', 'triceratops', 'longneck', 'pterodactyl', 'dinoegg'], own: ['trex'], from: 'trận trùm và bài ôn tập' },
+    { id: 'fruits', vi: 'Trái cây', en: 'Fruits', tint: 'var(--album-fruits)', items: ['apple', 'banana', 'grapes', 'orange', 'pear', 'strawberry'], own: ['apple', 'banana', 'grapes', 'orange', 'pear', 'strawberry'], from: 'vùng Trái cây' }];
+  var NEW = 'boat', TILT = [-4, 3, -2, 4, -3, 2];
+  var S = { p: 0 };
+  function have(a, empty) { return empty ? 0 : a.own.length; }
+  function tot(empty) { return AL.reduce(function (n, a) { return n + have(a, empty); }, 0); }
+  function head(empty, off) {
+    var n = off ? '··' : tot(empty), all = AL.length * 6;
+    return '<div class="ch"><h1 class="display-l">Bộ sưu tập</h1><div class="tabs" role="tablist" aria-label="Bộ sưu tập"><button type="button" role="tab" aria-selected="true">' + B.icon('gem', 22) + 'Sticker</button><button type="button" role="tab" aria-selected="false" data-tab-badges>' + B.icon('medal', 22) + 'Huy hiệu</button></div>' +
+      '<div class="total"><b>' + n + '/' + all + '</b><span class="body b-muted">sticker</span>' + B.ProgressBar(off ? 0 : n, all) + '</div></div>';
+  }
+  function idx(empty) {
+    return '<nav class="idx" aria-label="Các album"><h2 class="title">Album</h2><div role="tablist" aria-orientation="vertical" style="display:flex;flex-direction:column;gap:12px">' + AL.map(function (a, i) {
+      var h = have(a, empty); return '<button type="button" role="tab" class="al" data-al="' + i + '" aria-selected="' + (S.p === i) + '" style="--a:' + a.tint + '"' + (S.p === i ? '' : ' tabindex="-1"') + '><span class="ic">' + B.pic(a.items[0], 44).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '</span><span><b>' + a.vi + '</b><small>' + h + '/6 sticker</small><span class="mini"><span style="width:' + (h / 6 * 100) + '%"></span></span></span></button>';
+    }).join('') + '</div></nav>';
+  }
+  function page(empty) {
+    var a = AL[S.p];
+    return '<section class="page" style="--a:' + a.tint + '" aria-labelledby="pg-t"><div class="band"><h2 class="title" id="pg-t">' + a.vi + ' <span class="en" lang="en">' + a.en + '</span></h2><div class="nav">' +
+      B.btn({ label: '', variant: 'secondary', size: 'm', icon: 'back', attrs: 'data-prev aria-label="Trang trước (phím ←)" aria-keyshortcuts="ArrowLeft"', disabled: S.p === 0 }) + '<span class="pn" aria-live="polite">Trang ' + (S.p + 1) + '/' + AL.length + '</span>' + B.btn({ label: '', variant: 'secondary', size: 'm', icon: 'next', attrs: 'data-next aria-label="Trang sau (phím →)" aria-keyshortcuts="ArrowRight"', disabled: S.p === AL.length - 1 }) + '</div></div>' +
+      '<div class="grid">' + a.items.map(function (k, i) {
+        var own = !empty && a.own.indexOf(k) > -1, en = R.stickerName(k);
+        return '<div class="cell">' + R.sticker(k, { owned: own, isNew: own && k === NEW, tilt: TILT[i] }) + (own ? '<span class="lab">' + B.speak(en, 's', 'Nghe: ' + en) + '<span><b lang="en">' + en + '</b><small>' + R.stickerVi(k) + '</small></span></span>' : '<span class="lab q">' + B.icon('lock', 18) + 'Chưa có</span>') + '</div>';
+      }).join('') + '</div><p class="gk">' + B.icon('bulb', 20) + 'Sticker ' + a.vi.toLowerCase() + ' rơi bất ngờ khi cậu học xong bài ở ' + a.from + '.</p></section>';
+  }
+  function body(empty) { return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid }) + '<div class="scr__body">' + head(empty) + '<div class="book">' + idx(empty) + '<div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>' + page(empty) + '</div></div>'; }
+  function skel() { var g = ''; for (var i = 0; i < 6; i++) g += '<div class="cell">' + B.sk('min(120px, 15cqh)', 'min(120px, 15cqh)', '26%') + B.sk('110px', '22px', 'var(--radius-pill)') + '</div>';
+    return B.topbar({ back: true, kid: kid, stars: '··', coins: '··', streak: '··' }) + '<div class="scr__body">' + head(false, true) + '<div class="book"><div class="idx">' + B.sk('40%', '26px', 'var(--radius-pill)') + [1, 2, 3, 4].map(function () { return B.sk('100%', '76px', 'var(--radius-lg)'); }).join('') + '</div><div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><section class="page"><div class="band" style="background:var(--surface-sunk)">' + B.sk('200px', '30px', 'var(--radius-pill)') + '</div><div class="grid">' + g + '</div></section></div></div>'; }
+  B.screen({
+    fit: true, level: 3,
+    notes: { normal: 'Album bên trái (tab dọc, ↑ ↓), trang bên phải: 6 ô mỗi trang. Sticker đã có: viền trắng cắt bế (`sticker-frame`), nghiêng nhẹ, tên tiếng Anh + loa; bấm sticker để nghe. Ô chưa có: nền `sticker-slot`, viền nét đứt, hình bóng mờ `sticker-ghost` (bấm để xem cách nhận). ← → đổi trang album. Tab “Huy hiệu” là Screen39.', loading: 'Khung xương album.', empty: 'Bé chưa có sticker nào: mọi ô hiện bóng mờ, Bông chỉ cách nhận.', error: 'Không tải được bộ sưu tập.' },
+    states: {
+      normal: function () { return body(false); },
+      loading: skel,
+      empty: function () { return body(true).replace('<div class="book">', '<div class="b-bubble b-bubble--left body-l" style="margin-bottom:12px;align-self:flex-start">Album còn trống! Học xong một bài là có thể nhận <b>sticker bất ngờ</b> đó.</div><div class="book">'); },
+      error: function () { return B.topbar({ back: true, kid: kid }) + '<div class="scr__body">' + head(false, true) + B.stateBlock({ kind: 'error', title: 'Album chưa mở được', text: 'Sticker của cậu vẫn còn nguyên. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        if (ctx.state !== 'normal' && ctx.state !== 'empty') return;
+        var empty = ctx.state === 'empty';
+        function go(p, sel) { S.p = Math.max(0, Math.min(AL.length - 1, p)); ctx.setState(ctx.state); var f = ctx.scr.querySelector(sel || '[data-al="' + S.p + '"]'); f && f.focus({ preventScroll: true }); }
+        scr.querySelectorAll('[data-al]').forEach(function (b) { b.addEventListener('click', function () { go(+b.dataset.al); }); b.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); go(S.p + (e.key === 'ArrowDown' ? 1 : -1)); } }); });
+        var pv = scr.querySelector('[data-prev]'), nx = scr.querySelector('[data-next]');
+        pv.addEventListener('click', function () { go(S.p - 1, '[data-prev]:not([disabled]),[data-next]'); }); nx.addEventListener('click', function () { go(S.p + 1, '[data-next]:not([disabled]),[data-prev]'); });
+        function tip(el, html) { var o = scr.querySelector('.tip'); if (o) o.remove(); var r = el.getBoundingClientRect(), sr = scr.getBoundingClientRect(), sc = (scr.closest('.dsf-vp') || {}).__scale || 1; var t = document.createElement('div'); t.className = 'tip'; t.setAttribute('role', 'status'); t.innerHTML = html; t.style.left = ((r.left + r.width / 2 - sr.left) / sc) + 'px'; t.style.top = ((r.top - sr.top) / sc) + 'px'; scr.appendChild(t); ctx.later(function () { t.remove(); }, 2600); }
+        scr.querySelectorAll('[data-stk]').forEach(function (b) { b.addEventListener('click', function () { var k = b.dataset.stk; if (b.classList.contains('is-owned')) { B.L.say(R.stickerName(k), .85); b.animate && b.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 360 }); } else tip(b, 'Học bài ở ' + AL[S.p].from + ' để có cơ hội nhận sticker này!'); }); });
+        var bt = scr.querySelector('[data-tab-badges]'); bt.addEventListener('click', function () { tip(bt, 'Mở tab Huy hiệu (màn Screen39-Badges).'); });
+        ctx.onKey(function (e) { if (e.target.closest && e.target.closest('[role="tablist"][aria-orientation]')) return; if (e.key === 'ArrowLeft' && S.p > 0) { e.preventDefault(); go(S.p - 1, '[data-prev]:not([disabled]),[data-next]'); } if (e.key === 'ArrowRight' && S.p < AL.length - 1) { e.preventDefault(); go(S.p + 1, '[data-next]:not([disabled]),[data-prev]'); } });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!-- @dsCard group="Màn Tiểu học · 25–27 Mini game" height=700 subtitle="26. Đập chuột chữ cái (Screen31-WhackLetters): lưới 3×3 hang, chuột chui lên mang chữ cái hoặc hình; Bông đọc một âm, bé đập đúng con bằng chuột hoặc phím 1–9 (bố trí như bàn phím số). Đập sai chuột lè lưỡi, không trừ điểm" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Đập chuột chữ cái — preview</title>
+<style>
+  .scr { background: linear-gradient(var(--game-sky), var(--game-sky-2) 40%); }
+  .lesson-foot { background: var(--game-sky-2); }
+  .ask { flex: none; display: flex; align-items: center; justify-content: center; gap: var(--space-4); padding-bottom: min(var(--space-2), 1cqh); }
+  .ask .title { margin: 0; }
+  .yard { flex: 1; min-height: 0; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: 0 var(--space-12) min(var(--space-4), 2cqh); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+  .lawn { --c: min(var(--size-mole-hole), 18.5cqh); background: var(--mole-ground); border-radius: var(--radius-xl); box-shadow: inset 0 -10px 0 var(--mole-ground-shade), 0 0 0 6px var(--mole-ground-shade); padding: calc(var(--c) * .08) calc(var(--c) * .3) calc(var(--c) * .14); display: grid; grid-template-columns: repeat(3, calc(var(--c) * 1.45)); grid-auto-rows: calc(var(--c) * 1.04); column-gap: calc(var(--c) * .2); }
+  .hole { position: relative; border: 0; background: none; padding: 0; cursor: pointer; border-radius: var(--radius-lg); }
+  .hole:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+  .hole .b-key { position: absolute; left: 4px; bottom: 4px; z-index: 4; }
+  .pit { position: absolute; left: 50%; bottom: 10%; width: var(--c); height: calc(var(--c) * .34); transform: translateX(-50%); border-radius: 50%; background: var(--mole-hole); box-shadow: 0 0 0 7px var(--mole-hole-rim); }
+  .clip { position: absolute; left: 50%; bottom: calc(10% + var(--c) * .17); width: calc(var(--c) * 1.1); height: calc(var(--c) * .95); transform: translateX(-50%); overflow: hidden; z-index: 2; }
+  .mole { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; transform: translateY(105%); transition: transform .22s ease; }
+  .mole svg { position: absolute; left: 50%; bottom: -4%; width: 82%; height: auto; transform: translateX(-50%); }
+  .hole.is-up .mole { transform: translateY(0); }
+  .sign { position: absolute; left: 50%; bottom: 2%; transform: translateX(-50%); min-width: calc(var(--c) * .44); height: calc(var(--c) * .34); padding: 0 6px; border-radius: 12px; background: var(--surface); border: 3px solid var(--dragon-line); display: grid; place-items: center; font: 800 calc(var(--c) * .26)/1 var(--font-display); color: var(--ink); box-sizing: border-box; }
+  .sign .b-pic { width: calc(var(--c) * .3); height: auto; }
+  .lip { position: absolute; left: 50%; bottom: 10%; width: var(--c); height: calc(var(--c) * .17); transform: translateX(-50%); border-radius: 0 0 999px 999px; background: var(--mole-hole-rim); z-index: 3; pointer-events: none; }
+  .tongue { display: none; } .hole.is-tongue .tongue { display: inline; } .hole.is-tongue .mouth { display: none; }
+  .hole.is-tongue .mole { animation: b-shake .45s ease; }
+  .hole.is-bonk .eyes { display: none; } .bonk { display: none; } .hole.is-bonk .bonk { display: inline; }
+  .hole.is-hint .sign { box-shadow: 0 0 0 5px var(--star), 0 0 22px 4px var(--star); }
+  .hole:hover .sign { border-color: var(--brand); }
+  .demo { display: flex; align-items: flex-end; gap: 12px; }
+  .demo .mini { width: 120px; height: 110px; position: relative; --c: 100px; }
+  @media (prefers-reduced-motion: reduce) { .mole { transition-duration: .01s; } .hole.is-tongue .mole { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  // phím 1–9 theo bàn phím số: hàng trên 7 8 9, giữa 4 5 6, dưới 1 2 3
+  var KEYS = ['7', '8', '9', '4', '5', '6', '1', '2', '3'];
+  var SND = { b: { ex: 'ball', vi: 'quả bóng' }, c: { ex: 'cat', vi: 'con mèo', ipa: '/k/' }, d: { ex: 'dog', vi: 'con chó' }, f: { ex: 'fish', vi: 'con cá' }, a: { ex: 'apple', vi: 'quả táo', ipa: '/æ/' }, r: { ex: 'rabbit', vi: 'con thỏ' }, t: { ex: 'teddy', vi: 'gấu bông' }, s: { ex: 'sun', vi: 'mặt trời' }, m: { ex: 'monkey', vi: 'con khỉ' }, p: { ex: 'pear', vi: 'quả lê' } };
+  function ipa(l) { return SND[l].ipa || '/' + l + '/'; }
+  // 5 lượt chữ cái, 3 lượt hình (con nào bắt đầu bằng âm này?)
+  var ROUNDS = [{ t: 'b', k: 'l' }, { t: 'c', k: 'l' }, { t: 'd', k: 'l' }, { t: 'a', k: 'l' }, { t: 'f', k: 'l' }, { t: 'r', k: 'p', w: 'rabbit' }, { t: 'b', k: 'p', w: 'banana' }, { t: 'd', k: 'p', w: 'duck' }];
+  var DECOY_L = ['b', 'c', 'd', 'a', 'f', 'm', 's', 't', 'p'], DECOY_P = ['cat', 'apple', 'fish', 'pear', 'kite', 'teddy', 'grapes'];
+  var N = ROUNDS.length, S;
+  function reset() { S = { r: 0, score: 0, first: 0, tries: 0, hint: false, holes: [{ up: 1, v: 'm' }, { up: 0 }, { up: 1, v: 'b' }, { up: 0 }, { up: 1, v: 'd' }, { up: 0 }, { up: 1, v: 's' }, { up: 0 }, { up: 0 }] }; }
+  reset();
+  function R() { return ROUNDS[S.r]; }
+  function moleSvg() {
+    var ln = 'stroke="var(--dragon-line)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"';
+    return '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="30" cy="20" r="11" fill="var(--mole-fur)" ' + ln + '/><circle cx="90" cy="20" r="11" fill="var(--mole-fur)" ' + ln + '/><circle cx="30" cy="20" r="4.5" fill="var(--mole-belly)"/><circle cx="90" cy="20" r="4.5" fill="var(--mole-belly)"/>' +
+      '<path d="M14 132 V50 C14 10 106 10 106 50 V132 Z" fill="var(--mole-fur)" ' + ln + '/><ellipse cx="60" cy="46" rx="32" ry="21" fill="var(--mole-belly)"/>' +
+      '<g class="eyes"><circle cx="46" cy="36" r="5" fill="var(--dragon-line)"/><circle cx="74" cy="36" r="5" fill="var(--dragon-line)"/><circle cx="47.5" cy="34.5" r="1.6" fill="#fff"/><circle cx="75.5" cy="34.5" r="1.6" fill="#fff"/></g>' +
+      '<g class="bonk"><path d="M41 36 h10 M46 31 v10 M69 36 h10 M74 31 v10" ' + ln + '/></g>' +
+      '<ellipse cx="60" cy="45" rx="6.5" ry="4.5" fill="var(--mole-tongue)" ' + ln + '/><path class="mouth" d="M52 53 q8 6 16 0" fill="none" ' + ln + '/>' +
+      '<g class="tongue"><path d="M50 52 q10 5 20 0" fill="none" ' + ln + '/><path d="M54 54 q0 12 6 12 q6 0 6 -12" fill="var(--mole-tongue)" ' + ln + '/><path d="M41 31 l9 5 M79 31 l-9 5" ' + ln + '/></g>' +
+      '<circle cx="36" cy="50" r="5" fill="var(--mole-tongue)" opacity=".5"/><circle cx="84" cy="50" r="5" fill="var(--mole-tongue)" opacity=".5"/></svg>';
+  }
+  function sign(v) { return v.length > 1 ? B.pic(v, 60).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') : '<span lang="en">' + v + '</span>'; }
+  function holeHtml(h, i) {
+    return '<button type="button" class="hole' + (h.up ? ' is-up' : '') + '" data-h="' + i + '" aria-keyshortcuts="' + KEYS[i] + '" aria-label="Hang phím ' + KEYS[i] + (h.up ? ': ' + (h.v.length > 1 ? B.words[h.v].vi : 'chữ ' + h.v) : ': trống') + '">' + B.key(KEYS[i]) +
+      '<span class="pit"></span><span class="clip"><span class="mole">' + moleSvg() + '<span class="sign">' + (h.v ? sign(h.v) : '') + '</span></span></span><span class="lip"></span></button>';
+  }
+  function ask() { var r = R(); return '<div class="ask"><h1 class="title">' + (r.k === 'l' ? 'Đập chuột cầm chữ có âm Bông đọc' : 'Đập chuột cầm hình bắt đầu bằng âm Bông đọc') + '</h1>' + B.speak(r.t + '. ' + SND[r.t].ex, 'l', 'Nghe âm') + '</div>'; }
+  function view(off) {
+    return L.head({ n: S.score, total: N, pause: true, count: S.score + '/' + N }) + ask() +
+      '<div class="yard"><div class="lawn" role="group" aria-label="Sân 9 hang chuột">' + S.holes.map(holeHtml).join('') + '</div></div>' +
+      L.gfoot({ msg: off ? 'Chuột đang chờ cậu…' : 'Nghe âm rồi đập con chuột đúng nhé!', score: S.score, total: N, hintOff: S.hint, off: off, replayLabel: 'Nghe âm' });
+  }
+  function emptyLawn(sk) { return '<div class="yard"><div class="lawn">' + KEYS.map(function (k, i) { return '<span class="hole"' + (sk ? '' : '') + '>' + B.key(k) + '<span class="pit"></span><span class="lip"></span></span>'; }).join('') + '</div></div>'; }
+  B.screen({
+    fit: true, level: 1, defaultState: 'start', order: ['start', 'normal', 'pause', 'end', 'loading', 'empty', 'error'],
+    labels: { start: 'Bắt đầu', normal: 'Đang chơi', pause: 'Tạm dừng', end: 'Kết thúc' },
+    notes: { start: 'Lớp phủ bắt đầu: chuột cầm chữ + phím, 1 dòng cách chơi, Bắt đầu (Enter).', normal: 'Bông đọc một âm (Space nghe lại). Chuột chui lên trong `duration-mole-up` rồi thụt xuống và chui lại (không đếm ngược). Đập bằng chuột hoặc phím 1–9 theo bàn phím số (7 8 9 hàng trên). Đập sai: chuột lè lưỡi (`mole-tongue`), Bông đọc chữ đó; sai 2 lần tự bật gợi ý (chuột đúng phát sáng). 5 lượt chữ cái, 3 lượt hình.', pause: 'Tạm dừng: Chơi tiếp hoặc Thoát.', end: 'Bảng kết thúc: 8/8 âm, sao, xu, Tiếp tục.', loading: 'Khung xương sân cỏ: 9 hang trống.', empty: 'Chưa học âm nào để chơi.', error: 'Không tải được trò chơi.' },
+    states: {
+      start: function () { reset(); return view(true); }, normal: function () { return view(false); }, pause: function () { return view(true); },
+      end: function () { S.score = N; return L.head({ n: N, total: N, pause: true, count: N + '/' + N }) + '<div class="ask"><h1 class="title">Đập chuột chữ cái</h1></div>' + emptyLawn() + L.gfoot({ msg: 'Xong rồi!', expr: 'chucmung', score: N, total: N, off: true }); },
+      loading: function () { return L.head({ n: 0, total: N, pause: true, count: '0/' + N }) + '<div class="ask">' + B.sk('460px', '40px', 'var(--radius-pill)') + B.sk('96px', '96px', '50%') + '</div>' + emptyLawn(true) + L.gfoot({ msg: 'Chuột đang đào hang…', expr: 'suynghi', off: true, total: N }); },
+      empty: function () { return L.head({ n: 0, total: N, pause: true, count: '—' }) + '<div class="yard">' + B.stateBlock({ kind: 'empty', title: 'Cậu chưa học âm nào', text: 'Học bài Ghép âm đầu tiên là chơi được ngay!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</div>' + L.gfoot({ off: true, total: N }); },
+      error: function () { return L.head({ n: 0, total: N, pause: true, count: '—' }) + '<div class="yard">' + B.stateBlock({ kind: 'error', title: 'Chuột chưa chui lên', text: 'Trò chơi chưa tải xong. Không phải lỗi của cậu đâu!' }) + '</div>' + L.gfoot({ off: true, total: N }); }
+    },
+    mount: {
+      start: function (scr, ctx) { L.gameStart(scr, { title: 'Đập chuột chữ cái', art: '<div class="demo">' + B.speak('b. ball', 'm', 'Nghe thử') + '<span class="mini" style="display:grid;place-items:center"><span class="sign" style="position:static;transform:none;width:72px;height:60px;font-size:40px">b</span></span>' + B.key('5') + '</div>', how: 'Nghe âm, rồi đập con chuột cầm chữ đúng bằng chuột hoặc phím số 1–9.', onStart: function () { ctx.setState('normal'); } }); },
+      pause: function (scr, ctx) { L.gamePause(scr, { onResume: function () { ctx.setState('normal'); }, onExit: function () { L.exit(ctx, N - S.score, 'trò chơi'); } }); },
+      end: function (scr, ctx) { var st = S.first >= 7 || S.first === 0 ? 3 : S.first >= 5 ? 2 : 1; L.gameEnd(scr, { correct: N, total: N, stars: st, coins: 10 + st * 2, note: 'Cậu nhận ra cả 8 âm: <b class="en">b, c, d, a, f, r…</b>', onNext: function () { reset(); ctx.setState('start'); } }); },
+      normal: function (scr, ctx) {
+        var hs = [].slice.call(scr.querySelectorAll('[data-h]')), paused = false, busy = false;
+        var upMs = parseFloat(getComputedStyle(scr).getPropertyValue('--duration-mole-up')) || 3200;
+        var life = S.holes.map(function (h) { return h.up ? upMs * (0.6 + Math.random() * .4) : 400 + Math.random() * 900; });
+        function tgt() { var r = R(); return r.k === 'l' ? r.t : r.w; }
+        function paint(i) { var h = S.holes[i], el = hs[i]; el.classList.toggle('is-up', !!h.up); el.classList.remove('is-tongue', 'is-bonk'); el.classList.toggle('is-hint', S.hint && h.up && h.v === tgt()); el.querySelector('.sign').innerHTML = h.v ? sign(h.v) : ''; el.setAttribute('aria-label', 'Hang phím ' + KEYS[i] + (h.up ? ': ' + (h.v.length > 1 ? B.words[h.v].vi : 'chữ ' + h.v) : ': trống')); }
+        function pickVal() { var r = R(), t = tgt(), shown = S.holes.filter(function (h) { return h.up; }).map(function (h) { return h.v; });
+          if (shown.indexOf(t) < 0) return t;
+          var pool = (r.k === 'l' ? DECOY_L : DECOY_P).filter(function (v) { return shown.indexOf(v) < 0 && v !== t && (r.k === 'l' || v[0] !== r.t); });
+          return pool[Math.floor(Math.random() * pool.length)]; }
+        function tick() {
+          if (paused || busy) return;
+          var ups = S.holes.filter(function (h) { return h.up; }).length;
+          S.holes.forEach(function (h, i) { life[i] -= 200; if (life[i] > 0) return;
+            if (h.up) { h.up = 0; life[i] = 600 + Math.random() * 1200; paint(i); ups--; }
+            else if (ups < 4) { h.up = 1; h.v = pickVal(); life[i] = upMs; paint(i); ups++; } else life[i] = 300; });
+        }
+        S.holes.forEach(function (h, i) { if (h.up && R().k === 'p' && h.v.length === 1) h.v = pickVal(); paint(i); });
+        if (!S.holes.some(function (h) { return h.up && h.v === tgt(); })) { var free = S.holes.map(function (h, i) { return h.up ? -1 : i; }).filter(function (i) { return i >= 0; })[0]; if (free != null) { S.holes[free] = { up: 1, v: tgt() }; life[free] = upMs; paint(free); } }
+        ctx.every(tick, 200);
+        function whack(i) {
+          var h = S.holes[i], el = hs[i]; if (busy || !h.up) return;
+          if (h.v === tgt()) { busy = true; if (S.tries === 0) S.first++; S.score++; el.classList.remove('is-hint'); el.classList.add('is-bonk'); ctx.burst(el.querySelector('.sign'), scr.querySelector('.b-progress span'), 8); L.say(SND[R().t].ex);
+            ctx.later(function () { L.setProg(scr, S.score, N); scr.querySelector('[data-gscore] b').textContent = S.score; }, 500);
+            L.gmsg(scr, ['Bốp! Đúng rồi!', 'Giỏi quá!', 'Tai thính ghê!'][S.score % 3] + ' <b class="en">' + R().t + '</b> ' + ipa(R().t) + ' như <b class="en">' + SND[R().t].ex + '</b> (' + SND[R().t].vi + ')', 'vui');
+            if (S.score >= N) { ctx.later(function () { ctx.setState('end'); }, 1100); return; }
+            ctx.later(function () { h.up = 0; paint(i); life[i] = 900; S.r++; S.tries = 0; S.hint = false; scr.querySelector('.ask').outerHTML = ask(); scr.querySelector('.ask [data-say]').focus({ preventScroll: true }); scr.querySelector('[data-hint]').disabled = false;
+              S.holes.forEach(function (x, j) { if (x.up && R().k === 'p' && x.v.length === 1) { x.v = pickVal(); paint(j); } });
+              L.say(R().t + '. ' + SND[R().t].ex, .8); L.gmsg(scr, R().k === 'p' && S.r === 5 ? 'Giờ chuột cầm hình! Đập hình bắt đầu bằng âm Bông đọc.' : 'Âm tiếp theo! Nghe kỹ nhé.', 'chao'); busy = false; }, 900);
+          } else { S.tries++; el.classList.remove('is-tongue'); void el.offsetWidth; el.classList.add('is-tongue'); life[i] = Math.max(life[i], 1200); ctx.later(function () { el.classList.remove('is-tongue'); }, 1000);
+            L.say(h.v.length > 1 ? h.v : h.v); if (S.tries >= 2) { S.hint = true; S.holes.forEach(function (x, j) { paint(j); }); scr.querySelector('[data-hint]').disabled = true; }
+            L.gmsg(scr, 'Lêu lêu! Đây là ' + (h.v.length > 1 ? '<b class="en">' + h.v + '</b>' : 'chữ <b class="en">' + h.v + '</b> ' + ipa(h.v)) + '. ' + (S.hint ? 'Chuột đúng đang phát sáng đó!' : 'Nghe lại âm nhé!'), 'dongvien'); }
+        }
+        hs.forEach(function (el, i) { el.addEventListener('click', function () { whack(i); }); });
+        function pause() { if (paused) return; paused = true; L.gamePause(scr, { onResume: function () { paused = false; }, onExit: function () { L.exit(ctx, N - S.score, 'trò chơi'); } }); }
+        scr.querySelector('[data-pause]').addEventListener('click', pause);
+        L.wire(scr, ctx, { left: N - S.score, onEsc: pause,
+          onReplay: function (btn) { L.say(R().t + '. ' + SND[R().t].ex, .8, btn); },
+          onHint: function () { S.hint = true; S.holes.forEach(function (x, j) { paint(j); }); scr.querySelector('[data-hint]').disabled = true; L.gmsg(scr, 'Âm <b class="en">' + R().t + '</b> ' + ipa(R().t) + ' như <b class="en">' + SND[R().t].ex + '</b>. Chuột phát sáng là chuột đúng!', 'suynghi'); L.say(SND[R().t].ex, .7); },
+          onKey: function (e) { var k = KEYS.indexOf(e.key); if (k >= 0) { e.preventDefault(); whack(k); return true; } if (e.key === 'Enter') return true; }
+        });
+        ctx.later(function () { L.say(R().t + '. ' + SND[R().t].ex, .8); var a = document.activeElement; if (!a || a === document.body || !scr.contains(a)) scr.querySelector('.ask [data-say]').focus({ preventScroll: true }); }, 300);
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

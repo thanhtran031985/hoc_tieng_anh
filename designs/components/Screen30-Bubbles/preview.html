@@ -1,0 +1,121 @@
+<!-- @dsCard group="Màn Tiểu học · 25–27 Mini game" height=700 subtitle="25. Bong bóng từ vựng (Screen30-Bubbles): nghe một từ, bong bóng chứa hình bay lên chậm; bấm đúng bong bóng hoặc phím số in trên bóng để nổ. Bóng bay mất sẽ bay lại sau" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bong bóng từ vựng — preview</title>
+<style>
+  .scr { background: linear-gradient(var(--game-sky), var(--game-sky-2)); }
+  .lesson-foot { background: var(--game-sky-2); }
+  .ask { flex: none; display: flex; align-items: center; justify-content: center; gap: var(--space-4); padding-bottom: min(var(--space-3), 1.5cqh); }
+  .ask .title { margin: 0; }
+  .field { flex: 1; min-height: 0; position: relative; overflow: hidden; width: 100%; max-width: var(--size-content-max); margin: 0 auto; }
+  .cloud { position: absolute; background: var(--surface); border-radius: var(--radius-pill); opacity: .75; }
+  .cloud::before { content: ""; position: absolute; background: inherit; border-radius: 50%; width: 50%; height: 150%; left: 18%; top: -62%; }
+  .bub { --d: min(var(--size-bubble), 21cqh); position: absolute; left: 0; bottom: 0; width: var(--d); height: var(--d); margin-left: calc(var(--d) / -2); border-radius: 50%; border: 0; padding: 0; cursor: pointer; display: grid; place-items: center;
+    background: radial-gradient(circle at 34% 30%, var(--bubble-shine) 0 9%, transparent 10%), radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--bc) 55%, var(--bubble-shine)), var(--bc) 72%);
+    box-shadow: inset 0 0 0 4px var(--bubble-shine), inset -10px -14px 0 color-mix(in srgb, var(--bc) 80%, var(--ink) 8%), 0 10px 22px rgba(43, 36, 64, .10); will-change: transform; transition: filter .15s; }
+  .bub:hover { filter: brightness(1.04) saturate(1.1); }
+  .bub .b-pic { width: 60%; height: auto; pointer-events: none; }
+  .bub .b-key { position: absolute; top: 8%; left: 50%; transform: translateX(-50%); font-size: 18px; min-width: 32px; height: 32px; }
+  .bub.c1 { --bc: var(--bubble-1); } .bub.c2 { --bc: var(--bubble-2); } .bub.c3 { --bc: var(--bubble-3); } .bub.c4 { --bc: var(--bubble-4); } .bub.c5 { --bc: var(--bubble-5); }
+  .bub.is-hint { box-shadow: inset 0 0 0 4px var(--bubble-shine), 0 0 0 6px var(--star), 0 0 26px 6px var(--star); }
+  .bub.is-wob .b-pic { animation: b-shake .45s ease; }
+  .bub.is-pop { pointer-events: none; animation: popb .42s ease forwards; }
+  .bub.is-gone { visibility: hidden; }
+  @keyframes popb { 40% { scale: 1.18; } 100% { scale: .2; opacity: 0; } }
+  .bub:focus-visible { outline: none; box-shadow: inset 0 0 0 4px var(--bubble-shine), var(--shadow-focus); }
+  .back { position: absolute; top: 10px; padding: 4px 12px; border-radius: var(--radius-pill); background: var(--surface); font: 800 14px/18px var(--font-body); color: var(--ink-soft); box-shadow: var(--shadow-card); transform: translateX(-50%); animation: fadeo 2.2s ease forwards; }
+  @keyframes fadeo { 70% { opacity: 1; } 100% { opacity: 0; } }
+  .hand { display: flex; align-items: center; gap: 10px; }
+  .hand .demo { width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 34% 30%, var(--bubble-shine) 0 9%, transparent 10%), var(--bubble-1); box-shadow: inset 0 0 0 4px var(--bubble-shine); position: relative; }
+  .hand .demo .b-pic { width: 62%; height: auto; } .hand .demo .b-key { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); }
+  @media (prefers-reduced-motion: reduce) { .bub.is-pop { animation-duration: .01s; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var POOL = ['cat', 'dog', 'fish', 'bird', 'duck', 'rabbit', 'apple', 'banana'];
+  var ORDER = ['dog', 'apple', 'fish', 'cat', 'banana', 'bird', 'rabbit', 'duck'];
+  var LANES = [11, 30, 50, 70, 89], ROUNDS = 8;
+  var S;
+  function reset() { S = { score: 0, first: 0, tries: 0, hint: false, t: 0, lanes: LANES.map(function (_, i) { return { w: ['cat', 'bird', 'dog', 'apple', 'duck'][i], y: 0.12 + 0.17 * ((i * 2) % 5), wait: 0 }; }) }; S.lanes[2].w = 'dog'; S.lanes[2].y = 0.18; S.target = 'dog'; }
+  reset();
+  var clouds = '<span class="cloud" style="left:6%;top:12%;width:150px;height:40px"></span><span class="cloud" style="left:72%;top:6%;width:190px;height:46px"></span><span class="cloud" style="left:42%;top:34%;width:110px;height:30px"></span>';
+  function field() {
+    return '<div class="field" aria-label="Bầu trời bong bóng">' + clouds + S.lanes.map(function (l, i) {
+      return '<button type="button" class="bub c' + (i + 1) + '" data-b="' + i + '" aria-keyshortcuts="' + (i + 1) + '" aria-label="Bong bóng ' + (i + 1) + ': ' + B.words[l.w].vi + '" style="left:' + LANES[i] + '%">' + B.key(String(i + 1)) + B.pic(l.w, 92).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '</button>';
+    }).join('') + '</div>';
+  }
+  function view(off) {
+    return L.head({ n: S.score, total: ROUNDS, pause: true, count: S.score + '/' + ROUNDS }) +
+      '<div class="ask"><h1 class="title">Nghe rồi bắn bong bóng có hình đúng</h1>' + B.speak(S.target, 'l', 'Nghe từ') + '</div>' + field() +
+      L.gfoot({ msg: off ? 'Bông đang chờ cậu…' : 'Nghe từ rồi bấm bong bóng có hình đúng nhé!', score: S.score, total: ROUNDS, hintOff: S.hint, off: off });
+  }
+  function startOv(scr, ctx) {
+    L.gameStart(scr, { title: 'Bong bóng từ vựng', art: '<div class="hand">' + B.speak('cat', 'm', 'Nghe thử') + '<span class="demo">' + B.key('1') + B.pic('cat', 80) + '</span></div>',
+      how: 'Nghe từ, rồi bấm bong bóng có hình đúng hoặc nhấn phím số in trên bóng.', onStart: function () { ctx.setState('normal'); } });
+  }
+  B.screen({
+    fit: true, level: 1, defaultState: 'start', order: ['start', 'normal', 'pause', 'end', 'loading', 'empty', 'error'],
+    labels: { start: 'Bắt đầu', normal: 'Đang chơi', pause: 'Tạm dừng', end: 'Kết thúc' },
+    notes: { start: 'Lớp phủ bắt đầu: 1 dòng cách chơi có hình, nút Bắt đầu (Enter).', normal: 'Bông đọc một từ (Space nghe lại). Bong bóng 5 màu (`bubble-1…5`) bay lên chậm trong `duration-bubble-rise`; bấm bóng hoặc phím 1–5 in trên bóng. Bóng bay mất sẽ bay lại sau. Bấm nhầm: bóng lắc, Bông nói từ đó là gì; sai 2 lần tự bật gợi ý (bóng đúng phát sáng). Esc hoặc ⏸ tạm dừng.', pause: 'Tạm dừng: Chơi tiếp (Enter/Esc) hoặc Thoát (mở hộp thoại Dừng bài học?).', end: 'Bảng kết thúc: số từ đúng, sao (tính theo số lần đúng ngay lần đầu), xu, Tiếp tục.', loading: 'Khung xương bầu trời.', empty: 'Chưa có từ đã học để chơi.', error: 'Không tải được trò chơi.' },
+    states: {
+      start: function () { reset(); return view(true); }, normal: function () { return view(false); }, pause: function () { return view(true); },
+      end: function () { return L.head({ n: ROUNDS, total: ROUNDS, pause: true, count: ROUNDS + '/' + ROUNDS }) + '<div class="ask"><h1 class="title">Nghe rồi bắn bong bóng có hình đúng</h1></div><div class="field">' + clouds + '</div>' + L.gfoot({ msg: 'Xong rồi!', expr: 'chucmung', score: ROUNDS, total: ROUNDS, off: true }); },
+      loading: function () { return L.head({ n: 0, total: ROUNDS, pause: true, count: '0/' + ROUNDS }) + '<div class="ask">' + B.sk('420px', '40px', 'var(--radius-pill)') + '</div><div class="field">' + clouds + '<div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around;padding:0 4% 30px">' + [1, 2, 3, 4, 5].map(function (i) { return B.sk('min(150px, 21cqh)', 'min(150px, 21cqh)', '50%'); }).join('') + '</div></div>' + L.gfoot({ msg: 'Bông đang thổi bong bóng…', expr: 'suynghi', off: true, total: ROUNDS }); },
+      empty: function () { return L.head({ n: 0, total: ROUNDS, pause: true, count: '—' }) + '<div class="field">' + clouds + B.stateBlock({ kind: 'empty', title: 'Chưa có từ nào để thổi bong bóng', text: 'Học 1 bài trên bản đồ là có từ để chơi ngay!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</div>' + L.gfoot({ off: true, total: ROUNDS }); },
+      error: function () { return L.head({ n: 0, total: ROUNDS, pause: true, count: '—' }) + '<div class="field">' + clouds + B.stateBlock({ kind: 'error', title: 'Bong bóng chưa bay lên', text: 'Trò chơi chưa tải xong. Không phải lỗi của cậu đâu!' }) + '</div>' + L.gfoot({ off: true, total: ROUNDS }); }
+    },
+    mount: {
+      start: function (scr, ctx) { place(scr); startOv(scr, ctx); },
+      pause: function (scr, ctx) { place(scr); L.gamePause(scr, { onResume: function () { ctx.setState('normal'); }, onExit: function () { L.exit(ctx, ROUNDS - S.score, 'trò chơi'); } }); },
+      end: function (scr, ctx) { var st = S.first >= 7 ? 3 : S.first >= 5 ? 2 : 1; if (S.score < ROUNDS) { S.first = 7; st = 3; }
+        L.gameEnd(scr, { correct: ROUNDS, total: ROUNDS, stars: st, coins: 8 + st * 2, note: 'Cậu đã tìm đúng cả 8 từ. Bông thích nhất lúc cậu bắn trúng <b class="en">rabbit</b>!', onNext: function () { reset(); ctx.setState('start'); } }); },
+      normal: function (scr, ctx) {
+        var fieldEl = scr.querySelector('.field'), bubs = [].slice.call(scr.querySelectorAll('[data-b]')), raf, last = 0, alive = true, paused = false, busy = false;
+        var dur = parseFloat(getComputedStyle(scr).getPropertyValue('--duration-bubble-rise')) || 11000;
+        if (S.hint) bubs.forEach(function (b, i) { b.classList.toggle('is-hint', S.lanes[i].w === S.target); });
+        function setPic(i) { var b = bubs[i], w = S.lanes[i].w; b.querySelector('svg').outerHTML = B.pic(w, 92).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"'); b.setAttribute('aria-label', 'Bong bóng ' + (i + 1) + ': ' + B.words[w].vi); }
+        function draw() { var H = fieldEl.clientHeight, d = bubs[0].offsetWidth; S.lanes.forEach(function (l, i) { var y = l.y * (H + d) - d, sw = Math.sin(S.t / 900 + i * 1.7) * 12; bubs[i].style.transform = 'translate(' + sw + 'px,' + (-y) + 'px)'; }); }
+        function tick(ts) {
+          if (!alive) return; var dt = last ? Math.min(50, ts - last) : 0; last = ts;
+          if (!paused) { S.t += dt; S.lanes.forEach(function (l, i) {
+            if (l.wait > 0) { l.wait -= dt; if (l.wait <= 0) { l.y = 0; bubs[i].classList.remove('is-gone', 'is-pop'); } return; }
+            l.y += dt / dur; if (l.y > 1) { l.wait = 1600; bubs[i].classList.add('is-gone'); var t = document.createElement('span'); t.className = 'back'; t.style.left = LANES[i] + '%'; t.textContent = 'Bóng ' + (i + 1) + ' sẽ bay lại sau'; fieldEl.appendChild(t); ctx.later(function () { t.remove(); }, 2300); }
+          }); draw(); }
+          raf = requestAnimationFrame(tick);
+        }
+        draw(); raf = requestAnimationFrame(tick);
+        ctx.cleanup = function () { alive = false; cancelAnimationFrame(raf); };
+        function nextTarget() { var on = S.lanes.map(function (l) { return l.w; }); var c = ORDER.filter(function (w) { return on.indexOf(w) >= 0 && w !== S.target; }); return c[S.score % c.length] || on[0]; }
+        function hit(i) {
+          if (busy || S.lanes[i].wait > 0) return; var w = S.lanes[i].w, b = bubs[i];
+          if (w === S.target) { busy = true; if (S.tries === 0) S.first++; S.score++; b.classList.remove('is-hint'); b.classList.add('is-pop'); ctx.burst(b, scr.querySelector('.b-progress span'), 8); L.say(w);
+            ctx.later(function () { L.setProg(scr, S.score, ROUNDS); var sc = scr.querySelector('[data-gscore] b'); sc.textContent = S.score; }, 500);
+            L.gmsg(scr, ['Bùm! Đúng rồi!', 'Giỏi quá!', 'Trúng phóc!'][S.score % 3] + ' <b class="en">' + w + '</b> = ' + B.words[w].vi, 'vui');
+            if (S.score >= ROUNDS) { ctx.later(function () { ctx.setState('end'); }, 1100); return; }
+            ctx.later(function () { var used = S.lanes.map(function (l) { return l.w; }), fresh = POOL.filter(function (x) { return used.indexOf(x) < 0; }); S.lanes[i].w = fresh[S.score % fresh.length]; setPic(i); S.lanes[i].y = 0; S.lanes[i].wait = 900; b.classList.add('is-gone');
+              S.target = nextTarget(); S.tries = 0; S.hint = false; bubs.forEach(function (x) { x.classList.remove('is-hint'); }); var sp = scr.querySelector('.ask [data-say]'); sp.setAttribute('data-say', S.target); L.say(S.target); scr.querySelector('[data-hint]').disabled = false;
+              L.gmsg(scr, 'Từ tiếp theo! Nghe kỹ nhé.', 'chao'); busy = false; }, 900);
+          } else { S.tries++; b.classList.remove('is-wob'); void b.offsetWidth; b.classList.add('is-wob'); L.say(w);
+            if (S.tries >= 2) { S.hint = true; bubs.forEach(function (x, j) { x.classList.toggle('is-hint', S.lanes[j].w === S.target); }); scr.querySelector('[data-hint]').disabled = true; }
+            L.gmsg(scr, 'Đây là <b class="en">' + w + '</b> (' + B.words[w].vi + '). ' + (S.hint ? 'Bông làm sáng bóng đúng rồi đó!' : 'Nghe lại rồi tìm tiếp nhé!'), 'dongvien'); }
+        }
+        bubs.forEach(function (b, i) { b.addEventListener('click', function () { hit(i); }); });
+        function pause() { if (paused) return; paused = true; L.gamePause(scr, { onResume: function () { paused = false; last = 0; }, onExit: function () { L.exit(ctx, ROUNDS - S.score, 'trò chơi'); } }); }
+        scr.querySelector('[data-pause]').addEventListener('click', pause);
+        L.wire(scr, ctx, { left: ROUNDS - S.score, onEsc: pause,
+          onReplay: function (btn) { L.say(S.target, .8, btn); },
+          onHint: function () { S.hint = true; bubs.forEach(function (x, j) { x.classList.toggle('is-hint', S.lanes[j].w === S.target); }); scr.querySelector('[data-hint]').disabled = true; L.gmsg(scr, 'Bóng đang phát sáng là bóng đúng đó!', 'suynghi'); },
+          onKey: function (e) { if (/^[1-5]$/.test(e.key)) { e.preventDefault(); hit(+e.key - 1); return true; } if (e.key === 'Enter') return true; }
+        });
+        ctx.later(function () { L.say(S.target); var a = document.activeElement; if (!a || a === document.body || !scr.contains(a)) scr.querySelector('.ask [data-say]').focus({ preventScroll: true }); }, 300);
+      }
+    }
+  });
+  function place(scr) { var f = scr.querySelector('.field'), bs = scr.querySelectorAll('[data-b]'); if (!f || !bs.length) return; var H = f.clientHeight, d = bs[0].offsetWidth; S.lanes.forEach(function (l, i) { bs[i].style.transform = 'translateY(' + (-(l.y * (H + d) - d)) + 'px)'; }); }
+})();
+</script>
+</body>
+</html>

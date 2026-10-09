@@ -1,0 +1,73 @@
+<!-- @dsCard group="Màn Tiểu học · 28–32 Trùm & thi lên cấp" height=700 subtitle="31. Đạt bài thi lên cấp (Screen36-LevelUp): chúc mừng lớn, rồng Bông lớn lên (dáng cấp 3 → cấp 4), đảo Cành cây mở trên bản đồ, thưởng sao + xu + huy hiệu, nút “Đến đảo mới”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Lên cấp — preview</title>
+<style>
+  .scr { background: radial-gradient(90% 70% at 30% 40%, var(--level-4-soft), var(--bg) 70%); }
+  .lu { display: grid; grid-template-columns: 1.05fr 1fr; gap: var(--space-8); align-items: center; width: 100%; max-width: 1180px; }
+  .grow { position: relative; background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: min(var(--space-5), 2.6cqh) var(--space-6); display: flex; flex-direction: column; align-items: center; gap: min(var(--space-3), 1.4cqh); overflow: hidden; }
+  .grow::before { content: ""; position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 72% 62%, var(--level-4-soft) 0 10deg, transparent 10deg 20deg); opacity: .8; animation: spin 40s linear infinite; }
+  @keyframes spin { to { transform: rotate(1turn); } }
+  .grow > * { position: relative; }
+  .grow h2 { margin: 0; }
+  .ba { display: flex; align-items: flex-end; gap: var(--space-4); }
+  .st { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+  .st .b-dragon { height: auto; }
+  .st--b .b-dragon { width: min(150px, 19cqh); opacity: .9; }
+  .st--a .b-dragon { width: min(240px, 31cqh); animation: b-hop 1.6s ease-in-out infinite; }
+  .arrow { color: var(--lv-ink); align-self: center; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--level-4-soft); }
+  .rt { display: flex; flex-direction: column; gap: min(var(--space-4), 2cqh); }
+  .rt h1 { margin: 0; }
+  .score { display: inline-flex; align-items: center; gap: var(--space-2); background: var(--success-soft); color: var(--success-shade); border-radius: var(--radius-pill); padding: 6px 16px; font: 800 18px/24px var(--font-body); align-self: flex-start; }
+  .isl { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: var(--space-4) var(--space-5); }
+  .isl__t { font: 800 16px/20px var(--font-body); color: var(--ink-soft); margin: 0 0 var(--space-3); display: flex; align-items: center; gap: 6px; }
+  .chain { display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+  .chain::before { content: ""; position: absolute; left: 10%; right: 10%; top: 28px; border-top: 4px dashed var(--line-strong); }
+  .il { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+  .il i { width: 56px; height: 56px; border-radius: 46% 54% 50% 50%; display: grid; place-items: center; background: var(--c-soft); box-shadow: inset 0 0 0 4px var(--c); color: var(--c-ink); font-style: normal; }
+  .il.done i .b-ico { color: var(--success); }
+  .il.new i { width: 68px; height: 68px; margin-top: -6px; background: var(--c); color: var(--on-c); box-shadow: 0 0 0 6px var(--gate-glow), 0 0 26px 8px var(--gate-glow); animation: b-pulse 1.6s ease-in-out infinite; }
+  .il.lock i { background: var(--surface-sunk); box-shadow: inset 0 0 0 3px var(--star-empty); color: var(--ink-soft); }
+  .il span { font: 800 14px/17px var(--font-body); color: var(--ink); }
+  .il em { font: 800 12px/16px var(--font-body); font-style: normal; color: var(--ink-on-dark); background: var(--brand); border-radius: var(--radius-pill); padding: 1px 8px; }
+  .rew { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .rew > div { background: var(--surface); box-shadow: var(--shadow-card); border-radius: var(--radius-lg); padding: var(--space-3); display: flex; align-items: center; gap: var(--space-3); font: 800 14px/18px var(--font-body); color: var(--ink-soft); }
+  .rew b { display: block; font: 800 26px/30px var(--font-display); color: var(--ink); }
+  .medal { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--level-3); color: var(--on-level-3); box-shadow: 0 0 0 4px var(--star); flex: none; }
+  @media (prefers-reduced-motion: reduce) { .grow::before, .st--a .b-dragon, .il.new i { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var ISL = [[1, 'Hạt giống', 'done'], [2, 'Mầm non', 'done'], [3, 'Lá xanh', 'done'], [4, 'Cành cây', 'new'], [5, 'Cây lớn', 'lock']];
+  function chain() { return '<div class="chain">' + ISL.map(function (x) { var n = x[0]; return '<div class="il ' + x[2] + '" style="--c:var(--level-' + n + ');--c-soft:var(--level-' + n + '-soft);--c-ink:var(--level-' + n + '-ink);--on-c:var(--on-level-' + n + ')"><i aria-hidden="true">' + (x[2] === 'done' ? B.icon('check', 26) : x[2] === 'lock' ? B.icon('lock', 22) : B.icon('island', 34)) + '</i><span>' + x[1] + '</span>' + (x[2] === 'new' ? '<em>Mới mở!</em>' : '') + '</div>'; }).join('') + '</div>'; }
+  var WISH = 'Level up! Welcome to Branch Island!', TOTAL = 20;
+  B.screen({
+    fit: true, level: 4,
+    notes: { normal: 'Chúc mừng lớn: tia sáng xoay chậm, sao bay. Rồng Bông trước (dáng cấp 3) → sau (dáng cấp 4, khăn quàng `dragon-scarf-4`), giữ màu bé đã chọn. Bản đồ 5 đảo: đảo Cành cây sáng `gate-glow`, nhãn “Mới mở!”. Thưởng: +50 sao, +100 xu, huy hiệu. Enter = Đến đảo mới; × cũng về bản đồ (đã lưu kết quả, không hỏi lại).', loading: 'Khung xương khi đang chấm bài thi.', empty: 'Chưa có kết quả bài thi.', error: 'Không lưu được kết quả — có nút Thử lại.' },
+    states: {
+      normal: function () {
+        return L.head({ n: TOTAL, total: TOTAL, dots: true, count: '18/20' }) + '<main class="lesson-main"><div class="lu"><section class="grow" aria-label="Rồng Bông lớn lên"><h2 class="title">Bông lớn lên rồi!</h2><div class="ba">' +
+          '<div class="st st--b">' + L.grow(3, 'vui', 150) + '<span class="b-lvchip" data-level="3">Cấp 3 · Lá xanh</span></div><span class="arrow" aria-hidden="true">' + B.icon('next', 30) + '</span>' +
+          '<div class="st st--a">' + L.grow(4, 'chucmung', 240) + '<span class="b-lvchip" data-level="4">Cấp 4 · Cành cây</span></div></div></section>' +
+          '<div class="rt"><h1 class="display-l">Lên cấp rồi, Bảo Ngọc ơi!</h1><span class="score">' + B.icon('check', 22) + '18/20 câu đúng · 90%</span>' +
+          '<div class="isl"><p class="isl__t">' + B.icon('map', 20) + 'Bản đồ: đảo Cành cây vừa mở</p>' + chain() + '</div>' +
+          '<div class="rew"><div>' + B.icon('star', 40) + '<span><b>+50</b>sao</span></div><div>' + B.icon('coin', 40) + '<span><b>+100</b>xu</span></div><div><span class="medal">' + B.icon('medal', 26) + '</span><span><b style="font-size:18px;line-height:22px">Huy hiệu</b>Qua đảo Lá xanh</span></div></div></div></div></main>' +
+          L.foot({ replayLabel: 'Nghe lời chúc', hint: false, main: { label: 'Đến đảo mới', icon: 'next' } });
+      },
+      loading: function () { return L.head({ n: TOTAL, total: TOTAL, dots: true, count: '20/20' }) + '<main class="lesson-main"><div class="lu"><div class="grow">' + B.dragon('suynghi', 200) + '<p class="body-l">Bông đang chấm bài thi…</p></div><div class="rt">' + B.sk('80%', '56px', 'var(--radius-pill)') + B.sk('40%', '36px', 'var(--radius-pill)') + B.sk('100%', '130px', 'var(--radius-xl)') + B.sk('100%', '72px', 'var(--radius-lg)') + '</div></div></main>' + L.foot({ off: true, hint: false, main: { label: 'Đến đảo mới' } }); },
+      empty: function () { return L.head({ n: 0, total: TOTAL, dots: true, count: '—' }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Chưa có kết quả bài thi', text: 'Cậu làm bài thi lên cấp ở cổng cuối đảo Lá xanh nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + L.foot({ off: true, hint: false, main: { label: 'Đến đảo mới' } }); },
+      error: function () { return L.head({ n: TOTAL, total: TOTAL, dots: true, count: '20/20' }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Chưa lưu được kết quả', text: 'Bài làm của cậu vẫn được giữ trên máy. Mình thử lưu lại nhé!' }) + '</main>' + L.foot({ off: true, hint: false, main: { label: 'Đến đảo mới' } }); }
+    },
+    mount: { normal: function (scr, ctx) {
+      ctx.later(function () { ctx.burst(scr.querySelector('.st--a'), null, 18); }, 250); ctx.later(function () { ctx.burst(scr.querySelector('.rew'), null, 12); }, 900);
+      L.wire(scr, ctx, { left: 0, onReplay: function (b) { L.say(WISH, .8, b); }, onMain: function () { ctx.burst(scr.querySelector('[data-main]'), null, 10); }, onExit: function () { ctx.burst(scr.querySelector('[data-main]'), null, 6); } });
+      ctx.later(function () { var m = scr.querySelector('[data-main]'); var a = document.activeElement; if (!a || a === document.body) m && m.focus({ preventScroll: true }); }, 60);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

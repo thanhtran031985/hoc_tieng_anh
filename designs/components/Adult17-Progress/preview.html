@@ -1,0 +1,115 @@
+<!-- @dsCard group="Người lớn · Giai đoạn 2" height=760 subtitle="12. Tiến độ của con và mở khoá thủ công (Adult17-Progress): chọn con ở thanh trên; cây Cấp → Chủ đề → Bài với trạng thái Khoá / Đang học / Đã xong (số sao) / Mở thủ công; chọn bài hoặc chủ đề để mở khoá qua hộp thoại xác nhận; lọc và tìm" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bố mẹ · Tiến độ của con — preview</title>
+<style>
+  .tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+  .tree ul { margin-left: 22px; border-left: 1px dashed var(--line-strong); padding-left: 6px; }
+  .tn { display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 2px 8px 2px 2px; border-radius: var(--adm-radius-md); }
+  .tn:hover { background: var(--surface-soft); }
+  .tn .tg { width: 26px; height: 26px; border: 0; background: none; border-radius: 4px; color: var(--ink-soft); display: grid; place-items: center; cursor: pointer; padding: 0; flex: none; }
+  .tn .tg .b-ico { transition: transform var(--duration-fast); } .tn .tg[aria-expanded="true"] .b-ico { transform: rotate(90deg); }
+  .tn .sp { width: 26px; flex: none; }
+  .tn input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--brand); flex: none; margin: 0 2px; }
+  .tn .nm { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font: 500 14px/20px var(--font-thcs); color: var(--ink); }
+  .tn[data-type="level"] .nm { font-weight: 700; } .tn[data-type="topic"] .nm { font-weight: 600; }
+  .tn .nm .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--lv); flex: none; }
+  .tn .nm .c { color: var(--ink-soft); font-weight: 400; font-size: 13px; }
+  .tn .nm .lk { color: var(--adm-lock); display: inline-flex; }
+  .tn.is-locked .nm > span:not(.c):not(.lk):not(.dot) { color: var(--ink-soft); }
+  .stars { display: inline-flex; gap: 1px; } .stars .b-ico { width: 15px; height: 15px; }
+  .tbar2 { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; padding-bottom: var(--space-3); border-bottom: 1px solid var(--line); margin-bottom: var(--space-2); }
+  .tbar2 .sp2 { flex: 1; }
+  #pf { width: auto; }
+  .bulk { display: flex; align-items: center; gap: var(--space-2); background: var(--brand-soft); border-radius: var(--adm-radius-md); padding: 6px 10px; margin-bottom: var(--space-2); font: 600 13px/18px var(--font-thcs); color: var(--ink); }
+  .bulk[hidden] { display: none; }
+  .tw { max-height: calc(100cqh - 270px); overflow: auto; }
+  .lgd { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .lgd li { display: flex; align-items: center; gap: 8px; font: 400 13px/18px var(--font-thcs); color: var(--ink-soft); }
+  .kp { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); margin: var(--space-3) 0; }
+  .kp div { background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 8px 10px; } .kp b { display: block; font: 700 20px/26px var(--font-thcs); color: var(--ink); } .kp span { font: 400 12px/16px var(--font-thcs); color: var(--ink-soft); }
+  .hist { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .hist li { font: 400 13px/18px var(--font-thcs); color: var(--ink); display: flex; gap: 8px; } .hist time { color: var(--ink-soft); white-space: nowrap; }
+  .note { background: var(--info-soft); border-radius: var(--adm-radius-md); padding: 10px 12px; font: 400 13px/19px var(--font-thcs); color: var(--ink); margin-top: var(--space-3); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, D = A.data;
+  var SCR, CTX, uid = 0;
+  // Cây tiến độ theo từng con. st: done | learning | locked | manual
+  function lessons(n, doneN, cur) { var o = []; for (var i = 1; i <= n; i++) o.push({ id: 'p' + (++uid), type: 'lesson', name: 'Bài ' + i, st: i <= doneN ? 'done' : i === doneN + 1 && cur ? 'learning' : 'locked', stars: i <= doneN ? [3, 3, 2, 3, 2, 3, 1][i - 1] || 3 : 0 }); return o; }
+  function topic(name, en, n, doneN, cur) { var ks = lessons(n, doneN, cur), st = doneN >= n ? 'done' : doneN > 0 || cur ? 'learning' : 'locked'; return { id: 'p' + (++uid), type: 'topic', name: name, en: en, st: st, open: cur, kids: ks }; }
+  function lvl(n, topics, open) { var st = topics.every(function (t) { return t.st === 'done'; }) ? 'done' : topics.some(function (t) { return t.st !== 'locked'; }) ? 'learning' : 'locked'; return { id: 'p' + (++uid), type: 'level', n: n, name: B.levels[n - 1].name, st: st, open: open, kids: topics }; }
+  var DATA = {
+    minh: [lvl(1, [topic('Con vật', 'Animals', 7, 7), topic('Màu sắc', 'Colours', 7, 7), topic('Số đếm', 'Numbers', 6, 6), topic('Chào hỏi', 'Greetings', 4, 4)], false),
+      lvl(2, [topic('Trái cây', 'Fruits', 7, 7), topic('Đồ chơi', 'Toys', 7, 2, true), topic('Gia đình', 'My family', 7, 0), topic('Đồ dùng học tập', 'School things', 7, 0)], true),
+      lvl(3, [topic('Trường lớp', 'School', 8, 0), topic('Cơ thể', 'My body', 7, 0), topic('Quần áo', 'Clothes', 8, 0), topic('Nhà của em', 'My home', 7, 0)], false)],
+    linh: [lvl(7, [topic('Hobbies', 'Hobbies', 9, 9), topic('Health', 'Health', 9, 9), topic('Music and arts', 'Music and arts', 9, 9), topic('Food and drink', 'Food and drink', 9, 9)], false),
+      lvl(8, [topic('Leisure time', 'Leisure time', 6, 6), topic('Life in the countryside', 'Countryside', 6, 4, true), topic('Teenagers', 'Teenagers', 6, 0), topic('Ethnic groups', 'Ethnic groups', 6, 0), topic('Getting around', 'Getting around', 7, 0), topic('Environmental protection', 'Environment', 7, 0)], true)]
+  };
+  var HIST = { minh: [['28/09', 'Mở thủ công “Bài 1 · Gia đình” (con đã học ở trường).']], linh: [] };
+  var S = { q: '', f: 'all', sel: {} };
+  function kid() { return A.kids.filter(function (k) { return k.id === A.state.kid; })[0]; }
+  function tree() { return DATA[A.state.kid]; }
+  function stChip(n) { return n.st === 'done' ? A.status('live', 'Đã xong') : n.st === 'learning' ? A.status('info', 'Đang học') : n.st === 'manual' ? '<span class="a-status a-status--manual">' + B.icon('unlock', 13) + 'Mở thủ công</span>' : A.status('off', 'Khoá'); }
+  function match(n) { var q = S.q.trim().toLowerCase(); var okQ = !q || (n.name + ' ' + (n.en || '')).toLowerCase().indexOf(q) > -1; var okF = S.f === 'all' || n.st === S.f; return okQ && okF; }
+  function visible(n) { if (match(n)) return true; return (n.kids || []).some(visible); }
+  function node(n, parent) {
+    if (!visible(n) && !(parent && match(parent))) return '';
+    var has = n.kids && n.kids.length, open = n.open || (S.q && has && n.kids.some(visible)), lockable = (n.type === 'lesson' || n.type === 'topic') && n.st === 'locked';
+    var c = n.type === 'level' ? n.kids.length + ' chủ đề' : n.type === 'topic' ? n.kids.filter(function (x) { return x.st === 'done'; }).length + '/' + n.kids.length + ' bài' : '';
+    var row = '<div class="tn' + (n.st === 'locked' ? ' is-locked' : '') + '" data-type="' + n.type + '"' + (n.type === 'level' ? ' data-level="' + n.n + '"' : '') + '>' +
+      (has ? '<button type="button" class="tg" data-tg="' + n.id + '" aria-expanded="' + !!open + '" aria-label="' + (open ? 'Thu gọn ' : 'Mở ') + n.name + '">' + B.icon('next', 14) + '</button>' : '<span class="sp"></span>') +
+      (lockable ? '<input type="checkbox" data-pick="' + n.id + '" aria-label="Chọn ' + n.name + (parent ? ' · ' + parent.name : '') + ' để mở khoá"' + (S.sel[n.id] ? ' checked' : '') + '>' : '') +
+      '<span class="nm">' + (n.type === 'level' ? '<span class="dot"></span>Cấp ' + n.n + ' · ' : '') + (n.st === 'locked' ? '<span class="lk">' + B.icon('lock', 14) + '</span>' : '') + '<span>' + n.name + '</span>' + (n.en && n.en !== n.name ? '<span class="c" lang="en">' + n.en + '</span>' : '') + (c ? '<span class="c">· ' + c + '</span>' : '') + '</span>' +
+      (n.type === 'lesson' && n.st === 'done' ? '<span class="stars" aria-label="' + n.stars + ' sao">' + [0, 1, 2].map(function (i) { return B.icon(i < n.stars ? 'star' : 'starEmpty', 15); }).join('') + '</span>' : '') + stChip(n) +
+      (lockable ? A.btn({ label: n.type === 'topic' ? 'Mở cả chủ đề' : 'Mở khoá', icon: 'unlock', variant: 'ghost', size: 's', attrs: 'data-unlock="' + n.id + '"' }) : '') + '</div>';
+    return '<li>' + row + (has && open ? '<ul>' + n.kids.map(function (k) { return node(k, n); }).join('') + '</ul>' : '') + '</li>';
+  }
+  function find(id, list, parent) { list = list || tree(); for (var i = 0; i < list.length; i++) { var n = list[i]; if (n.id === id) return { n: n, parent: parent }; if (n.kids) { var r = find(id, n.kids, n); if (r) return r; } } return null; }
+  function count(st) { var c = 0; (function walk(l) { l.forEach(function (n) { if (n.type === 'lesson' && n.st === st) c++; if (n.kids) walk(n.kids); }); })(tree()); return c; }
+  function main() {
+    var k = kid(), picked = Object.keys(S.sel).filter(function (x) { return S.sel[x]; }).length;
+    return '<div class="a-grid"><section class="a-card a-s8" aria-labelledby="pt"><div class="tbar2"><h2 class="adm-h2" id="pt" style="margin:0">Lộ trình của ' + k.name + '</h2><span class="sp2"></span>' +
+      '<div class="a-search">' + B.icon('search', 18) + '<label class="b-sr" for="pq">Tìm bài hoặc chủ đề</label><input class="t-input a-input" id="pq" placeholder="Tìm bài, chủ đề…" value="' + B.esc(S.q) + '"></div>' +
+      '<label class="b-sr" for="pf">Lọc trạng thái</label><select class="t-input a-input" id="pf">' + [['all', 'Trạng thái: tất cả'], ['locked', 'Khoá'], ['learning', 'Đang học'], ['done', 'Đã xong'], ['manual', 'Mở thủ công']].map(function (o) { return '<option value="' + o[0] + '"' + (S.f === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div>' +
+      '<div class="bulk" data-bulk' + (picked ? '' : ' hidden') + ' role="status">' + B.icon('check', 16) + '<span style="flex:1">Đã chọn <b>' + picked + '</b> mục đang khoá</span>' + A.btn({ label: 'Mở khoá ' + picked + ' mục', icon: 'unlock', size: 's', attrs: 'data-bulkgo' }) + A.btn({ label: 'Bỏ chọn', variant: 'ghost', size: 's', attrs: 'data-bulkclear' }) + '</div>' +
+      '<div class="tw"><ul class="tree" aria-label="Cấp, chủ đề, bài">' + (tree().map(function (n) { return node(n); }).join('') || '<li>' + A.empty({ title: 'Không có mục phù hợp', text: 'Thử từ khoá khác hoặc chọn “Trạng thái: tất cả”.' }) + '</li>') + '</ul></div></section>' +
+      '<aside class="a-s4" style="display:flex;flex-direction:column;gap:var(--space-4)"><section class="a-card"><h2 class="adm-h2" style="margin:0">' + k.name + ' · Lớp ' + k.grade + '</h2><div class="kp"><div><b>Cấp ' + k.level + '</b><span>' + B.levels[k.level - 1].name + '</span></div><div><b>' + count('done') + '</b><span>bài đã xong</span></div><div><b>' + count('locked') + '</b><span>bài đang khoá</span></div></div>' +
+      '<ul class="lgd" aria-label="Chú thích"><li>' + A.status('live', 'Đã xong') + 'kèm số sao 1–3</li><li>' + A.status('info', 'Đang học') + 'bài con đang làm dở</li><li>' + A.status('off', 'Khoá') + 'mở khi xong bài trước</li><li><span class="a-status a-status--manual">' + B.icon('unlock', 13) + 'Mở thủ công</span>bố mẹ tự mở</li></ul>' +
+      '<p class="note">Mở thủ công giúp con học trước bài đã học ở trường. Con vẫn cần làm bài thi lên cấp để sang đảo mới.</p></section>' +
+      '<section class="a-card"><h2 class="adm-h3" style="margin:0 0 8px">Lịch sử mở khoá</h2>' + (HIST[A.state.kid].length ? '<ul class="hist">' + HIST[A.state.kid].map(function (h) { return '<li><time>' + h[0] + '</time><span>' + h[1] + '</span></li>'; }).join('') + '</ul>' : '<p class="adm-small b-muted" style="margin:0">Chưa mở khoá thủ công lần nào.</p>') + '</section></aside></div>';
+  }
+  function page(m) { return A.shell2({ area: 'parent', active: 'progress', title: 'Tiến độ & mở khoá', crumb: 'Khu bố mẹ', kids: true, main: m }); }
+  function confirm(ids) {
+    var items = ids.map(function (id) { return find(id); }), names = items.map(function (r) { return r.n.type === 'topic' ? 'chủ đề “' + r.n.name + '” (' + r.n.kids.length + ' bài)' : '“' + r.n.name + ' · ' + r.parent.name + '”'; });
+    A.dialog(SCR, { title: 'Mở khoá thủ công cho ' + kid().name + '?', body: '<p style="margin:0 0 8px">Sẽ mở: <b>' + names.join(', ') + '</b>.</p><p class="adm-small b-muted" style="margin:0">Con vào học được ngay, không cần xong bài trước. Bố mẹ có thể khoá lại trong 24 giờ nếu mở nhầm.</p>',
+      actions: [{ label: 'Mở khoá', variant: 'primary', icon: 'unlock', onClick: function () { items.forEach(function (r) { r.n.st = 'manual'; (r.n.kids || []).forEach(function (k) { if (k.st === 'locked') k.st = 'manual'; }); S.sel[r.n.id] = false; }); HIST[A.state.kid].unshift(['03/10', 'Mở thủ công ' + names.join(', ') + '.']); CTX.setState('normal'); A.toast(CTX.scr, 'Đã mở khoá ' + names.length + ' mục cho ' + kid().name + '.'); } }, { label: 'Huỷ', variant: 'secondary' }] });
+  }
+  A.screen({
+    labels: { empty: 'Trống (con chưa học)' },
+    notes: { normal: 'Chọn con ở thanh trên (Minh · Lớp 3 / Khánh Linh · Lớp 8). Cây Cấp → Chủ đề → Bài: Đã xong (sao), Đang học, Khoá (ổ khoá + chữ xám), Mở thủ công (`adm-unlocked-manual`). Mục đang khoá có ô chọn + nút “Mở khoá” / “Mở cả chủ đề” → hộp thoại xác nhận. Chọn nhiều → thanh “Mở khoá N mục”. Tìm theo tên (tiếng Việt / Anh), lọc theo trạng thái.', loading: 'Khung xương cây.', empty: 'Con chưa học bài nào.', error: 'Không tải được tiến độ.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="a-grid"><div class="a-s8">' + A.skel('520px') + '</div><div class="a-s4">' + A.skel('300px') + '</div></div>'); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: kid().name + ' chưa bắt đầu học', text: 'Khi con học bài đầu tiên, tiến độ từng cấp, chủ đề và bài sẽ hiện ở đây.', action: A.btn({ label: 'Xem lộ trình cấp 1', variant: 'secondary', icon: 'tree' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'PRG-503' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx; if (ctx.state !== 'normal') return;
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); if (f) { f.focus({ preventScroll: true }); if (f.tagName === 'INPUT' && f.type === 'text') { var v = f.value; f.value = ''; f.value = v; } } }
+      scr.querySelectorAll('[data-tg]').forEach(function (b) { b.addEventListener('click', function () { var r = find(b.dataset.tg); r.n.open = !r.n.open; re('[data-tg="' + b.dataset.tg + '"]'); }); });
+      scr.querySelectorAll('[data-unlock]').forEach(function (b) { b.addEventListener('click', function () { confirm([b.dataset.unlock]); }); });
+      scr.querySelectorAll('[data-pick]').forEach(function (c) { c.addEventListener('change', function () { S.sel[c.dataset.pick] = c.checked; re('[data-pick="' + c.dataset.pick + '"]'); }); });
+      var q = scr.querySelector('#pq'); q.addEventListener('input', function () { S.q = q.value; re('#pq'); });
+      var f = scr.querySelector('#pf'); f.addEventListener('change', function () { S.f = f.value; re('#pf'); });
+      var bg = scr.querySelector('[data-bulkgo]'); bg && bg.addEventListener('click', function () { confirm(Object.keys(S.sel).filter(function (x) { return S.sel[x] && find(x); })); });
+      var bc = scr.querySelector('[data-bulkclear]'); bc && bc.addEventListener('click', function () { S.sel = {}; re('#pq'); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

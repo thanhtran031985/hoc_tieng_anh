@@ -1,0 +1,107 @@
+<!-- @dsCard group="Màn Tiểu học · 18–24 Dạng bài mới" height=700 subtitle="20. Luyện nói từ và câu (Screen25-Speak): sẵn sàng → đang ghi (tối đa 10 giây) → đang chấm → kết quả 1–3 sao; thêm trạng thái chưa cho micro và máy không có micro" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Luyện nói — preview</title>
+<style>
+  .sp { display: grid; grid-template-columns: min(300px, 34cqh) 1fr; gap: var(--space-10); align-items: center; }
+  .pic { width: min(300px, 34cqh); aspect-ratio: 1; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-card); display: grid; place-items: center; }
+  .pic .b-pic { width: 76%; height: auto; }
+  .col { display: flex; flex-direction: column; gap: min(var(--space-5), 2.6cqh); align-items: flex-start; }
+  .model { display: flex; align-items: center; gap: var(--space-4); font: 800 min(52px, 6.4cqh)/1.2 var(--font-display); color: var(--ink); }
+  .model .b-kw.ok { color: var(--success-shade); } .model .b-kw.soso { background: var(--retry-soft); color: var(--retry-shade); }
+  .microw { display: flex; align-items: center; gap: var(--space-6); }
+  .mic { width: min(var(--size-mic), 16cqh); height: min(var(--size-mic), 16cqh); border-radius: 50%; border: 0; background: var(--brand); color: var(--ink-on-dark); box-shadow: 0 8px 0 var(--brand-shade); display: grid; place-items: center; cursor: pointer; position: relative; flex: none; }
+  .mic .b-key { position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); background: var(--surface); }
+  .mic:hover { transform: translateY(-3px); }
+  .mic.is-rec { background: var(--rec); box-shadow: 0 8px 0 var(--ink-soft), 0 0 0 14px var(--rec-soft); animation: recpulse 1.4s ease-in-out infinite; }
+  @keyframes recpulse { 50% { box-shadow: 0 8px 0 var(--ink-soft), 0 0 0 26px var(--rec-soft); } }
+  .rec { display: flex; flex-direction: column; gap: var(--space-2); min-width: 360px; }
+  .wave { display: flex; align-items: center; gap: 4px; height: 72px; }
+  .wave i { width: 8px; border-radius: 4px; background: var(--rec); animation: wv 0.9s ease-in-out infinite; }
+  .wave.idle i { background: var(--rec-track); animation: none; height: 10px !important; }
+  @keyframes wv { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+  .meter { height: 12px; border-radius: var(--radius-pill); background: var(--rec-track); overflow: hidden; }
+  .meter span { display: block; height: 100%; width: 0; background: var(--rec); border-radius: var(--radius-pill); animation: fillup var(--duration-rec-max) linear forwards; }
+  @keyframes fillup { to { width: 100%; } }
+  .res { display: flex; align-items: center; gap: var(--space-5); background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-4) var(--space-6); }
+  .res .b-dragon { width: min(110px, 13cqh); height: auto; }
+  .res .b-stars .b-ico { width: min(48px, 6cqh); height: auto; }
+  .listen { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .card { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: var(--space-6) var(--space-8); display: grid; grid-template-columns: auto 1fr; gap: var(--space-6); align-items: center; max-width: 980px; }
+  .card .b-dragon { width: min(170px, 20cqh); height: auto; }
+  .steps { margin: var(--space-2) 0 var(--space-4); padding-left: 24px; display: flex; flex-direction: column; gap: 6px; }
+  .opts { display: grid; grid-template-columns: repeat(3, min(200px, 23cqh)); gap: var(--space-5); }
+  .opts .b-choice { aspect-ratio: 1; width: 100%; } .opts .b-pic { width: 70%; height: auto; }
+  .dots i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--rec); margin: 0 4px; animation: b-hop 1s ease-in-out infinite; }
+  .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+  @media (prefers-reduced-motion: reduce) { .wave i, .mic.is-rec, .dots i { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var QS = [{ t: 'I like apples.', pic: 'apple', vi: 'Tớ thích táo.' }, { t: 'banana', pic: 'banana', vi: 'quả chuối', word: true }];
+  var S = { q: 0, step: 5, total: 8, stars: 2, sel: -1 };
+  function Q() { return QS[S.q % QS.length]; }
+  function wave(idle) { var h = ''; for (var i = 0; i < 28; i++) h += '<i style="height:' + (20 + Math.round(52 * Math.abs(Math.sin(i * 1.3)))) + 'px;animation-delay:' + (i % 7) * 0.09 + 's"></i>'; return '<div class="wave' + (idle ? ' idle' : '') + '" aria-hidden="true">' + h + '</div>'; }
+  function model(marks) { var q = Q(); return '<div class="model" lang="en">' + B.speak(q.t, 'm', 'Nghe giọng mẫu') + '<span>' + L.words(q.t).replace(/class="b-kw"/g, function () { return 'class="b-kw"'; }) + '</span></div><span class="body-l b-muted">' + q.vi + '</span>'; }
+  function micBtn(rec) { return '<button type="button" class="mic' + (rec ? ' is-rec' : '') + '" data-mic aria-label="' + (rec ? 'Dừng ghi âm (R)' : 'Bắt đầu nói (R)') + '" aria-pressed="' + !!rec + '">' + B.icon(rec ? 'pause' : 'mic', 56) + B.key('R') + '</button>'; }
+  function shell(inner, foot, title) { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main"><div class="instr"><h1 class="title">' + (title || (Q().word ? 'Nói to từ này' : 'Nói to câu này')) + '</h1></div>' + inner + '</main>' + foot; }
+  function sp(col) { return '<div class="sp"><div class="pic">' + B.pic(Q().pic, 260) + '</div><div class="col">' + col + '</div></div>'; }
+  var V = {
+    normal: function () { return shell(sp(model() + '<div class="microw">' + micBtn(false) + '<div class="rec">' + wave(true) + '<span class="body b-muted">Bấm micro hoặc phím <b>R</b> rồi nói. Nghe mẫu trước nếu cậu muốn.</span></div></div>'), L.foot({ replayLabel: 'Nghe mẫu', main: { label: 'Tiếp tục', icon: 'next', disabled: true } })); },
+    rec: function () { return shell(sp(model() + '<div class="microw">' + micBtn(true) + '<div class="rec" role="status" aria-live="polite">' + wave(false) + '<div class="meter" aria-label="Thời lượng ghi âm, tối đa 10 giây"><span></span></div><span class="body"><b>Bông đang nghe…</b> Bấm lại micro hoặc phím R để dừng (tối đa 10 giây).</span></div></div>'), L.foot({ off: true, main: { label: 'Tiếp tục', icon: 'next' } })); },
+    scoring: function () { return shell(sp(model() + '<div class="res" role="status">' + B.dragon('suynghi', 110) + '<div><b class="title">Bông đang chấm…</b><div class="dots" aria-hidden="true" style="margin-top:10px"><i></i><i></i><i></i></div></div></div>'), L.foot({ off: true, main: { label: 'Tiếp tục', icon: 'next' } })); },
+    result: function () {
+      var q = Q(), words = q.t.split(' ');
+      var mk = '<div class="model" lang="en">' + B.speak(q.t, 'm', 'Nghe giọng mẫu') + '<span>' + words.map(function (w, i) { var soso = S.stars < 3 && /apples|banana/.test(w); return '<span class="b-kw ' + (soso ? 'soso' : 'ok') + '">' + w + '</span>'; }).join(' ') + '</span></div>';
+      var praise = S.stars === 3 ? 'Tuyệt vời! Cậu nói rõ như người bản xứ!' : S.stars === 2 ? 'Cậu nói rõ lắm! Thử nói <b class="en">' + (q.word ? 'banana' : 'apples') + '</b> chậm hơn chút nữa nhé.' : 'Bông nghe được rồi! Mình thử lại cùng giọng mẫu nhé.';
+      return shell(sp(mk + '<div class="res">' + B.dragon(S.stars === 3 ? 'chucmung' : 'vui', 110) + '<div>' + B.stars(S.stars, 48) + '<p class="body-l" style="margin:6px 0 0">' + praise + '</p></div></div>' +
+        '<div class="listen">' + B.btn({ label: 'Nghe giọng tớ', variant: 'secondary', icon: 'play', attrs: 'data-mine' }) + B.btn({ label: 'Nghe giọng mẫu', variant: 'secondary', icon: 'speaker', attrs: 'data-model' }) + B.btn({ label: 'Nói lại', variant: 'secondary', icon: 'mic', key: 'R', attrs: 'data-again' }) + '</div>'), L.foot({ replayLabel: 'Nghe mẫu', main: { label: 'Tiếp tục', icon: 'next' } }));
+    },
+    noperm: function () { return shell('<div class="card">' + B.dragon('suynghi', 170) + '<div><h2 class="title">Trình duyệt chưa cho dùng micro</h2><p class="body-l b-muted" style="margin:6px 0 0">Bố mẹ giúp Bông một chút nhé:</p><ol class="steps body-l"><li>Bấm biểu tượng ' + B.icon('lock', 20) + ' cạnh địa chỉ trang.</li><li>Ở mục <b>Micro</b>, chọn <b>Cho phép</b>.</li><li>Bấm <b>Thử lại</b> bên dưới.</li></ol><div class="listen">' + B.btn({ label: 'Thử lại', icon: 'replay', size: 'l', attrs: 'data-retry2' }) + B.btn({ label: 'Hôm nay bỏ qua phần nói', variant: 'secondary', size: 'l', attrs: 'data-skipspeak' }) + '</div></div></div>', L.foot({ off: true, main: { label: 'Tiếp tục', icon: 'next' } })); },
+    nomic: function () { return shell('<div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4)"><div class="res" style="max-width:820px">' + B.dragon('chao', 100) + '<p class="body-l" style="margin:0">Máy này chưa có micro nên Bông đổi sang <b>nghe và chọn</b> nhé. Bài vẫn được tính đủ!</p></div>' +
+      '<p class="title" style="margin:0" lang="en">' + B.speak('I like apples.', 'm') + ' I like ___.</p><div class="opts" role="radiogroup" aria-label="Chọn hình">' + ['banana', 'apple', 'grapes'].map(function (w, i) { return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-label="Hình ' + (i + 1) + '">' + B.key(String(i + 1), 'b-key--corner') + B.pic(w, 140).replace('aria-label="' + w + '"', 'aria-hidden="true"') + '</button>'; }).join('') + '</div></div>', L.foot({ main: { label: 'Kiểm tra', disabled: S.sel < 0 } }), 'Nghe và chọn hình'); },
+    loading: function () { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main">' + B.sk('300px', '36px', 'var(--radius-pill)') + '<div class="sp">' + B.sk('min(300px, 34cqh)', 'min(300px, 34cqh)', 'var(--radius-xl)') + '<div class="col">' + B.sk('420px', '56px', 'var(--radius-pill)') + '<div class="microw">' + B.sk('min(132px, 16cqh)', 'min(132px, 16cqh)', '50%') + B.sk('360px', '72px') + '</div></div></div></main>' + L.foot({ off: true, main: { label: 'Tiếp tục' } }); },
+    empty: function () { return L.head({ n: 0, total: S.total }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Bài này chưa có câu để nói', text: 'Bông sẽ báo cậu khi bài sẵn sàng nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + L.foot({ off: true, main: { label: 'Tiếp tục' } }); },
+    error: function () { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Bông chưa chấm được', text: 'Mạng chập chờn nên chưa gửi được giọng nói. Không phải lỗi của cậu đâu!' }) + '</main>' + L.foot({ off: true, main: { label: 'Tiếp tục' } }); }
+  };
+  B.screen({
+    fit: true, level: 2,
+    order: ['normal', 'rec', 'scoring', 'result', 'noperm', 'nomic', 'loading', 'empty', 'error'],
+    labels: { normal: 'Sẵn sàng', rec: 'Đang ghi', scoring: 'Đang chấm', result: 'Kết quả', noperm: 'Chưa cho micro', nomic: 'Không có micro', loading: 'Đang tải', empty: 'Trống', error: 'Lỗi' },
+    notes: { normal: 'Bấm micro hoặc R để ghi; Space nghe mẫu; H: Bông đọc chậm từng từ (chữ sáng theo).', rec: 'Sóng âm chạy, vạch thời lượng đầy dần trong 10 giây (duration-rec-max) rồi tự dừng; bấm lại micro hoặc R để dừng sớm. Micro màu `rec` (tím), không dùng đỏ.', scoring: 'Bông đang chấm (khoảng 1–2 giây).', result: 'Chấm dễ tính 1–3 sao (luôn ít nhất 1 sao). Chữ nói tốt màu xanh, chữ nên nói lại nền cam nhẹ. Nghe giọng tớ / giọng mẫu, Nói lại (R), Tiếp tục (Enter).', noperm: 'Trình duyệt chặn micro: hướng dẫn bố mẹ bấm Cho phép rồi Thử lại; có thể bỏ qua phần nói hôm nay.', nomic: 'Máy không có micro: thông báo nhẹ, câu nói được thay bằng câu nghe và chọn (1–3, Enter).', loading: 'Khung xương.', empty: 'Bài chưa có câu nói.', error: 'Không gửi được bản ghi để chấm.' },
+    states: V,
+    mount: { all: function (scr, ctx) {
+      var st = ctx.state, q = Q();
+      function go(s, sel) { ctx.setState(s); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function stop() { go('scoring'); ctx.later(function () { S.stars = S.q % 2 ? 3 : 2; go('result', '[data-main]'); }, 1500); }
+      var mic = scr.querySelector('[data-mic]'); mic && mic.addEventListener('click', function () { st === 'rec' ? stop() : go('rec', '[data-mic]'); });
+      if (st === 'rec') ctx.later(stop, 10000);
+      var mine = scr.querySelector('[data-mine]'); mine && mine.addEventListener('click', function () { L.say(q.t, .9, mine); });
+      var md = scr.querySelector('[data-model]'); md && md.addEventListener('click', function () { L.say(q.t, .8, md); });
+      var ag = scr.querySelector('[data-again]'); ag && ag.addEventListener('click', function () { go('rec', '[data-mic]'); });
+      var r2 = scr.querySelector('[data-retry2]'); r2 && r2.addEventListener('click', function () { go('loading'); ctx.later(function () { go('normal', '[data-mic]'); }, 900); });
+      var sk = scr.querySelector('[data-skipspeak]'); sk && sk.addEventListener('click', function () { go('nomic'); });
+      scr.querySelectorAll('[data-kw]').forEach(function (k) { k.addEventListener('click', function () { L.say(k.dataset.w, .8); }); });
+      scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { S.sel = +b.dataset.i; go('nomic', '[data-i="' + S.sel + '"]'); }); });
+      if (['normal', 'result', 'nomic'].indexOf(st) < 0) { ctx.onKey(function (e) { if ((e.key === 'r' || e.key === 'R') && st === 'rec') { e.preventDefault(); stop(); } }); scr.querySelector('[data-exit]') && scr.querySelector('[data-exit]').addEventListener('click', function () { L.exit(ctx, S.total - S.step); }); return; }
+      L.wire(scr, ctx, { left: S.total - S.step,
+        onReplay: function (b) { L.say(q.t, .8, b); },
+        onHint: function () { var kws = scr.querySelectorAll('.model [data-kw]'), i = 0; L.say(q.t, .5); (function step() { if (i > 0) kws[i - 1].classList.remove('is-lit'); if (i < kws.length) { kws[i].classList.add('is-lit'); i++; ctx.later(step, 700); } })(); },
+        onMain: function () {
+          if (st === 'nomic') { if (S.sel === 1) { var c = scr.querySelector('[data-i="1"]'); L.ok(scr, ctx, { card: c, n: S.step + 1, total: S.total, detail: '<b class="en">I like apples.</b> <span class="b-muted">Tớ thích táo.</span>', onNext: function () { S.sel = -1; S.step++; go('nomic'); } }); } else if (S.sel > -1) L.retry(scr, ctx, { card: scr.querySelector('[data-i="' + S.sel + '"]'), tries: 1, detail: 'Nghe lại câu: <b class="en">I like apples.</b>', onRetry: function () { S.sel = -1; go('nomic'); } }); return; }
+          if (st === 'result') { ctx.burst(scr.querySelector('.b-stars'), scr.querySelector('.b-progress span'), 8); ctx.later(function () { S.q++; S.step++; L.setProg(ctx.scr, S.step, S.total); go('normal', '[data-mic]'); }, 900); }
+        },
+        onKey: function (e) {
+          if (e.key === 'r' || e.key === 'R') { e.preventDefault(); if (st === 'normal' || st === 'result') go('rec', '[data-mic]'); return true; }
+          if (st === 'nomic' && /^[1-3]$/.test(e.key)) { e.preventDefault(); S.sel = +e.key - 1; go('nomic', '[data-i="' + S.sel + '"]'); return true; }
+        }
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

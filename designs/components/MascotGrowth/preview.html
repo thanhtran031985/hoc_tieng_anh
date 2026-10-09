@@ -1,0 +1,39 @@
+<!-- @dsCard group="Linh vật" height=520 subtitle="16. Rồng Bông lớn lên (MascotGrowth): 5 dáng theo cấp 1–5, cùng nét vẽ; đổi biểu cảm (8) và màu (4) cho mọi dáng" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Rồng Bông lớn lên — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .wrap { padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+  .ctl { display: flex; gap: var(--space-5); flex-wrap: wrap; align-items: center; }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button { height: 40px; padding: 0 14px; border-radius: var(--radius-pill); border: var(--border-thin) solid var(--line-strong); background: var(--surface); font: 800 15px/18px var(--font-body); color: var(--ink); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4); align-items: stretch; margin-top: var(--space-5); }
+  .st { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-3) var(--space-3) var(--space-4); display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+  .st .pad { height: 200px; margin-top: -24px; display: flex; align-items: flex-end; justify-content: center; }
+  .st .b-dragon { width: 180px; height: auto; }
+  .st b { font: 800 18px/22px var(--font-display); }
+  .arrow { color: var(--ink-soft); }
+</style></head>
+<body>
+<div class="wrap" id="w"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var EX = [['chao', 'Chào'], ['vui', 'Vui'], ['dongvien', 'Động viên'], ['suynghi', 'Suy nghĩ'], ['ngu', 'Ngủ'], ['chucmung', 'Chúc mừng'], ['tiec', 'Hơi tiếc'], ['xaydung', 'Đang xây']];
+  var CO = [['', 'Ngọc'], ['dragon-dao', 'Đào'], ['dragon-nang', 'Nắng'], ['dragon-tim', 'Tím']];
+  var NOTE = ['Bé xíu, còn trong vỏ trứng', 'Mầm lá trên đầu, cánh nhỏ', 'Dáng gốc của Bông', 'Cao hơn, khăn quàng xanh trời', 'Gần tuổi teen, sừng dài, khăn tím'];
+  var S = { e: 'chao', c: '' };
+  function draw() {
+    document.getElementById('w').innerHTML = '<div class="ctl"><div><div class="label b-muted">Biểu cảm</div><div class="seg" role="group" aria-label="Biểu cảm">' + EX.map(function (e) { return '<button type="button" data-e="' + e[0] + '" aria-pressed="' + (S.e === e[0]) + '">' + e[1] + '</button>'; }).join('') + '</div></div>' +
+      '<div><div class="label b-muted">Màu bé chọn</div><div class="seg" role="group" aria-label="Màu">' + CO.map(function (c) { return '<button type="button" data-c="' + c[0] + '" aria-pressed="' + (S.c === c[0]) + '">' + c[1] + '</button>'; }).join('') + '</div></div></div>' +
+      '<div class="row ' + S.c + '">' + B.levels.slice(0, 5).map(function (l, i) { return '<div class="st" data-level="' + l.n + '"><div class="pad">' + L.grow(i + 1, S.e, 180) + '</div><span class="b-lvchip" data-level="' + l.n + '">Cấp ' + l.n + ' · ' + l.name + '</span><span class="caption b-muted">' + NOTE[i] + '</span><code class="caption b-muted">Bong.L.grow(' + (i + 1) + ', \'' + S.e + '\')</code></div>'; }).join('') + '</div>';
+    document.querySelectorAll('[data-e]').forEach(function (b) { b.onclick = function () { S.e = b.dataset.e; draw(); document.querySelector('[data-e="' + S.e + '"]').focus(); }; });
+    document.querySelectorAll('[data-c]').forEach(function (b) { b.onclick = function () { S.c = b.dataset.c; draw(); document.querySelector('[data-c="' + S.c + '"]').focus(); }; });
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

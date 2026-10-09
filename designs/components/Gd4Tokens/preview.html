@@ -1,0 +1,55 @@
+<!-- @dsCard group="Chung · Màu" height=520 subtitle="Token bổ sung đợt 6: màu vần, nhánh Khám phá từ, ô “?”, khung bẫy chính tả, chữ bản dịch và chữ đang đọc, dải liên kết + đường dẫn, nhãn Sắp học, ô ghép chữ; cỡ, thời lượng mới và họ token Khám phá & Họ vần (wordlab)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Token bổ sung đợt 6 — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .p { padding: var(--space-3) var(--space-4); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+  section { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-2) var(--space-3); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  h3 { margin: 0; font: 800 16px/20px var(--font-display); color: var(--ink); }
+  .sw { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+  .sw div { display: flex; align-items: center; gap: 5px; min-width: 0; }
+  .sw i { width: 20px; height: 20px; border-radius: 6px; box-shadow: inset 0 0 0 2px rgba(43, 36, 64, .1); flex: none; }
+  code { font: 700 11px/14px var(--font-body); color: var(--ink-soft); }
+  .demo { display: flex; align-items: center; gap: 10px; min-height: 64px; flex-wrap: wrap; }
+  .hub { width: 64px; height: 64px; border-radius: 50%; background: var(--rime-hub); color: var(--rime-hub-ink); display: grid; place-items: center; font: 800 22px/1 var(--font-display); box-shadow: 0 4px 0 var(--rime-ink), 0 0 0 5px var(--rime-bg); }
+  .w { font: 800 30px/1 var(--font-display); color: var(--ink); }
+  .ln { width: 40px; height: 4px; background: var(--rime-line); border-radius: 2px; }
+  .qm { width: 64px; height: 40px; border-radius: 10px; background: var(--q-mark-bg); color: var(--q-mark-ink); border: 2px dashed var(--q-mark-ink); display: grid; place-items: center; font: 800 22px/1 var(--font-display); }
+  .num { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 800 19px/1 var(--font-body); }
+  .trapw { background: var(--trap-bg); border: 3px dashed var(--trap-line); border-radius: 12px; padding: 6px 12px; font: 800 28px/1.2 var(--font-display); }
+  .sent { font: 700 20px/1.4 var(--font-display); color: var(--ink); background: var(--read-highlight); border-radius: 8px; padding: 2px 6px; }
+  .sent b { background: var(--read-word-bg); color: var(--read-word-ink); border-radius: 5px; padding: 0 3px; }
+  .tr { color: var(--trans-ink); border-left: 3px solid var(--trans-rule); padding-left: 8px; }
+  .strip { display: flex; align-items: center; gap: 6px; background: var(--links-bg); border: 2px solid var(--links-line); border-radius: 12px; padding: 6px 8px; font: 700 14px/18px var(--font-body); }
+  .strip .c { color: var(--crumb-ink); } .strip .now { color: var(--crumb-now); background: var(--surface); border-radius: 99px; padding: 2px 8px; font-weight: 800; }
+  .tile { width: 44px; height: 44px; border-radius: 10px; background: var(--letter-tile); border: 3px solid var(--line-strong); display: grid; place-items: center; font: 800 24px/1 var(--font-display); }
+  .slot { width: 52px; height: 52px; border-radius: 12px; border: 3px dashed var(--brand); background: var(--build-slot-bg); }
+  .fake { width: 52px; height: 52px; border-radius: 12px; border: 3px solid var(--retry); background: var(--fake-word-bg); display: grid; place-items: center; font: 800 24px/1 var(--font-display); }
+  .chip { border-radius: 99px; background: var(--found-chip); border: 2px solid var(--branch-line-open); padding: 4px 12px; font: 800 18px/1 var(--font-display); }
+  .soon { background: var(--soon-bg); color: var(--soon-ink); font: 800 12px/16px var(--font-body); padding: 2px 8px; border-radius: 99px; }
+  .tab { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+  .tab div { display: contents; } .tab code { border-bottom: 1px dashed var(--line); padding: 1px 0; } .tab b { font: 800 12px/16px var(--font-body); color: var(--ink); border-bottom: 1px dashed var(--line); text-align: right; }
+  .note { font: 600 12px/16px var(--font-body); color: var(--ink-soft); margin: 0; }
+</style></head>
+<body>
+<div class="p" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  function sw(list) { return '<div class="sw">' + list.map(function (n) { return '<div><i style="background:var(--' + n + ')"></i><code>' + n + '</code></div>'; }).join('') + '</div>'; }
+  function tab(rows) { return '<div class="tab">' + rows.map(function (x) { return '<div><code>' + x[0] + '</code><b>' + x[1] + '</b></div>'; }).join('') + '</div>'; }
+  document.getElementById('p').innerHTML =
+    '<section><h3>Màu vần (Họ vần)</h3><div class="demo"><span class="hub" lang="en">-at</span><span class="ln"></span><span class="w" lang="en">c<span class="b-rime">at</span></span><span class="w" lang="en">h<span class="b-rime">at</span></span></div>' + sw(['rime-ink', 'rime-bg', 'rime-hub', 'rime-hub-ink', 'rime-line']) + '<p class="note">Phần vần cùng một màu ở mọi từ trong họ.</p></section>' +
+    '<section><h3>Nhánh Khám phá từ</h3><div class="demo"><svg width="120" height="64" viewBox="0 0 120 64" aria-hidden="true"><path d="M6 32 C40 32 50 8 80 8" fill="none" stroke="var(--branch-line-open)" stroke-width="4" stroke-linecap="round"/><path d="M6 32 C40 32 50 32 80 32" fill="none" stroke="var(--branch-line-active)" stroke-width="6" stroke-linecap="round"/><path d="M6 32 C40 32 50 56 80 56" fill="none" stroke="var(--branch-line)" stroke-width="4" stroke-linecap="round"/></svg>' +
+      '<span class="num" style="background:var(--branch-num);color:var(--brand)">3</span><span class="qm">?</span></div>' + sw(['branch-line', 'branch-line-open', 'branch-line-active', 'branch-node', 'branch-node-open', 'branch-num', 'q-mark-bg', 'q-mark-ink']) + '</section>' +
+    '<section><h3>Bẫy chính tả</h3><div class="demo"><span class="trapw" lang="en">e<span class="b-trap__mark">at</span></span><span class="trapw" lang="en">wh<span class="b-trap__mark">at</span></span></div>' + sw(['trap-bg', 'trap-line', 'trap-ink']) + '<p class="note">Cùng chữ, khác âm: gạch lượn sóng, Bông giải thích.</p></section>' +
+    '<section><h3>Đọc cả đoạn · dịch nghĩa</h3><div class="demo" style="flex-direction:column;align-items:flex-start;gap:4px"><span class="sent" lang="en">It likes to <b>eat</b> seeds.</span><span class="translation tr">Chim thích ăn hạt.</span></div>' + sw(['read-highlight', 'read-word-bg', 'read-word-ink', 'trans-ink', 'trans-rule']) + '<p class="note">Kiểu chữ mới <code>translation</code> 18/26 · 600.</p></section>' +
+    '<section><h3>Dải liên kết · đường dẫn</h3><div class="demo"><div class="strip"><span class="c" lang="en">bird</span>›<span class="c">họ -ir</span>›<span class="now">Ghép chữ</span></div></div>' + sw(['links-bg', 'links-line', 'crumb-ink', 'crumb-now']) + '</section>' +
+    '<section><h3>Sắp học · Ghép chữ đầu</h3><div class="demo"><span class="tile" lang="en">h</span><span class="slot"></span><span class="fake" lang="en">z</span><span class="chip" lang="en">cat</span><span class="soon">Sắp học</span></div>' + sw(['letter-tile', 'build-slot-bg', 'fake-word-bg', 'found-chip', 'soon-bg', 'soon-ink']) + '</section>' +
+    '<section><h3>Cỡ và thời lượng</h3>' + tab([['size-word-card', '300px'], ['size-branch-node', '72px'], ['size-branch-line', '4px'], ['size-family-card', '176px'], ['size-rime-hub', '148px'], ['size-letter-tile', '76px'], ['size-links-strip', '56px'], ['size-print-answer-line', '9mm'], ['duration-branch-open', '360ms'], ['duration-read-word-slow', '640ms']]) + '</section>' +
+    '<section><h3>Họ token <code>wordlab</code></h3>' + tab([['branch-min', '4'], ['branch-max', '6'], ['links-max-depth', '4'], ['build-goal', '5'], ['read-rate', '0.82'], ['read-rate-slow', '0.6']]) + '<p class="note">Không đếm ngược, làm sai không bị trừ điểm.</p></section>';
+})();
+</script>
+</body>
+</html>

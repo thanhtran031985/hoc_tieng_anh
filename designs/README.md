@@ -173,6 +173,77 @@ Khu bố mẹ: Cổng vào (PIN 4–6 số / mật khẩu) · Tổng quan · K�
 - **Khung chương trình** trong cây lộ trình: chủ đề có trong khung mà chưa có bài mang nhãn **“Chưa có bài”** — trung tính, viền nét đứt (`adm-status-none-ink`, `adm-status-none-line`), khác Nháp (nền xám) và Đã xuất bản (xanh) — kèm số từ mục tiêu. Bấm vào mở bảng từ mục tiêu với “Xuất Excel để điền” và “Nhập Excel”.
 - Bảng điều khiển có thẻ **Chủ đề chưa có bài** theo từng cấp (cột màu cấp + danh sách).
 
+## Bổ sung giai đoạn 2 · Tiểu học (cấp 1–5)
+
+### Khung chung (`Bong.L`)
+Mọi dạng bài và trò chơi mới nằm trong khung của “Nghe và chọn hình”: × mở hộp thoại “Dừng bài học?”, thanh tiến độ, chân bài Nghe lại (Space) · Gợi ý (H) · Kiểm tra/Tiếp tục (Enter). Đúng: xanh + sao bay vào thanh tiến độ. Chưa đúng: cam nhẹ, Bông động viên, làm lại; **sai 2 lần tự bật gợi ý**. Không có màn thua, không trừ điểm, không đếm ngược. Mọi từ và câu tiếng Anh có loa; chữ trong đoạn đọc là nút `.b-kw` bấm để nghe + nghĩa.
+
+### 7 dạng bài mới
+Ghép âm (`Screen23-Phonics`) · Truyện tranh có đọc to (`Screen24-Story`) · Luyện nói (`Screen25-Speak`, ghi âm màu tím `rec`, có trạng thái chưa cho micro / không có micro) · Sắp xếp từ thành câu (`Screen26-SentenceOrder`) · Nghe và gõ (`Screen27-Dictation`, gợi ý bằng phím ? vì H phải gõ được) · Điền từ vào câu (`Screen28-FillBlank`) · Đọc hiểu ngắn (`Screen29-ShortReading`).
+
+### 3 mini game
+Mỗi game là một bước trong bài: lớp phủ bắt đầu (1 dòng cách chơi có hình, Bắt đầu · Enter), tạm dừng Esc/⏸ (Chơi tiếp · Thoát), bảng kết thúc (số đúng, sao, xu, Tiếp tục). Chân bài game `Bong.L.gfoot`: Bông + lời nhắn, Nghe lại, Gợi ý, điểm. Thời lượng chuyển động (`duration-bubble-rise`, `duration-mole-up`) là **tốc độ**, không phải đồng hồ.
+- Bong bóng từ vựng (`Screen30-Bubbles`): phím 1–5 in trên bóng; bóng bay mất sẽ bay lại.
+- Đập chuột chữ cái (`Screen31-WhackLetters`): phím 1–9 theo bàn phím số; đập sai chuột lè lưỡi.
+- Đua xe trả lời (`Screen32-Race`): xe ma = chính bé lần trước, đi theo **số câu**, không theo giờ; lần đầu không có xe ma.
+
+### Trùm và bài thi lên cấp
+- Trận trùm (`Screen33-Boss`): trùm dễ thương theo vùng (Vua Khỉ Lém – Con vật). Thanh **năng lượng của trùm** (`boss-energy`, vàng cam, luôn kèm số) giảm khi bé đúng; trùm không bao giờ thắng; cuối trận trùm làm bạn.
+- Cổng lên cấp (`LevelGate`) ở cuối đường đảo (`Screen34-IslandMapGate`, màn mới): khoá hiện “Còn N vùng”, mở thì sáng `gate-glow`.
+- Giới thiệu bài thi (`Screen35-LevelTestIntro`): 20 câu, trộn dạng bài, không đếm giờ, cần 80%; thanh tiến độ **20 chấm** (`size-test-dot`).
+- Đạt (`Screen36-LevelUp`): Bông lớn lên trước/sau, đảo mới mở, sao + xu + huy hiệu. Chưa đạt (`Screen37-LevelTestRetry`): không dùng chữ “trượt”; 2–3 chủ đề nên ôn, “Ôn chủ đề này”, “Thi lại sau”.
+
+### Rồng Bông lớn lên (`MascotGrowth`)
+5 dáng theo cấp: Hạt giống (trong vỏ trứng) → Mầm non (mầm lá) → Lá xanh (dáng gốc) → Cành cây (khăn quàng) → Cây lớn (gần tuổi teen, sừng dài). Cùng nét vẽ, cùng 4 màu bé chọn, cả 8 biểu cảm dùng được cho mọi dáng: `Bong.dragon(expr, size, { stage })`.
+
+### Token mới
+Xem thẻ “Token bổ sung giai đoạn 2”: `read-highlight`, `phon-slot`, `rec*`, `bubble-1…5`, `bubble-shine`, `game-sky*`, `mole-*`, `race-*`, `boss-*`, `gate-*`, `dragon-egg*`, `dragon-leaf`, `dragon-scarf-4/5`, `size-phon-tile`, `size-mic`, `size-bubble`, `size-mole-hole`, `size-race-lane`, `size-test-dot`, `size-boss`, `duration-read-word`, `duration-rec-max`, `duration-bubble-rise`, `duration-mole-up`. Không có màu đỏ: ghi âm dùng tím, năng lượng trùm dùng vàng cam.
+
+## Bổ sung đợt 5B · Phần thưởng, phòng của tớ, người lớn giai đoạn 2
+
+### Phần thưởng (Tiểu học)
+- Bộ sưu tập · Sticker (`Screen38-Stickers`): album theo chủ đề (Con vật, Xe cộ, Khủng long, Trái cây) như cuốn sổ dán; sticker đã có viền trắng cắt bế, nghiêng nhẹ, tên tiếng Anh + loa; ô chưa có là bóng mờ nét đứt. ← → đổi trang.
+- Bộ sưu tập · Huy hiệu (`Screen39-Badges`): huy hiệu tròn vành vàng + ruy băng; chưa đạt thì xám kem + điều kiện + thanh tiến độ luôn kèm số (63/100 từ).
+- Nhận phần thưởng (`RewardPopup`): hộp quà lắc nhẹ → mở → sticker/huy hiệu, Bông chúc mừng, tên tiếng Anh tự đọc 1 lần, xu thưởng, “Cho vào bộ sưu tập”. Kết thúc bài có sticker bất ngờ: `Screen40-LessonEndSticker` (màn cũ giữ nguyên).
+- Xu thưởng là token họ `coins`: bài học 20, sticker 10, huy hiệu 50, trận trùm 30.
+
+### Phòng của tớ
+- Phòng (`Screen41-MyRoom`): Xem (bấm đồ nghe tên tiếng Anh) và Trang trí (kéo thả; bàn phím Tab chọn, mũi tên di chuyển, R xoay, Delete cất kho); Tủ đồ mặc mũ, áo cho Bông.
+- Cửa hàng (`Screen42-Shop`): Nội thất · Quần áo · Mũ; giá theo token (`price-furniture-s/m/l` 40/80/150, `price-special` 400, `price-clothes` 60, `price-hat` 50). Không đủ xu: nút mờ, Bông nói còn thiếu bao nhiêu và gợi ý học thêm một bài. **Xu chỉ dùng trong trò chơi: không có tiền thật, không quảng cáo.**
+- Bông mặc đồ: `Bong.dragon(expr, size, { top: 'tee'|'stripe'|'raincoat', hat: 'cap'|'beanie'|'sunhat', stage })`; không truyền thì rồng y như cũ. Trang chủ có Bông mặc đồ + thẻ nổi Chuỗi ngày (thẻ nghỉ phép còn / đã dùng): `Screen43-HomeDressed`.
+
+### Chi tiết Tiểu học
+- Sổ từ bổ sung (`Screen44-NotebookPlus`): đã gặp / đã thuộc, lọc cấp + chủ đề, thẻ phóng to, “In danh sách từ”.
+- Bản in (`Screen45-WordListPrint`): A4 dọc, chỉ `print-*` trắng đen, ô 3 dòng kẻ tập viết; bố cục theo em nên bản xem trên màn và bản in giống nhau.
+- Học tập trung (`LessonTools` + `Screen46-LessonFocus`): nút Toàn màn hình (F, Esc thoát trước khi hỏi dừng bài) và Âm thanh (Nhạc nền, Hiệu ứng, Âm lượng; giọng đọc luôn bật).
+- Chưa đến giờ học (`Screen47-OutsideHours`): ban ngày, Bông chơi ngoài vườn, giờ bắt đầu, các ngày được học, “Bố mẹ mở” bằng PIN.
+
+### Khu người lớn · giai đoạn 2
+Khung `Bong.A.shell2` thêm mục mới vào menu (nhãn “Mới”), menu cũ giữ nguyên: Bố mẹ · “Tiến độ & mở khoá” (`Adult17-Progress`); Quản trị · “Truyện tranh” (`Adult19-StoryEditor`), “Âm phonics” (`Adult20-PhonicsSounds`), “Phần thưởng” (`Adult21-Rewards`). Câu hỏi dạng mới (`Adult18-QuestionTypes2`) mở trong Ngân hàng câu hỏi. Mở khoá thủ công màu tím `adm-unlocked-manual`; thiếu âm thanh màu cam `adm-audio-missing`.
+
+### Token mới
+Xem thẻ “Token bổ sung đợt 5B” (`Gd3Tokens`): `album-*`, `sticker-*`, `badge-*`, `gift-*`, `room-*`, `price-chip*`, `owned-chip`, `outfit-*`, `streak-day*`, `freeze-card*`, `print-*`, `focus-scrim`, `volume-*`, `garden-*`, `day-allowed`, `adm-lock`, `adm-unlocked-manual`, `adm-audio-missing`, `size-sticker*`, `size-badge`, `size-shop-card`, `size-room-item`, `size-print-*`, cùng họ mới `coins`. Vẫn không có màu đỏ.
+
+## Bổ sung đợt 6 · Khám phá từ, Họ vần, Ghép chữ đầu
+
+### Ba chức năng học từ (Tiểu học)
+- Khám phá từ (`Screen48-WordExplorer`): thẻ từ lớn bên trái toả ra 4–6 nhánh đường cong đánh số, mỗi nhánh một câu hỏi (What’s this? · What color is a bird? · What does a bird like to eat? · What does a bird have? · What can a bird do? · Where does a bird live?). Nhánh chưa mở có ô “?”, đang hỏi thì bé đoán bằng 2–3 hình (phím 1–3), đã mở hiện hình + từ có loa. Mở đủ: Bông chúc mừng, “Đọc cả đoạn”, Nói theo, In (`Screen49-WordExplorerPrint`, A4 trắng đen, tuỳ chọn kèm bản dịch).
+- Họ vần (`Screen50-WordFamily`): vần ở giữa (bấm nghe cả họ), các từ cùng vần quanh đó, **phần vần tô cùng một màu** `rime-ink` ở mọi từ; từ chưa học mờ với nhãn “Sắp học”; ô “Bẫy chính tả” cho từ cùng chữ khác âm (eat, what) có lời Bông. Họ theo âm: “-ir” /ɜː/.
+- Ghép chữ đầu (`Screen51-BuildFamily`): kéo, bấm hoặc gõ chữ đầu vào trước vần; từ thật thì hình hiện ra và bay vào “Đã tìm được”, từ không có thật (zat) thì Bông nói nhẹ; đủ 5 từ là xong.
+- Mỗi màn có 2 cách hiện: **trong khung bài học** (thanh tiến độ, “Dừng bài học?”, chân bài Nghe lại · Gợi ý · Kiểm tra) và **tự khám phá từ Sổ từ** (chỉ có nút Đóng, không tính điểm). Làm sai không bị phạt, không đếm ngược; bấm vào từ hay câu tiếng Anh nào cũng nghe được.
+
+### Đọc cả đoạn và dịch nghĩa (`ReadAloudParagraph`)
+Khung đoạn văn dùng chung trong Khám phá từ và Họ vần: P đọc cả đoạn (câu đang đọc `read-highlight`, chữ đang đọc `read-word-bg`), Tạm dừng, Đọc chậm; bấm câu để nghe riêng, bấm từ để nghe + nghĩa trong bong bóng. T bật “Dịch nghĩa”: **mặc định ẩn** để bé tự nghe hiểu trước; bản dịch hiện dưới từng câu, chữ `translation` nhỏ hơn, màu `trans-ink` nhạt hơn; có thể dịch riêng một câu.
+
+### Liên kết qua lại (`WordLinks`)
+Chỉ ở chế độ tự khám phá: Quay lại (Backspace), đường dẫn tối đa 4 bậc (bird › họ -ir › Ghép chữ), nút “Họ vần của bird: -ir”, nút Ghép · Khám phá trên thẻ họ vần, bấm từ đã tìm được để khám phá. Trong khung bài học thì ẩn. Một lượt đi đầy đủ: `Screen53-WordJourney`. Thẻ từ trong Sổ từ có thêm tab Thẻ từ · Khám phá · Họ vần (`Screen52-NotebookWordTabs`, tab chưa có dữ liệu thì ẩn).
+
+### Khu quản trị
+Soạn Khám phá từ (`Adult22-WordExplorerEditor`, tab “Khám phá” trong ngăn kéo của Ngân hàng từ vựng) và Họ vần (`Adult23-WordFamilies`, mục menu mới “Họ vần” qua `Bong.A.shell3`): bộ câu hỏi mẫu theo nhóm, nhánh kéo thả, đáp án từ kho, hình nhiễu, đoạn văn ghép từ câu trả lời + dịch + giọng đọc tự động; từ thành viên “Cùng âm / Bẫy: khác âm”, gợi ý từ trong kho, chữ đầu không thành từ. Báo lỗi dưới ô, “Xem như học sinh”, Nháp/Xuất bản.
+
+### Token mới
+Xem thẻ “Token bổ sung đợt 6” (`Gd4Tokens`): `rime-*`, `branch-*`, `q-mark-*`, `trap-*`, `trans-ink`, `trans-rule`, `read-word-*`, `links-*`, `crumb-*`, `soon-*`, `letter-tile`, `build-slot-bg`, `found-chip`, `fake-word-bg`, `size-word-card`, `size-branch-node`, `size-branch-line`, `size-family-card`, `size-rime-hub`, `size-letter-tile`, `size-links-strip`, `size-print-answer-line`, `duration-branch-open`, `duration-read-word-slow`, kiểu chữ `translation`, họ mới `wordlab`. Vẫn không có màu đỏ.
+
 ## Dùng trong mã
 
-Tải `tokens.css`, `components/bundle.css` rồi `components/bundle.js` (không cần React). `window.Bong` cung cấp `icon`, `pic`, `dragon`, `avatar`, `btn`, `speak`, `key`, `stars`, `stat`, `topbar`, `bubble`, `stateBlock`, `feedback`, `dialog`, `burst`, `say` cùng dữ liệu mẫu `words`, `levels`, `kids`. Lớp CSS có tiền tố `b-`. Bộ THCS: gọi `Bong.suite('thcs')` rồi dùng `Bong.T` (`shell`, `btn`, `opt`, `chip`, `ring`, `bars`, `badge`, `dragon`, `tip`, `state`, `feedback`, `dialog`, `lessonHead`, `lessonFoot`); `Bong.setMode('thcs' | 'thcs-toi')` đổi sáng/tối. Lớp CSS THCS có tiền tố `t-`, đặt trong vùng `.thcs`. Kiểu chi tiết ở `components/index.d.ts`. Khu người lớn: gọi `Bong.suite('adult')` rồi dùng `Bong.A` (`shell`, `btn`, `kpi`, `status`, `field`, `validate`, `wireValidate`, `setErr`, `toggle`, `table`, `drawer`, `dialog`, `toast`, `sortable`, `vbars`, `hbars`, `line`, `empty`, `error`, `skel`) cùng dữ liệu mẫu `Bong.A.data`; lớp CSS tiền tố `a-` trong vùng `.adm`.
+Tải `tokens.css`, `components/bundle.css` rồi `components/bundle.js` (không cần React). `window.Bong` cung cấp `icon`, `pic`, `dragon`, `avatar`, `btn`, `speak`, `key`, `stars`, `stat`, `topbar`, `bubble`, `stateBlock`, `feedback`, `dialog`, `burst`, `say` cùng dữ liệu mẫu `words`, `levels`, `kids`. Lớp CSS có tiền tố `b-`. Bộ THCS: gọi `Bong.suite('thcs')` rồi dùng `Bong.T` (`shell`, `btn`, `opt`, `chip`, `ring`, `bars`, `badge`, `dragon`, `tip`, `state`, `feedback`, `dialog`, `lessonHead`, `lessonFoot`); `Bong.setMode('thcs' | 'thcs-toi')` đổi sáng/tối. Lớp CSS THCS có tiền tố `t-`, đặt trong vùng `.thcs`. Kiểu chi tiết ở `components/index.d.ts`. Khu người lớn: gọi `Bong.suite('adult')` rồi dùng `Bong.A` (`shell`, `btn`, `kpi`, `status`, `field`, `validate`, `wireValidate`, `setErr`, `toggle`, `table`, `drawer`, `dialog`, `toast`, `sortable`, `vbars`, `hbars`, `line`, `empty`, `error`, `skel`) cùng dữ liệu mẫu `Bong.A.data`; lớp CSS tiền tố `a-` trong vùng `.adm`. Giai đoạn 2 Tiểu học: `Bong.L` (`head`, `foot`, `dots`, `wire`, `ok`, `retry`, `say`, `words`, `overlay`, `gameStart`, `gamePause`, `gameEnd`, `gfoot`, `gmsg`, `grow`, `monkey`, `gate`), `Bong.LevelGate`, `Bong.MascotGrowth`. Đợt 5B: `Bong.R` (`sticker`, `medal`, `gift`, `reward`, `tools`, `wireTools`, `soundPanel`, `sound`, `roomWords`, `stickerWords`), `Bong.RewardPopup` (= `Bong.R.reward`), `Bong.LessonTools` (= `Bong.R.tools`; gắn phím F, Esc và bảng âm thanh bằng `Bong.R.wireTools`), `Bong.A.shell2`, và tuỳ chọn `top` / `hat` của `Bong.dragon`. Đợt 6: `Bong.W` (`explorer`, `lines`, `family`, `famLines`, `builder`, `paragraph`, `wireParagraph`, `links`, `linkBtn`, `frame`, `app`, dữ liệu mẫu `wx`, `fam`, `build`), `Bong.ReadAloudParagraph` (= `Bong.W.paragraph`), `Bong.WordLinks` (= `Bong.W.links`), `Bong.A.shell3`.

@@ -1,0 +1,79 @@
+<!-- @dsCard group="Màn Tiểu học · 33–36 Phần thưởng" height=700 subtitle="36. Kết thúc bài có sticker bất ngờ (Screen40-LessonEndSticker): biến thể mới của Kết thúc bài — cạnh rồng Bông có hộp quà lắc nhẹ, mở ra sticker bất ngờ (RewardPopup), rồi sticker nằm lại trên màn kết quả. Màn Kết thúc bài cũ giữ nguyên" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Kết thúc bài có sticker bất ngờ — preview</title>
+<style>
+  .end { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; gap: var(--space-12); align-items: center; width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: var(--space-8) var(--space-12); box-sizing: border-box; position: relative; }
+  .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); position: relative; }
+  .duo { display: flex; align-items: flex-end; gap: var(--space-4); }
+  .duo .b-dragon { width: min(230px, 27cqh); height: auto; }
+  .surprise { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+  .giftbtn { border: 0; background: none; padding: 0; cursor: pointer; border-radius: var(--radius-lg); animation: b-wobble 1.6s ease-in-out infinite; }
+  .giftbtn .b-gift { width: min(150px, 18cqh); height: auto; }
+  .giftbtn:focus-visible { outline: 4px solid var(--focus); outline-offset: 6px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; background: var(--gift-box-shade); color: var(--surface); border-radius: var(--radius-pill); padding: 4px 14px; font: 800 16px/22px var(--font-body); }
+  .got { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+  .got .b-stk { --size-sticker: min(130px, 16cqh); --tilt: -5deg; }
+  .got .lab { display: flex; align-items: center; gap: 6px; }
+  .got .lab b { font: 800 26px/30px var(--font-display); }
+  .bigstars { display: flex; align-items: flex-end; gap: var(--space-3); }
+  .bigstars .b-ico { width: min(84px, 10cqh); height: auto; }
+  .bigstars .b-ico:nth-child(2) { width: min(104px, 12cqh); margin-bottom: 14px; }
+  .res { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-8); }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .tile { background: var(--surface-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
+  .tile .v { font: 800 26px/30px var(--font-display); } .tile .l { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .tile--coin { background: var(--price-chip); }
+  .words { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2) var(--space-4); }
+  .wr { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border-radius: var(--radius-md); }
+  .wr .b-pic { width: 44px; height: 44px; }
+  .wr .en { font: 700 22px/26px var(--font-display); } .wr .vi { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .acts { display: flex; gap: var(--space-4); justify-content: flex-end; margin-top: var(--space-2); }
+  .note { display: flex; gap: var(--space-3); align-items: center; background: var(--retry-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+  @container (max-height: 800px) { .res { padding: var(--space-6); gap: var(--space-4); } .end { padding-top: var(--space-4); padding-bottom: var(--space-4); } .wr .b-pic { width: 36px; height: 36px; } .display-xl { font-size: 46px; line-height: 52px; } }
+  @container (max-width: 1400px) { .end { grid-template-columns: 1fr 580px; gap: var(--space-8); padding-left: var(--space-10); padding-right: var(--space-10); } }
+  @media (prefers-reduced-motion: reduce) { .giftbtn { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, R = B.R, W = ['cat', 'dog', 'fish', 'bird', 'duck', 'rabbit'], GIFT = 'dog';
+  var S = { opened: false };
+  function stars(n) { return '<div class="bigstars" aria-label="' + n + ' trên 3 sao">' + [0, 1, 2].map(function (i) { return B.icon(i < n ? 'star' : 'starEmpty', 84); }).join('') + '</div>'; }
+  function surprise(off) {
+    if (S.opened) return '<div class="got">' + R.sticker(GIFT, { size: 110 }) + '<span class="lab">' + B.speak('dog', 's', 'Nghe: dog') + '<b lang="en">dog</b></span><span class="caption b-muted">Đã dán vào album Con vật</span></div>';
+    return '<div class="surprise"><span class="tag">' + B.icon('gift', 18) + 'Quà bất ngờ!</span><button type="button" class="giftbtn" data-gift aria-label="Mở hộp quà bất ngờ (Enter)"' + (off ? ' disabled' : '') + '>' + R.gift(false, 150) + '</button></div>';
+  }
+  function hero(expr, n, title, sub, off, noGift) { return '<section class="hero"><div class="duo">' + B.dragon(expr, 230) + (noGift ? '' : '<div data-sur>' + surprise(off) + '</div>') + '</div>' + stars(n) + '<h1 class="display-xl">' + title + '</h1><p class="body-l b-muted" style="margin:0">' + sub + '</p></section>'; }
+  function tiles(c) { return '<div class="tiles"><div class="tile tile--coin">' + B.icon('coin', 36) + '<div><div class="v" data-coin>+' + c + '</div><div class="l">xu</div></div></div><div class="tile"><span style="color:var(--success)">' + B.icon('check', 32) + '</span><div><div class="v">10/10</div><div class="l">câu đúng</div></div></div><div class="tile"><span style="color:var(--brand)">' + B.icon('clock', 32) + '</span><div><div class="v">5 phút</div><div class="l">thời gian</div></div></div></div>'; }
+  function words() { return '<div><h2 class="title" style="margin-bottom:8px">Từ vừa học <span class="label b-muted">(' + W.length + ')</span></h2><div class="words">' + W.map(function (w) { return '<div class="wr">' + B.pic(w, 44) + B.speak(w, 's') + '<div><div class="en" lang="en">' + w + '</div><div class="vi">' + B.words[w].vi + '</div></div></div>'; }).join('') + '</div></div>'; }
+  function acts(off) { return '<div class="acts">' + B.btn({ label: 'Về bản đồ', variant: 'secondary', size: 'l', icon: 'map', disabled: off }) + B.btn({ label: S.opened ? 'Bài tiếp theo' : 'Mở quà', size: 'l', key: 'Enter', icon: S.opened ? null : 'gift', attrs: 'data-next', disabled: off }) + '</div>'; }
+  function coins() { return S.opened ? 40 : 30; }
+  B.screen({
+    fit: true, level: 1, order: ['normal', 'opened', 'loading', 'empty', 'error'], labels: { opened: 'Đã mở quà' },
+    notes: { normal: 'Như Kết thúc bài, thêm hộp quà (`gift-box`) lắc nhẹ cạnh Bông. Enter (hoặc bấm hộp) mở quà → RewardPopup: sticker “dog”, +10 xu (`coin-sticker-lesson`), “Cho vào bộ sưu tập”. Sau đó nút chính đổi thành Bài tiếp theo (Enter).', opened: 'Sau khi mở: sticker nằm lại cạnh Bông, tên + loa, “Đã dán vào album Con vật”; xu +40.', loading: 'Đang lưu kết quả: hộp quà chờ, chưa mở được.', empty: 'Bài ôn tập không có từ mới và không rơi quà: màn giống Kết thúc bài cũ.', error: 'Chưa lưu được kết quả: quà vẫn được giữ, mở sau khi thử lại.' },
+    states: {
+      normal: function () { S.opened = false; return '<div class="end">' + hero('chucmung', 3, 'Giỏi quá, An ơi!', 'Bé đã học xong <b class="en">Animals</b> · Bài 5') + '<section class="b-card res">' + tiles(coins()) + words() + acts() + '</section></div>'; },
+      opened: function () { S.opened = true; return '<div class="end">' + hero('chucmung', 3, 'Giỏi quá, An ơi!', 'Bé đã học xong <b class="en">Animals</b> · Bài 5') + '<section class="b-card res">' + tiles(coins()) + words() + acts() + '</section></div>'; },
+      loading: function () { S.opened = false; return '<div class="end">' + hero('suynghi', 3, 'Xong bài rồi!', 'Bông đang ghi lại kết quả…', true) + '<section class="b-card res"><div class="tiles">' + B.sk('100%', '70px') + B.sk('100%', '70px') + B.sk('100%', '70px') + '</div>' + B.sk('180px', '30px', 'var(--radius-pill)') + '<div class="words">' + [1, 2, 3, 4, 5, 6].map(function () { return '<div class="wr">' + B.sk('44px', '44px', '50%') + B.sk('60%', '22px', 'var(--radius-pill)') + '</div>'; }).join('') + '</div>' + acts(true) + '</section></div>'; },
+      empty: function () { S.opened = true; return '<div class="end">' + hero('chucmung', 2, 'Ôn tập xong rồi!', 'Bé đã ôn lại 8 từ cũ', false, true) + '<section class="b-card res">' + tiles(coins()) + '<div class="b-card--soft b-card" style="display:flex;gap:16px;align-items:center">' + B.dragon('suynghi', 90) + '<div><div class="title">Không có từ mới</div><p class="body b-muted">Bài ôn tập chỉ ôn lại từ cũ. Xem các từ trong Sổ từ nhé!</p></div></div>' + acts() + '</section></div>'; },
+      error: function () { S.opened = false; return '<div class="end">' + hero('dongvien', 3, 'Giỏi quá, An ơi!', 'Bé đã học xong <b class="en">Animals</b> · Bài 5', true) + '<section class="b-card res"><div class="note" role="alert">' + B.icon('wifi', 28) + '<div><b class="label">Chưa lưu được kết quả</b><div class="body b-muted">Sao, xu và hộp quà của bé vẫn được giữ trên máy.</div></div></div>' + words() + '<div class="acts">' + B.btn({ label: 'Về bản đồ', variant: 'secondary', size: 'l', icon: 'map' }) + B.btn({ label: 'Thử lại', size: 'l', icon: 'replay', attrs: 'data-retry' }) + '</div></section></div>'; }
+    },
+    mount: { all: function (scr, ctx) {
+      if (ctx.state === 'loading' || ctx.state === 'error') return;
+      var next = scr.querySelector('[data-next]');
+      function openGift() {
+        var g = scr.querySelector('[data-gift]'); if (!g || S.opened) return; g.style.animation = 'none'; g.innerHTML = R.gift(true, 150); g.disabled = true;
+        ctx.later(function () { R.reward(scr, { kind: 'sticker', key: GIFT, coins: 10, skipGift: true, onAdd: function () { ctx.setState('opened'); var n = ctx.scr.querySelector('[data-next]'); n && n.focus({ preventScroll: true }); } }); }, 450);
+      }
+      var g = scr.querySelector('[data-gift]'); g && g.addEventListener('click', openGift);
+      next.addEventListener('click', function () { if (!S.opened) openGift(); else ctx.burst(next); });
+      ctx.onKey(function (e) { if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); next.click(); } });
+      if (ctx.state === 'normal') ctx.later(function () { ctx.burst(scr.querySelector('.bigstars'), null, 10); }, 600);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

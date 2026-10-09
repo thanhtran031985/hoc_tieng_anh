@@ -13,9 +13,9 @@
   "groups": [],
   "lastChange": {
     "by": "Thanh",
-    "at": "2026-10-02T12:52:27Z",
+    "at": "2026-10-09T00:51:17Z",
     "via": "Claude (Cowork)",
-    "note": "Bổ sung giai đoạn 1: 8 màn Tiểu học (bài xếp lớp, Chọn từ đúng cho hình, Ôn tập hôm nay, Dừng bài học, Sắp có), 2 biểu cảm rồng Bông, nhập chủ đề mới bằng Excel, khung chương trình “Chưa có bài”, token mới"
+    "note": "Đợt 6: Khám phá từ (Screen48-WordExplorer, bản in Screen49-WordExplorerPrint), Họ vần (Screen50-WordFamily), Ghép chữ đầu (Screen51-BuildFamily), thẻ Sổ từ có tab (Screen52-NotebookWordTabs), Đọc cả đoạn + dịch (ReadAloudParagraph), liên kết qua lại (WordLinks, Screen53-WordJourney), quản trị Adult22-WordExplorerEditor, Adult23-WordFamilies (A.shell3); 30 màu + 8 cỡ + 2 thời lượng + kiểu chữ translation + họ token wordlab (thẻ Gd4Tokens). Màn cũ giữ nguyên."
   },
   "layout": "files",
   "libraries": [],

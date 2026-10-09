@@ -1,0 +1,140 @@
+<!-- @dsCard group="Người lớn · Đợt 6 · Khám phá từ, Họ vần" height=760 subtitle="9. Họ vần (Adult23-WordFamilies): bảng các họ vần (vần, âm IPA, cấp, số từ, trạng thái) có tìm, lọc theo cấp, sắp xếp, phân trang; ngăn kéo sửa một họ — vần, âm, cấp, từ thành viên lấy từ kho, “Gợi ý từ trong kho”, đánh dấu Cùng âm / Bẫy: khác âm, chữ đầu không thành từ cho Ghép chữ đầu, đoạn văn vui (Anh + Việt + âm thanh), Xem như học sinh, Nháp/Xuất bản" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Họ vần — preview</title>
+<style>
+  .rm { font: 700 18px/1 var(--font-thcs); color: var(--ink); } .rm b { color: var(--rime-ink); background: var(--rime-bg); border-radius: 4px; padding: 0 3px; }
+  .ed-sec { display: flex; flex-direction: column; gap: 10px; }
+  .ed-sec > h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 700 15px/20px var(--font-thcs); color: var(--ink); }
+  .ed-sec > h3 .n { font-weight: 600; color: var(--ink-soft); font-size: 13px; } .ed-sec > h3 .sp { margin-left: auto; }
+  .f3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .mem { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .mem li { display: grid; grid-template-columns: 40px 1fr 90px auto 32px; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: 4px 8px; }
+  .mem li.is-trap { border-style: dashed; border-color: var(--trap-line); background: var(--trap-bg); }
+  .mem .ph { width: 36px; height: 36px; border-radius: 8px; background: var(--surface-soft); display: grid; place-items: center; } .mem .ph .b-pic { width: 30px; height: 30px; }
+  .mem .w { font: 600 16px/20px var(--font-thcs); } .mem .w small { display: block; font: 500 12px/16px var(--font-thcs); color: var(--ink-soft); }
+  .mem .w .b-rime { font-weight: 700; } .mem .w .tm { color: var(--trap-ink); text-decoration: underline wavy var(--trap-line); text-underline-offset: 3px; }
+  .mem .ipa { font: 500 13px/18px var(--font-thcs); color: var(--ink-soft); }
+  .mem .t-seg button { font-size: 12px; padding: 4px 8px; }
+  .sug { border: 1px solid var(--brand); border-radius: var(--adm-radius-md); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+  .sug h4 { margin: 0; font: 700 14px/18px var(--font-thcs); }
+  .sug ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 12px; }
+  .sug label { display: flex; align-items: center; gap: 8px; font: 500 14px/20px var(--font-thcs); cursor: pointer; padding: 2px 4px; border-radius: 6px; }
+  .sug label:hover { background: var(--surface-soft); }
+  .sug input { width: 16px; height: 16px; accent-color: var(--brand); }
+  .sug small { color: var(--ink-soft); } .sug .dif { font: 600 11px/14px var(--font-thcs); color: var(--trap-ink); background: var(--trap-bg); border-radius: 99px; padding: 1px 6px; }
+  .sug .acts { display: flex; gap: 8px; justify-content: flex-end; }
+  .on { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .on .ok, .on .no { display: inline-flex; align-items: center; gap: 4px; border-radius: 99px; padding: 2px 4px 2px 10px; font: 700 14px/20px var(--font-thcs); }
+  .on .ok { background: var(--found-chip); padding-right: 10px; } .on .no { border: 1px dashed var(--line-strong); }
+  .on .no button { border: 0; background: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--ink-soft); }
+  .ed-s { display: grid; grid-template-columns: 24px 1fr 1fr; gap: 8px; align-items: start; }
+  .ed-s .num { margin-top: 30px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface-sunk); display: grid; place-items: center; font: 700 12px/1 var(--font-thcs); }
+  .ed-audio { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: 8px 10px; } .ed-audio .t { flex: 1; font: 500 13px/18px var(--font-thcs); }
+  .a-stu-fam { width: 100%; padding: 12px; background: var(--bg); border-radius: 12px; box-sizing: border-box; text-align: left; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, W = B.W;
+  function unscroll() { var n = SCR; while (n && n !== document.body) { if (n.scrollTop) n.scrollTop = 0; if (n.scrollLeft) n.scrollLeft = 0; n = n.parentElement; } }
+  function scrollDrawer(el) { var b = dr.el.querySelector('.a-drawer__b'), y = 0, n = el; while (n && n !== b) { y += n.offsetTop; n = n.offsetParent; } b.scrollTop = Math.max(0, y - 12); unscroll(); }
+  var SCR, dr = null;
+  var FAMS = [['at', '/æt/', 1, 8, 'live'], ['ir', '/ɜː/', 3, 6, 'live'], ['ig', '/ɪɡ/', 1, 5, 'live'], ['op', '/ɒp/', 1, 5, 'draft'], ['en', '/en/', 1, 6, 'live'], ['un', '/ʌn/', 1, 5, 'live'], ['ake', '/eɪk/', 2, 6, 'live'],
+    ['ee', '/iː/', 2, 7, 'live'], ['ight', '/aɪt/', 3, 6, 'draft'], ['ing', '/ɪŋ/', 2, 6, 'live'], ['ock', '/ɒk/', 2, 5, 'live'], ['ell', '/el/', 2, 5, 'draft'], ['ay', '/eɪ/', 2, 6, 'live'], ['ow', '/əʊ/', 3, 4, 'draft']]
+    .map(function (r, i) { return { id: 'f' + i, rime: r[0], ipa: r[1], lv: r[2], n: r[3], status: r[4] }; });
+  /* Kho từ có chứa “at”: [từ, IPA, loại từ, nghĩa, cùng âm?] */
+  var BANKW = { bat: ['/bæt/', 'danh từ', 'con dơi', 1], cat: ['/kæt/', 'danh từ', 'con mèo', 1], hat: ['/hæt/', 'danh từ', 'cái mũ', 1], fat: ['/fæt/', 'tính từ', 'béo, mập', 1], mat: ['/mæt/', 'danh từ', 'tấm thảm nhỏ', 1], flat: ['/flæt/', 'tính từ', 'phẳng, bẹp', 1],
+    chat: ['/tʃæt/', 'động từ', 'trò chuyện', 1], that: ['/ðæt/', 'từ chỉ định', 'kia, đó', 1], sat: ['/sæt/', 'động từ', 'đã ngồi', 1], rat: ['/ræt/', 'danh từ', 'con chuột', 1], eat: ['/iːt/', 'động từ', 'ăn', 0], what: ['/wɒt/', 'từ để hỏi', 'cái gì', 0],
+    water: ['/ˈwɔː.tə/', 'danh từ', 'nước', 0], late: ['/leɪt/', 'tính từ', 'muộn', 0], plate: ['/pleɪt/', 'danh từ', 'cái đĩa', 0] };
+  function fresh() { return { rime: 'at', ipa: '/æt/', lv: '1', status: 'live', sug: false, audio: 'done', members: ['bat', 'cat', 'hat', 'fat', 'mat', 'flat', 'chat', 'that', 'eat', 'what'].map(function (w) { return { w: w, same: !!BANKW[w][3] }; }), no: ['z', 'v', 'j'],
+    sents: W.fam.at.para.map(function (s) { return { en: s[0], vi: s[1] }; }) }; }
+  var ED = fresh();
+  function onsets() { return ED.members.filter(function (m) { return m.same && m.w.slice(-ED.rime.length) === ED.rime; }).map(function (m) { return m.w.slice(0, m.w.length - ED.rime.length); }).filter(Boolean); }
+  function member(m, i) {
+    var b = BANKW[m.w] || ['', '', '', 1], wr = m.same ? W.rimeWord(m.w, ED.rime) : W.rimeWord(m.w, ED.rime, 'tm');
+    return '<li' + (m.same ? '' : ' class="is-trap"') + '><span class="ph">' + W.pic(m.w, 30) + '</span><span class="w" lang="en">' + wr + '<small lang="vi">' + b[1] + ' · ' + b[2] + '</small></span><span class="ipa">' + b[0] + '</span>' +
+      '<div class="t-seg a-seg" role="radiogroup" aria-label="Âm của ' + m.w + '" data-same="' + i + '"><button type="button" role="radio" data-v="1" aria-checked="' + m.same + '" aria-pressed="' + m.same + '">Cùng âm</button><button type="button" role="radio" data-v="0" aria-checked="' + !m.same + '" aria-pressed="' + !m.same + '">Bẫy: khác âm</button></div>' +
+      '<button type="button" class="a-iconbtn" data-rmw="' + i + '" aria-label="Bỏ ' + m.w + ' khỏi họ">' + B.icon('close', 16) + '</button></li>';
+  }
+  function body() {
+    var same = ED.members.filter(function (m) { return m.same; }).length, traps = ED.members.length - same, ons = onsets();
+    var have = ED.members.map(function (m) { return m.w; });
+    return '<section class="ed-sec"><h3>Thông tin họ</h3><div class="f3">' + A.field({ id: 'f-rime', label: 'Vần', value: ED.rime, required: true, en: true, hint: 'Chỉ chữ cái, không gạch nối. Ví dụ: at' }) + A.field({ id: 'f-ipa', label: 'Âm (IPA)', value: ED.ipa, required: true, hint: 'Đặt trong hai dấu /…/' }) + A.field({ id: 'f-lv', label: 'Cấp', type: 'select', value: ED.lv, options: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (n) { return [String(n), 'Cấp ' + n + ' · ' + B.levels[n - 1].name]; }) }) + '</div></section>' +
+      '<section class="ed-sec"><h3>Từ thành viên <span class="n">' + same + ' cùng âm · ' + traps + ' bẫy (khác âm)</span><span class="sp">' + A.btn({ label: ED.sug ? 'Ẩn gợi ý' : 'Gợi ý từ trong kho', icon: 'wand', variant: 'secondary', size: 's', attrs: 'data-sug aria-expanded="' + ED.sug + '"' }) + '</span></h3>' +
+      (ED.sug ? '<div class="sug" role="region" aria-labelledby="sug-t"><h4 id="sug-t">Từ trong kho có chứa “' + B.esc(ED.rime) + '” (' + Object.keys(BANKW).length + ')</h4><ul>' + Object.keys(BANKW).map(function (w) { var inn = have.indexOf(w) > -1; return '<li><label><input type="checkbox" data-pick="' + w + '"' + (inn ? ' checked disabled' : '') + '><span lang="en">' + W.rimeWord(w, ED.rime) + '</span><small>' + BANKW[w][0] + '</small>' + (BANKW[w][3] ? '' : '<span class="dif">khác âm?</span>') + (inn ? '<small>· đã có</small>' : '') + '</label></li>'; }).join('') + '</ul><div class="acts">' + A.btn({ label: 'Thêm các từ đã chọn', icon: 'plus', size: 's', attrs: 'data-addpick' }) + '</div></div>' : '') +
+      '<ul class="mem" aria-label="Từ thành viên">' + ED.members.map(member).join('') + '</ul><p class="a-err adm-small" id="mem-e" role="alert"' + (ED.memErr ? '' : ' hidden') + '>' + B.icon('warn', 14) + '<span>' + (ED.memErr || '') + '</span></p></section>' +
+      '<section class="ed-sec"><h3>Ghép chữ đầu <span class="n">vần cố định “' + B.esc(ED.rime) + '” bên phải</span></h3><div class="on"><span class="adm-small b-muted">Thành từ (tự tính):</span>' + ons.map(function (o) { return '<span class="ok" lang="en">' + o + '</span>'; }).join('') + '</div>' +
+      '<div class="on"><span class="adm-small b-muted">Chữ đầu không thành từ (để bé thử):</span>' + ED.no.map(function (o, i) { return '<span class="no" lang="en">' + o + B.esc(ED.rime) + '<button type="button" data-rmno="' + i + '" aria-label="Bỏ chữ ' + o + '">' + B.icon('close', 14) + '</button></span>'; }).join('') + '</div>' +
+      A.field({ id: 'f-no', label: 'Thêm chữ đầu không thành từ', placeholder: 'ví dụ: k', en: true, suffix: A.btn({ label: 'Thêm', icon: 'plus', variant: 'secondary', size: 's', attrs: 'data-addno' }), hint: 'Mỗi lần một chữ hoặc cụm chữ (z, v, j, kl…). Hệ thống kiểm tra không trùng từ thật trong kho.' }) + '</section>' +
+      '<section class="ed-sec" id="sec-para"><h3>Đoạn văn vui của họ <span class="n">dùng nhiều từ trong họ</span></h3>' + ED.sents.map(function (s, i) { return '<div class="ed-s"><span class="num">' + (i + 1) + '</span>' + A.field({ id: 's-en-' + i, label: 'Câu tiếng Anh', value: s.en, required: true, en: true }) + A.field({ id: 's-vi-' + i, label: 'Bản dịch tiếng Việt', value: s.vi, required: true }) + '</div>'; }).join('') +
+      '<div class="ed-audio">' + B.icon('music', 18) + (ED.audio === 'done' ? '<span class="t">Đã có giọng đọc (0:06) · giọng Anh, tốc độ 0.82</span>' + A.btn({ label: 'Nghe', icon: 'speaker', variant: 'secondary', size: 's', attrs: 'data-say="' + B.esc(ED.sents.map(function (s) { return s.en; }).join(' ')) + '"' }) + A.btn({ label: 'Tạo lại giọng đọc', icon: 'wand', variant: 'ghost', size: 's', attrs: 'data-tts' }) : '<span class="t">Đang tạo giọng đọc…</span>') + '</div></section>';
+  }
+  function rules() {
+    var r = { 'f-rime': function (v) { return !v.trim() ? 'Nhập vần.' : /^[a-z]+$/i.test(v.trim()) ? '' : 'Vần chỉ gồm chữ cái, không có dấu gạch nối hay khoảng trắng.'; }, 'f-ipa': function (v) { return !v.trim() ? 'Nhập âm IPA.' : /^\/.+\/$/.test(v.trim()) ? '' : 'Âm IPA cần đặt trong hai dấu gạch chéo, ví dụ /æt/.'; } };
+    ED.sents.forEach(function (s, i) { r['s-en-' + i] = function (v) { return v.trim() ? '' : 'Nhập câu tiếng Anh.'; }; r['s-vi-' + i] = function (v) { return v.trim() ? '' : 'Câu này chưa có bản dịch.'; }; });
+    return r;
+  }
+  function sync() { if (!dr) return; var el = dr.el, f = function (id) { var x = el.querySelector('#' + id); return x ? x.value : null; }; if (f('f-rime') != null) { ED.rime = f('f-rime').trim() || ED.rime; ED.ipa = f('f-ipa'); ED.lv = f('f-lv'); } ED.sents.forEach(function (s, i) { if (f('s-en-' + i) != null) { s.en = f('s-en-' + i); s.vi = f('s-vi-' + i); } }); }
+  function redraw(sel) { var b = dr.el.querySelector('.a-drawer__b'), y = b.scrollTop; b.innerHTML = body(); wire(); b.scrollTop = y; var f = sel && dr.el.querySelector(sel); f && f.focus({ preventScroll: true }); }
+  function wire() {
+    var el = dr.el; A.wireValidate(el, rules());
+    el.querySelectorAll('[data-same]').forEach(function (g) { g.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { sync(); ED.members[+g.dataset.same].same = b.dataset.v === '1'; ED.memErr = ''; redraw('[data-same="' + g.dataset.same + '"] [data-v="' + b.dataset.v + '"]'); }); b.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); g.querySelector('[data-v="' + (b.dataset.v === '1' ? '0' : '1') + '"]').click(); } }); }); });
+    el.querySelectorAll('[data-rmw]').forEach(function (b) { b.addEventListener('click', function () { sync(); ED.members.splice(+b.dataset.rmw, 1); redraw('[data-sug]'); }); });
+    el.querySelector('[data-sug]').addEventListener('click', function () { sync(); ED.sug = !ED.sug; redraw(ED.sug ? '[data-pick]:not([disabled])' : '[data-sug]'); });
+    var ap = el.querySelector('[data-addpick]'); ap && ap.addEventListener('click', function () { sync(); var n = 0; el.querySelectorAll('[data-pick]:checked:not([disabled])').forEach(function (c) { ED.members.push({ w: c.dataset.pick, same: !!BANKW[c.dataset.pick][3] }); n++; }); ED.sug = false; redraw('[data-sug]'); A.toast(SCR, n ? 'Đã thêm ' + n + ' từ vào họ. Từ khác âm được đánh dấu “Bẫy”.' : 'Chưa chọn từ nào.'); });
+    el.querySelectorAll('[data-rmno]').forEach(function (b) { b.addEventListener('click', function () { sync(); ED.no.splice(+b.dataset.rmno, 1); redraw('#f-no'); }); });
+    el.querySelector('[data-addno]').addEventListener('click', function () { var i = el.querySelector('#f-no'), v = i.value.trim().toLowerCase();
+      var m = !v ? 'Nhập một chữ đầu.' : !/^[a-z]{1,3}$/.test(v) ? 'Chỉ 1–3 chữ cái.' : ED.no.indexOf(v) > -1 ? 'Chữ này đã có trong danh sách.' : BANKW[v + ED.rime] ? '“' + v + ED.rime + '” là từ thật trong kho, không dùng làm chữ không thành từ.' : '';
+      A.setErr(el, 'f-no', m); if (m) { i.focus(); return; } sync(); ED.no.push(v); redraw('#f-no'); });
+    var tts = el.querySelector('[data-tts]'); tts && tts.addEventListener('click', function () { sync(); ED.audio = 'gen'; redraw(); setTimeout(function () { ED.audio = 'done'; if (dr) redraw('[data-tts]'); A.toast(SCR, 'Đã tạo lại giọng đọc cho đoạn văn.'); }, 1400); });
+  }
+  function student() {
+    sync(); W.fam.__prev = { rime: ED.rime, ipa: ED.ipa, build: 'at', members: ED.members.filter(function (m) { return m.same; }).map(function (m) { var b = BANKW[m.w]; return [m.w, b[0], b[1], b[2], 1]; }), traps: ED.members.filter(function (m) { return !m.same; }).map(function (m) { var b = BANKW[m.w]; return [m.w, b[0], b[2]]; }), trapNote: 'Các từ này cũng có chữ “' + B.esc(ED.rime) + '” nhưng đọc khác. Nghe kỹ nhé!', para: ED.sents.map(function (s) { return [s.en, s.vi]; }) };
+    A.dialog(SCR, { title: 'Xem như học sinh · Họ vần -' + B.esc(ED.rime) + ' (giao diện Tiểu học)', wide: 1120, body: '<div class="a-stu-fam" data-theme="tieu-hoc">' + W.family('__prev', { compact: true }) + '</div><p class="adm-small" style="margin:8px 0 0;text-align:left">Bản xem trước tĩnh. Bé thật nghe được từng thẻ, bấm vần ở giữa để nghe cả họ, có khung Đọc cả đoạn bên dưới.</p>', actions: [{ label: 'Đóng', variant: 'primary' }], onOpen: function (w) { requestAnimationFrame(function () { W.famLines(w); }); } });
+  }
+  function open(state) {
+    ED = fresh(); if (state === 'suggest') ED.sug = true; if (state === 'errors') { ED.rime = 'at-'; ED.ipa = 'æt'; }
+    dr = A.drawer(SCR, { wide: true, title: 'Sửa họ vần -at', body: body(), foot: '<div class="t-seg a-seg" role="radiogroup" aria-label="Trạng thái" data-st><button type="button" role="radio" data-v="draft" aria-checked="false" aria-pressed="false">Nháp</button><button type="button" role="radio" data-v="live" aria-checked="true" aria-pressed="true">Xuất bản</button></div><span style="flex:1"></span>' + A.btn({ label: 'Xem như học sinh', icon: 'eye', variant: 'secondary', attrs: 'data-stu' }) + A.btn({ label: 'Lưu', icon: 'check', attrs: 'data-save' }) });
+    wire();
+    var seg = dr.el.querySelector('[data-st]'); seg.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { seg.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); ED.status = b.dataset.v; }); });
+    dr.el.querySelector('[data-stu]').addEventListener('click', student);
+    dr.el.querySelector('[data-save]').addEventListener('click', function () { sync(); var bad = A.validate(dr.el, rules()); unscroll(); var same = ED.members.filter(function (m) { return m.same; }).length;
+      ED.memErr = same < 3 ? 'Cần ít nhất 3 từ “Cùng âm” để thành một họ.' : ''; var me = dr.el.querySelector('#mem-e'); me.hidden = !ED.memErr; me.querySelector('span').textContent = ED.memErr; if (bad || ED.memErr) return;
+      dr.close(); A.toast(SCR, (ED.status === 'live' ? 'Đã xuất bản' : 'Đã lưu nháp') + ' họ vần -' + ED.rime + ' (' + same + ' từ cùng âm).'); });
+    if (state === 'errors') setTimeout(function () { dr.el.querySelector('[data-save]').click(); unscroll(); }, 120);
+    if (state === 'suggest') setTimeout(function () { var p = dr.el.querySelector('.sug'); p && scrollDrawer(p); var f = dr.el.querySelector('[data-pick]:not([disabled])'); f && f.focus({ preventScroll: true }); }, 100);
+  }
+  var TABLE = A.table({ id: 't-fam', rows: FAMS, pageSize: 8, searchKeys: ['rime', 'ipa'], placeholder: 'Tìm vần, ví dụ: at', sort: { key: 'lv', dir: 'asc' },
+    filters: [{ key: 'lv', label: 'Cấp', options: [1, 2, 3].map(function (n) { return [String(n), 'Cấp ' + n]; }), match: function (r, v) { return String(r.lv) === v; } }, { key: 'status', label: 'Trạng thái', options: [['live', 'Đã xuất bản'], ['draft', 'Nháp']] }],
+    columns: [{ key: 'rime', label: 'Vần', sort: true, render: function (x) { return '<span class="rm" lang="en">-<b>' + x.rime + '</b></span>'; } }, { key: 'ipa', label: 'Âm IPA', sort: true }, { key: 'lv', label: 'Cấp', sort: true, render: function (x) { return 'Cấp ' + x.lv + ' · ' + B.levels[x.lv - 1].name; } }, { key: 'n', label: 'Số từ', sort: true, align: 'right' },
+      { key: 'status', label: 'Trạng thái', sort: true, render: function (x) { return x.status === 'live' ? A.status('live', 'Đã xuất bản') : A.status('draft', 'Nháp'); } }],
+    actions: function (x) { return A.btn({ label: 'Sửa', variant: 'ghost', size: 's', icon: 'pen', attrs: 'data-edit="' + x.rime + '"' }); } });
+  function page(m) { return A.shell3({ area: 'admin', active: 'families', title: 'Họ vần', crumb: 'Nội dung · từ cùng vần cho Họ vần và Ghép chữ đầu', actions: A.btn({ label: 'Thêm họ vần', icon: 'plus', attrs: 'data-new' }), main: m }); }
+  A.screen({
+    order: ['normal', 'table', 'suggest', 'errors', 'loading', 'empty', 'error'], labels: { normal: 'Ngăn kéo sửa họ', table: 'Bảng họ vần', suggest: 'Gợi ý từ trong kho', errors: 'Báo lỗi khi lưu' },
+    notes: {
+      normal: 'Ngăn kéo sửa họ -at: vần, âm IPA, cấp; từ thành viên lấy từ kho, mỗi từ chọn “Cùng âm” hoặc “Bẫy: khác âm” (← → đổi; từ bẫy viền nét đứt `trap-line`, chữ “at” gạch lượn sóng `trap-ink`); chữ đầu thành từ được tự tính, thêm chữ đầu không thành từ cho Ghép chữ đầu; đoạn văn vui Anh + Việt + âm thanh. Xem như học sinh mở giao diện Tiểu học.',
+      table: 'Bảng các họ vần: vần (phần vần tô `rime-ink` trên `rime-bg`), âm IPA, cấp, số từ, trạng thái. Tìm, lọc Cấp / Trạng thái, sắp xếp, phân trang 8 dòng.',
+      suggest: '“Gợi ý từ trong kho”: liệt kê mọi từ có chứa vần, tick để thêm; từ đã có bị khoá; từ đọc khác âm có nhãn “khác âm?” và được đánh dấu Bẫy khi thêm.',
+      errors: 'Lưu khi vần là “at-” và IPA thiếu dấu /…/: lỗi hiện dưới ô (đồng thời báo khi rời ô).',
+      loading: 'Khung xương bảng.', empty: 'Chưa có họ vần nào.', error: 'Không tải được họ vần.' },
+    states: {
+      normal: function () { return page(TABLE.html()); }, table: function () { return page(TABLE.html()); }, suggest: function () { return page(TABLE.html()); }, errors: function () { return page(TABLE.html()); },
+      loading: function () { return page(A.skel('420px')); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có họ vần nào', text: 'Tạo họ vần đầu tiên (ví dụ “-at”) rồi chọn các từ cùng vần trong kho.', action: A.btn({ label: 'Thêm họ vần', icon: 'plus' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'FAM-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; if (['normal', 'table', 'suggest', 'errors'].indexOf(ctx.state) < 0) return;
+      TABLE.mount(scr, bind); bind();
+      function bind() { scr.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { if (b.dataset.edit === 'at') open(); else A.toast(scr, 'Bản xem trước chỉ soạn sẵn họ “-at”.'); }; }); }
+      scr.querySelectorAll('[data-new]').forEach(function (b) { b.addEventListener('click', function () { A.toast(scr, 'Thêm họ vần mới: mở ngăn kéo trống (giống ngăn kéo sửa).'); }); });
+      if (ctx.state !== 'table') open(ctx.state);
+    } }
+  });
+})();
+</script>
+</body>
+</html>

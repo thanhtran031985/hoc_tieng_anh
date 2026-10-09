@@ -1,0 +1,108 @@
+<!-- @dsCard group="Màn Tiểu học · 40–43 Sổ từ, in, học tập trung, ngoài giờ" height=700 subtitle="40. Sổ từ bổ sung (Screen44-NotebookPlus): số từ đã gặp và đã thuộc ở trên; lọc theo cấp và theo chủ đề; bấm thẻ mở thẻ phóng to (hình lớn, từ, nghĩa, câu ví dụ, nghe từ + nghe câu, mức thuộc); nút “In danh sách từ”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Sổ từ bổ sung — preview</title>
+<style>
+  .nh { display: flex; align-items: center; gap: var(--space-4); padding: 0 0 var(--space-3); flex-wrap: wrap; }
+  .nh h1 { margin: 0; flex: 1; }
+  .kpi { display: flex; align-items: center; gap: var(--space-3); background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); }
+  .kpi .ic { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-sunk); color: var(--brand); }
+  .kpi.ok .ic { background: var(--mastery-5-soft); color: var(--mastery-5); }
+  .kpi b { display: block; font: 800 26px/28px var(--font-display); color: var(--ink); } .kpi span { font: 700 13px/16px var(--font-body); color: var(--ink-soft); }
+  .flt { display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; padding-bottom: var(--space-3); }
+  .flt .lb { font: 800 14px/18px var(--font-body); color: var(--ink-soft); }
+  .chips { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .fchip { height: 42px; padding: 0 var(--space-4); border-radius: var(--radius-pill); border: var(--border-thin) solid var(--line-strong); background: var(--surface); font: 800 16px/20px var(--font-body); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 0 var(--line); }
+  .fchip .n { font-size: 13px; color: var(--ink-soft); }
+  .fchip[aria-checked="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .fchip[aria-checked="true"] .n { color: var(--ink-on-dark-soft); }
+  .fchip .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--lv); }
+  .gw { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .wg { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+  .wc { border: var(--border-thick) solid var(--m); border-radius: var(--radius-lg); box-shadow: 0 5px 0 var(--m); background: var(--surface); padding: var(--space-2) var(--space-3) var(--space-3); display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; font: inherit; color: var(--ink); min-height: 0; }
+  .wc:hover { transform: translateY(-3px); }
+  .wc .pips { align-self: stretch; display: flex; justify-content: space-between; align-items: center; }
+  .wc .pips span { display: flex; gap: 3px; } .wc .pips i { width: 9px; height: 9px; border-radius: 50%; background: var(--surface-sunk); } .wc .pips i.on { background: var(--m); }
+  .wc .pips b { font: 800 11px/14px var(--font-body); color: var(--ink-soft); }
+  .wc .b-pic { width: min(80px, 9.5cqh); height: auto; }
+  .wc .en { font: 700 24px/28px var(--font-display); } .wc .vi { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .wc .lvb { font: 800 11px/14px var(--font-body); color: var(--lv-ink); background: var(--lv-soft); border-radius: 99px; padding: 1px 8px; }
+  .pg { display: flex; justify-content: space-between; align-items: center; }
+  .pg .t { font: 800 15px/20px var(--font-body); color: var(--ink-soft); }
+  .zoom { display: grid; grid-template-columns: 220px 1fr; gap: var(--space-6); align-items: center; text-align: left; }
+  .zoom .art { width: 220px; height: 220px; border-radius: var(--radius-xl); background: var(--surface-soft); display: grid; place-items: center; box-shadow: inset 0 0 0 4px var(--m); }
+  .zoom .art .b-pic { width: 180px; height: 180px; }
+  .zoom h3 { margin: 0; font: 800 44px/50px var(--font-display); color: var(--ink); display: flex; align-items: center; gap: var(--space-3); }
+  .zoom .ipa { font: 700 18px/22px var(--font-body); color: var(--ink-soft); }
+  .zoom .mean { font: 800 22px/28px var(--font-body); color: var(--ink); margin: 4px 0 var(--space-3); }
+  .zoom .ex { background: var(--surface-soft); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); display: flex; gap: var(--space-3); align-items: flex-start; }
+  .zoom .ex b { display: block; font: 700 22px/28px var(--font-display); color: var(--ink); } .zoom .ex span { font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+  .zoom .mm { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); font: 800 15px/20px var(--font-body); color: var(--ink); }
+  .zoom .mm .bar { display: flex; gap: 4px; } .zoom .mm .bar i { width: 30px; height: 12px; border-radius: 6px; background: var(--surface-sunk); } .zoom .mm .bar i.on { background: var(--m); }
+  .b-dialog.zd { width: 760px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var kid = { id: 'minh', name: 'Minh', grade: 4, level: 3, hair: 'short' };
+  var ML = ['', 'Mới gặp', 'Đang nhớ', 'Khá nhớ', 'Nhớ tốt', 'Thuộc lòng'];
+  var TP = { animals: 'Con vật', fruits: 'Trái cây', colors: 'Màu sắc', numbers: 'Số đếm', toys: 'Đồ chơi', school: 'Trường lớp', home: 'Nhà của em' };
+  function w(word, vi, ipa, ex, exVi, lv, topic, m) { return { w: word, vi: vi, ipa: ipa, ex: ex, exVi: exVi, lv: lv, topic: topic, m: m }; }
+  var X = B.words;
+  var WL = ['cat', 'dog', 'fish', 'bird', 'duck', 'rabbit', 'one', 'two', 'three'].map(function (k, i) { return w(k, X[k].vi, X[k].ipa, X[k].ex, X[k].exVi, 1, X[k].topic, [5, 5, 5, 4, 4, 5, 5, 5, 4][i]); })
+    .concat(['apple', 'banana', 'grapes', 'orange', 'pear', 'strawberry', 'red', 'blue', 'yellow', 'green', 'ball', 'kite', 'teddy'].map(function (k, i) { return w(k, X[k].vi, X[k].ipa, X[k].ex, X[k].exVi, 2, X[k].topic, [5, 4, 4, 3, 4, 3, 5, 4, 4, 3, 4, 3, 2][i]); }))
+    .concat([w('book', 'quyển sách', '/bʊk/', 'She is reading a book.', 'Bạn ấy đang đọc sách.', 3, 'school', 3), w('desk', 'cái bàn học', '/desk/', 'My bag is on the desk.', 'Cặp của tớ ở trên bàn.', 3, 'school', 2), w('clock', 'đồng hồ', '/klɒk/', 'The clock is on the wall.', 'Đồng hồ ở trên tường.', 3, 'school', 1),
+      w('bed', 'cái giường', '/bed/', 'I sleep in my bed.', 'Tớ ngủ trên giường của tớ.', 3, 'home', 2), w('chair', 'cái ghế', '/tʃeə/', 'Sit on the chair, please.', 'Mời cậu ngồi lên ghế.', 3, 'home', 1), w('lamp', 'cái đèn', '/læmp/', 'Turn on the lamp.', 'Bật đèn lên nào.', 3, 'home', 1)]);
+  var S = { lv: 'all', topic: 'all', page: 0 };
+  var PER = 12;
+  function list() { return WL.filter(function (x) { return (S.lv === 'all' || x.lv === +S.lv) && (S.topic === 'all' || x.topic === S.topic); }).sort(function (a, b) { return a.m - b.m || b.lv - a.lv; }); }
+  function topicsFor() { var t = {}; WL.forEach(function (x) { if (S.lv === 'all' || x.lv === +S.lv) t[x.topic] = (t[x.topic] || 0) + 1; }); return t; }
+  function head(off) {
+    return '<div class="nh"><h1 class="display-l">Sổ từ của Minh</h1><div class="kpi"><span class="ic">' + B.icon('book', 24) + '</span><div><b>' + (off ? '··' : 186) + '</b><span>từ đã gặp</span></div></div><div class="kpi ok"><span class="ic">' + B.icon('check', 24) + '</span><div><b>' + (off ? '··' : 92) + '</b><span>từ đã thuộc</span></div></div>' +
+      B.btn({ label: 'In danh sách từ', icon: 'print', variant: 'secondary', size: 'm', attrs: 'data-print', disabled: off }) + '</div>';
+  }
+  function filters(off) {
+    var lvs = [['all', 'Tất cả cấp']].concat([1, 2, 3].map(function (n) { return [String(n), 'Cấp ' + n + ' · ' + B.levels[n - 1].name]; })), tp = topicsFor();
+    return '<div class="flt"><span class="lb" id="fl-lv">Cấp</span><div class="chips" role="radiogroup" aria-labelledby="fl-lv">' + lvs.map(function (x) { return '<button type="button" role="radio" class="fchip" data-lv="' + x[0] + '" aria-checked="' + (S.lv === x[0]) + '"' + (x[0] !== 'all' ? ' data-level="' + x[0] + '"' : '') + (off ? ' disabled' : '') + '>' + (x[0] !== 'all' ? '<span class="dot"></span>' : '') + x[1] + '</button>'; }).join('') + '</div>' +
+      '<span class="lb" id="fl-tp">Chủ đề</span><div class="chips" role="radiogroup" aria-labelledby="fl-tp">' + [['all', 'Tất cả']].concat(Object.keys(tp).map(function (k) { return [k, TP[k]]; })).map(function (x) { return '<button type="button" role="radio" class="fchip" data-tp="' + x[0] + '" aria-checked="' + (S.topic === x[0]) + '"' + (off ? ' disabled' : '') + '>' + x[1] + (off ? '' : '<span class="n">' + (x[0] === 'all' ? Object.keys(tp).reduce(function (a, k) { return a + tp[k]; }, 0) : tp[x[0]]) + '</span>') + '</button>'; }).join('') + '</div></div>';
+  }
+  function card(x, i) { var p = ''; for (var k = 1; k <= 5; k++) p += '<i class="' + (k <= x.m ? 'on' : '') + '"></i>';
+    return '<button type="button" class="wc" data-w="' + i + '" data-level="' + x.lv + '" style="--m:var(--mastery-' + x.m + ')" aria-label="' + x.w + ', ' + x.vi + ', ' + ML[x.m] + ', cấp ' + x.lv + '. Bấm để phóng to"><span class="pips"><span aria-hidden="true">' + p + '</span><b>' + ML[x.m] + '</b></span>' + B.pic(x.w, 80).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '<span class="en" lang="en">' + x.w + '</span><span class="vi">' + x.vi + '</span><span class="lvb">Cấp ' + x.lv + '</span></button>'; }
+  function grid() { var L = list(), pages = Math.max(1, Math.ceil(L.length / PER)); if (S.page >= pages) S.page = pages - 1; var cur = L.slice(S.page * PER, S.page * PER + PER);
+    return '<div class="gw"><div class="wg">' + cur.map(function (x) { return card(x, WL.indexOf(x)); }).join('') + '</div><div class="pg"><span class="t" aria-live="polite">' + L.length + ' từ · trang ' + (S.page + 1) + '/' + pages + ' · xếp từ mức thấp lên</span><div style="display:flex;gap:8px">' + B.btn({ label: 'Trang trước', variant: 'secondary', size: 's', icon: 'back', attrs: 'data-pg="-1"', disabled: S.page === 0 }) + B.btn({ label: 'Trang sau', variant: 'secondary', size: 's', icon: 'next', attrs: 'data-pg="1"', disabled: S.page >= pages - 1 }) + '</div></div></div>'; }
+  var tb = function () { return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid }); };
+  B.screen({
+    fit: true, level: 3,
+    notes: { normal: 'Trên cùng: 186 từ đã gặp, 92 từ đã thuộc (mức Nhớ tốt trở lên). Lọc Cấp (chấm màu cấp) và Chủ đề (đổi theo cấp). Lưới 12 thẻ/trang, xếp từ mức thấp lên. Bấm thẻ (Enter) → thẻ phóng to: hình lớn, từ + phiên âm, nghĩa, câu ví dụ, Nghe từ / Nghe câu, mức thuộc; ← → xem từ trước / sau. “In danh sách từ” mở Screen45.', loading: 'Khung xương.', empty: 'Chưa có từ nào trong sổ.', error: 'Không tải được sổ từ.' },
+    states: {
+      normal: function () { return tb() + '<div class="scr__body">' + head() + filters() + grid() + '</div>'; },
+      loading: function () { var c = ''; for (var i = 0; i < 12; i++) c += '<div class="wc" style="--m:var(--line);cursor:default">' + B.sk('100%', '10px', 'var(--radius-pill)') + B.sk('70px', '70px', '50%') + B.sk('70%', '22px', 'var(--radius-pill)') + B.sk('45%', '14px', 'var(--radius-pill)') + '</div>'; return tb() + '<div class="scr__body">' + head(true) + filters(true) + '<div class="gw"><div class="wg">' + c + '</div></div></div>'; },
+      empty: function () { return tb() + '<div class="scr__body">' + head(true).replace(/··/g, '0') + B.stateBlock({ kind: 'empty', expr: 'suynghi', title: 'Sổ từ còn trống', text: 'Mỗi từ cậu học sẽ được Bông ghi vào đây. Học bài đầu tiên nhé!', action: B.btn({ label: 'Học bài đầu tiên', size: 'l', icon: 'map' }) }) + '</div>'; },
+      error: function () { return tb() + '<div class="scr__body">' + head(true) + B.stateBlock({ kind: 'error', title: 'Sổ từ chưa mở được', text: 'Mạng đang chập chờn. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: { normal: function (scr, ctx) {
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      scr.querySelectorAll('[data-lv]').forEach(function (b) { b.addEventListener('click', function () { S.lv = b.dataset.lv; S.topic = 'all'; S.page = 0; re('[data-lv="' + S.lv + '"]'); }); });
+      scr.querySelectorAll('[data-tp]').forEach(function (b) { b.addEventListener('click', function () { S.topic = b.dataset.tp; S.page = 0; re('[data-tp="' + S.topic + '"]'); }); });
+      scr.querySelectorAll('[data-pg]').forEach(function (b) { b.addEventListener('click', function () { S.page += +b.dataset.pg; re('[data-pg="' + b.dataset.pg + '"]:not([disabled]),[data-pg]:not([disabled])'); }); });
+      scr.querySelector('[data-print]').addEventListener('click', function () { ctx.dialog({ expr: 'chao', title: 'In danh sách từ', body: 'Bông sẽ mở bản in khổ A4 (trắng đen) gồm <b>' + list().length + ' từ</b> đang lọc: hình nhỏ, từ, nghĩa, câu ví dụ và ô để cậu tự viết lại. (Màn Screen45-WordListPrint)', actions: [{ label: 'Mở bản in', variant: 'primary', key: 'Enter' }, { label: 'Để sau', variant: 'secondary' }] }); });
+      function zoom(i) {
+        var L = list(), x = WL[i], pos = L.indexOf(x), bar = ''; for (var k = 1; k <= 5; k++) bar += '<i class="' + (k <= x.m ? 'on' : '') + '"></i>';
+        var d = ctx.dialog({ mascot: '', title: '<span class="b-sr">Thẻ từ ' + x.w + '</span>', body: '<div class="zoom" style="--m:var(--mastery-' + x.m + ')" lang="vi"><div class="art">' + B.pic(x.w, 180) + '</div><div><h3><span lang="en">' + x.w + '</span>' + B.speak(x.w, 'm', 'Nghe từ ' + x.w) + '</h3><div class="ipa">' + x.ipa + ' · Cấp ' + x.lv + ' · ' + TP[x.topic] + '</div><p class="mean">' + x.vi + '</p><div class="ex">' + B.speak(x.ex, 's', 'Nghe câu ví dụ') + '<div><b lang="en">' + x.ex + '</b><span>' + x.exVi + '</span></div></div><div class="mm"><span class="bar" aria-hidden="true">' + bar + '</span>Mức thuộc: ' + ML[x.m] + ' (' + x.m + '/5)</div></div></div>',
+          actions: [{ label: 'Từ trước', variant: 'secondary', key: '←' }, { label: 'Đóng', variant: 'primary', key: 'Esc' }, { label: 'Từ sau', variant: 'secondary', key: '→' }] });
+        var ovs = ctx.scr.querySelectorAll('.b-overlay'), w = ovs[ovs.length - 1], dlg = w.querySelector('.b-dialog'); dlg.classList.add('zd');
+        var bs = w.querySelectorAll('button[data-dlg]'); if (pos <= 0) bs[0].disabled = true; if (pos >= L.length - 1) bs[2].disabled = true;
+        function go(dir) { var n = L[pos + dir]; if (!n) return; d.close(); setTimeout(function () { zoom(WL.indexOf(n)); }, 210); }
+        bs[0].addEventListener('click', function (e) { e.stopImmediatePropagation(); go(-1); }, true); bs[2].addEventListener('click', function (e) { e.stopImmediatePropagation(); go(1); }, true);
+        w.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); } if (e.key === 'ArrowRight') { e.preventDefault(); go(1); } });
+        B.L.say(x.w, .85);
+      }
+      scr.querySelectorAll('[data-w]').forEach(function (b) { b.addEventListener('click', function () { zoom(+b.dataset.w); }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

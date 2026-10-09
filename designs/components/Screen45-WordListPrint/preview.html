@@ -1,0 +1,65 @@
+<!-- @dsCard group="Màn Tiểu học · 40–43 Sổ từ, in, học tập trung, ngoài giờ" height=760 subtitle="41. Bản in danh sách từ (Screen45-WordListPrint): trang A4 dọc chỉ trắng đen — tên bé, cấp, chủ đề; bảng hình nhỏ, từ, nghĩa, câu ví dụ, ô 3 dòng kẻ để bé tự viết lại từ. Trên màn hình thu nhỏ vừa khung; khi in đúng khổ A4" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bản in danh sách từ — preview</title>
+<style>
+  .pv { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px 24px 16px; background: var(--surface-sunk); }
+  .tool { display: flex; align-items: center; gap: var(--space-3); width: 100%; max-width: 1100px; }
+  .tool .t { flex: 1; font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+  /* Trang A4: cao = khung còn lại; mọi kích thước bên trong theo em (1em = 1/80 chiều cao trang) để in ra đúng tỉ lệ */
+  .page { --H: calc(100cqh - 96px); height: var(--H); aspect-ratio: 210 / 297; font-size: calc(var(--H) / 80); background: var(--print-paper); color: var(--print-ink); box-shadow: 0 6px 24px rgba(0, 0, 0, .18); padding: 3.8em 3.8em 2.6em; box-sizing: border-box; display: flex; flex-direction: column; font-family: var(--font-body); }
+  .ph { display: grid; grid-template-columns: 1fr auto; gap: 1em; align-items: end; border-bottom: .3em solid var(--print-ink); padding-bottom: .9em; }
+  .ph h1 { margin: 0; font: 800 3em/1.1 var(--font-display); }
+  .ph .meta { font-size: 1.35em; line-height: 1.5; color: var(--print-ink); }
+  .ph .meta b { font-weight: 800; }
+  .ph .who { text-align: right; font-size: 1.25em; line-height: 1.5; }
+  .ph .who .ln { display: inline-block; width: 9em; border-bottom: .1em solid var(--print-ink); }
+  .tip { font-size: 1.2em; color: var(--print-muted); margin: .8em 0; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; flex: 1; }
+  th { font: 800 1.15em/1.2 var(--font-body); text-align: left; padding: .5em .6em; border-bottom: .15em solid var(--print-ink); }
+  td { border-bottom: .08em solid var(--print-ink); padding: .4em .6em; vertical-align: middle; }
+  td.pic .b-pic { width: 5.4em; height: 5.4em; filter: grayscale(1) contrast(1.15); display: block; }
+  td.w { font: 800 1.8em/1.1 var(--font-display); }
+  td.w small { display: block; font: 600 .55em/1.3 var(--font-body); color: var(--print-muted); }
+  td.vi { font-size: 1.3em; font-weight: 700; }
+  td.ex { font-size: 1.15em; line-height: 1.3; } td.ex span { display: block; color: var(--print-muted); font-size: .9em; }
+  .lines { height: 4.6em; border: .1em solid var(--print-ink); border-radius: .4em; background: linear-gradient(var(--print-rule), var(--print-rule)) 0 33% / 100% .06em no-repeat, linear-gradient(var(--print-rule), var(--print-rule)) 0 66% / 100% .06em no-repeat; position: relative; }
+  .lines::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: .08em dashed var(--print-rule); }
+  .pf { display: flex; justify-content: space-between; font-size: 1.1em; color: var(--print-muted); padding-top: .8em; border-top: .08em solid var(--print-ink); margin-top: .6em; }
+  .pf b { color: var(--print-ink); }
+  .skrow td { padding: .8em .6em; }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body { background: var(--print-paper) !important; }
+    .dsf-bar, .dsf-note, .tool { display: none !important; }
+    .dsf-stage, .dsf-vp, .scr, .pv { all: unset; display: block; }
+    .page { width: var(--size-print-page-w); height: var(--size-print-page-h); font-size: calc(var(--size-print-page-h) / 80); box-shadow: none; padding: var(--size-print-margin); }
+    td.pic .b-pic { width: var(--size-print-pic); height: var(--size-print-pic); } col.c-wr { width: var(--size-print-write); }
+  }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var ROWS = [['book', '/bʊk/', 'quyển sách', 'She is reading a book.', 'Bạn ấy đang đọc sách.'], ['desk', '/desk/', 'cái bàn học', 'My bag is on the desk.', 'Cặp của tớ ở trên bàn.'], ['clock', '/klɒk/', 'đồng hồ', 'The clock is on the wall.', 'Đồng hồ ở trên tường.'], ['picture', '/ˈpɪk.tʃə/', 'bức tranh', 'Look at this picture.', 'Nhìn bức tranh này nhé.'],
+    ['bed', '/bed/', 'cái giường', 'I sleep in my bed.', 'Tớ ngủ trên giường của tớ.'], ['chair', '/tʃeə/', 'cái ghế', 'Sit on the chair, please.', 'Mời cậu ngồi lên ghế.'], ['lamp', '/læmp/', 'cái đèn', 'Turn on the lamp.', 'Bật đèn lên nào.'], ['bookshelf', '/ˈbʊk.ʃelf/', 'giá sách', 'The books are on the bookshelf.', 'Sách ở trên giá sách.']];
+  function tool(off) { return '<div class="tool"><span class="t">Bản xem trước khổ A4 dọc · trắng đen · ' + ROWS.length + ' từ (Trường lớp, Nhà của em)</span>' + B.btn({ label: 'Quay lại Sổ từ', variant: 'secondary', size: 'm', icon: 'back' }) + B.btn({ label: 'In', size: 'm', icon: 'print', key: 'Ctrl P', attrs: 'data-doprint', disabled: off }) + '</div>'; }
+  function head() { return '<header class="ph"><div><h1>Danh sách từ của Minh</h1><div class="meta">Lớp 4 · <b>Cấp 3 · Lá xanh</b> · Chủ đề: <b>Trường lớp</b>, <b>Nhà của em</b></div></div><div class="who">Ngày in: 03/10/2026<br>Bố mẹ ký: <span class="ln"></span></div></header>'; }
+  function page(body) { return '<article class="page" aria-label="Trang in A4: Danh sách từ của Minh">' + head() + '<p class="tip">Nhìn hình, đọc to từ, rồi tự viết lại từ vào ô bên phải (viết 2 lần).</p>' + body + '<footer class="pf"><span><b>Học cùng Bông</b> · Sổ từ</span><span>Trang 1/1</span></footer></article>'; }
+  function table(rows) { return '<table><colgroup><col style="width:6.4em"><col style="width:9.6em"><col style="width:8.4em"><col><col class="c-wr" style="width:12em"></colgroup><thead><tr><th scope="col">Hình</th><th scope="col">Từ</th><th scope="col">Nghĩa</th><th scope="col">Câu ví dụ</th><th scope="col">Tự viết lại</th></tr></thead><tbody>' + rows + '</tbody></table>'; }
+  B.screen({
+    level: 3, fit: true,
+    notes: { normal: 'Chỉ dùng `print-ink`, `print-muted`, `print-rule` trên `print-paper`; hình chuyển xám khi in. Kích thước theo em (1/80 chiều cao trang) nên bản thu nhỏ trên màn và bản in A4 (`size-print-page-w/h` 210×297mm, lề `size-print-margin`) cùng bố cục. Ô tập viết 3 dòng kẻ (`size-print-write`). Nút In (Ctrl+P) mở hộp thoại in của trình duyệt.', loading: 'Đang chuẩn bị bản in.', empty: 'Bộ lọc không có từ nào.', error: 'Không tạo được bản in.' },
+    states: {
+      normal: function () { return '<div class="pv">' + tool() + page(table(ROWS.map(function (r) { return '<tr><td class="pic">' + B.pic(r[0], 60).replace(/aria-label="[^"]*"/, 'aria-label="Hình ' + r[0] + '"') + '</td><td class="w" lang="en">' + r[0] + '<small>' + r[1] + '</small></td><td class="vi">' + r[2] + '</td><td class="ex" lang="en">' + r[3] + '<span lang="vi">' + r[4] + '</span></td><td class="wr"><div class="lines" aria-label="Ô để viết lại từ ' + r[0] + '"></div></td></tr>'; }).join(''))) + '</div>'; },
+      loading: function () { return '<div class="pv">' + tool(true) + page(table([1, 2, 3, 4, 5, 6, 7, 8].map(function () { return '<tr class="skrow"><td>' + B.sk('4.6em', '4.6em', '.6em') + '</td><td>' + B.sk('80%', '1.6em') + '</td><td>' + B.sk('80%', '1.2em') + '</td><td>' + B.sk('90%', '1.2em') + '</td><td>' + B.sk('100%', '4em') + '</td></tr>'; }).join(''))) + '</div>'; },
+      empty: function () { return '<div class="pv">' + tool(true) + page('<div style="flex:1;display:grid;place-items:center;text-align:center;font-size:1.6em"><div><b>Chưa có từ để in</b><br><span style="color:var(--print-muted)">Bộ lọc Cấp / Chủ đề trong Sổ từ đang không có từ nào.</span></div></div>') + '</div>'; },
+      error: function () { return '<div class="pv">' + tool(true) + B.stateBlock({ kind: 'error', title: 'Chưa tạo được bản in', text: 'Mạng chập chờn một chút. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: { normal: function (scr, ctx) { var p = scr.querySelector('[data-doprint]'); p.addEventListener('click', function () { try { window.print(); } catch (e) {} }); } }
+  });
+})();
+</script>
+</body>
+</html>

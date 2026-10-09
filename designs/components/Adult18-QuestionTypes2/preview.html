@@ -1,0 +1,188 @@
+<!-- @dsCard group="Người lớn · Giai đoạn 2" height=760 subtitle="13. Câu hỏi dạng mới (Adult18-QuestionTypes2): ngăn kéo biểu mẫu trong Ngân hàng câu hỏi cho 7 dạng — Ghép âm, Luyện nói, Sắp xếp câu, Nghe và gõ, Điền từ, Đọc hiểu ngắn, Truyện; báo lỗi dưới ô; nút “Xem như học sinh”" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Câu hỏi dạng mới — preview</title>
+<style>
+  .tiles { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-2); }
+  .tile { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); background: var(--surface); padding: 10px; text-align: left; cursor: pointer; font: 600 13px/18px var(--font-thcs); color: var(--ink); display: flex; flex-direction: column; gap: 4px; }
+  .tile span { font-weight: 400; color: var(--ink-soft); font-size: 12px; line-height: 16px; }
+  .tile .b-ico { color: var(--brand); }
+  .tile:hover { border-color: var(--brand); }
+  .qt { max-width: 420px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .seg-tiles { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ph-tiles { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .pht { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); padding: 8px; display: flex; flex-direction: column; gap: 6px; width: 132px; background: var(--surface); }
+  .pht.is-error { border-color: var(--field-error); box-shadow: inset 0 0 0 1px var(--field-error); }
+  .pht .row { display: flex; gap: 4px; align-items: center; }
+  .pht input { width: 100%; text-align: center; font: 700 18px/24px var(--font-thcs) !important; }
+  .pht select { width: 100%; }
+  .pht .mv { display: flex; gap: 4px; justify-content: space-between; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: var(--adm-radius-md); background: var(--surface-soft); border: 1px solid var(--line); font: 600 14px/20px var(--font-thcs); color: var(--ink); }
+  .chip.is-noise { background: var(--surface-sunk); border-style: dashed; border-color: var(--line-strong); color: var(--ink-soft); }
+  .grp-err { margin-top: 4px; }
+  .fl { display: grid; grid-template-columns: 30px 1fr 120px; gap: var(--space-2); align-items: center; }
+  .fl b { width: 28px; height: 28px; border-radius: 6px; background: var(--surface-sunk); display: grid; place-items: center; font: 700 13px/1 var(--font-thcs); }
+  .fl.ok b { background: var(--success); color: var(--surface); }
+  .rad { display: inline-flex; gap: 6px; align-items: center; font: 500 12px/16px var(--font-thcs); color: var(--ink-soft); cursor: pointer; }
+  .rad input { accent-color: var(--success); width: 16px; height: 16px; }
+  .rq { border: 1px solid var(--line); border-radius: var(--adm-radius-md); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .rq h4 { margin: 0; font: 600 13px/18px var(--font-thcs); color: var(--ink-soft); }
+  .stories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+  .sty { border: 1px solid var(--line-strong); border-radius: var(--adm-radius-md); padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; background: var(--surface); text-align: left; font: inherit; color: var(--ink); }
+  .sty[aria-checked="true"] { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); background: var(--brand-soft); }
+  .sty[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+  .sty .b-pic { width: 52px; height: 52px; background: var(--surface-soft); border-radius: 8px; flex: none; }
+  .sty b { display: block; font: 600 14px/20px var(--font-thcs); } .sty span { font: 400 12px/16px var(--font-thcs); color: var(--ink-soft); }
+  .stu-ins { font: 800 22px/28px var(--font-display); margin: 0; color: var(--ink); }
+  .stu-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+  .stu-tile { min-width: 64px; height: 64px; padding: 0 10px; border-radius: var(--radius-md); background: var(--surface); box-shadow: inset 0 0 0 3px var(--line), 0 4px 0 var(--line); display: grid; place-items: center; font: 800 30px/1 var(--font-display); color: var(--ink); }
+  .stu-slot { width: 64px; height: 64px; border-radius: var(--radius-md); border: 3px dashed var(--line-strong); background: var(--phon-slot); }
+  .stu-card { padding: 8px 16px; border-radius: var(--radius-md); background: var(--surface); box-shadow: inset 0 0 0 3px var(--line), 0 4px 0 var(--line); font: 800 24px/28px var(--font-display); color: var(--ink); }
+  .stu-p { font: 700 20px/30px var(--font-display); color: var(--ink); margin: 0; text-align: left; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var T = { phonics: ['Ghép âm', 'Từ + ô âm + âm thanh', 'music'], speak: ['Luyện nói', 'Câu mẫu, mức dễ tính', 'mic'], order: ['Sắp xếp câu', 'Tự tách thẻ, từ nhiễu', 'shuffle'], dictation: ['Nghe và gõ', 'Âm thanh, đáp án chấp nhận', 'keyboard'], fill: ['Điền từ', 'Câu có ô trống, thẻ từ', 'pen'], reading: ['Đọc hiểu ngắn', 'Đoạn văn + 2–3 câu hỏi', 'book'], story: ['Truyện', 'Chọn truyện có sẵn', 'cards'] };
+  var SOUNDS = ['—', '/k/ c', '/æ/ a', '/t/ t', '/d/ d', '/ɒ/ o', '/g/ g', '/s/ s', '/ʌ/ u', '/n/ n', '/f/ f', '/ɪ/ i', '/ʃ/ sh', '/tʃ/ ch', '/θ/ th', '/iː/ ee'];
+  var STORIES = [['tomkite', 'Tom’s Red Kite', 'Cấp 3 · 6 trang · Đã xuất bản', 'kite', true], ['mimi', 'My Cat Mimi', 'Cấp 2 · 4 trang · Đã xuất bản', 'cat', true], ['farm', 'A Day at the Farm', 'Cấp 1 · 5 trang · Đã xuất bản', 'duck', true], ['rainy', 'The Rainy Day', 'Cấp 3 · 3/6 trang · Nháp', 'sun', false]];
+  var uid = 0;
+  function Q(type, text, lv, st, d) { return Object.assign({ id: 'n' + (++uid), type: type, text: text, level: lv, status: st || 'live' }, d); }
+  var QS = [
+    Q('phonics', 'Ghép âm: cat', 1, 'live', { word: 'cat', tiles: [['c', '/k/ c'], ['a', '/æ/ a'], ['t', '/t/ t']] }),
+    Q('phonics', 'Ghép âm: fish', 1, 'draft', { word: 'fish', tiles: [['f', '/f/ f'], ['i', '/ɪ/ i'], ['sh', '—']] }),
+    Q('speak', 'Nói: I like apples.', 2, 'live', { sent: 'I like apples.', lenient: 'easy', pic: 'apple' }),
+    Q('order', 'Xếp câu: She is reading a book.', 3, 'live', { sent: 'She is reading a book.', noise: 'are, books' }),
+    Q('dictation', 'Nghe và gõ: fish', 2, 'live', { audio: 'fish', answers: 'fish', icase: true, ipunct: true }),
+    Q('dictation', 'Nghe và gõ: I can see a bird.', 2, 'draft', { audio: 'I can see a bird.', answers: 'I can see a bird.\nI can see a bird', icase: true, ipunct: true }),
+    Q('fill', 'Điền: The cat is ___ the box.', 2, 'live', { text: 'The cat is ___ the box.', cards: ['on', 'in', 'under', ''], ok: 1, pic: 'cat' }),
+    Q('reading', 'Đọc hiểu: My Cat Mimi', 2, 'live', { passage: 'My name is Lan. I have a cat. Her name is Mimi. Mimi is white and small. She likes fish. She sleeps on my bed.', pic: 'cat', qs: [['What is the cat’s name?', ['Mimi', 'Lan', 'Tom'], 0], ['What colour is Mimi?', ['black', 'white', 'yellow'], 1], ['What does Mimi like?', ['milk', 'apples', 'fish'], 2]] }),
+    Q('story', 'Truyện: Tom’s Red Kite', 3, 'live', { story: 'tomkite' })
+  ];
+  var SCR, CTX, CUR = null;
+  var table = A.table({ id: 'qn', rows: QS, pageSize: 8, searchKeys: ['text'], placeholder: 'Tìm câu hỏi dạng mới…', sort: { key: 'level', dir: 'asc' },
+    filters: [{ key: 'type', label: 'Dạng', options: Object.keys(T).map(function (k) { return [k, T[k][0]]; }) }, { key: 'level', label: 'Cấp', options: [1, 2, 3, 4, 5].map(function (n) { return [String(n), 'Cấp ' + n]; }) }],
+    rowAttrs: function (r) { return 'data-row="' + r.id + '"'; }, onRow: function (id) { open(QS.filter(function (x) { return x.id === id; })[0]); },
+    columns: [{ key: 'text', label: 'Câu hỏi', sort: true, render: function (r) { return '<span class="qt">' + B.esc(r.text) + '</span>'; } }, { key: 'type', label: 'Dạng', sort: true, render: function (r) { return T[r.type][0]; } },
+      { key: 'level', label: 'Cấp', sort: true, align: 'center', render: function (r) { return '<span data-level="' + r.level + '"><span class="t-pill t-pill--lv">Cấp ' + r.level + '</span></span>'; } },
+      { key: 'status', label: 'Trạng thái', sort: true, render: function (r) { return r.status === 'live' ? A.status('live', 'Đã xuất bản') : A.status('draft', 'Nháp'); } }],
+    actions: function (r) { return A.btn({ label: 'Sửa', variant: 'ghost', size: 's', icon: 'pen', attrs: 'data-edit="' + r.id + '"' }); } });
+  function grpErr(id, m) { return '<p class="a-err adm-small grp-err" id="' + id + '-e" role="alert"' + (m ? '' : ' hidden') + '>' + B.icon('warn', 14) + '<span>' + (m || '') + '</span></p>'; }
+  function picSel(id, v) { return A.field({ id: id, label: 'Hình minh hoạ', type: 'select', value: v, options: Object.keys(B.words).concat(['book', 'bed', 'chair', 'lamp']) }); }
+  /* ---------- Biểu mẫu theo dạng ---------- */
+  function body(q) {
+    if (q.type === 'phonics') return A.field({ id: 'f-word', label: 'Từ', value: q.word || '', required: true, en: true, suffix: A.btn({ label: 'Tách thành ô âm', icon: 'shuffle', variant: 'secondary', size: 's', attrs: 'data-split' }), hint: 'Chữ ghép một âm (sh, ch, th, ee, oo) để chung một ô.' }) +
+      '<div class="a-field" id="f-tiles-f"><span class="adm-h3" id="f-tiles-l">Ô âm · chọn âm thanh cho từng ô</span><div class="ph-tiles" role="group" aria-labelledby="f-tiles-l">' + (q.tiles || []).map(function (t, i) {
+        return '<div class="pht" data-ti="' + i + '"><label class="b-sr" for="f-t' + i + '">Chữ ô ' + (i + 1) + '</label><input class="t-input a-input a-en" id="f-t' + i + '" value="' + B.esc(t[0]) + '"><label class="b-sr" for="f-s' + i + '">Âm thanh ô ' + (i + 1) + '</label><select class="t-input a-input" id="f-s' + i + '">' + SOUNDS.map(function (s) { return '<option' + (s === t[1] ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select><div class="mv">' + A.btn({ label: '', icon: 'speaker', variant: 'ghost', size: 's', attrs: 'data-play="' + i + '" aria-label="Nghe âm ô ' + (i + 1) + '"' }) + (i < q.tiles.length - 1 ? A.btn({ label: 'Gộp', variant: 'ghost', size: 's', attrs: 'data-merge="' + i + '" aria-label="Gộp ô ' + (i + 1) + ' với ô ' + (i + 2) + '"' }) : '') + '</div></div>'; }).join('') + '</div>' + grpErr('f-tiles') + '</div>' + picSel('f-pic', q.word || 'cat');
+    if (q.type === 'speak') return A.field({ id: 'f-sent', label: 'Câu mẫu', value: q.sent || '', required: true, en: true, hint: 'Tối đa 12 từ. Cấp 1–2 nên dùng 1 từ hoặc câu ngắn.' }) +
+      '<div class="a-field"><span class="adm-h3">Âm thanh mẫu</span><div class="a-inrow"><span class="chip">' + B.icon('music', 14) + (q.sent ? q.sent.toLowerCase().replace(/[^a-z ]/g, '').replace(/ /g, '-') + '.mp3 · 1,8 giây' : 'Chưa có') + '</span>' + A.btn({ label: 'Tải lên', icon: 'upload', variant: 'secondary', size: 's' }) + A.btn({ label: 'Tạo giọng đọc tự động', icon: 'wand', variant: 'secondary', size: 's' }) + '</div></div>' +
+      A.field({ id: 'f-len', label: 'Mức dễ tính khi chấm', type: 'seg', value: q.lenient || 'easy', options: [['easy', 'Rất dễ tính'], ['mid', 'Vừa'], ['strict', 'Chặt hơn']], hint: 'Rất dễ tính: nói gần đúng đã được 2 sao (khuyên dùng cho cấp 1–3).' }) + picSel('f-pic', q.pic || 'apple');
+    if (q.type === 'order') { var w = (q.sent || '').trim().split(/\s+/).filter(Boolean), nz = (q.noise || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      return A.field({ id: 'f-sent', label: 'Câu gốc', value: q.sent || '', required: true, en: true, hint: 'Hệ thống tự tách mỗi từ thành một thẻ; dấu câu đi kèm từ cuối.' }) + '<div class="a-field"><span class="adm-h3">Thẻ học sinh sẽ thấy (đã xáo trộn)</span><div class="chips" aria-live="polite" data-cards>' + w.concat(nz).map(function (x, i) { return '<span class="chip' + (i >= w.length ? ' is-noise' : '') + '" lang="en">' + B.esc(x) + (i >= w.length ? ' · nhiễu' : '') + '</span>'; }).join('') + '</div></div>' +
+        A.field({ id: 'f-noise', label: 'Từ nhiễu (tuỳ chọn)', value: q.noise || '', en: true, hint: 'Cách nhau bằng dấu phẩy, tối đa 3 từ. Cấp 1–2 không nên dùng từ nhiễu.' }) + picSel('f-pic', 'book'); }
+    if (q.type === 'dictation') return A.field({ id: 'f-audio', label: 'Nội dung được đọc', value: q.audio || '', required: true, en: true, suffix: A.btn({ label: 'Tạo giọng đọc tự động', icon: 'wand', variant: 'secondary', size: 's' }), hint: 'Từ ngắn: học sinh gõ mỗi chữ một ô. Câu: gõ một dòng.' }) +
+      A.field({ id: 'f-ans', label: 'Các đáp án chấp nhận', type: 'textarea', rows: 3, value: q.answers || '', required: true, en: true, hint: 'Mỗi dòng một đáp án (ví dụ cách viết khác: colour / color).' }) + A.toggle('f-icase', 'Không phân biệt chữ hoa / thường', q.icase !== false) + A.toggle('f-ipunct', 'Bỏ qua dấu câu cuối câu', q.ipunct !== false);
+    if (q.type === 'fill') return A.field({ id: 'f-text', label: 'Câu có ô trống', value: q.text || '', required: true, en: true, hint: 'Đánh dấu ô trống bằng ___ (3 gạch dưới). Chỉ một ô trống.' }) +
+      '<div class="a-field" id="f-cards-f"><span class="adm-h3" id="f-cards-l">Thẻ từ (3–4) · chọn thẻ đúng</span><div style="display:flex;flex-direction:column;gap:8px" role="group" aria-labelledby="f-cards-l">' + [0, 1, 2, 3].map(function (i) { var c = (q.cards || [])[i] || ''; return '<div class="fl' + (q.ok === i ? ' ok' : '') + '" data-fl="' + i + '"><b>' + (i + 1) + '</b><label class="b-sr" for="f-c' + i + '">Thẻ ' + (i + 1) + '</label><input class="t-input a-input a-en" id="f-c' + i + '" value="' + B.esc(c) + '" placeholder="' + (i === 3 ? '(tuỳ chọn)' : '') + '"><label class="rad"><input type="radio" name="f-ok" value="' + i + '"' + (q.ok === i ? ' checked' : '') + '>Đáp án đúng</label></div>'; }).join('') + '</div>' + grpErr('f-cards') + '</div>' + picSel('f-pic', q.pic || 'cat');
+    if (q.type === 'reading') return A.field({ id: 'f-pass', label: 'Đoạn văn (3–6 câu)', type: 'textarea', rows: 4, value: q.passage || '', required: true, en: true }) + picSel('f-pic', q.pic || 'cat') +
+      '<div class="a-field" id="f-rq-f"><span class="adm-h3">Câu hỏi (2–3 câu, mỗi câu 3 đáp án)</span>' + (q.qs || []).map(function (x, i) { return '<div class="rq"><h4>Câu ' + (i + 1) + '</h4>' + A.field({ id: 'f-q' + i, label: 'Câu hỏi ' + (i + 1), value: x[0], en: true }).replace('class="adm-h3"', 'class="adm-h3 b-sr"') + '<div class="chips">' + x[1].map(function (o, j) { return '<label class="chip"><input type="radio" name="f-rq' + i + '" value="' + j + '"' + (x[2] === j ? ' checked' : '') + ' style="accent-color:var(--success)"><span lang="en">' + o + '</span></label>'; }).join('') + '</div></div>'; }).join('') + grpErr('f-rq') + '</div>';
+    return '<div class="a-field" id="f-story-f"><span class="adm-h3" id="f-story-l">Chọn truyện có sẵn</span><div class="stories" role="radiogroup" aria-labelledby="f-story-l">' + STORIES.map(function (s) { return '<button type="button" role="radio" class="sty" data-story="' + s[0] + '" aria-checked="' + (q.story === s[0]) + '"' + (s[4] ? '' : ' aria-disabled="true"') + '>' + B.pic(s[3], 52) + '<span><b lang="en">' + s[1] + '</b><span>' + s[2] + '</span></span></button>'; }).join('') + '</div>' + grpErr('f-story') + '<p class="adm-small b-muted" style="margin:0">Chỉ chọn được truyện đã xuất bản. Sửa truyện ở mục Truyện tranh.</p></div>';
+  }
+  function form(q) {
+    return '<div class="a-field"><span class="adm-h3" id="f-type-l">Dạng câu hỏi</span><div class="seg-tiles" role="radiogroup" aria-labelledby="f-type-l">' + Object.keys(T).map(function (k) { return '<button type="button" role="radio" class="tile" style="flex:1 1 30%" data-type="' + k + '" aria-checked="' + (q.type === k) + '"' + (q.type === k ? ' style="border-color:var(--brand)"' : '') + '>' + B.icon(T[k][2], 16) + T[k][0] + '<span>' + T[k][1] + '</span></button>'; }).join('') + '</div></div>' +
+      '<div class="a-form">' + A.field({ id: 'f-lv', label: 'Cấp', type: 'select', value: q.level, options: [1, 2, 3, 4, 5].map(function (n) { return [n, 'Cấp ' + n + ' · ' + B.levels[n - 1].name]; }) }) + A.field({ id: 'f-st', label: 'Trạng thái', type: 'seg', value: q.status, options: [['draft', 'Nháp'], ['live', 'Đã xuất bản']] }) + '</div>' +
+      '<div id="f-body" class="a-form" style="grid-template-columns:1fr">' + body(q) + '</div>';
+  }
+  /* ---------- Kiểm tra ---------- */
+  function setGrp(w, id, m) { var e = w.querySelector('#' + id + '-e'); if (!e) return; e.hidden = !m; e.querySelector('span').textContent = m || ''; }
+  function collect(w, q) {
+    var g = function (s) { var e = w.querySelector(s); return e ? e.value : ''; };
+    if (q.type === 'phonics') { q.word = g('#f-word').trim(); q.tiles = q.tiles.map(function (t, i) { return [g('#f-t' + i).trim(), g('#f-s' + i)]; }); }
+    if (q.type === 'speak') q.sent = g('#f-sent').trim();
+    if (q.type === 'order') { q.sent = g('#f-sent').trim(); q.noise = g('#f-noise'); }
+    if (q.type === 'dictation') { q.audio = g('#f-audio').trim(); q.answers = g('#f-ans'); }
+    if (q.type === 'fill') { q.text = g('#f-text').trim(); q.cards = [0, 1, 2, 3].map(function (i) { return g('#f-c' + i).trim(); }); var r = w.querySelector('input[name="f-ok"]:checked'); q.ok = r ? +r.value : null; }
+    if (q.type === 'reading') { q.passage = g('#f-pass').trim(); q.qs = q.qs.map(function (x, i) { var r = w.querySelector('input[name="f-rq' + i + '"]:checked'); return [g('#f-q' + i).trim(), x[1], r ? +r.value : null]; }); }
+    q.level = +g('#f-lv');
+    return q;
+  }
+  function check(w, q) {
+    collect(w, q); var first = null; function bad(sel) { first = first || sel; }
+    if (q.type === 'phonics') { A.setErr(w, 'f-word', q.word ? '' : 'Nhập từ cần ghép.'); if (!q.word) bad('#f-word'); var joined = q.tiles.map(function (t) { return t[0]; }).join(''), miss = q.tiles.filter(function (t) { return t[1] === '—'; })[0];
+      var m = joined !== q.word ? 'Các ô âm ghép lại phải thành “' + q.word + '” (đang là “' + joined + '”).' : miss ? 'Ô “' + miss[0] + '” chưa chọn âm thanh.' : ''; setGrp(w, 'f-tiles', m); w.querySelectorAll('.pht').forEach(function (p, i) { p.classList.toggle('is-error', !!m && (q.tiles[i][1] === '—' || joined !== q.word)); }); if (m) bad(miss ? '#f-s' + q.tiles.indexOf(miss) : '#f-t0'); }
+    if (q.type === 'speak') { var n = q.sent.split(/\s+/).filter(Boolean).length, m2 = !q.sent ? 'Nhập câu mẫu.' : n > 12 ? 'Câu mẫu dài ' + n + ' từ — tối đa 12 từ.' : ''; A.setErr(w, 'f-sent', m2); if (m2) bad('#f-sent'); }
+    if (q.type === 'order') { var c = q.sent.split(/\s+/).filter(Boolean).length, nz = q.noise.split(',').map(function (x) { return x.trim(); }).filter(Boolean); var m3 = !q.sent ? 'Nhập câu gốc.' : c < 3 ? 'Câu cần ít nhất 3 từ để sắp xếp.' : ''; A.setErr(w, 'f-sent', m3); if (m3) bad('#f-sent');
+      var low = q.sent.toLowerCase().replace(/[.,!?]/g, '').split(/\s+/), dup = nz.filter(function (x) { return low.indexOf(x.toLowerCase()) > -1; })[0], m4 = nz.length > 3 ? 'Tối đa 3 từ nhiễu.' : dup ? 'Từ nhiễu “' + dup + '” trùng với từ trong câu.' : ''; A.setErr(w, 'f-noise', m4); if (m4) bad('#f-noise'); }
+    if (q.type === 'dictation') { A.setErr(w, 'f-audio', q.audio ? '' : 'Nhập nội dung được đọc.'); if (!q.audio) bad('#f-audio'); var lines = q.answers.split('\n').map(function (x) { return x.trim(); }).filter(Boolean); var m5 = !lines.length ? 'Cần ít nhất một đáp án chấp nhận.' : lines.every(function (x) { return x.toLowerCase().replace(/[.!?]$/, '') !== q.audio.toLowerCase().replace(/[.!?]$/, ''); }) ? 'Chưa có đáp án nào trùng với nội dung được đọc.' : ''; A.setErr(w, 'f-ans', m5); if (m5) bad('#f-ans'); }
+    if (q.type === 'fill') { var bl = (q.text.match(/___/g) || []).length, m6 = !q.text ? 'Nhập câu.' : bl !== 1 ? (bl ? 'Câu chỉ được có một ô trống ___.' : 'Câu chưa có ô trống ___.') : ''; A.setErr(w, 'f-text', m6); if (m6) bad('#f-text');
+      var cs = q.cards.filter(Boolean), m7 = cs.length < 3 ? 'Cần ít nhất 3 thẻ từ (đang có ' + cs.length + ').' : cs.filter(function (x, i) { return cs.indexOf(x) !== i; }).length ? 'Có hai thẻ trùng nhau.' : q.ok == null || !q.cards[q.ok] ? 'Chọn một thẻ đúng.' : ''; setGrp(w, 'f-cards', m7); if (m7) bad('#f-c' + Math.min(cs.length, 3)); }
+    if (q.type === 'reading') { var sc = (q.passage.match(/[.!?](\s|$)/g) || []).length, m8 = !q.passage ? 'Nhập đoạn văn.' : sc < 3 || sc > 6 ? 'Đoạn văn cần 3–6 câu (đang có ' + sc + ' câu).' : ''; A.setErr(w, 'f-pass', m8); if (m8) bad('#f-pass'); var bq = q.qs.filter(function (x) { return !x[0] || x[2] == null; })[0], m9 = bq ? 'Câu hỏi ' + (q.qs.indexOf(bq) + 1) + ' chưa có nội dung hoặc chưa chọn đáp án đúng.' : ''; setGrp(w, 'f-rq', m9); if (m9) bad('#f-q' + q.qs.indexOf(bq)); }
+    if (q.type === 'story') { var m10 = q.story ? '' : 'Chọn một truyện đã xuất bản.'; setGrp(w, 'f-story', m10); if (m10) bad('[data-story]'); }
+    return first;
+  }
+  /* ---------- Xem như học sinh (giao diện Tiểu học) ---------- */
+  function preview(q) {
+    var inner = '<div class="a-stu" data-theme="tieu-hoc">';
+    if (q.type === 'phonics') inner += '<p class="stu-ins">Ghép âm thành từ</p>' + B.pic(q.word, 110) + '<div class="stu-row">' + q.tiles.map(function () { return '<span class="stu-slot"></span>'; }).join('') + '</div><div class="stu-row">' + q.tiles.slice().reverse().map(function (t) { return '<span class="stu-tile">' + B.esc(t[0]) + '</span>'; }).join('') + '</div>';
+    if (q.type === 'speak') inner += '<p class="stu-ins">Nghe rồi nói theo</p>' + B.pic(q.pic || 'apple', 100) + '<div class="stu-row">' + B.speak(q.sent, 'm') + '<span class="stu-card" lang="en">' + B.esc(q.sent) + '</span></div><span class="b-btn b-btn--primary b-btn--l" style="border-radius:50%;width:96px;height:96px;padding:0;justify-content:center">' + B.icon('mic', 40) + '</span>';
+    if (q.type === 'order') { var w = q.sent.split(/\s+/), nz = q.noise.split(',').map(function (x) { return x.trim(); }).filter(Boolean); inner += '<p class="stu-ins">Sắp xếp thành câu</p><div class="stu-row">' + w.map(function () { return '<span class="stu-slot" style="width:90px"></span>'; }).join('') + '</div><div class="stu-row">' + w.concat(nz).sort().map(function (x, i) { return '<span class="stu-card" lang="en">' + (i + 1) + ' · ' + B.esc(x) + '</span>'; }).join('') + '</div>'; }
+    if (q.type === 'dictation') inner += '<p class="stu-ins">Nghe và gõ</p>' + B.speak(q.audio, 'l') + '<div class="stu-row">' + (q.audio.indexOf(' ') < 0 ? q.audio.split('').map(function () { return '<span class="stu-slot" style="background:var(--surface)"></span>'; }).join('') : '<span class="stu-slot" style="width:420px"></span>') + '</div>';
+    if (q.type === 'fill') inner += '<p class="stu-ins">Điền từ vào chỗ trống</p>' + B.pic(q.pic || 'cat', 90) + '<p class="stu-card" lang="en" style="margin:0">' + B.esc(q.text).replace('___', '<span class="stu-slot" style="display:inline-block;width:110px;height:40px;vertical-align:middle"></span>') + '</p><div class="stu-row">' + q.cards.filter(Boolean).map(function (c, i) { return '<span class="stu-card" lang="en">' + (i + 1) + ' · ' + B.esc(c) + '</span>'; }).join('') + '</div>';
+    if (q.type === 'reading') inner += '<p class="stu-ins">Đọc rồi trả lời</p><p class="stu-p" lang="en">' + B.esc(q.passage) + '</p><div class="stu-row">' + q.qs.map(function (x, i) { return '<span class="stu-card" lang="en" style="font-size:18px">' + (i + 1) + '. ' + B.esc(x[0]) + '</span>'; }).join('') + '</div>';
+    if (q.type === 'story') { var s = STORIES.filter(function (x) { return x[0] === q.story; })[0]; inner += '<p class="stu-ins" lang="en">' + s[1] + '</p>' + B.pic(s[3], 120) + '<p class="stu-p" lang="en">This is Tom. He has a red kite.</p>'; }
+    A.dialog(SCR, { title: 'Xem như học sinh · ' + T[q.type][0] + ' · Cấp ' + q.level + ' (giao diện Tiểu học)', wide: 680, body: inner + '</div><p class="adm-small" style="margin:8px 0 0">Bản xem trước tĩnh, không lưu kết quả. Bài thật có loa, phím tắt và dải phản hồi.</p>', actions: [{ label: 'Đóng', variant: 'primary' }] });
+  }
+  function open(q) {
+    var cur = q ? JSON.parse(JSON.stringify(q)) : { type: 'phonics', level: 1, status: 'draft', word: '', tiles: [] }, orig = q;
+    var dr = A.drawer(SCR, { wide: true, title: q ? 'Sửa câu hỏi · ' + T[cur.type][0] : 'Thêm câu hỏi dạng mới', body: form(cur), foot: '<span style="flex:1"></span>' + A.btn({ label: 'Xem như học sinh', icon: 'eye', variant: 'secondary', attrs: 'data-prev' }) + A.btn({ label: q ? 'Lưu thay đổi' : 'Thêm câu hỏi', icon: 'check', attrs: 'data-save' }) });
+    var w = dr.el;
+    function redraw(focusSel) { w.querySelector('#f-body').innerHTML = body(cur); wire(); var f = focusSel && w.querySelector(focusSel); f && f.focus(); }
+    function wire() {
+      var sp = w.querySelector('[data-split]'); sp && sp.addEventListener('click', function () { var wd = w.querySelector('#f-word').value.trim().toLowerCase(), out = [], i = 0; while (i < wd.length) { var two = wd.substr(i, 2); if (['sh', 'ch', 'th', 'ee', 'oo', 'ck'].indexOf(two) > -1) { out.push(two); i += 2; } else { out.push(wd[i]); i++; } } cur.word = wd; cur.tiles = out.map(function (t) { var s = SOUNDS.filter(function (x) { return x.split(' ')[1] === t; })[0] || '—'; return [t, s]; }); redraw('#f-t0'); });
+      w.querySelectorAll('[data-merge]').forEach(function (b) { b.addEventListener('click', function () { collect(w, cur); var i = +b.dataset.merge; cur.tiles.splice(i, 2, [cur.tiles[i][0] + cur.tiles[i + 1][0], '—']); redraw('#f-s' + i); }); });
+      w.querySelectorAll('[data-play]').forEach(function (b) { b.addEventListener('click', function () { var s = w.querySelector('#f-s' + b.dataset.play).value; B.L.say(s === '—' ? '' : s.split(' ')[1], .7, b); }); });
+      var ss = w.querySelector('#f-sent'), nz = w.querySelector('#f-noise'), cd = w.querySelector('[data-cards]');
+      function cards() { if (!cd) return; var ws = ss.value.trim().split(/\s+/).filter(Boolean), n = nz.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean); cd.innerHTML = ws.concat(n).map(function (x, i) { return '<span class="chip' + (i >= ws.length ? ' is-noise' : '') + '" lang="en">' + B.esc(x) + (i >= ws.length ? ' · nhiễu' : '') + '</span>'; }).join(''); }
+      if (cd) { ss.addEventListener('input', cards); nz.addEventListener('input', cards); }
+      w.querySelectorAll('input[name="f-ok"]').forEach(function (r) { r.addEventListener('change', function () { w.querySelectorAll('.fl').forEach(function (x) { x.classList.toggle('ok', x.contains(r)); }); }); });
+      w.querySelectorAll('[data-story]').forEach(function (b) { b.addEventListener('click', function () { if (b.getAttribute('aria-disabled') === 'true') { setGrp(w, 'f-story', '“' + b.querySelector('b').textContent + '” đang là bản nháp — xuất bản ở mục Truyện tranh trước.'); return; } cur.story = b.dataset.story; w.querySelectorAll('[data-story]').forEach(function (x) { x.setAttribute('aria-checked', x === b); }); setGrp(w, 'f-story', ''); }); });
+      w.querySelectorAll('.a-switch').forEach(function (s) { s.addEventListener('click', function () { s.setAttribute('aria-checked', s.getAttribute('aria-checked') !== 'true'); }); });
+      w.querySelectorAll('.a-seg').forEach(function (g) { g.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { g.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); if (g.id === 'f-st') cur.status = b.dataset.v; }); }); });
+    }
+    wire();
+    w.querySelectorAll('[data-type]').forEach(function (b) { b.addEventListener('click', function () {
+      cur = Object.assign({ type: b.dataset.type, level: cur.level, status: cur.status }, { phonics: { word: '', tiles: [] }, speak: { sent: '', lenient: 'easy' }, order: { sent: '', noise: '' }, dictation: { audio: '', answers: '' }, fill: { text: '', cards: ['', '', '', ''], ok: null }, reading: { passage: '', qs: [['', ['', '', ''], null], ['', ['', '', ''], null]] }, story: { story: null } }[b.dataset.type]);
+      w.querySelectorAll('[data-type]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.style.borderColor = x === b ? 'var(--brand)' : ''; }); redraw(); }); });
+    w.querySelector('[data-prev]').addEventListener('click', function () { var f = check(w, cur); if (f) { var e = w.querySelector(f); e && e.focus(); return; } preview(cur); });
+    w.querySelector('[data-save]').addEventListener('click', function () { var f = check(w, cur); if (f) { var e = w.querySelector(f); e && e.focus(); return; }
+      cur.text = { phonics: 'Ghép âm: ' + cur.word, speak: 'Nói: ' + cur.sent, order: 'Xếp câu: ' + cur.sent, dictation: 'Nghe và gõ: ' + cur.audio, fill: 'Điền: ' + cur.text, reading: 'Đọc hiểu: ' + (cur.passage || '').slice(0, 30) + '…', story: 'Truyện: ' + (STORIES.filter(function (x) { return x[0] === cur.story; })[0] || [0, ''])[1] }[cur.type];
+      if (orig) Object.assign(orig, cur); else { cur.id = 'n' + (++uid); QS.unshift(cur); } dr.close(); CTX.setState('normal'); A.toast(CTX.scr, orig ? 'Đã lưu câu hỏi.' : 'Đã thêm câu hỏi ' + T[cur.type][0] + '.'); });
+    return dr;
+  }
+  function page(m) { return A.shell2({ area: 'admin', active: 'questions', title: 'Ngân hàng câu hỏi · Dạng mới', crumb: 'Giai đoạn 2 · 7 dạng bài Tiểu học', actions: A.btn({ label: 'Thêm câu hỏi', icon: 'plus', attrs: 'data-new' }), main: m }); }
+  function main() { return '<section class="a-card" style="margin-bottom:var(--space-4)"><h2 class="adm-h3" style="margin:0 0 8px">Thêm nhanh theo dạng</h2><div class="tiles">' + Object.keys(T).map(function (k) { return '<button type="button" class="tile" data-quick="' + k + '">' + B.icon(T[k][2], 18) + T[k][0] + '<span>' + T[k][1] + '</span></button>'; }).join('') + '</div></section>' + table.html(); }
+  var ST = { phonics: 1, speak: 2, order: 3, dictation: 5, fill: 6, reading: 7, story: 8 };
+  A.screen({
+    order: ['normal', 'phonics', 'speak', 'order', 'dictation', 'fill', 'reading', 'story', 'loading', 'empty', 'error'],
+    labels: { phonics: 'Ghép âm', speak: 'Luyện nói', order: 'Sắp xếp', dictation: 'Nghe gõ', fill: 'Điền từ', reading: 'Đọc hiểu', story: 'Truyện', empty: 'Trống' },
+    notes: { normal: 'Bảng câu hỏi dạng mới (tìm, lọc Dạng / Cấp, sắp xếp, phân trang) + 7 ô “Thêm nhanh”. Bấm một dòng hoặc ô → ngăn kéo biểu mẫu. Mỗi tab trên mở sẵn ngăn kéo một dạng.', phonics: 'Ghép âm: nhập từ → “Tách thành ô âm” (sh, ch, th, ee, oo chung một ô) → chọn âm thanh từng ô, nút nghe, Gộp ô. Ví dụ “fish”: ô “sh” chưa có âm thanh → bấm Lưu để thấy lỗi dưới nhóm ô.', speak: 'Luyện nói: câu mẫu (≤ 12 từ), âm thanh mẫu (tải lên / tạo giọng đọc tự động), mức dễ tính 3 nấc, hình.', order: 'Sắp xếp câu: câu gốc tự tách thẻ (xem ngay), từ nhiễu (thẻ nền xám, viền nét đứt), báo lỗi khi nhiễu trùng từ trong câu.', dictation: 'Nghe và gõ: nội dung được đọc, các đáp án chấp nhận (mỗi dòng một), bỏ qua hoa/thường, dấu câu.', fill: 'Điền từ: câu có đúng một ___, 3–4 thẻ từ, chọn thẻ đúng.', reading: 'Đọc hiểu ngắn: đoạn 3–6 câu, hình, 2–3 câu hỏi 3 đáp án.', story: 'Truyện: chọn truyện đã xuất bản (bản nháp bị khoá kèm lời nhắc).', loading: 'Khung xương bảng.', empty: 'Chưa có câu hỏi dạng mới.', error: 'Không tải được câu hỏi.' },
+    states: (function () { var s = { normal: function () { return page(main()); },
+      loading: function () { return page('<section class="a-card">' + B.sk('100%', '70px') + '</section><div style="height:16px"></div>' + A.skel('360px')); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có câu hỏi dạng mới', text: 'Chọn một dạng để tạo câu hỏi đầu tiên: Ghép âm, Luyện nói, Sắp xếp câu, Nghe và gõ, Điền từ, Đọc hiểu ngắn, Truyện.', action: A.btn({ label: 'Thêm câu hỏi', icon: 'plus', attrs: 'data-new' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'QBK-502' }) + '</section>'); } };
+      Object.keys(ST).forEach(function (k) { s[k] = s.normal; }); return s; })(),
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx;
+      if (ctx.state !== 'loading' && ctx.state !== 'empty' && ctx.state !== 'error') { table.mount(scr, function () { scr.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { open(QS.filter(function (x) { return x.id === b.dataset.edit; })[0]); }; }); }); scr.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { open(QS.filter(function (x) { return x.id === b.dataset.edit; })[0]); }; }); }
+      scr.querySelectorAll('[data-new]').forEach(function (b) { b.addEventListener('click', function () { open(null); }); });
+      scr.querySelectorAll('[data-quick]').forEach(function (b) { b.addEventListener('click', function () { var q = QS.filter(function (x) { return x.type === b.dataset.quick; })[0]; open(q); }); });
+      if (ST[ctx.state]) { var q = QS.filter(function (x) { return x.type === ctx.state; })[ctx.state === 'phonics' ? 1 : 0]; ctx.later(function () { open(q); }, 60); }
+    } }
+  });
+})();
+</script>
+</body>
+</html>

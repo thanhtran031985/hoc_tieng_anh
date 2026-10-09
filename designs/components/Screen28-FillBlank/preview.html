@@ -1,0 +1,85 @@
+<!-- @dsCard group="Màn Tiểu học · 18–24 Dạng bài mới" height=700 subtitle="23. Điền từ vào câu (Screen28-FillBlank): câu có 1 ô trống kèm hình, 3–4 thẻ từ có phím 1–4 để bấm, kéo vào ô hoặc gõ thẳng vào ô" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Điền từ vào câu — preview</title>
+<style>
+  .fb { display: grid; grid-template-columns: min(300px, 34cqh) 1fr; gap: var(--space-10); align-items: center; max-width: 1180px; width: 100%; }
+  .pic { width: min(300px, 34cqh); aspect-ratio: 1; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-card); display: grid; place-items: center; }
+  .pic .b-pic { width: 78%; height: auto; }
+  .pic .two { display: flex; gap: 6px; } .pic .two .b-pic { width: min(120px, 14cqh); }
+  .col { display: flex; flex-direction: column; gap: min(var(--space-8), 4cqh); }
+  .sent { font: 800 min(54px, 6.6cqh)/1.6 var(--font-display); color: var(--ink); display: flex; align-items: center; flex-wrap: wrap; gap: 0 14px; }
+  .blank { width: min(230px, 28cqh); height: min(80px, 10cqh); border-radius: var(--radius-md); border: var(--border-thick) dashed var(--line-strong); background: var(--phon-slot); font: inherit; font-size: min(48px, 6cqh); color: var(--brand-shade); text-align: center; padding: 0 8px; caret-color: var(--brand); }
+  .blank:focus { outline: none; border-color: var(--brand); border-style: solid; box-shadow: var(--shadow-focus); }
+  .blank.is-over { border-color: var(--brand); background: var(--brand-soft); }
+  .blank.is-filled { border-style: solid; border-color: var(--line); background: var(--surface); }
+  .blank.is-ok { border-color: var(--success); background: var(--success-soft); color: var(--success-shade); border-style: solid; }
+  .blank.is-bad { border-color: var(--retry); background: var(--retry-soft); color: var(--retry-shade); border-style: solid; }
+  .cards { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+  .wc { height: min(80px, 10cqh); min-width: min(150px, 18cqh); padding: 0 var(--space-6) 0 var(--space-3); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); border-radius: var(--radius-md); border: var(--border-thick) solid var(--line); background: var(--surface); box-shadow: 0 5px 0 var(--line); font: 800 min(38px, 4.8cqh)/1 var(--font-display); color: var(--ink); cursor: grab; position: relative; touch-action: none; }
+  .wc:hover { transform: translateY(-3px); border-color: var(--brand-soft-shade); box-shadow: 0 8px 0 var(--brand-soft-shade); }
+  .wc .b-key { flex: none; }
+  .wc.is-selected { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 5px 0 var(--brand); }
+  .wc.is-dim { opacity: .35; } .wc.is-drag { z-index: 30; box-shadow: var(--shadow-raised); cursor: grabbing; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var QS = [{ a: 'The cat is', b: 'the box.', ans: 'in', o: ['on', 'in', 'under'], pic: 'catbox', vi: 'Con mèo ở trong cái hộp.' },
+    { a: 'I have', b: 'apples.', ans: 'two', o: ['one', 'three', 'two', 'four'], pic: 'two', vi: 'Tớ có hai quả táo.' },
+    { a: 'The banana is', b: '.', ans: 'yellow', o: ['red', 'yellow', 'blue'], pic: 'banana', vi: 'Quả chuối màu vàng.' }];
+  var S = { q: 0, step: 4, total: 10, val: '', tries: 0, hint: false, done: false, mark: null };
+  function Q() { return QS[S.q % QS.length]; }
+  function full(q) { return q.a + ' ' + q.ans + (q.b === '.' ? '.' : ' ' + q.b); }
+  function body() {
+    var q = Q(), drop = S.hint ? q.o.filter(function (w) { return w !== q.ans; })[0] : null;
+    var pic = q.pic === 'two' ? '<div class="two">' + B.pic('apple', 120) + B.pic('apple', 120) + '</div>' : B.pic(q.pic, 240).replace(/aria-label="[^"]*"/, 'aria-label="Hình gợi ý"');
+    return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main"><div class="instr"><h1 class="title">Điền từ vào chỗ trống</h1><span class="caption b-muted">Bấm thẻ, kéo thẻ vào ô, hoặc gõ thẳng vào ô</span></div>' +
+      '<div class="fb"><div class="pic">' + pic + '</div><div class="col"><p class="sent" lang="en">' + B.speak(full(q), 'm', 'Nghe câu') + '<span>' + q.a + '</span><label class="b-sr" for="blank">Ô trống</label><input id="blank" class="blank' + (S.val ? ' is-filled' : '') + (S.mark === true ? ' is-ok' : S.mark === false ? ' is-bad' : '') + '" autocomplete="off" spellcheck="false" value="' + B.esc(S.val) + '"' + (S.done ? ' readonly' : '') + '><span>' + q.b + '</span></p>' +
+      '<div class="cards" role="group" aria-label="Thẻ từ">' + q.o.map(function (w, i) { var dim = w === drop; return '<button type="button" class="wc' + (S.val === w && !S.done ? ' is-selected' : '') + (dim ? ' is-dim' : '') + '" data-w="' + w + '" aria-keyshortcuts="' + (i + 1) + '" lang="en"' + (dim ? ' disabled' : '') + '>' + B.key(String(i + 1)) + w + '</button>'; }).join('') + '</div></div></div></main>' +
+      L.foot({ hintOff: S.hint || S.done, main: { disabled: !S.val.trim() || S.done } });
+  }
+  B.screen({
+    fit: true, level: 2,
+    notes: { normal: 'Bấm thẻ hoặc phím 1–4 để điền; kéo thẻ vào ô; hoặc bấm vào ô và gõ. Enter kiểm tra. Chưa đúng: ô cam nhẹ, Bông nói nghĩa từ đã chọn; sai 2 lần tự làm mờ một thẻ. Space nghe câu. Ví dụ tiếp: “I have ___ apples.” (4 thẻ), “The banana is ___.”', loading: 'Khung xương.', empty: 'Bài chưa có câu.', error: 'Không tải được câu.' },
+    states: {
+      normal: body,
+      loading: function () { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main"><div class="fb">' + B.sk('min(300px, 34cqh)', 'min(300px, 34cqh)', 'var(--radius-xl)') + '<div class="col">' + B.sk('90%', 'min(80px, 10cqh)', 'var(--radius-pill)') + '<div class="cards">' + B.sk('150px', 'min(80px, 10cqh)') + B.sk('150px', 'min(80px, 10cqh)') + B.sk('150px', 'min(80px, 10cqh)') + '</div></div></div></main>' + L.foot({ off: true }); },
+      empty: function () { return L.head({ n: 0, total: S.total }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Bài này chưa có câu để điền', text: 'Bông sẽ báo cậu khi bài sẵn sàng nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + L.foot({ off: true }); },
+      error: function () { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Chưa tải được câu', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' }) + '</main>' + L.foot({ off: true }); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var q = Q(), bl = scr.querySelector('#blank');
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function put(w) { if (S.done) return; S.val = w; S.mark = null; L.say(w, .85); re('[data-main]'); }
+      function check() {
+        if (S.done || !S.val.trim()) return;
+        if (S.val.trim().toLowerCase() === q.ans) { S.done = true; S.mark = true; re(); L.ok(ctx.scr, ctx, { from: ctx.scr.querySelector('#blank'), n: S.step + 1, total: S.total, say: full(q), detail: B.speak(full(q), 's') + '<b class="en" style="font-size:24px">' + full(q) + '</b><span class="b-muted">' + q.vi + '</span>', onNext: function () { S.q++; S.step = S.step >= S.total - 1 ? 1 : S.step + 1; S.val = ''; S.tries = 0; S.hint = false; S.done = false; S.mark = null; re(); } }); }
+        else { S.tries++; S.mark = false; re(); var vi = { on: 'ở trên', under: 'ở dưới', one: 'một', three: 'ba', four: 'bốn', red: 'màu đỏ', blue: 'màu xanh dương' }[S.val.trim().toLowerCase()];
+          L.retry(ctx.scr, ctx, { tries: S.tries, detail: vi ? '<b class="en">' + B.esc(S.val) + '</b> là “' + vi + '”. Nhìn lại hình nhé.' : 'Kiểm tra lại chính tả và nhìn hình nhé.', onRetry: function () { S.val = ''; S.mark = null; if (S.tries >= 2) S.hint = true; re('[data-w]:not([disabled])'); } }); }
+      }
+      bl.addEventListener('input', function () { S.val = bl.value; S.mark = null; bl.classList.remove('is-bad'); bl.classList.toggle('is-filled', !!bl.value); var m = scr.querySelector('[data-main]'); m.disabled = !S.val.trim(); scr.querySelectorAll('.wc').forEach(function (c) { c.classList.toggle('is-selected', c.dataset.w === S.val); }); });
+      scr.querySelectorAll('[data-w]').forEach(function (el) {
+        el.addEventListener('pointerdown', function (e) {
+          if (S.done || el.disabled) return; var vp = el.closest('.dsf-vp'), sc = (vp && vp.__scale) || 1, sx = e.clientX, sy = e.clientY, moved = false; el.setPointerCapture(e.pointerId);
+          function ov(ev) { var r = bl.getBoundingClientRect(); return ev.clientX > r.left - 20 && ev.clientX < r.right + 20 && ev.clientY > r.top - 20 && ev.clientY < r.bottom + 20; }
+          function mv(ev) { var dx = (ev.clientX - sx) / sc, dy = (ev.clientY - sy) / sc; if (!moved && Math.abs(dx) + Math.abs(dy) > 6) { moved = true; el.classList.add('is-drag'); } if (moved) { el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; bl.classList.toggle('is-over', ov(ev)); } }
+          function up(ev) { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.style.transform = ''; el.classList.remove('is-drag'); bl.classList.remove('is-over'); if (!moved || ov(ev)) put(el.dataset.w); }
+          el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up);
+        });
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); put(el.dataset.w); } });
+      });
+      L.wire(scr, ctx, { left: S.total - S.step,
+        onReplay: function (b) { L.say(full(q), .8, b); },
+        onHint: function () { S.hint = true; if (S.val && S.val !== q.ans) S.val = ''; L.say(full(q), .5); re('[data-w]:not([disabled])'); },
+        onMain: check,
+        onKey: function (e) { if (L.typing()) return; if (/^[1-4]$/.test(e.key) && q.o[+e.key - 1]) { e.preventDefault(); var b = scr.querySelector('[data-w="' + q.o[+e.key - 1] + '"]'); if (b && !b.disabled) put(b.dataset.w); return true; } }
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

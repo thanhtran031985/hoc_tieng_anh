@@ -1,0 +1,119 @@
+<!-- @dsCard group="Màn Tiểu học · 18–24 Dạng bài mới" height=700 subtitle="18. Ghép âm phonics (Screen23-Phonics): bấm ô chữ để nghe âm, kéo vào ô trống hoặc gõ phím chữ cái; ghép xong Bông đọc nối âm rồi đọc cả từ" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Ghép âm phonics — preview</title>
+<style>
+  .stage { display: flex; align-items: center; gap: min(var(--space-12), 4cqw); }
+  .pic { width: min(300px, 36cqh); aspect-ratio: 1; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-card); display: grid; place-items: center; position: relative; }
+  .pic .b-pic { width: 76%; height: auto; }
+  .pic .b-speak { position: absolute; right: -18px; bottom: -18px; }
+  .work { display: flex; flex-direction: column; gap: min(var(--space-8), 4cqh); align-items: center; }
+  .slots, .pool { display: flex; gap: var(--space-4); justify-content: center; min-height: min(var(--size-phon-tile), 12.5cqh); }
+  .tile, .slot { width: min(var(--size-phon-tile), 12.5cqh); height: min(var(--size-phon-tile), 12.5cqh); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font: 800 min(52px, 6.4cqh)/1 var(--font-display); color: var(--ink); padding: 0; }
+  .tile.wide, .slot.wide { width: min(calc(var(--size-phon-tile) * 1.45), 18cqh); }
+  .tile { background: var(--surface); border: var(--border-thick) solid var(--line); box-shadow: 0 6px 0 var(--line); cursor: grab; touch-action: none; user-select: none; }
+  .tile:hover { transform: translateY(-3px); border-color: var(--brand-soft-shade); box-shadow: 0 9px 0 var(--brand-soft-shade); }
+  .tile.is-drag { cursor: grabbing; z-index: 30; box-shadow: var(--shadow-raised); transition: none; }
+  .tile.is-used { visibility: hidden; }
+  .tile small, .slot small { font: 700 min(15px, 1.9cqh)/1 var(--font-body); color: var(--ink-soft); margin-top: 6px; }
+  .tile.is-playing { background: var(--read-highlight); }
+  .slot { background: var(--phon-slot); border: var(--border-thick) dashed var(--line-strong); cursor: pointer; }
+  .slot.is-over { border-color: var(--brand); background: var(--brand-soft); }
+  .slot.is-filled { border-style: solid; border-color: var(--line); background: var(--surface); box-shadow: 0 6px 0 var(--line); }
+  .slot.is-lit { background: var(--read-highlight); border-color: var(--star-shade); }
+  .slot.is-ok { border-color: var(--success); box-shadow: 0 6px 0 var(--success-shade); }
+  .slot.is-bad { border-color: var(--retry); background: var(--retry-soft); box-shadow: 0 6px 0 var(--retry-shade); }
+  .slot .ghost { color: var(--line-strong); }
+  .slot .n { position: absolute; top: 6px; left: 8px; font: 800 13px/1 var(--font-body); color: var(--ink-soft); }
+  .tile .b-key--corner { font-size: 13px; }
+  .word { font: 800 min(56px, 7cqh)/1 var(--font-display); letter-spacing: .04em; display: flex; gap: 4px; min-height: min(56px, 7cqh); }
+  .word span { padding: 0 4px; border-radius: 8px; }
+  .word span.is-lit { background: var(--read-highlight); }
+  .help { display: flex; align-items: center; gap: var(--space-2); }
+  .sk-row { display: flex; gap: var(--space-4); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var SND = { c: ['/k/', 'kuh'], a: ['/æ/', 'a'], t: ['/t/', 'tuh'], d: ['/d/', 'duh'], o: ['/ɒ/', 'o'], g: ['/g/', 'guh'], s: ['/s/', 'sss'], u: ['/ʌ/', 'uh'], n: ['/n/', 'nnn'], f: ['/f/', 'fff'], i: ['/ɪ/', 'ih'], sh: ['/ʃ/', 'shh'] };
+  var QS = [{ w: 'cat', p: ['c', 'a', 't'], mix: [2, 0, 1] }, { w: 'dog', p: ['d', 'o', 'g'], mix: [1, 2, 0] }, { w: 'sun', p: ['s', 'u', 'n'], mix: [2, 1, 0] }, { w: 'fish', p: ['f', 'i', 'sh'], mix: [2, 0, 1] }];
+  var S = { q: 0, step: 3, total: 8, slots: [], tries: 0, hint: 0, done: false, lit: -1 };
+  function Q() { return QS[S.q % QS.length]; }
+  function reset() { S.slots = Q().p.map(function () { return null; }); S.tries = 0; S.hint = 0; S.done = false; S.lit = -1; }
+  reset();
+  function tile(i, used) { var t = Q().p[i]; return '<button type="button" class="tile' + (t.length > 1 ? ' wide' : '') + (used ? ' is-used' : '') + '" data-tile="' + i + '" aria-label="Ô chữ ' + t + ', âm ' + SND[t][0] + '. Kéo vào ô trống hoặc nhấn phím ' + t.toUpperCase() + '"' + (used ? ' tabindex="-1" aria-hidden="true"' : '') + '>' + B.key(t[0].toUpperCase(), 'b-key--corner') + '<span lang="en">' + t + '</span><small>' + SND[t][0] + '</small></button>'; }
+  function slot(k) {
+    var v = S.slots[k], q = Q(), t = v != null ? q.p[v] : null, ghost = S.hint > k && v == null ? q.p[k] : '';
+    return '<button type="button" class="slot' + (q.p[k].length > 1 ? ' wide' : '') + (v != null ? ' is-filled' : '') + (S.lit === k || S.lit === 99 ? ' is-lit' : '') + '" data-slot="' + k + '" aria-label="Ô ' + (k + 1) + (t ? ': ' + t + ' (bấm để trả lại)' : ': còn trống') + '"><span class="n">' + (k + 1) + '</span>' + (t ? '<span lang="en">' + t + '</span><small>' + SND[t][0] + '</small>' : ghost ? '<span class="ghost" lang="en">' + ghost + '</span>' : '') + '</button>';
+  }
+  function body() {
+    var q = Q(), full = S.slots.every(function (v) { return v != null; });
+    return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main"><div class="instr"><h1 class="title">Ghép âm thành từ</h1><span class="caption b-muted help">Bấm ô chữ để nghe âm · kéo vào ô trống hoặc gõ ' + B.key('C') + B.key('A') + B.key('T') + '</span></div>' +
+      '<div class="stage"><div class="pic">' + B.pic(q.w, 260).replace('aria-label="' + q.w + '"', 'aria-label="Hình cần ghép"') + B.speak(q.w, 'm', 'Nghe cả từ') + '</div><div class="work">' +
+      '<div class="word" aria-live="polite">' + (S.done ? q.p.map(function (t, k) { return '<span class="' + (S.lit === k || S.lit === 99 ? 'is-lit' : '') + '" lang="en">' + t + '</span>'; }).join('') : '') + '</div>' +
+      '<div class="slots" role="group" aria-label="Các ô trống theo thứ tự">' + q.p.map(function (_, k) { return slot(k); }).join('') + '</div>' +
+      '<div class="pool" role="group" aria-label="Ô chữ xáo trộn">' + q.mix.map(function (i) { return tile(i, S.slots.indexOf(i) > -1); }).join('') + '</div></div></div></main>' +
+      L.foot({ hintOff: S.hint >= q.p.length || S.done, main: { disabled: !full || S.done } });
+  }
+  function sk() { return '<div class="sk-row">' + B.sk('min(104px, 12.5cqh)', 'min(104px, 12.5cqh)', 'var(--radius-lg)') + B.sk('min(104px, 12.5cqh)', 'min(104px, 12.5cqh)', 'var(--radius-lg)') + B.sk('min(104px, 12.5cqh)', 'min(104px, 12.5cqh)', 'var(--radius-lg)') + '</div>'; }
+  B.screen({
+    fit: true, level: 1,
+    notes: { normal: 'Bấm ô chữ = nghe âm (/k/ /æ/ /t/). Kéo ô chữ vào ô trống, hoặc gõ phím C, A, T (Backspace bỏ ô cuối). Bấm ô đã điền để trả lại. Enter kiểm tra: đúng thì Bông đọc nối từng âm, các ô sáng lần lượt, rồi đọc cả từ. Gợi ý (H) hiện mờ chữ ở ô kế tiếp. Ví dụ tiếp: dog, sun, fish (ô “sh” là một ô ghép).', loading: 'Khung xương hình, ô trống và ô chữ.', empty: 'Bài chưa có từ để ghép.', error: 'Không tải được âm thanh các chữ.' },
+    states: {
+      normal: body,
+      loading: function () { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main">' + B.sk('320px', '36px', 'var(--radius-pill)') + '<div class="stage">' + B.sk('min(300px, 36cqh)', 'min(300px, 36cqh)', 'var(--radius-xl)') + '<div class="work">' + sk() + sk() + '</div></div></main>' + L.foot({ off: true }); },
+      empty: function () { return L.head({ n: 0, total: S.total }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'empty', title: 'Bài này chưa có từ để ghép', text: 'Bông sẽ báo cậu khi bài sẵn sàng. Mình quay về bản đồ nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</main>' + L.foot({ off: true }); },
+      error: function () { return L.head({ n: S.step, total: S.total }) + '<main class="lesson-main">' + B.stateBlock({ kind: 'error', title: 'Chưa nghe được âm của chữ', text: 'Bông chưa tải được âm thanh. Không phải lỗi của cậu đâu!' }) + '</main>' + L.foot({ off: true }); }
+    },
+    mount: { normal: function (scr, ctx) {
+      var q = Q();
+      function re(sel) { ctx.setState('normal'); var f = sel && ctx.scr.querySelector(sel); f && f.focus({ preventScroll: true }); }
+      function play(t, el) { L.say(SND[t][1], .7); if (el) { el.classList.add('is-playing'); setTimeout(function () { el.classList.remove('is-playing'); }, 500); } }
+      function place(i, k) { if (S.done) return; if (k == null) k = S.slots.indexOf(null); if (k < 0 || S.slots[k] != null || S.slots.indexOf(i) > -1) return; S.slots[k] = i; play(q.p[i]); re(S.slots.indexOf(null) > -1 ? '[data-tile]:not(.is-used)' : '[data-main]'); }
+      function unplace(k) { if (S.done || S.slots[k] == null) return; var i = S.slots[k]; S.slots[k] = null; play(q.p[i]); re('[data-slot="' + k + '"]'); }
+      function check() {
+        if (S.done || S.slots.indexOf(null) > -1) return;
+        var bad = S.slots.map(function (v, k) { return v !== k; });
+        if (bad.indexOf(true) < 0) {
+          S.done = true; S.lit = -1; re(); var k = 0;
+          (function step() { if (k < q.p.length) { S.lit = k; paint(); L.say(SND[q.p[k]][1], .7); k++; ctx.later(step, 2 * 420); } else { S.lit = 99; paint(); L.say(q.w, .7); ctx.later(done, 900); } })();
+        } else {
+          S.tries++; bad.forEach(function (b, k) { if (b) ctx.scr.querySelector('[data-slot="' + k + '"]').classList.add('is-bad'); else ctx.scr.querySelector('[data-slot="' + k + '"]').classList.add('is-ok'); });
+          L.retry(ctx.scr, ctx, { tries: S.tries, detail: 'Nghe lại từng âm rồi xếp theo thứ tự nhé.', onRetry: function () { S.slots = S.slots.map(function (v, k) { return v === k ? v : null; }); if (S.tries >= 2) S.hint = Math.max(S.hint, S.slots.indexOf(null) + 1); re('[data-tile]:not(.is-used)'); } });
+        }
+      }
+      function paint() { var w = ctx.scr.querySelector('.word'); if (w) w.innerHTML = q.p.map(function (t, k) { return '<span class="' + (S.lit === k || S.lit === 99 ? 'is-lit' : '') + '" lang="en">' + t + '</span>'; }).join(''); ctx.scr.querySelectorAll('[data-slot]').forEach(function (s, k) { s.classList.toggle('is-lit', S.lit === k || S.lit === 99); }); }
+      function done() { var w = B.words[q.w] || { ipa: '/sʌn/', vi: 'mặt trời' }; if (q.w === 'sun') w = { ipa: '/sʌn/', vi: 'mặt trời' }; L.ok(ctx.scr, ctx, { from: ctx.scr.querySelector('.slots'), n: S.step + 1, total: S.total, title: 'Ghép đúng rồi!', detail: B.speak(q.w, 's') + '<b class="en" style="font-size:26px">' + q.w + '</b><span class="b-muted">' + w.ipa + ' · ' + w.vi + '</span>', onNext: function () { S.q++; S.step = S.step >= S.total - 1 ? 1 : S.step + 1; reset(); re(); } }); }
+      // kéo thả bằng chuột / bấm để nghe
+      scr.querySelectorAll('[data-tile]:not(.is-used)').forEach(function (el) {
+        el.addEventListener('pointerdown', function (e) {
+          if (S.done) return; var vp = el.closest('.dsf-vp'), sc = (vp && vp.__scale) || 1, sx = e.clientX, sy = e.clientY, moved = false; el.setPointerCapture(e.pointerId);
+          function mv(ev) { var dx = (ev.clientX - sx) / sc, dy = (ev.clientY - sy) / sc; if (!moved && Math.abs(dx) + Math.abs(dy) > 6) { moved = true; el.classList.add('is-drag'); } if (moved) { el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; scr.querySelectorAll('[data-slot]').forEach(function (s) { var r = s.getBoundingClientRect(); s.classList.toggle('is-over', ev.clientX > r.left && ev.clientX < r.right && ev.clientY > r.top && ev.clientY < r.bottom && S.slots[+s.dataset.slot] == null); }); } }
+          function up(ev) { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); var tgt = scr.querySelector('.slot.is-over'); el.style.transform = ''; el.classList.remove('is-drag'); if (moved && tgt) place(+el.dataset.tile, +tgt.dataset.slot); else if (!moved) play(q.p[+el.dataset.tile], el); scr.querySelectorAll('.is-over').forEach(function (s) { s.classList.remove('is-over'); }); }
+          el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up);
+        });
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); place(+el.dataset.tile); } });
+      });
+      scr.querySelectorAll('[data-slot]').forEach(function (s) { s.addEventListener('click', function () { unplace(+s.dataset.slot); }); });
+      L.wire(scr, ctx, { left: S.total - S.step,
+        onReplay: function (b) { L.say(q.w, .8, b); },
+        onHint: function () { S.hint = Math.min(q.p.length, Math.max(S.hint, S.slots.indexOf(null)) + 1); L.say(q.w, .5); re('[data-hint]'); },
+        onMain: check,
+        onKey: function (e) {
+          if (S.done || e.ctrlKey || e.metaKey) return;
+          if (e.key === 'Backspace') { e.preventDefault(); for (var k = S.slots.length - 1; k >= 0; k--) if (S.slots[k] != null) { unplace(k); break; } return true; }
+          if (/^[a-z]$/i.test(e.key) && e.key.toLowerCase() !== 'h') {
+            var ch = e.key.toLowerCase(), cand = q.p.map(function (t, i) { return i; }).filter(function (i) { return S.slots.indexOf(i) < 0 && q.p[i][0] === ch; });
+            if (cand.length) { e.preventDefault(); place(cand[0]); return true; }
+          }
+          if ((e.key === 'h' || e.key === 'H') && q.p.some(function (t, i) { return t[0] === 'h' && S.slots.indexOf(i) < 0; })) { e.preventDefault(); place(q.p.map(function (t, i) { return i; }).filter(function (i) { return q.p[i][0] === 'h' && S.slots.indexOf(i) < 0; })[0]); return true; }
+        }
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

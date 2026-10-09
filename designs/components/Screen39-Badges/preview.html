@@ -1,0 +1,87 @@
+<!-- @dsCard group="Màn Tiểu học · 33–36 Phần thưởng" height=700 subtitle="34. Bộ sưu tập · tab Huy hiệu (Screen39-Badges): lưới huy hiệu (7 ngày liên tiếp, 100 từ đầu tiên, Qua đảo Hạt giống, Thắng 5 trận trùm…); chưa đạt thì mờ + điều kiện + thanh tiến độ (63/100 từ); bấm mở thẻ chi tiết" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bộ sưu tập · Huy hiệu — preview</title>
+<style>
+  .ch { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding: var(--space-2) 0 var(--space-4); flex-wrap: wrap; }
+  .ch h1 { margin: 0; }
+  .tabs { display: inline-flex; background: var(--surface-sunk); border-radius: var(--radius-pill); padding: 5px; gap: 4px; }
+  .tabs button { height: 48px; border: 0; background: none; border-radius: var(--radius-pill); padding: 0 var(--space-5); font: 800 18px/22px var(--font-body); color: var(--ink-soft); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); }
+  .tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+  .total { display: flex; align-items: center; gap: var(--space-3); min-width: 300px; }
+  .total b { font: 800 26px/30px var(--font-display); color: var(--ink); white-space: nowrap; }
+  .total .b-progress { flex: 1; }
+  .bg { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: var(--space-5); }
+  .bd { border: 0; background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: var(--space-4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2); cursor: pointer; text-align: center; position: relative; transition: transform var(--duration-fast); }
+  .bd:hover { transform: translateY(-3px); }
+  .bd .b-medal { --sz: min(var(--size-badge), 13cqh); }
+  .bd b { font: 800 19px/24px var(--font-display); color: var(--ink); }
+  .bd .sub { font: 700 14px/18px var(--font-body); color: var(--ink-soft); }
+  .bd.is-locked { background: var(--surface-soft); box-shadow: inset 0 0 0 2px var(--line); }
+  .bd .pr { width: 82%; display: flex; flex-direction: column; gap: 4px; }
+  .bd .pr span { font: 800 14px/18px var(--font-body); color: var(--ink); }
+  .bd .new { position: absolute; top: 12px; right: 12px; background: var(--sticker-new); color: var(--ink); border-radius: var(--radius-pill); padding: 2px 10px; font: 800 13px/18px var(--font-body); }
+  .bd .pr .b-progress, .dt .b-progress { flex: none; width: 100%; height: 14px; }
+  .dt { display: flex; flex-direction: column; gap: var(--space-3); align-items: center; }
+  .dt .row { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+  .dt .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-sunk); border-radius: var(--radius-pill); padding: 6px 14px; font: 800 15px/20px var(--font-body); color: var(--ink); }
+  .dt .en { display: inline-flex; align-items: center; gap: 8px; font: 800 22px/28px var(--font-display); color: var(--ink); }
+  .dmedal { display: flex; justify-content: center; margin-top: -96px; }
+  .dmedal .b-medal { --sz: 140px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, R = B.R;
+  var kid = { id: 'minh', name: 'Minh', grade: 4, level: 3, hair: 'short' };
+  var BD = [
+    { id: 'streak7', vi: '7 ngày liên tiếp', en: '7-day streak', icon: 'flame', lv: 6, earned: true, date: '14/09', cond: 'Học 7 ngày liền nhau', isNew: true },
+    { id: 'words100', vi: '100 từ đầu tiên', en: 'First 100 words', icon: 'book', lv: 4, have: 63, goal: 100, unit: 'từ', cond: 'Thuộc 100 từ (mức Nhớ tốt trở lên)' },
+    { id: 'seed', vi: 'Qua đảo Hạt giống', en: 'Seed Island', icon: 'island', lv: 1, earned: true, date: '02/08', cond: 'Đạt bài thi lên cấp 2' },
+    { id: 'boss5', vi: 'Thắng 5 trận trùm', en: 'Boss champion', icon: 'crown', lv: 5, have: 3, goal: 5, unit: 'trận', cond: 'Thắng trận trùm ở 5 vùng' },
+    { id: 'sprout', vi: 'Qua đảo Mầm non', en: 'Sprout Island', icon: 'island', lv: 2, earned: true, date: '20/09', cond: 'Đạt bài thi lên cấp 3' },
+    { id: 'stars10', vi: '3 sao 10 bài', en: 'Star learner', icon: 'star', lv: 3, earned: true, date: '25/09', cond: 'Được 3 sao ở 10 bài học' },
+    { id: 'speak20', vi: 'Nói 20 câu', en: 'Little speaker', icon: 'mic', lv: 7, have: 8, goal: 20, unit: 'câu', cond: 'Luyện nói được 1 sao trở lên ở 20 câu' },
+    { id: 'streak30', vi: '30 ngày liên tiếp', en: '30-day streak', icon: 'flame', lv: 6, have: 12, goal: 30, unit: 'ngày', cond: 'Học 30 ngày liền nhau (được dùng thẻ nghỉ phép)' }];
+  function head(n, off) {
+    return '<div class="ch"><h1 class="display-l">Bộ sưu tập</h1><div class="tabs" role="tablist" aria-label="Bộ sưu tập"><button type="button" role="tab" aria-selected="false" data-tab-stk>' + B.icon('gem', 22) + 'Sticker</button><button type="button" role="tab" aria-selected="true">' + B.icon('medal', 22) + 'Huy hiệu</button></div>' +
+      '<div class="total"><b>' + (off ? '··' : n) + '/' + BD.length + '</b><span class="body b-muted">huy hiệu</span>' + B.ProgressBar(off ? 0 : n, BD.length) + '</div></div>';
+  }
+  function grid(none) {
+    return '<div class="bg" role="list">' + BD.map(function (b, i) {
+      var on = b.earned && !none, have = none ? 0 : (b.have || 0), goal = b.goal || 1;
+      return '<div role="listitem" style="display:contents"><button type="button" class="bd ' + (on ? 'is-earned' : 'is-locked') + '" data-b="' + i + '" aria-label="' + b.vi + (on ? ', đã nhận ngày ' + b.date : ', chưa đạt, ' + b.cond + (b.goal ? ', ' + have + ' trên ' + goal + ' ' + b.unit : '')) + '">' + (on && b.isNew ? '<span class="new">Mới</span>' : '') +
+        R.medal({ icon: b.icon, lv: b.lv, earned: on }, { size: 120 }) + '<b>' + b.vi + '</b>' +
+        (on ? '<span class="sub">Nhận ngày ' + b.date + '</span>' : b.goal ? '<span class="pr"><span>' + have + '/' + goal + ' ' + b.unit + '</span>' + B.ProgressBar(have, goal) + '</span>' : '<span class="sub">' + b.cond + '</span>') + '</button></div>';
+    }).join('') + '</div>';
+  }
+  function body(none) { return B.topbar({ back: true, backLabel: 'Về trang chủ', kid: kid }) + '<div class="scr__body">' + head(none ? 0 : BD.filter(function (b) { return b.earned; }).length) + grid(none) + '</div>'; }
+  B.screen({
+    fit: true, level: 3,
+    notes: { normal: 'Huy hiệu đã nhận: vành vàng `badge-ring`, lõi màu cấp, ruy băng `badge-ribbon-a/b`, ngày nhận. Chưa đạt: xám kem `badge-locked`, điều kiện + thanh tiến độ bằng số (63/100 từ). Bấm (hoặc Enter) mở thẻ chi tiết: tên tiếng Anh có loa, điều kiện, +50 xu.', loading: 'Khung xương lưới huy hiệu.', empty: 'Bé chưa có huy hiệu nào: tất cả mờ, vẫn thấy điều kiện để phấn đấu.', error: 'Không tải được huy hiệu.' },
+    states: {
+      normal: function () { return body(false); },
+      loading: function () { var g = ''; for (var i = 0; i < 8; i++) g += '<div class="bd" style="cursor:default">' + B.sk('min(120px, 13cqh)', 'min(120px, 13cqh)', '50%') + B.sk('70%', '22px', 'var(--radius-pill)') + B.sk('50%', '16px', 'var(--radius-pill)') + '</div>'; return B.topbar({ back: true, kid: kid, stars: '··', coins: '··', streak: '··' }) + '<div class="scr__body">' + head(0, true) + '<div class="bg">' + g + '</div></div>'; },
+      empty: function () { return body(true); },
+      error: function () { return B.topbar({ back: true, kid: kid }) + '<div class="scr__body">' + head(0, true) + B.stateBlock({ kind: 'error', title: 'Chưa tải được huy hiệu', text: 'Huy hiệu của cậu vẫn còn nguyên. Mình thử lại nhé!' }) + '</div>'; }
+    },
+    mount: {
+      all: function (scr, ctx) {
+        if (ctx.state !== 'normal' && ctx.state !== 'empty') return;
+        var none = ctx.state === 'empty';
+        scr.querySelectorAll('[data-b]').forEach(function (el) { el.addEventListener('click', function () {
+          var b = BD[+el.dataset.b], on = b.earned && !none, have = none ? 0 : (b.have || 0);
+          ctx.dialog({ mascot: '<div class="dmedal">' + R.medal({ icon: b.icon, lv: b.lv, earned: on }, { size: 140 }) + '</div>', title: b.vi,
+            body: '<div class="dt"><span class="en" lang="en">' + b.en + B.speak(b.en, 's', 'Nghe: ' + b.en) + '</span><div class="row"><span class="chip">' + B.icon('check', 18) + b.cond + '</span><span class="chip">' + B.icon('coin', 20) + '+50 xu</span></div>' +
+              (on ? '<p class="body" style="margin:0">Cậu nhận huy hiệu này ngày <b>' + b.date + '</b>. Giỏi quá!</p>' : b.goal ? '<div style="width:100%;display:flex;flex-direction:column;gap:6px"><b class="label">' + have + '/' + b.goal + ' ' + b.unit + ' · còn ' + (b.goal - have) + ' ' + b.unit + ' nữa</b>' + B.ProgressBar(have, b.goal) + '</div>' : '<p class="body" style="margin:0">Cố lên, cậu sắp có rồi!</p>') + '</div>',
+            actions: [{ label: 'Đóng', variant: 'primary', key: 'Enter' }] });
+        }); });
+        var t = scr.querySelector('[data-tab-stk]'); t && t.addEventListener('click', function () { B.L.say('Stickers', .9); });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

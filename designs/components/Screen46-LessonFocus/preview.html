@@ -1,0 +1,69 @@
+<!-- @dsCard group="Màn Tiểu học · 40–43 Sổ từ, in, học tập trung, ngoài giờ" height=700 subtitle="42b. Bài học ở chế độ học tập trung (Screen46-LessonFocus): khung “Nghe và chọn hình” có 2 nút LessonTools trên đầu — toàn màn hình (F, Esc để thoát; ẩn thanh đường dẫn và mọi thứ ngoài bài) và âm thanh (bảng bật tắt nhạc nền, hiệu ứng, kéo âm lượng)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Học tập trung — preview</title>
+<style>
+  .crumb { flex: none; height: 48px; display: flex; align-items: center; gap: var(--space-3); width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: 0 var(--space-12); box-sizing: border-box; font: 700 15px/20px var(--font-body); color: var(--ink-soft); border-bottom: var(--border-thin) solid var(--line); }
+  .crumb b { color: var(--ink); }
+  .crumb .sp { flex: 1; }
+  .crumb .b-me { display: flex; align-items: center; gap: 8px; }
+  .scr.is-focusmode .lesson-main { gap: min(var(--space-8), 4cqh); }
+  .scr.is-focusmode .opts { grid-template-columns: repeat(4, min(230px, 27cqh)); }
+  .fbadge { display: none; align-items: center; gap: 6px; background: var(--ink); color: var(--surface); border-radius: var(--radius-pill); padding: 4px 12px; font: 800 13px/18px var(--font-body); }
+  .scr.is-focusmode .fbadge { display: inline-flex; }
+  .opts { display: grid; grid-template-columns: repeat(4, min(200px, 24cqh)); gap: var(--space-6); }
+  .opts .b-choice { aspect-ratio: 1; width: 100%; }
+  .opts .b-pic { width: 74%; height: auto; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L, R = B.R;
+  var Q = { a: 2, o: ['bed', 'chair', 'lamp', 'desk'], vi: 'cái đèn' };
+  var S = { sel: -1, tries: 0, hint: false, done: false, focus: false };
+  function crumb() { return '<nav class="crumb b-nofocus" aria-label="Đường dẫn">' + B.icon('map', 18) + '<span>Đảo Lá xanh</span>›<span>Nhà của em</span>›<b>Bài 3 · My home</b><span class="sp"></span><span class="b-me">' + B.avatar({ name: 'Minh', grade: 4, level: 3, hair: 'short' }, 28) + 'Minh · 12/20 phút hôm nay</span></nav>'; }
+  function body(st) {
+    var dim = S.hint ? [0, 1, 3].filter(function (i) { return i !== Q.a; })[0] : -1;
+    return crumb() + L.head({ n: 6, total: 10, extra: '<span class="fbadge" role="status">' + B.icon('expand', 16) + 'Đang học tập trung · Esc để thoát</span>' + R.tools({ focus: st === 'focus' }) }) +
+      '<main class="lesson-main"><div class="instr"><h1 class="title">Nghe và chọn hình</h1>' + B.speak('lamp', 'l', 'Nghe từ') + '</div><div class="opts" role="radiogroup" aria-label="Chọn hình">' + Q.o.map(function (w, i) { var d = i === dim; return '<button type="button" role="radio" class="b-choice' + (S.sel === i ? ' is-selected' : '') + (d ? ' is-dim' : '') + '" data-i="' + i + '" aria-checked="' + (S.sel === i) + '" aria-label="' + B.R.roomWords[w] + '" aria-keyshortcuts="' + (i + 1) + '"' + (d ? ' disabled' : '') + '>' + B.key(String(i + 1), 'b-key--corner') + B.pic(w, 150).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"') + '</button>'; }).join('') + '</div></main>' +
+      L.foot({ hintOff: S.hint, main: { disabled: S.sel < 0 || S.done } });
+  }
+  function shell(inner) { return crumb() + L.head({ n: 6, total: 10, extra: R.tools() }) + '<main class="lesson-main">' + inner + '</main>' + L.foot({ off: true }); }
+  B.screen({
+    fit: true, level: 3, order: ['normal', 'focus', 'sound', 'loading', 'empty', 'error'], labels: { focus: 'Học tập trung', sound: 'Bảng âm thanh' },
+    notes: { normal: 'Đầu khung bài học có 2 nút LessonTools: Toàn màn hình (F) và Âm thanh. Phía trên là thanh đường dẫn (Đảo › Chủ đề › Bài) — phần “ngoài bài”.', focus: 'Học tập trung: thanh đường dẫn ẩn, trình duyệt vào toàn màn hình (trong bản xem trước chỉ mô phỏng), thẻ to hơn, nhãn “Đang học tập trung · Esc để thoát”. Esc thoát chế độ này trước, lần Esc sau mới hỏi “Dừng bài học?”.', sound: 'Bảng âm thanh mở dưới nút loa: công tắc Nhạc nền, Hiệu ứng (role=switch), thanh kéo Âm lượng (← → 10%), giọng đọc tiếng Anh luôn bật. Esc hoặc Tab ra ngoài để đóng.', loading: 'Khung xương bài học.', empty: 'Bài chưa có câu.', error: 'Không tải được câu hỏi.' },
+    states: {
+      normal: function () { return body('normal'); }, focus: function () { return body('focus'); }, sound: function () { return body('normal'); },
+      loading: function () { return shell('<div class="opts">' + [1, 2, 3, 4].map(function () { return B.sk('100%', 'min(200px, 24cqh)', 'var(--radius-xl)'); }).join('') + '</div>'); },
+      empty: function () { return shell(B.stateBlock({ kind: 'empty', title: 'Bài này chưa có câu hỏi', text: 'Bông sẽ báo cậu khi bài sẵn sàng nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) })); },
+      error: function () { return shell(B.stateBlock({ kind: 'error', title: 'Chưa tải được câu hỏi', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' })); }
+    },
+    mount: { all: function (scr, ctx) {
+      var tools = R.wireTools(scr, ctx, { realFullscreen: false });
+      if (ctx.state === 'focus') tools.setFocus(true);
+      if (ctx.state === 'sound') ctx.later(function () { tools.openPanel(); }, 50);
+      if (['normal', 'focus', 'sound'].indexOf(ctx.state) < 0) { ctx.onKey(function (e) { if ((e.key === 'f' || e.key === 'F') && !L.typing()) tools.setFocus(!tools.isFocus()); }); return; }
+      function re(sel) { var f = tools.isFocus(); ctx.setState(f ? 'focus' : 'normal'); var x = sel && ctx.scr.querySelector(sel); x && x.focus({ preventScroll: true }); }
+      scr.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { if (b.disabled || S.done) return; S.sel = +b.dataset.i; B.L.say(Q.o[S.sel], .85); re('[data-i="' + S.sel + '"]'); }); });
+      L.wire(scr, ctx, { left: 4,
+        onReplay: function (b) { L.say('lamp', .8, b); },
+        onHint: function () { S.hint = true; if (S.sel > -1 && S.sel !== Q.a) S.sel = -1; re('[data-i]:not([disabled])'); },
+        onMain: function () { if (S.sel < 0 || S.done) return; var c = scr.querySelector('[data-i="' + S.sel + '"]');
+          if (S.sel === Q.a) { S.done = true; L.ok(scr, ctx, { card: c, n: 7, total: 10, say: 'lamp', detail: B.speak('lamp', 's') + '<b class="en" style="font-size:24px">lamp</b><span class="b-muted">cái đèn</span>', onNext: function () { S.sel = -1; S.done = false; S.tries = 0; S.hint = false; re(); } }); }
+          else { S.tries++; L.retry(scr, ctx, { card: c, tries: S.tries, detail: 'Đây là <b class="en">' + Q.o[S.sel] + '</b> (' + B.R.roomWords[Q.o[S.sel]] + '). Nghe lại nhé.', onRetry: function () { S.sel = -1; if (S.tries >= 2) S.hint = true; re('[data-i]:not([disabled])'); } }); } },
+        onEsc: function () { if (tools.closePanel(true)) return; if (tools.isFocus()) { tools.setFocus(false); ctx.setState('normal'); var f = ctx.scr.querySelector('[data-focusmode]'); f && f.focus(); return; } L.exit(ctx, 4); },
+        onKey: function (e) {
+          if ((e.key === 'f' || e.key === 'F') && !L.typing() && !e.ctrlKey && !e.metaKey) { e.preventDefault(); var on = !tools.isFocus(); ctx.setState(on ? 'focus' : 'normal'); var f = ctx.scr.querySelector('[data-focusmode]'); f && f.focus({ preventScroll: true }); return true; }
+          if (/^[1-4]$/.test(e.key)) { e.preventDefault(); var b = scr.querySelector('[data-i="' + (+e.key - 1) + '"]'); b && b.click(); return true; }
+          if (e.target.closest && e.target.closest('[data-sndpanel]')) return true;
+        }
+      });
+      var fb = scr.querySelector('[data-focusmode]'); fb.addEventListener('click', function () { ctx.setState(tools.isFocus() ? 'focus' : 'normal'); var f = ctx.scr.querySelector('[data-focusmode]'); f && f.focus({ preventScroll: true }); });
+      var ex = scr.querySelector('[data-exit]');
+    } }
+  });
+})();
+</script>
+</body>
+</html>

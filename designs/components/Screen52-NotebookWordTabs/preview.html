@@ -1,0 +1,123 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=700 subtitle="48. Thẻ từ trong Sổ từ có thêm tab (Screen52-NotebookWordTabs): biến thể mới của thẻ phóng to trong Sổ từ với 3 tab Thẻ từ · Khám phá · Họ vần; tab chưa có dữ liệu thì ẩn (apple chỉ có Thẻ từ). Từ tab mở được màn đầy đủ ở chế độ tự khám phá. Màn Sổ từ cũ giữ nguyên" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Sổ từ · thẻ từ có tab — preview</title>
+<style>
+  .nb { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .nbg { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; padding: 8px 48px 24px; align-content: start; }
+  .nbg span { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; font: 800 22px/1 var(--font-display); color: var(--ink); }
+  .nbg .b-pic { width: 70px; height: 70px; }
+  .zw { position: absolute; inset: 0; z-index: 40; background: var(--scrim); display: grid; place-items: center; }
+  .zd { width: min(1260px, calc(100% - 48px)); height: calc(100% - 40px); background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-dialog); display: flex; flex-direction: column; overflow: hidden; }
+  .zd__h { flex: none; display: flex; align-items: center; gap: 14px; padding: 14px 18px 0 24px; }
+  .zd__h h2 { margin: 0; font: 800 26px/32px var(--font-display); color: var(--ink); display: flex; align-items: center; gap: 10px; }
+  .zd__h .nav { margin-left: auto; display: flex; gap: 8px; }
+  .ztabs { flex: none; display: flex; gap: 6px; padding: 10px 24px 0; border-bottom: 2px solid var(--line); }
+  .ztabs [role="tab"] { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 16px; border: 0; border-bottom: 4px solid transparent; background: none; font: 800 18px/1 var(--font-body); color: var(--ink-soft); cursor: pointer; border-radius: 10px 10px 0 0; margin-bottom: -2px; }
+  .ztabs [role="tab"]:hover { background: var(--surface-soft); }
+  .ztabs [role="tab"][aria-selected="true"] { color: var(--brand-shade); border-bottom-color: var(--brand); background: var(--brand-soft); }
+  .ztabs .hid { margin-left: auto; align-self: center; font: 700 14px/18px var(--font-body); color: var(--ink-soft); display: inline-flex; gap: 6px; align-items: center; }
+  .zp { flex: 1; min-height: 0; padding: 16px 24px 18px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+  .zp[hidden] { display: none; }
+  .zp__foot { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+  .zp__foot p { margin: 0 auto 0 0; font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+  .zcard { display: grid; grid-template-columns: 260px 1fr; gap: 32px; align-items: center; }
+  .zcard .art { width: 260px; height: 260px; border-radius: var(--radius-xl); background: var(--surface-soft); display: grid; place-items: center; box-shadow: inset 0 0 0 4px var(--m); }
+  .zcard .art .b-pic { width: 210px; height: 210px; }
+  .zcard h3 { margin: 0; font: 800 60px/1.05 var(--font-display); color: var(--ink); display: flex; align-items: center; gap: 14px; }
+  .zcard .ipa { font: 700 20px/26px var(--font-body); color: var(--ink-soft); margin-top: 6px; }
+  .zcard .mean { font: 800 26px/32px var(--font-body); color: var(--ink); margin: 6px 0 14px; }
+  .zcard .ex { background: var(--surface-soft); border-radius: var(--radius-lg); padding: 12px 16px; display: flex; gap: 12px; align-items: center; }
+  .zcard .ex b { display: block; font: 800 26px/32px var(--font-display); } .zcard .ex span { display: block; font: 700 17px/22px var(--font-body); color: var(--ink-soft); }
+  .zcard .acts { display: flex; gap: 10px; margin-top: 14px; }
+  .zcard .mm { display: flex; align-items: center; gap: 10px; margin-top: 16px; font: 700 17px/22px var(--font-body); color: var(--ink); }
+  .zcard .mm .bar { display: flex; gap: 4px; } .zcard .mm .bar i { width: 34px; height: 12px; border-radius: 6px; background: var(--surface-sunk); } .zcard .mm .bar i.on { background: var(--m); }
+  .zp .b-fam--compact { grid-template-columns: minmax(0, 1fr) 270px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, W = B.W;
+  var ML = ['', 'Mới gặp', 'Đang nhớ', 'Khá nhớ', 'Nhớ tốt', 'Thuộc lòng'];
+  var WORDS = { bird: { m: 4, lv: 2, topic: 'Con vật' }, cat: { m: 5, lv: 1, topic: 'Con vật' }, apple: { m: 3, lv: 1, topic: 'Trái cây' } };
+  var LIST = ['bird', 'cat', 'apple'];
+  var S = { w: 'bird', tab: 'card' };
+  function wd(w) { var x = B.words[w] || {}, wx = W.wx[w]; return { w: w, vi: (wx && wx.vi) || x.vi, ipa: (wx && wx.ipa) || x.ipa, ex: (wx && wx.ex) || x.ex, exVi: (wx && wx.exVi) || x.exVi, fam: wx ? wx.fam : null, m: WORDS[w].m, lv: WORDS[w].lv, topic: WORDS[w].topic }; }
+  function tabs(x) { var t = [['card', 'Thẻ từ', 'book']]; if (W.wx[x.w]) t.push(['wx', 'Khám phá', 'branch']); if (x.fam) t.push(['fam', 'Họ vần', 'family']); return t; }
+  function bg() { return B.topbar({ back: true, title: 'Sổ từ của Minh', kid: null }) + '<div class="nbg" aria-hidden="true">' + ['bird', 'cat', 'dog', 'fish', 'duck', 'rabbit', 'apple', 'banana', 'pear', 'kite', 'ball', 'teddy'].map(function (w) { return '<span>' + W.pic(w, 70) + w + '</span>'; }).join('') + '</div>'; }
+  function cardPanel(x) {
+    var bar = ''; for (var i = 1; i <= 5; i++) bar += '<i' + (i <= x.m ? ' class="on"' : '') + '></i>';
+    return '<div class="zcard" style="--m:var(--mastery-' + x.m + ')"><div class="art">' + W.pic(x.w, 210, 'Hình: ' + x.vi) + '</div><div><h3><span lang="en">' + x.w + '</span></h3><div class="ipa">' + x.ipa + ' · Cấp ' + x.lv + ' · ' + x.topic + '</div><p class="mean">' + x.vi + '</p>' +
+      '<div class="ex">' + B.speak(x.ex, 's', 'Nghe câu ví dụ') + '<div><b lang="en">' + x.ex + '</b><span>' + x.exVi + '</span></div></div>' +
+      '<div class="acts">' + B.btn({ label: 'Nghe từ', icon: 'speaker', attrs: 'data-say="' + x.w + '"' }) + B.btn({ label: 'Nghe câu', icon: 'speaker', variant: 'secondary', attrs: 'data-say="' + B.esc(x.ex) + '"' }) + '</div>' +
+      '<div class="mm"><span class="bar" aria-hidden="true">' + bar + '</span>Mức thuộc: ' + ML[x.m] + ' (' + x.m + '/5)</div></div></div>';
+  }
+  function dlg(x) {
+    var T = tabs(x), i = LIST.indexOf(x.w);
+    if (!T.some(function (t) { return t[0] === S.tab; })) S.tab = 'card';
+    var hiddenNote = T.length < 3 ? '<span class="hid">' + B.icon('info', 18) + 'Từ này chưa có ' + ['Khám phá', 'Họ vần'].filter(function (n, j) { return T.length < 2 || (j === 1 && T.length < 3); }).join(' và ') + ' nên tab đó được ẩn</span>' : '';
+    return '<div class="zw"><div class="zd" role="dialog" aria-modal="true" aria-labelledby="zd-t"><div class="zd__h"><h2 id="zd-t"><span class="b-sr">Thẻ từ </span><span lang="en">' + x.w + '</span>' + B.speak(x.w, 'm', 'Nghe từ ' + x.w) + '</h2><div class="nav">' +
+      B.btn({ label: 'Từ trước', variant: 'secondary', icon: 'back', attrs: 'data-prev', disabled: i <= 0 }) + B.btn({ label: 'Từ sau', variant: 'secondary', icon: 'next', attrs: 'data-next', disabled: i >= LIST.length - 1 }) + '</div>' +
+      '<button type="button" class="b-iconbtn" data-zclose aria-label="Đóng (Esc)">' + B.icon('close', 26) + '</button></div>' +
+      '<div class="ztabs" role="tablist" aria-label="Nội dung thẻ từ">' + T.map(function (t) { var on = t[0] === S.tab; return '<button type="button" role="tab" id="zt-' + t[0] + '" aria-controls="zp-' + t[0] + '" aria-selected="' + on + '"' + (on ? '' : ' tabindex="-1"') + ' data-ztab="' + t[0] + '">' + B.icon(t[2], 20) + t[1] + '</button>'; }).join('') + hiddenNote + '</div>' +
+      T.map(function (t) { var on = t[0] === S.tab, body;
+        if (t[0] === 'card') body = cardPanel(x);
+        else if (t[0] === 'wx') body = W.explorer(x.w, { open: W.wx[x.w].branches.map(function () { return true; }), compact: true }) + '<div class="zp__foot"><p>Bé đã mở đủ ' + W.wx[x.w].branches.length + ' nhánh. Bấm một đáp án để nghe.</p>' + B.btn({ label: 'Mở Khám phá đầy đủ', icon: 'expand', attrs: 'data-full="wx"' }) + '</div>';
+        else body = W.family(x.fam, { hl: x.w, compact: true, mode: 'explore', from: null }) + '<div class="zp__foot"><p>Từ “' + x.w + '” thuộc họ -' + W.fam[x.fam].rime + ' ' + W.fam[x.fam].ipa + '. Bấm thẻ để nghe.</p>' + B.btn({ label: 'Mở Họ vần đầy đủ', icon: 'expand', attrs: 'data-full="fam"' }) + '</div>';
+        return '<div class="zp" role="tabpanel" id="zp-' + t[0] + '" aria-labelledby="zt-' + t[0] + '"' + (on ? '' : ' hidden') + ' tabindex="0">' + body + '</div>'; }).join('') + '</div></div>';
+  }
+  function page() { return '<div class="nb">' + bg() + dlg(wd(S.w)) + '</div>'; }
+  function wrap(inner) { return '<div class="nb">' + bg() + '<div class="zw"><div class="zd" role="dialog" aria-modal="true" aria-label="Thẻ từ">' + inner + '</div></div></div>'; }
+  B.screen({
+    fit: true, level: 3, order: ['normal', 'wx', 'fam', 'apple', 'loading', 'empty', 'error'],
+    labels: { normal: 'bird · Thẻ từ', wx: 'bird · Khám phá', fam: 'bird · Họ vần', apple: 'apple · chỉ Thẻ từ' },
+    notes: {
+      normal: 'Thẻ phóng to của Sổ từ (biến thể mới): 3 tab Thẻ từ · Khám phá · Họ vần (← → đổi tab, Tab vào nội dung). Thẻ từ: hình lớn, từ + phiên âm, nghĩa, câu ví dụ, Nghe từ / Nghe câu, mức thuộc. Từ trước / Từ sau, Esc đóng.',
+      wx: 'Tab Khám phá: sơ đồ thu gọn của “bird” (6 nhánh đã mở), bấm đáp án để nghe; “Mở Khám phá đầy đủ” mở Screen48 ở chế độ tự khám phá (chỉ có nút Đóng, có dải liên kết), Đóng thì quay về thẻ này.',
+      fam: 'Tab Họ vần: họ -ir với “bird” được tô sáng; nút Ghép / Khám phá trên thẻ mở màn đầy đủ tương ứng (tự khám phá).',
+      apple: '“apple” chưa có Khám phá và chưa thuộc họ vần nào: 2 tab đó ẩn, kèm dòng giải thích nhỏ.',
+      loading: 'Khung xương thẻ phóng to.', empty: 'Sổ từ chưa có từ.', error: 'Không tải được thẻ từ.' },
+    states: {
+      normal: function () { S.w = 'bird'; S.tab = 'card'; return page(); }, wx: function () { S.w = 'bird'; S.tab = 'wx'; return page(); }, fam: function () { S.w = 'bird'; S.tab = 'fam'; return page(); }, apple: function () { S.w = 'apple'; S.tab = 'card'; return page(); },
+      loading: function () { return wrap('<div class="zp"><div class="zcard"><div class="art" style="--m:var(--line)">' + B.sk('200px', '200px', 'var(--radius-lg)') + '</div><div style="display:flex;flex-direction:column;gap:14px">' + B.sk('220px', '56px', 'var(--radius-pill)') + B.sk('260px', '22px', 'var(--radius-pill)') + B.sk('180px', '28px', 'var(--radius-pill)') + B.sk('100%', '70px') + '</div></div></div>'); },
+      empty: function () { return wrap('<div class="zp">' + B.stateBlock({ kind: 'empty', title: 'Sổ từ chưa có từ nào', text: 'Học bài đầu tiên là Sổ từ có từ mới ngay!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) }) + '</div>'); },
+      error: function () { return wrap('<div class="zp">' + B.stateBlock({ kind: 'error', title: 'Chưa tải được thẻ từ', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' }) + '</div>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      if (['normal', 'wx', 'fam', 'apple'].indexOf(ctx.state) < 0) return;
+      function rerender(focusSel) { scr.querySelector('.nb').outerHTML = page(); wire(); var f = focusSel && scr.querySelector(focusSel); f && f.focus({ preventScroll: true }); }
+      function full(stack) {
+        var host = scr.querySelector('.nb'); host.outerHTML = '<div class="b-wl" data-wapp></div>';
+        W.app(scr.querySelector('[data-wapp]'), ctx, { mode: 'explore', stack: stack, onClose: function () { var h = scr.querySelector('[data-wapp]'); h.outerHTML = page(); wire(); var t = scr.querySelector('[data-ztab="' + S.tab + '"]'); t && t.focus(); } });
+      }
+      function wire() {
+        var d = scr.querySelector('.zd'); if (!d) return;
+        requestAnimationFrame(function () { W.lines(d); W.famLines(d); });
+        var tabsEl = Array.prototype.slice.call(scr.querySelectorAll('[data-ztab]'));
+        tabsEl.forEach(function (b, i) {
+          b.addEventListener('click', function () { S.tab = b.dataset.ztab; rerender('[data-ztab="' + S.tab + '"]'); });
+          b.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); var n = tabsEl[(i + (e.key === 'ArrowRight' ? 1 : tabsEl.length - 1)) % tabsEl.length]; n.click(); } });
+        });
+        scr.querySelector('[data-zclose]').addEventListener('click', function () { W.toast(scr, 'Đã đóng thẻ — về lưới Sổ từ.'); });
+        var p = scr.querySelector('[data-prev]'), n = scr.querySelector('[data-next]');
+        p.addEventListener('click', function () { S.w = LIST[LIST.indexOf(S.w) - 1]; rerender('[data-prev]:not([disabled]), [data-next]'); });
+        n.addEventListener('click', function () { S.w = LIST[LIST.indexOf(S.w) + 1]; rerender('[data-next]:not([disabled]), [data-prev]'); });
+        var x = wd(S.w);
+        scr.querySelectorAll('[data-full]').forEach(function (b) { b.addEventListener('click', function () { full(b.dataset.full === 'wx' ? [{ v: 'wx', k: x.w, open: W.wx[x.w].branches.map(function () { return true; }) }] : [{ v: 'fam', k: x.fam, hl: x.w }]); }); });
+        scr.querySelectorAll('.zp [data-fsay]').forEach(function (b) { b.addEventListener('click', function () { B.L.say(b.dataset.fsay, .8, b); }); });
+        scr.querySelectorAll('.zp [data-fhub]').forEach(function (b) { b.addEventListener('click', function () { B.L.say(W.fam[x.fam].members.map(function (m) { return m[0]; }).join(', '), .75, b); }); });
+        scr.querySelectorAll('.zp [data-fbuild]').forEach(function (b) { b.addEventListener('click', function () { full([{ v: 'fam', k: x.fam, hl: x.w }, { v: 'build', k: W.fam[x.fam].build, target: b.dataset.fbuild }]); }); });
+        scr.querySelectorAll('.zp [data-fexp]').forEach(function (b) { b.addEventListener('click', function () { full([{ v: 'fam', k: x.fam, hl: x.w }, { v: 'wx', k: b.dataset.fexp }]); }); });
+        scr.querySelectorAll('.zp [data-bq]').forEach(function (b) { b.addEventListener('click', function () { var br = W.wx[x.w].branches[+b.dataset.bq]; B.L.say(br.q + ' ' + br.sent[0], .82); }); });
+      }
+      wire();
+      var first = scr.querySelector('[data-ztab][aria-selected="true"]'); first && first.focus({ preventScroll: true });
+      ctx.onKey(function (e) { if (!scr.querySelector('.zd')) return; if (e.key === 'Escape') { e.preventDefault(); scr.querySelector('[data-zclose]').click(); }
+        if (e.key === 'Tab') { var d = scr.querySelector('.zd'), f = Array.prototype.filter.call(d.querySelectorAll('button:not([disabled]), [tabindex="0"]'), function (el) { return el.offsetParent !== null; }); if (!f.length) return; var a = f[0], z = f[f.length - 1]; if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } } });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

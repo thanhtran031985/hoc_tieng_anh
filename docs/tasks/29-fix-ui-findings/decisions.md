@@ -26,3 +26,8 @@
 - Quyết định: `validateNewPassword` (`src/lib/rules/parent-settings.ts`, dùng chung cho client và server) chỉ báo lỗi khi để trống; bỏ yêu cầu ≥ 8 ký tự và có cả chữ lẫn số. Giữ độ dài tối đa của schema (bcrypt chỉ dùng 72 byte đầu) và việc hai lần nhập phải khớp. Cập nhật gợi ý dưới ô, test hàm thuần và tên test `11`.
 - Không đổi: form Đăng ký vẫn yêu cầu ≥ 8 ký tự (`src/lib/schemas/auth.ts`); mật khẩu vẫn băm bcrypt.
 - Ảnh hưởng: ngược quy tắc "mật khẩu mạnh" của task 04; chấp nhận để tiện khi dev, nên siết lại trước khi đưa lên hosting.
+
+### 09/10/2026 — Áp dụng gói thiết kế GĐ2: test token đỏ 108 token cho tới task 13
+- Bối cảnh: `designs/tokens.json` mới có thêm 108 token màu hex (đọc to, ghép âm, bong bóng, đập chuột…). Theme của app (`globals.css`) chưa có, vì chúng thuộc GĐ2.
+- Kết quả: `01-nen-tang` "mọi token màu dạng hex của bộ Tiểu học khớp designs/tokens.json" hỏng: 108 token "trang có rỗng", 0 token đổi giá trị (221 token GĐ1 vẫn khớp). Các test khác của task 01 đạt (32/33); `npm run build`, `tsc`, `lint` sạch.
+- Quyết định: KHÔNG nới test. Test này tự hết đỏ khi task `13-gd2-ui-kit` thêm token GĐ2 vào theme.

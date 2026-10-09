@@ -1,0 +1,81 @@
+<!-- @dsCard group="Người lớn · Giai đoạn 2" height=760 subtitle="15. Âm phonics (Adult20-PhonicsSounds): bảng các âm — chữ đơn a–z và âm ghép sh, ch, th, ee, oo… — có từ ví dụ, nút nghe, tải lên hoặc tạo âm thanh; lọc âm còn thiếu âm thanh" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Âm phonics — preview</title>
+<style>
+  .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) 1.4fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+  .gl { display: inline-flex; align-items: baseline; gap: 8px; }
+  .gl b { font: 700 22px/26px var(--font-thcs); color: var(--ink); min-width: 34px; } .gl span { font: 500 13px/18px var(--font-thcs); color: var(--ink-soft); }
+  .ex { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ex .w { display: inline-flex; align-items: center; gap: 4px; background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 2px 8px 2px 2px; font: 500 13px/20px var(--font-thcs); }
+  .ex .w b { font-weight: 700; color: var(--brand-shade); }
+  .au { display: inline-flex; align-items: center; gap: 6px; font: 500 13px/18px var(--font-thcs); color: var(--ink); }
+  .miss { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/18px var(--font-thcs); color: var(--adm-audio-missing); }
+  .miss i { width: 8px; height: 8px; border-radius: 50%; background: var(--adm-audio-missing); }
+  .gen { font: 500 12px/18px var(--font-thcs); color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
+  .bulk { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+  .up { display: flex; flex-direction: column; gap: 8px; }
+  .drop { border: 2px dashed var(--line-strong); border-radius: var(--adm-radius-md); padding: 16px; text-align: center; font: 500 13px/20px var(--font-thcs); color: var(--ink-soft); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A;
+  var SCR, CTX;
+  // [âm, IPA, loại, ví dụ (từ, phần in đậm), có âm thanh?]
+  var RAW = [['a', '/æ/', 'single', [['apple', 'a'], ['cat', 'a']], 1], ['b', '/b/', 'single', [['ball', 'b'], ['bed', 'b']], 1], ['c', '/k/', 'single', [['cat', 'c'], ['cup', 'c']], 1], ['d', '/d/', 'single', [['dog', 'd'], ['duck', 'd']], 1], ['e', '/e/', 'single', [['egg', 'e'], ['bed', 'e']], 1],
+    ['f', '/f/', 'single', [['fish', 'f'], ['fan', 'f']], 1], ['g', '/g/', 'single', [['grapes', 'g'], ['dog', 'g']], 1], ['h', '/h/', 'single', [['hat', 'h'], ['hand', 'h']], 1], ['i', '/ɪ/', 'single', [['fish', 'i'], ['pig', 'i']], 1], ['j', '/dʒ/', 'single', [['jam', 'j'], ['jet', 'j']], 1],
+    ['k', '/k/', 'single', [['kite', 'k'], ['king', 'k']], 1], ['l', '/l/', 'single', [['lamp', 'l'], ['leg', 'l']], 1], ['m', '/m/', 'single', [['monkey', 'm'], ['mum', 'm']], 1], ['n', '/n/', 'single', [['nose', 'n'], ['sun', 'n']], 1], ['o', '/ɒ/', 'single', [['dog', 'o'], ['box', 'o']], 1],
+    ['p', '/p/', 'single', [['pear', 'p'], ['pen', 'p']], 1], ['q', '/kw/', 'single', [['queen', 'q'], ['quick', 'q']], 0], ['r', '/r/', 'single', [['rabbit', 'r'], ['red', 'r']], 1], ['s', '/s/', 'single', [['sun', 's'], ['sock', 's']], 1], ['t', '/t/', 'single', [['teddy', 't'], ['cat', 't']], 1],
+    ['u', '/ʌ/', 'single', [['sun', 'u'], ['cup', 'u']], 1], ['v', '/v/', 'single', [['van', 'v'], ['vet', 'v']], 1], ['w', '/w/', 'single', [['window', 'w'], ['wet', 'w']], 1], ['x', '/ks/', 'single', [['box', 'x'], ['fox', 'x']], 0], ['y', '/j/', 'single', [['yellow', 'y'], ['yes', 'y']], 1], ['z', '/z/', 'single', [['zoo', 'z'], ['zip', 'z']], 1],
+    ['sh', '/ʃ/', 'digraph', [['fish', 'sh'], ['ship', 'sh']], 1], ['ch', '/tʃ/', 'digraph', [['chair', 'ch'], ['chip', 'ch']], 1], ['th', '/θ/', 'digraph', [['three', 'th'], ['bath', 'th']], 1], ['ck', '/k/', 'digraph', [['duck', 'ck'], ['sock', 'ck']], 1], ['ng', '/ŋ/', 'digraph', [['king', 'ng'], ['ring', 'ng']], 0],
+    ['ee', '/iː/', 'vowel', [['tree', 'ee'], ['see', 'ee']], 1], ['oo', '/uː/', 'vowel', [['zoo', 'oo'], ['moon', 'oo']], 0], ['ai', '/eɪ/', 'vowel', [['rain', 'ai'], ['tail', 'ai']], 1], ['ar', '/ɑː/', 'vowel', [['car', 'ar'], ['star', 'ar']], 0], ['or', '/ɔː/', 'vowel', [['fork', 'or'], ['corn', 'or']], 0]];
+  var KIND = { single: 'Chữ đơn', digraph: 'Âm ghép phụ âm', vowel: 'Âm ghép nguyên âm' };
+  var ROWS = RAW.map(function (r, i) { return { id: 'ph' + i, g: r[0], ipa: r[1], kind: r[2], ex: r[3], has: r[4] ? 'yes' : 'no', file: r[4] ? 'ph-' + r[0] + '.mp3' : '', len: r[4] ? (0.4 + (i % 5) * 0.1).toFixed(1).replace('.', ',') : '', auto: false, gen: false, order: i }; });
+  function missing() { return ROWS.filter(function (r) { return r.has === 'no'; }); }
+  function exHtml(r) { return '<span class="ex">' + r.ex.map(function (e) { var w = e[0], p = e[1], k = w.indexOf(p); return '<span class="w">' + B.speak(w, 's', 'Nghe: ' + w) + '<span lang="en">' + w.slice(0, k) + '<b>' + p + '</b>' + w.slice(k + p.length) + '</span></span>'; }).join('') + '</span>'; }
+  var table = A.table({ id: 'phs', rows: ROWS, pageSize: 8, searchKeys: ['g', 'ipa'], placeholder: 'Tìm âm, ví dụ “sh” hoặc /ʃ/…', sort: { key: 'order', dir: 'asc' },
+    filters: [{ key: 'kind', label: 'Loại', options: Object.keys(KIND).map(function (k) { return [k, KIND[k]]; }) }, { key: 'has', label: 'Âm thanh', options: [['no', 'Còn thiếu âm thanh'], ['yes', 'Đã có âm thanh']] }],
+    rowAttrs: function (r) { return 'data-row="' + r.id + '"'; },
+    columns: [
+      { key: 'order', label: 'Âm', sort: true, render: function (r) { return '<span class="gl"><b lang="en">' + r.g + '</b><span>' + r.ipa + '</span></span>'; } },
+      { key: 'kind', label: 'Loại', sort: true, render: function (r) { return KIND[r.kind]; } },
+      { key: 'ex', label: 'Ví dụ từ', render: exHtml },
+      { key: 'has', label: 'Âm thanh', sort: true, render: function (r) { return r.gen ? '<span class="gen" role="status">' + B.icon('wand', 14) + 'Đang tạo…</span>' : r.has === 'yes' ? '<span class="au">' + A.btn({ label: '', icon: 'speaker', variant: 'ghost', size: 's', attrs: 'data-play="' + r.id + '" aria-label="Nghe âm ' + r.g + '"' }) + r.file + ' · ' + r.len + ' giây' + (r.auto ? ' · tự động' : '') + '</span>' : '<span class="miss"><i aria-hidden="true"></i>Thiếu âm thanh</span>'; } }
+    ],
+    actions: function (r) { return A.btn({ label: 'Tải lên', icon: 'upload', variant: 'ghost', size: 's', attrs: 'data-up="' + r.id + '"' }) + A.btn({ label: r.has === 'yes' ? 'Tạo lại' : 'Tạo âm thanh', icon: 'wand', variant: r.has === 'yes' ? 'ghost' : 'secondary', size: 's', attrs: 'data-gen="' + r.id + '"' }); },
+    onMount: function (box) { bind(box); } });
+  function find(id) { return ROWS.filter(function (r) { return r.id === id; })[0]; }
+  function gen(list) { list.forEach(function (r) { r.gen = true; }); CTX.setState('normal'); setTimeout(function () { list.forEach(function (r) { r.gen = false; r.has = 'yes'; r.auto = true; r.file = 'ph-' + r.g + '.mp3'; r.len = '0,6'; }); CTX.setState('normal'); A.toast(CTX.scr, 'Đã tạo âm thanh cho ' + list.map(function (r) { return '“' + r.g + '”'; }).join(', ') + '.'); }, 1200); }
+  function bind(box) {
+    box.querySelectorAll('[data-play]').forEach(function (b) { b.onclick = function () { var r = find(b.dataset.play); B.L.say(r.ex[0][0], .6, b); }; });
+    box.querySelectorAll('[data-gen]').forEach(function (b) { b.onclick = function () { gen([find(b.dataset.gen)]); }; });
+    box.querySelectorAll('[data-up]').forEach(function (b) { b.onclick = function () { var r = find(b.dataset.up);
+      A.dialog(SCR, { title: 'Tải âm thanh cho âm “' + r.g + '” ' + r.ipa, body: '<div class="up"><div class="drop">' + B.icon('upload', 22) + '<br>Kéo tệp vào đây hoặc chọn tệp bên dưới</div>' + A.field({ id: 'u-file', label: 'Tệp âm thanh', type: 'file', hint: '.mp3 hoặc .wav, tối đa 1 MB, dài 0,3–2 giây. Chỉ đọc âm, không đọc tên chữ cái.', attrs: 'accept="audio/mpeg,audio/wav"' }) + '</div>',
+        actions: [{ label: 'Tải lên', variant: 'primary', icon: 'upload', onClick: function (w) { var f = w.querySelector('#u-file'); if (!f.files || !f.files.length) { A.setErr(w, 'u-file', 'Chọn một tệp .mp3 hoặc .wav.'); f.focus(); return false; } var fl = f.files[0]; if (!/\.(mp3|wav)$/i.test(fl.name)) { A.setErr(w, 'u-file', 'Tệp “' + fl.name + '” không phải .mp3 / .wav.'); return false; } if (fl.size > 1048576) { A.setErr(w, 'u-file', 'Tệp lớn hơn 1 MB.'); return false; } r.has = 'yes'; r.file = fl.name; r.len = '0,7'; r.auto = false; CTX.setState('normal'); A.toast(CTX.scr, 'Đã tải âm thanh cho “' + r.g + '”.'); } }, { label: 'Huỷ', variant: 'secondary' }] }); }; });
+  }
+  function main() { var m = missing().length;
+    return '<div class="kpis">' + A.kpi({ label: 'Tổng số âm', value: ROWS.length, sub: '26 chữ đơn · 10 âm ghép', icon: 'music' }) + A.kpi({ label: 'Đã có âm thanh', value: ROWS.length - m, icon: 'okcircle', sub: 'trong đó ' + ROWS.filter(function (r) { return r.auto; }).length + ' tạo tự động' }) + A.kpi({ label: 'Còn thiếu', value: m, icon: 'warn', sub: m ? missing().map(function (r) { return r.g; }).join(', ') : 'Đủ cả rồi' }) +
+      '<section class="a-card bulk"><b class="adm-h3">Bài Ghép âm cần âm thanh của từng ô.</b><span class="adm-small b-muted">Âm thiếu thì ô đó không phát được tiếng khi bé bấm.</span>' + A.btn({ label: m ? 'Tạo âm thanh cho ' + m + ' âm còn thiếu' : 'Đã đủ âm thanh', icon: 'wand', attrs: 'data-genall', disabled: !m }) + '</section></div>' + table.html(); }
+  function page(m) { return A.shell2({ area: 'admin', active: 'phonics', title: 'Âm phonics', crumb: 'Dùng cho bài Ghép âm và Đập chuột chữ cái', actions: A.btn({ label: 'Lọc âm còn thiếu', icon: 'warn', variant: 'secondary', attrs: 'data-onlymiss' }), main: m }); }
+  A.screen({
+    labels: { empty: 'Trống' },
+    notes: { normal: 'Bảng 36 âm: chữ đơn a–z, âm ghép phụ âm (sh, ch, th, ck, ng), âm ghép nguyên âm (ee, oo, ai, ar, or). Mỗi âm có IPA, 2 từ ví dụ (phần âm in đậm, có loa), trạng thái âm thanh. Thiếu âm thanh: chấm + chữ `adm-audio-missing`. “Tải lên” → hộp thoại chọn tệp (báo lỗi dưới ô). “Tạo âm thanh” → đang tạo → có (tự động). Lọc “Âm thanh: còn thiếu” hoặc nút trên thanh tiêu đề.', loading: 'Khung xương.', empty: 'Chưa có âm nào.', error: 'Không tải được danh sách âm.' },
+    states: {
+      normal: function () { return page(main()); },
+      loading: function () { return page('<div class="kpis">' + [1, 2, 3, 4].map(function () { return A.skel('70px'); }).join('') + '</div>' + A.skel('420px')); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có âm phonics nào', text: 'Nhập bộ 26 chữ đơn và các âm ghép mẫu để bắt đầu soạn bài Ghép âm.', action: A.btn({ label: 'Nhập bộ âm mẫu', icon: 'plus' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'PHN-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx; if (ctx.state !== 'normal') return;
+      table.mount(scr); bind(scr);
+      var ga = scr.querySelector('[data-genall]'); ga && ga.addEventListener('click', function () { gen(missing()); });
+      var om = scr.querySelector('[data-onlymiss]'); om.addEventListener('click', function () { var s = scr.querySelector('#phs-f-has'); s.value = 'no'; s.dispatchEvent(new Event('change')); s.focus(); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

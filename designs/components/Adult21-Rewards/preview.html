@@ -1,0 +1,105 @@
+<!-- @dsCard group="Người lớn · Giai đoạn 2" height=760 subtitle="16. Danh mục phần thưởng (Adult21-Rewards): 3 thẻ Sticker (theo album), Huy hiệu (điều kiện chọn từ danh sách + xu thưởng), Đồ trong phòng (nhóm, giá xu, hình); bảng có tìm, lọc, sắp xếp, phân trang; ngăn kéo biểu mẫu; Nháp / Xuất bản" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Quản trị · Danh mục phần thưởng — preview</title>
+<style>
+  .rtabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: var(--space-4); }
+  .rtabs button { border: 0; background: none; padding: 10px 14px; font: 600 14px/20px var(--font-thcs); color: var(--ink-soft); cursor: pointer; border-bottom: 3px solid transparent; display: inline-flex; gap: 8px; align-items: center; }
+  .rtabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brand); }
+  .rtabs .n { background: var(--surface-sunk); border-radius: 99px; padding: 0 8px; font-size: 12px; }
+  .th { width: 44px; height: 44px; border-radius: 10px; background: var(--surface-soft); display: grid; place-items: center; }
+  .th .b-pic { width: 36px; height: 36px; } .th .b-dragon { width: 40px; height: auto; } .th .b-medal { --sz: 34px; }
+  .nm b { font-weight: 600; } .nm small { display: block; color: var(--ink-soft); font-size: 12px; }
+  .pr { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+  .cond { display: inline-flex; flex-direction: column; } .cond small { color: var(--ink-soft); font-size: 12px; }
+  .prevbox { display: flex; gap: var(--space-4); align-items: center; background: var(--surface-soft); border-radius: var(--adm-radius-md); padding: 12px; }
+  .prevbox .b-pic, .prevbox .b-dragon { width: 72px; height: auto; } .prevbox .b-medal { --sz: 64px; }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, A = B.A, R = B.R;
+  var SCR, CTX, TAB = 'stk', uid = 0;
+  var ALB = { animals: 'Con vật', vehicles: 'Xe cộ', dino: 'Khủng long', fruits: 'Trái cây' };
+  var COND = { streak: ['Số ngày học liên tiếp', 'ngày'], mastered: ['Số từ đã thuộc', 'từ'], level: ['Qua cấp', 'cấp'], boss: ['Số trận trùm đã thắng', 'trận'], stars3: ['Số bài được 3 sao', 'bài'], speak: ['Số câu luyện nói đạt', 'câu'] };
+  var GRP = { furn: 'Nội thất', clothes: 'Quần áo', hats: 'Mũ' };
+  function r(o) { return Object.assign({ id: 'r' + (++uid) }, o); }
+  var STK = [['cat', 'animals', 'Con vật'], ['dog', 'animals', 'Con vật'], ['fish', 'animals', 'Con vật'], ['bird', 'animals', 'Con vật'], ['duck', 'animals', 'Con vật'], ['rabbit', 'animals', 'Con vật'], ['car', 'vehicles', 'Xe cộ'], ['bus', 'vehicles', 'Xe cộ'], ['bike', 'vehicles', 'Xe cộ'], ['train', 'vehicles', 'Xe cộ'], ['plane', 'vehicles', 'Xe cộ'], ['boat', 'vehicles', 'Xe cộ'], ['trex', 'dino', 'Trận trùm'], ['stegosaurus', 'dino', 'Trận trùm'], ['triceratops', 'dino', 'Ôn tập'], ['longneck', 'dino', 'Ôn tập'], ['pterodactyl', 'dino', 'Ôn tập'], ['dinoegg', 'dino', 'Bài thi lên cấp'], ['apple', 'fruits', 'Trái cây'], ['banana', 'fruits', 'Trái cây'], ['grapes', 'fruits', 'Trái cây'], ['orange', 'fruits', 'Trái cây'], ['pear', 'fruits', 'Trái cây'], ['strawberry', 'fruits', 'Trái cây']]
+    .map(function (x, i) { return r({ key: x[0], en: R.stickerName(x[0]), vi: R.stickerVi(x[0]), album: x[1], from: x[2], status: i === 16 || i === 17 ? 'draft' : 'live' }); });
+  var BDG = [r({ en: '7-day streak', vi: '7 ngày liên tiếp', icon: 'flame', lv: 6, cond: 'streak', goal: 7, coins: 50, status: 'live' }), r({ en: '30-day streak', vi: '30 ngày liên tiếp', icon: 'flame', lv: 6, cond: 'streak', goal: 30, coins: 100, status: 'live' }), r({ en: 'First 100 words', vi: '100 từ đầu tiên', icon: 'book', lv: 4, cond: 'mastered', goal: 100, coins: 50, status: 'live' }),
+    r({ en: 'Seed Island', vi: 'Qua đảo Hạt giống', icon: 'island', lv: 1, cond: 'level', goal: 1, coins: 50, status: 'live' }), r({ en: 'Sprout Island', vi: 'Qua đảo Mầm non', icon: 'island', lv: 2, cond: 'level', goal: 2, coins: 50, status: 'live' }), r({ en: 'Boss champion', vi: 'Thắng 5 trận trùm', icon: 'crown', lv: 5, cond: 'boss', goal: 5, coins: 80, status: 'live' }),
+    r({ en: 'Star learner', vi: '3 sao 10 bài', icon: 'star', lv: 3, cond: 'stars3', goal: 10, coins: 50, status: 'live' }), r({ en: 'Little speaker', vi: 'Nói 20 câu', icon: 'mic', lv: 7, cond: 'speak', goal: 20, coins: 50, status: 'draft' })];
+  var ITM = [['lamp', 'lamp', 'furn', 80], ['bookshelf', 'bookshelf', 'furn', 150], ['bed', 'bed', 'furn', 150], ['chair', 'chair', 'furn', 80], ['desk', 'desk', 'furn', 150], ['rug', 'rug', 'furn', 80], ['plant', 'plant', 'furn', 40], ['clock', 'clock', 'furn', 40], ['picture', 'picture', 'furn', 40], ['globe', 'globe', 'furn', 80], ['guitar', 'guitar', 'furn', 80], ['sofa', 'sofa', 'furn', 150], ['fishtank', 'fish tank', 'furn', 400], ['tee', 'T-shirt', 'clothes', 60], ['stripe', 'striped shirt', 'clothes', 60], ['raincoat', 'raincoat', 'clothes', 60], ['cap', 'cap', 'hats', 50], ['beanie', 'beanie', 'hats', 50], ['sunhat', 'sun hat', 'hats', 50]]
+    .map(function (x, i) { return r({ key: x[0], en: x[1], grp: x[2], price: x[3], vi: R.roomWords[x[0]] || { tee: 'áo phông', stripe: 'áo sọc', raincoat: 'áo mưa', cap: 'mũ lưỡi trai', beanie: 'mũ len', sunhat: 'mũ rơm' }[x[0]], status: i === 12 ? 'draft' : 'live' }); });
+  function art(row, t) { if (t === 'bdg') return R.medal({ icon: row.icon, lv: row.lv, earned: true }, { size: 34 }); if (t === 'itm' && row.grp !== 'furn') return B.dragon('chao', 40, row.grp === 'hats' ? { hat: row.key } : { top: row.key }).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"'); return B.pic(row.key, 36).replace(/role="img"[^>]*?aria-label="[^"]*"/, 'aria-hidden="true"'); }
+  function st(row) { return row.status === 'live' ? A.status('live', 'Đã xuất bản') : A.status('draft', 'Nháp'); }
+  function editBtn(row) { return A.btn({ label: 'Sửa', variant: 'ghost', size: 's', icon: 'pen', attrs: 'data-edit="' + row.id + '"' }); }
+  var TABLES = {
+    stk: A.table({ id: 't-stk', rows: STK, pageSize: 8, searchKeys: ['en', 'vi'], placeholder: 'Tìm sticker…', sort: { key: 'album', dir: 'asc' }, filters: [{ key: 'album', label: 'Album', options: Object.keys(ALB).map(function (k) { return [k, ALB[k]]; }) }, { key: 'status', label: 'Trạng thái', options: [['live', 'Đã xuất bản'], ['draft', 'Nháp']] }], select: true,
+      columns: [{ key: 'key', label: 'Hình', render: function (x) { return '<span class="th">' + art(x, 'stk') + '</span>'; } }, { key: 'en', label: 'Tên', sort: true, render: function (x) { return '<span class="nm"><b lang="en">' + x.en + '</b><small>' + x.vi + '</small></span>'; } }, { key: 'album', label: 'Album', sort: true, render: function (x) { return ALB[x.album]; } }, { key: 'from', label: 'Rơi từ', sort: true }, { key: 'status', label: 'Trạng thái', sort: true, render: st }], actions: editBtn, onMount: function (b) { bind(b); } }),
+    bdg: A.table({ id: 't-bdg', rows: BDG, pageSize: 8, searchKeys: ['en', 'vi'], placeholder: 'Tìm huy hiệu…', sort: { key: 'cond', dir: 'asc' }, filters: [{ key: 'cond', label: 'Điều kiện', options: Object.keys(COND).map(function (k) { return [k, COND[k][0]]; }) }, { key: 'status', label: 'Trạng thái', options: [['live', 'Đã xuất bản'], ['draft', 'Nháp']] }],
+      columns: [{ key: 'icon', label: 'Hình', render: function (x) { return '<span class="th">' + art(x, 'bdg') + '</span>'; } }, { key: 'vi', label: 'Tên', sort: true, render: function (x) { return '<span class="nm"><b>' + x.vi + '</b><small lang="en">' + x.en + '</small></span>'; } }, { key: 'cond', label: 'Điều kiện', sort: true, render: function (x) { return '<span class="cond">' + COND[x.cond][0] + '<small>≥ ' + x.goal + ' ' + COND[x.cond][1] + '</small></span>'; } }, { key: 'coins', label: 'Xu thưởng', sort: true, align: 'right', render: function (x) { return '<span class="pr">' + B.icon('coin', 16) + x.coins + '</span>'; } }, { key: 'status', label: 'Trạng thái', sort: true, render: st }], actions: editBtn, onMount: function (b) { bind(b); } }),
+    itm: A.table({ id: 't-itm', rows: ITM, pageSize: 8, searchKeys: ['en', 'vi'], placeholder: 'Tìm đồ…', sort: { key: 'price', dir: 'asc' }, filters: [{ key: 'grp', label: 'Nhóm', options: Object.keys(GRP).map(function (k) { return [k, GRP[k]]; }) }, { key: 'status', label: 'Trạng thái', options: [['live', 'Đã xuất bản'], ['draft', 'Nháp']] }],
+      columns: [{ key: 'key', label: 'Hình', render: function (x) { return '<span class="th">' + art(x, 'itm') + '</span>'; } }, { key: 'en', label: 'Tên', sort: true, render: function (x) { return '<span class="nm"><b lang="en">' + x.en + '</b><small>' + x.vi + '</small></span>'; } }, { key: 'grp', label: 'Nhóm', sort: true, render: function (x) { return GRP[x.grp]; } }, { key: 'price', label: 'Giá', sort: true, align: 'right', render: function (x) { return '<span class="pr">' + B.icon('coin', 16) + x.price + '</span>'; } }, { key: 'status', label: 'Trạng thái', sort: true, render: st }], actions: editBtn, onMount: function (b) { bind(b); } })
+  };
+  var DATA = { stk: STK, bdg: BDG, itm: ITM };
+  var TABN = { stk: ['Sticker', 'gem'], bdg: ['Huy hiệu', 'medal'], itm: ['Đồ trong phòng', 'house'] };
+  function bind(box) { box.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { open(DATA[TAB].filter(function (x) { return x.id === b.dataset.edit; })[0]); }; }); }
+  function prevArt(t, o) { return t === 'bdg' ? R.medal({ icon: o.icon || 'star', lv: o.lv || 3, earned: true }, { size: 64 }) : t === 'itm' && o.grp && o.grp !== 'furn' ? B.dragon('chao', 72, o.grp === 'hats' ? { hat: o.key } : { top: o.key }) : B.pic(o.key || (t === 'itm' ? 'lamp' : 'cat'), 72); }
+  function form(t, o) {
+    var pics = t === 'stk' ? Object.keys(R.stickerWords).concat(Object.keys(B.words)) : Object.keys(R.roomWords).concat(['tee', 'stripe', 'raincoat', 'cap', 'beanie', 'sunhat']);
+    var common = A.field({ id: 'w-st', label: 'Trạng thái', type: 'seg', value: o.status || 'draft', options: [['draft', 'Nháp'], ['live', 'Xuất bản']], hint: 'Bản nháp không hiện với bé.' });
+    if (t === 'bdg') return '<div class="prevbox" data-prev>' + prevArt(t, o) + '<span class="adm-body">Xem trước huy hiệu trong Bộ sưu tập</span></div><div class="a-form">' + A.field({ id: 'w-vi', label: 'Tên tiếng Việt', value: o.vi || '', required: true }) + A.field({ id: 'w-en', label: 'Tên tiếng Anh', value: o.en || '', required: true, en: true, hint: 'Bé nghe tên này qua loa.' }) +
+      A.field({ id: 'w-cond', label: 'Điều kiện', type: 'select', value: o.cond || 'streak', options: Object.keys(COND).map(function (k) { return [k, COND[k][0]]; }) }) + A.field({ id: 'w-goal', label: 'Mức cần đạt', type: 'number', value: o.goal || '', required: true, suffix: '<span class="adm-small b-muted" data-unit>' + COND[o.cond || 'streak'][1] + '</span>' }) +
+      A.field({ id: 'w-coins', label: 'Xu thưởng', type: 'number', value: o.coins != null ? o.coins : 50, required: true, hint: 'Mặc định 50 xu (token `coin-badge`), 0–200.' }) + A.field({ id: 'w-icon', label: 'Biểu tượng', type: 'select', value: o.icon || 'star', options: [['flame', 'Lửa · chuỗi ngày'], ['book', 'Sách · từ vựng'], ['island', 'Đảo · qua cấp'], ['crown', 'Vương miện · trùm'], ['star', 'Sao'], ['mic', 'Micro · luyện nói']] }) + '</div>' + common;
+    if (t === 'itm') return '<div class="prevbox" data-prev>' + prevArt(t, o) + '<span class="adm-body">Xem trước thẻ trong Cửa hàng</span></div><div class="a-form">' + A.field({ id: 'w-en', label: 'Tên tiếng Anh', value: o.en || '', required: true, en: true }) + A.field({ id: 'w-vi', label: 'Nghĩa', value: o.vi || '', required: true }) +
+      A.field({ id: 'w-grp', label: 'Nhóm', type: 'select', value: o.grp || 'furn', options: Object.keys(GRP).map(function (k) { return [k, GRP[k]]; }) }) + A.field({ id: 'w-price', label: 'Giá (xu)', type: 'number', value: o.price || '', required: true, hint: 'Mức gợi ý: 40 / 80 / 150 (`price-furniture-*`), 400 đồ đặc biệt.' }) +
+      A.field({ id: 'w-key', label: 'Hình', type: 'select', value: o.key || 'lamp', options: pics }) + '</div>' + common;
+    return '<div class="prevbox" data-prev>' + prevArt(t, o) + '<span class="adm-body">Xem trước sticker trong album</span></div><div class="a-form">' + A.field({ id: 'w-en', label: 'Tên tiếng Anh', value: o.en || '', required: true, en: true }) + A.field({ id: 'w-vi', label: 'Nghĩa', value: o.vi || '', required: true }) +
+      A.field({ id: 'w-album', label: 'Album', type: 'select', value: o.album || 'animals', options: Object.keys(ALB).map(function (k) { return [k, ALB[k]]; }) }) + A.field({ id: 'w-from', label: 'Rơi từ', type: 'select', value: o.from || 'Con vật', options: ['Con vật', 'Trái cây', 'Xe cộ', 'Ôn tập', 'Trận trùm', 'Bài thi lên cấp'] }) + A.field({ id: 'w-key', label: 'Hình', type: 'select', value: o.key || 'cat', options: pics }) + '</div>' + common;
+  }
+  function open(o) {
+    var t = TAB, isNew = !o; o = o || {}; var stv = o.status || 'draft';
+    var dr = A.drawer(SCR, { title: (isNew ? 'Thêm ' : 'Sửa ') + TABN[t][0].toLowerCase(), body: form(t, o), foot: A.btn({ label: isNew ? 'Thêm' : 'Lưu', icon: 'check', attrs: 'data-wsave' }) });
+    var w = dr.el;
+    w.querySelectorAll('.a-seg').forEach(function (g) { g.querySelectorAll('[data-v]').forEach(function (b) { b.addEventListener('click', function () { g.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-checked', x === b); x.setAttribute('aria-pressed', x === b); }); stv = b.dataset.v; }); }); });
+    function upd() { var k = w.querySelector('#w-key'), g = w.querySelector('#w-grp'), ic = w.querySelector('#w-icon'), cd = w.querySelector('#w-cond'); var p = w.querySelector('[data-prev]'); p.firstChild.outerHTML = prevArt(t, { key: k && k.value, grp: g && g.value, icon: ic && ic.value, lv: o.lv }); var u = w.querySelector('[data-unit]'); if (u && cd) u.textContent = COND[cd.value][1]; }
+    w.querySelectorAll('select').forEach(function (s) { s.addEventListener('change', upd); });
+    var rules = { 'w-en': function (v) { return !v.trim() ? 'Nhập tên tiếng Anh.' : /[^A-Za-z '’-]/.test(v) ? 'Tên tiếng Anh chỉ gồm chữ cái, dấu cách, dấu nháy, gạch nối.' : ''; }, 'w-vi': function (v) { return v.trim() ? '' : 'Nhập ' + (t === 'bdg' ? 'tên tiếng Việt.' : 'nghĩa tiếng Việt.'); } };
+    if (t === 'itm') rules['w-price'] = function (v) { var n = +v; return !v ? 'Nhập giá.' : !(n >= 10 && n <= 1000) || n % 10 ? 'Giá từ 10 đến 1.000 xu, bội số của 10.' : ''; };
+    if (t === 'bdg') { rules['w-goal'] = function (v) { var n = +v; return !v ? 'Nhập mức cần đạt.' : !(n >= 1) || n % 1 ? 'Mức cần đạt là số nguyên ≥ 1.' : w.querySelector('#w-cond').value === 'level' && n > 10 ? 'Chỉ có 10 cấp.' : ''; }; rules['w-coins'] = function (v) { var n = +v; return v === '' ? 'Nhập xu thưởng.' : !(n >= 0 && n <= 200) ? 'Xu thưởng từ 0 đến 200.' : ''; }; }
+    A.wireValidate(w, rules);
+    w.querySelector('[data-wsave]').addEventListener('click', function () {
+      if (A.validate(w, rules)) return; var g = function (id) { var e = w.querySelector('#' + id); return e ? e.value.trim() : undefined; };
+      var v = { en: g('w-en'), vi: g('w-vi'), status: stv };
+      if (t === 'stk') Object.assign(v, { album: g('w-album'), from: g('w-from'), key: g('w-key') });
+      if (t === 'itm') Object.assign(v, { grp: g('w-grp'), price: +g('w-price'), key: g('w-key') });
+      if (t === 'bdg') Object.assign(v, { cond: g('w-cond'), goal: +g('w-goal'), coins: +g('w-coins'), icon: g('w-icon'), lv: o.lv || 3 });
+      if (isNew) DATA[t].unshift(r(v)); else Object.assign(o, v);
+      dr.close(); CTX.setState(CTX.state); A.toast(CTX.scr, (isNew ? 'Đã thêm ' : 'Đã lưu ') + '“' + (v.vi || v.en) + '” (' + (stv === 'live' ? 'đã xuất bản' : 'nháp') + ').');
+    });
+  }
+  function main() { return '<div class="rtabs" role="tablist" aria-label="Loại phần thưởng">' + Object.keys(TABN).map(function (k) { return '<button type="button" role="tab" data-tab="' + k + '" aria-selected="' + (TAB === k) + '"' + (TAB === k ? '' : ' tabindex="-1"') + '>' + B.icon(TABN[k][1], 18) + TABN[k][0] + '<span class="n">' + DATA[k].length + '</span></button>'; }).join('') + '</div>' + TABLES[TAB].html(); }
+  function page(m) { return A.shell2({ area: 'admin', active: 'rewards', title: 'Danh mục phần thưởng', crumb: 'Sticker · Huy hiệu · Đồ trong phòng — xu không đổi ra tiền thật', actions: A.btn({ label: 'Thêm ' + TABN[TAB][0].toLowerCase(), icon: 'plus', attrs: 'data-new' }), main: m }); }
+  A.screen({
+    order: ['normal', 'badges', 'items', 'loading', 'empty', 'error'], labels: { normal: 'Sticker', badges: 'Huy hiệu', items: 'Đồ trong phòng' },
+    notes: { normal: 'Thẻ Sticker: hình, tên tiếng Anh + nghĩa, album (Con vật, Xe cộ, Khủng long, Trái cây), rơi từ đâu, trạng thái. Tìm, lọc Album / Trạng thái, sắp xếp, phân trang, chọn nhiều. Sửa / Thêm → ngăn kéo (xem trước sticker, báo lỗi dưới ô khi rời ô và khi lưu).', badges: 'Thẻ Huy hiệu: điều kiện chọn từ danh sách (số ngày liên tiếp, số từ đã thuộc, qua cấp, số trận trùm, số bài 3 sao, số câu luyện nói) + mức cần đạt + xu thưởng (mặc định 50).', items: 'Thẻ Đồ trong phòng: nhóm Nội thất / Quần áo / Mũ, giá xu (gợi ý theo token giá), hình; quần áo & mũ xem trước trên Bông.', loading: 'Khung xương bảng.', empty: 'Danh mục trống.', error: 'Không tải được danh mục.' },
+    states: {
+      normal: function () { TAB = 'stk'; return page(main()); }, badges: function () { TAB = 'bdg'; return page(main()); }, items: function () { TAB = 'itm'; return page(main()); },
+      loading: function () { return page('<div class="rtabs">' + B.sk('360px', '36px') + '</div>' + A.skel('420px')); },
+      empty: function () { return page('<section class="a-card">' + A.empty({ title: 'Chưa có phần thưởng nào', text: 'Thêm sticker, huy hiệu hoặc đồ trong phòng để bé có mục tiêu khi học.', action: A.btn({ label: 'Thêm sticker', icon: 'plus', attrs: 'data-new' }) }) + '</section>'); },
+      error: function () { return page('<section class="a-card">' + A.error({ code: 'RWD-500' }) + '</section>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      SCR = scr; CTX = ctx;
+      if (['normal', 'badges', 'items'].indexOf(ctx.state) > -1) { TABLES[TAB].mount(scr); bind(scr);
+        scr.querySelectorAll('[data-tab]').forEach(function (b, i, all) { b.addEventListener('click', function () { var s = { stk: 'normal', bdg: 'badges', itm: 'items' }[b.dataset.tab]; ctx.setState(s); ctx.scr.querySelector('[data-tab="' + b.dataset.tab + '"]').focus(); });
+          b.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); var n = all[(i + (e.key === 'ArrowRight' ? 1 : all.length - 1)) % all.length]; n.click(); } }); }); }
+      scr.querySelectorAll('[data-new]').forEach(function (b) { b.addEventListener('click', function () { open(null); }); });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

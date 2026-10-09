@@ -1,0 +1,31 @@
+<!-- @dsCard group="Màn Tiểu học · 28–32 Trùm & thi lên cấp" height=360 subtitle="29a. Cổng bài thi lên cấp (LevelGate): khoá khi còn vùng chưa xong (hiện số vùng còn lại), mở và sáng khi xong hết; là một nút, Tab tới được, Enter để vào bài thi" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Cổng bài thi lên cấp — preview</title>
+<style>
+  body { margin: 0; background: var(--bg-sea); }
+  .p { padding: var(--space-5) var(--space-6); display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); align-items: end; }
+  .cell { background: var(--level-3-soft); border-radius: var(--radius-xl); padding: var(--space-5) var(--space-4) var(--space-4); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  .cell .b-gate { width: 130px; }
+  code { font: 700 12px/16px var(--font-body); color: var(--ink-soft); text-align: center; }
+  .cap { font: 800 15px/20px var(--font-body); color: var(--ink); text-align: center; }
+  .log { grid-column: 1 / -1; margin: 0; font: 700 14px/20px var(--font-body); color: var(--ink-soft); min-height: 20px; }
+</style></head>
+<body>
+<div class="p dsf-demo" id="p" data-level="3"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  var C = [{ o: { locked: true, left: 2, next: 'đảo Cành cây' }, cap: 'Khoá · còn 2 vùng', code: 'locked, left: 2' },
+    { o: { locked: true, left: 1, next: 'đảo Cành cây' }, cap: 'Khoá · còn 1 vùng', code: 'locked, left: 1' },
+    { o: { locked: false, next: 'đảo Cành cây' }, cap: 'Mở · vào bài thi', code: 'locked: false' },
+    { o: { locked: false, next: 'đảo Cành cây' }, cap: 'Mở · đang focus (Tab)', code: 'focus-visible', focus: true }];
+  var p = document.getElementById('p');
+  p.innerHTML = C.map(function (c, i) { return '<div class="cell">' + L.gate(c.o) + '<span class="cap">' + c.cap + '</span><code>LevelGate({ ' + c.code + ' })</code></div>'; }).join('') + '<p class="log" aria-live="polite">Bấm thử cổng: cổng khoá báo số vùng còn lại, cổng mở đưa vào bài thi lên cấp.</p>';
+  var log = p.querySelector('.log');
+  p.querySelectorAll('[data-gate]').forEach(function (g, i) { g.addEventListener('click', function () { log.textContent = C[i].o.locked ? 'Cổng khoá: còn ' + C[i].o.left + ' vùng nữa mới mở. (Trên bản đồ: mở thẻ liệt kê vùng còn thiếu.)' : 'Cổng mở → Giới thiệu bài thi lên cấp (Screen35-LevelTestIntro).'; if (!C[i].o.locked) B.burst(document.body, g, null, 8); }); });
+  setTimeout(function () { var g = p.querySelectorAll('[data-gate]')[3]; g.style.outline = '4px solid var(--focus)'; g.style.outlineOffset = '3px'; g.style.borderRadius = 'var(--radius-lg)'; }, 50);
+})();
+</script>
+</body>
+</html>

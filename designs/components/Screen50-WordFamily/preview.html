@@ -1,0 +1,41 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=700 subtitle="46. Họ vần (Screen50-WordFamily): vần “-at” /æt/ ở giữa, xung quanh 8 từ cùng vần (bat, cat, hat, fat, mat, flat, chat, that), phần vần tô một màu; thẻ có hình, phiên âm, loại từ, nghĩa; từ chưa học mờ với nhãn “Sắp học”; ô “Bẫy chính tả” (eat, what) có lời Bông; bấm vần ở giữa nghe cả họ; “Đọc cả đoạn” với câu vui. Ví dụ thứ hai họ “-ir” /ɜː/" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Họ vần — preview</title></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L, W = B.W;
+  function shell() { return '<div class="b-wl" data-wapp></div>'; }
+  function cardSk() { return '<li class="b-fam__card"><div class="b-fam__main">' + B.sk('56px', '56px', '12px') + B.sk('80%', '28px', 'var(--radius-pill)') + B.sk('60%', '16px', 'var(--radius-pill)') + B.sk('70%', '18px', 'var(--radius-pill)') + '</div></li>'; }
+  function skel() { return '<div class="b-fam"><div class="b-fam__ring"><ul class="b-fam__side">' + [1, 2, 3, 4].map(cardSk).join('') + '</ul>' + B.sk('var(--size-rime-hub)', 'var(--size-rime-hub)', '50%') + '<ul class="b-fam__side">' + [1, 2, 3, 4].map(cardSk).join('') + '</ul></div><div class="b-trap">' + B.sk('60%', '24px', 'var(--radius-pill)') + B.sk('100%', '44px') + B.sk('100%', '44px') + B.sk('100%', '80px') + '</div></div>' +
+    '<div class="b-rap b-rap--compact">' + B.sk('40%', '26px', 'var(--radius-pill)') + B.sk('70%', '26px', 'var(--radius-pill)') + B.sk('30%', '26px', 'var(--radius-pill)') + '</div>'; }
+  function lessonWrap(body) { return L.head({ n: 0, total: 5 }) + '<main class="lesson-main b-wl__main b-wl__main--fam">' + body + '</main>' + L.foot({ off: true, replayLabel: 'Nghe cả họ' }); }
+  var CFG = {
+    normal: { mode: 'lesson', stack: [{ v: 'fam', k: 'at', heard: { cat: true, hat: true } }] },
+    translated: { mode: 'lesson', stack: [{ v: 'fam', k: 'at', heard: { bat: true, cat: true, hat: true, fat: true }, tr: true }], focus: '[data-rap-tr]' },
+    explore: { mode: 'explore', stack: [{ v: 'wx', k: 'cat' }, { v: 'fam', k: 'at', hl: 'cat' }], focus: '[data-fexp], [data-fbuild="hat"]' },
+    ir: { mode: 'explore', stack: [{ v: 'wx', k: 'bird' }, { v: 'fam', k: 'ir', hl: 'bird' }], focus: '[data-fbuild="shirt"]' }
+  };
+  B.screen({
+    fit: true, level: 3, order: ['normal', 'translated', 'explore', 'ir', 'loading', 'empty', 'error'],
+    labels: { normal: 'Trong bài học', translated: 'Đã dịch đoạn', explore: 'Tự khám phá (-at)', ir: 'Họ -ir (theo âm)' },
+    notes: {
+      normal: 'Vần ở giữa (`rime-hub`, bấm hoặc Space: nghe lần lượt cả họ, từng thẻ sáng lên), đường nối `rime-line`. Phần vần “at” tô `rime-ink` trên `rime-bg` ở mọi từ. Bấm thẻ (Enter) để nghe; ← → đi giữa các thẻ. Từ chưa học (flat, chat, that): thẻ mờ, nét đứt, nhãn “Sắp học” (`soon-bg`). “Bẫy chính tả” (`trap-bg`, viền `trap-line`): eat /iːt/, what /wɒt/ — chữ “at” gạch lượn sóng `trap-ink`, Bông giải thích. Trong bài: nghe đủ 5 từ đã học → Tiếp tục; Gợi ý (H) chỉ thẻ chưa nghe.',
+      translated: 'Khung “Đọc cả đoạn” với câu vui “The fat cat sat on a mat. It has a hat.”: T bật dịch, bản dịch hiện dưới từng câu (chữ `translation`, màu `trans-ink`).',
+      explore: 'Mở từ Khám phá “cat” (chế độ tự khám phá): “cat” được tô sáng; mỗi thẻ có “Ghép” (mở Ghép chữ đầu, từ đó là từ cần ghép đầu tiên) và “Khám phá” (chỉ khi từ có dữ liệu). Bấm thẻ vẫn là nghe. Đường dẫn cat › họ -at, Quay lại (Backspace).',
+      ir: 'Họ theo âm: “-ir” /ɜː/ — bird, girl, shirt, skirt (đã học), first, third (sắp học); bẫy “fire” /ˈfaɪə/. Đi từ Khám phá “bird”: bird được tô sáng. “Ghép” chỉ hiện ở từ ghép được với vần “-irt” (shirt, skirt).',
+      loading: 'Khung xương vòng thẻ, ô bẫy và đoạn văn.', empty: 'Họ vần chưa có từ.', error: 'Không tải được họ vần.' },
+    states: {
+      normal: shell, translated: shell, explore: shell, ir: shell,
+      loading: function () { return lessonWrap(skel()); },
+      empty: function () { return lessonWrap(B.stateBlock({ kind: 'empty', title: 'Họ vần “-at” chưa có từ nào', text: 'Bông đang tìm các từ cùng vần. Cậu quay lại sau nhé!', action: B.btn({ label: 'Về bản đồ', icon: 'map', size: 'l' }) })); },
+      error: function () { return lessonWrap(B.stateBlock({ kind: 'error', title: 'Chưa tải được họ vần', text: 'Mạng chập chờn một chút. Không phải lỗi của cậu đâu!' })); }
+    },
+    mount: { all: function (scr, ctx) { var c = CFG[ctx.state]; if (!c) return; W.app(scr.querySelector('[data-wapp]'), ctx, JSON.parse(JSON.stringify(c))); } }
+  });
+})();
+</script>
+</body>
+</html>

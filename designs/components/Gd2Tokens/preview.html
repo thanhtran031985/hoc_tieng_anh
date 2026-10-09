@@ -1,0 +1,50 @@
+<!-- @dsCard group="Chung · Màu" height=760 subtitle="Token bổ sung giai đoạn 2 (Tiểu học): đọc to & ghép âm, ghi âm, bong bóng, đập chuột, đua xe, năng lượng trùm, cổng lên cấp, rồng Bông lớn lên; cỡ và thời lượng mới" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Token bổ sung giai đoạn 2 — preview</title>
+<style>
+  body { margin: 0; background: var(--bg); }
+  .p { padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4) var(--space-5); }
+  section { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+  h3 { margin: 0; font: 800 17px/22px var(--font-display); color: var(--ink); }
+  .sw { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+  .sw div { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .sw i { width: 26px; height: 26px; border-radius: 7px; box-shadow: inset 0 0 0 2px rgba(43, 36, 64, .1); flex: none; }
+  code { font: 700 12px/15px var(--font-body); color: var(--ink-soft); }
+  .demo { display: flex; align-items: center; gap: var(--space-3); min-height: 40px; }
+  .hl { font: 800 20px/28px var(--font-display); } .hl span { background: var(--read-highlight); border-radius: 6px; padding: 0 3px; }
+  .slot { width: 40px; height: 40px; border-radius: 10px; border: 3px dashed var(--line-strong); background: var(--phon-slot); }
+  .wave { display: flex; align-items: center; gap: 3px; height: 34px; } .wave i { width: 6px; border-radius: 3px; background: var(--rec); }
+  .bar { flex: 1; height: 10px; border-radius: 99px; background: var(--rec-track); overflow: hidden; } .bar span { display: block; width: 62%; height: 100%; background: var(--rec); }
+  .bb { width: 40px; height: 40px; border-radius: 50%; box-shadow: inset 0 0 0 3px var(--bubble-shine); }
+  .road { flex: 1; height: 34px; border-radius: 8px; background: var(--race-track); box-shadow: inset 0 3px 0 var(--race-track-edge), inset 0 -3px 0 var(--race-track-edge); position: relative; }
+  .road .g { position: absolute; left: 20%; top: 6px; width: 44px; height: 22px; border-radius: 8px; background: var(--race-ghost); border: 2px dashed var(--race-ghost-line); }
+  .road .f { position: absolute; right: 0; top: 0; bottom: 0; width: 14px; border-radius: 0 8px 8px 0; background: repeating-conic-gradient(var(--race-finish-a) 0 25%, var(--race-finish-b) 0 50%) 0 0 / 7px 7px; }
+  .hole { width: 60px; height: 22px; border-radius: 50%; background: var(--mole-hole); box-shadow: 0 0 0 5px var(--mole-hole-rim); }
+  .lawn { padding: 10px 14px; border-radius: 10px; background: var(--mole-ground); box-shadow: inset 0 -5px 0 var(--mole-ground-shade); }
+  .sz { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+  .sz div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line); padding: 2px 0; }
+  .sz b { font: 800 13px/18px var(--font-body); color: var(--ink); }
+</style></head>
+<body>
+<div class="p" id="p"></div>
+<script>
+(function () {
+  var B = window.Bong, L = B.L;
+  function sw(list) { return '<div class="sw">' + list.map(function (n) { return '<div><i style="background:var(--' + n + ')"></i><code>' + n + '</code></div>'; }).join('') + '</div>'; }
+  var waves = [10, 22, 30, 16, 26, 12, 30, 20, 8].map(function (h) { return '<i style="height:' + h + 'px"></i>'; }).join('');
+  document.getElementById('p').innerHTML =
+    '<section><h3>Đọc to · ghép âm</h3><div class="demo"><span class="hl" lang="en">The <span>kite</span> flies</span><span class="slot"></span></div>' + sw(['read-highlight', 'phon-slot']) + '<code>duration-read-word · 420ms / chữ</code></section>' +
+    '<section><h3>Ghi âm (luyện nói)</h3><div class="demo"><span class="wave">' + waves + '</span><span class="bar"><span></span></span></div>' + sw(['rec', 'rec-soft', 'rec-track']) + '<code>duration-rec-max · 10000ms · size-mic 132px</code></section>' +
+    '<section><h3>Bong bóng từ vựng</h3><div class="demo" style="background:linear-gradient(var(--game-sky),var(--game-sky-2));border-radius:10px;padding:6px">' + [1, 2, 3, 4, 5].map(function (i) { return '<span class="bb" style="background:var(--bubble-' + i + ')"></span>'; }).join('') + '</div>' + sw(['bubble-1', 'bubble-2', 'bubble-3', 'bubble-4', 'bubble-5', 'bubble-shine', 'game-sky', 'game-sky-2']) + '</section>' +
+    '<section><h3>Đập chuột chữ cái</h3><div class="demo"><span class="lawn"><span class="hole" style="display:block"></span></span></div>' + sw(['mole-ground', 'mole-ground-shade', 'mole-hole', 'mole-hole-rim', 'mole-fur', 'mole-belly', 'mole-tongue']) + '</section>' +
+    '<section><h3>Đua xe trả lời</h3><div class="demo" style="background:var(--race-grass);border-radius:10px;padding:6px"><span class="road"><span class="g"></span><span class="f"></span></span></div>' + sw(['race-grass', 'race-track', 'race-track-edge', 'race-ghost', 'race-ghost-line', 'race-finish-a', 'race-finish-b']) + '</section>' +
+    '<section><h3>Trận trùm</h3><div class="demo">' + L.monkey('tease', 44) + '<div class="b-energy" style="flex:1"><div class="b-energy__bar"><span style="width:66%"></span></div></div><b style="font:800 16px var(--font-display)">4/6</b></div>' + sw(['boss-energy', 'boss-energy-shade', 'boss-energy-track', 'boss-fur', 'boss-face']) + '</section>' +
+    '<section><h3>Cổng thi lên cấp</h3><div class="demo" style="gap:16px"><span style="width:56px">' + L.gate({ locked: true, left: 1 }).replace(/<span class="b-gate__lab">[\s\S]*?<\/span><\/button>/, '</button>') + '</span><span style="width:56px">' + L.gate({ locked: false }).replace(/<span class="b-gate__lab">[\s\S]*?<\/span><\/button>/, '</button>') + '</span></div>' + sw(['gate-stone', 'gate-stone-shade', 'gate-glow', 'gate-dark']) + '</section>' +
+    '<section><h3>Rồng Bông lớn lên</h3><div class="demo" style="gap:0">' + [1, 2, 4, 5].map(function (n) { return '<span style="width:60px">' + L.grow(n, 'chao', 60) + '</span>'; }).join('') + '</div>' + sw(['dragon-egg', 'dragon-egg-spot', 'dragon-leaf', 'dragon-scarf-4', 'dragon-scarf-5']) + '</section>' +
+    '<section><h3>Cỡ và thời lượng</h3><div class="sz">' + [['size-phon-tile', '104px'], ['size-mic', '132px'], ['size-bubble', '150px'], ['size-mole-hole', '150px'], ['size-race-lane', '76px'], ['size-test-dot', '14px'], ['size-boss', '260px'], ['duration-read-word', '420ms'], ['duration-rec-max', '10000ms'], ['duration-bubble-rise', '11000ms'], ['duration-mole-up', '3200ms']].map(function (x) { return '<div><code>' + x[0] + '</code><b>' + x[1] + '</b></div>'; }).join('') + '</div><code>Thời lượng là tốc độ chuyển động, không phải đồng hồ đếm ngược.</code></section>';
+  document.querySelectorAll('.b-gate').forEach(function (g) { g.style.width = '56px'; g.tabIndex = -1; });
+})();
+</script>
+</body>
+</html>

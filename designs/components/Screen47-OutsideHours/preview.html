@@ -1,0 +1,75 @@
+<!-- @dsCard group="Màn Tiểu học · 40–43 Sổ từ, in, học tập trung, ngoài giờ" height=700 subtitle="43. Chưa đến giờ học (Screen47-OutsideHours): mở web ngoài khung giờ bố mẹ cho phép — rồng Bông chơi ngoài vườn ban ngày, “Giờ học của cậu bắt đầu lúc 17:00 nhé!”, các ngày được học trong tuần, nút “Bố mẹ mở” (nhập PIN). Cùng họ với màn Hết giờ học (ban đêm)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Chưa đến giờ học — preview</title>
+<style>
+  .scr { background: linear-gradient(var(--garden-sky), var(--garden-sky) 62%, var(--garden-grass) 62%); overflow: hidden; }
+  .sun { position: absolute; right: 9%; top: 9%; width: 120px; height: 120px; border-radius: 50%; background: var(--star); box-shadow: 0 0 0 18px rgba(255, 210, 63, .25), 0 0 0 40px rgba(255, 210, 63, .12); }
+  .cl { position: absolute; background: var(--surface); border-radius: var(--radius-pill); opacity: .9; }
+  .cl::before { content: ""; position: absolute; background: inherit; border-radius: 50%; width: 50%; height: 150%; left: 18%; top: -62%; }
+  .hill { position: absolute; left: -5%; right: -5%; bottom: 0; height: 40%; background: var(--garden-grass); border-radius: 50% 50% 0 0 / 22% 22% 0 0; box-shadow: inset 0 14px 0 var(--garden-grass-shade); }
+  .fl { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--garden-flower); box-shadow: 0 0 0 5px var(--surface); }
+  .day { flex: 1; min-height: 0; position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: var(--space-12); width: 100%; max-width: var(--size-content-max); margin: 0 auto; padding: 0 var(--space-12); box-sizing: border-box; }
+  .play { box-sizing: border-box; position: relative; display: flex; justify-content: center; align-items: flex-end; height: 100%; padding-bottom: 8%; }
+  .play .b-dragon { width: min(300px, 36cqh); height: auto; position: relative; z-index: 2; animation: b-hop 1.8s ease-in-out infinite; }
+  .play .ball { position: absolute; left: 18%; bottom: 10%; z-index: 3; } .play .ball .b-pic { width: min(84px, 10cqh); height: auto; }
+  .play .kite { position: absolute; right: 8%; top: 8%; } .play .kite .b-pic { width: min(110px, 13cqh); height: auto; transform: rotate(-14deg); }
+  .msg { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-raised); padding: var(--space-6) var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); position: relative; z-index: 2; }
+  .msg h1 { margin: 0; }
+  .when { display: inline-flex; align-items: center; gap: var(--space-2); align-self: flex-start; background: var(--price-chip); color: var(--price-chip-ink); border-radius: var(--radius-pill); padding: 6px 16px 6px 10px; font: 800 18px/24px var(--font-body); }
+  .wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .wd { border-radius: var(--radius-md); padding: 8px 4px; text-align: center; background: var(--surface-sunk); color: var(--ink-soft); font: 800 15px/18px var(--font-body); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .wd small { font: 700 12px/15px var(--font-body); }
+  .wd.on { background: var(--day-allowed); color: var(--success-shade); }
+  .wd.today { box-shadow: inset 0 0 0 3px var(--ink); color: var(--ink); }
+  .acts { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+  .acts .caption { flex: 1; min-width: 200px; }
+  .pin { display: flex; flex-direction: column; gap: 8px; text-align: left; margin-top: var(--space-3); }
+  .pin input { letter-spacing: .4em; font-size: 26px; text-align: center; }
+  .pin .err[hidden] { display: none; }
+  .pin input[aria-invalid="true"] { border-color: var(--retry); }
+  .pin .err { color: var(--retry-shade); font: 800 15px/20px var(--font-body); display: flex; gap: 6px; align-items: center; }
+  .dsk { display: block; background: var(--surface-sunk); border-radius: var(--radius-pill); }
+  @media (prefers-reduced-motion: reduce) { .play .b-dragon { animation: none; } }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong;
+  var DAYS = [['T2', 1], ['T3', 1], ['T4', 1], ['T5', 1], ['T6', 1], ['T7', 1], ['CN', 0]], TODAY = 5;
+  var scene = '<span class="sun" aria-hidden="true"></span><span class="cl" style="left:8%;top:12%;width:150px;height:42px" aria-hidden="true"></span><span class="cl" style="left:38%;top:7%;width:110px;height:32px" aria-hidden="true"></span><span class="hill" aria-hidden="true"></span>' +
+    [[6, 82], [14, 90], [30, 86], [44, 93], [58, 88], [72, 92], [86, 84], [94, 91]].map(function (p) { return '<span class="fl" style="left:' + p[0] + '%;top:' + p[1] + '%" aria-hidden="true"></span>'; }).join('');
+  function week(off) { return '<ul class="wk" aria-label="Các ngày được học trong tuần">' + DAYS.map(function (d, i) { return '<li class="wd' + (d[1] ? ' on' : '') + (i === TODAY ? ' today' : '') + '">' + (off ? '<span class="dsk" style="width:24px;height:18px"></span>' : d[0] + '<small>' + (d[1] ? '17:00–17:30' : 'Nghỉ') + '</small>' + (i === TODAY ? '<small>Hôm nay</small>' : '')) + '<span class="b-sr">' + (d[1] ? ' được học 17:00 đến 17:30' : ' ngày nghỉ') + '</span></li>'; }).join('') + '</ul>'; }
+  function page(title, text, when, w, err) {
+    return scene + '<div class="day"><div class="play"><span class="kite" aria-hidden="true">' + B.pic('kite', 110) + '</span>' + B.dragon('vui', 300, { hat: 'sunhat', top: 'tee' }) + '<span class="ball" aria-hidden="true">' + B.pic('ball', 84) + '</span></div>' +
+      '<section class="msg" aria-labelledby="oh-t"><h1 class="display-l" id="oh-t">' + title + '</h1><p class="body-l" style="margin:0">' + text + '</p>' + when + (err || '') + '<div><h2 class="label" style="margin:0 0 8px">Ngày được học trong tuần</h2>' + w + '</div>' +
+      '<div class="acts"><span class="caption b-muted">Bố mẹ đặt giờ học trong Khu bố mẹ › Cài đặt.</span>' + B.btn({ label: 'Bố mẹ mở', icon: 'lock', size: 'l', variant: 'secondary', attrs: 'data-parent' }) + '</div></section></div>';
+  }
+  B.screen({
+    level: 3, fit: true,
+    labels: { empty: 'Trống (ngày nghỉ)' },
+    notes: { normal: 'Ban ngày, cùng họ màn Hết giờ học (ban đêm): trời `garden-sky`, cỏ `garden-grass`, hoa `garden-flower`; Bông đội mũ rơm chơi diều, bóng. Không có nút vào học cho bé. Ngày được học `day-allowed` + giờ; hôm nay viền đậm. “Bố mẹ mở” → hộp thoại nhập PIN 4–6 số (báo lỗi dưới ô), đúng thì mở 30 phút (PIN mẫu: 2468).', loading: 'Đang tải lịch học: khung xương ngày.', empty: 'Hôm nay là ngày nghỉ theo lịch bố mẹ.', error: 'Không tải được lịch: vẫn có nút Thử lại và Bố mẹ mở.' },
+    states: {
+      normal: function () { return page('Chưa đến giờ học!', 'Bông đang chơi ngoài vườn. <b>Giờ học của cậu bắt đầu lúc 17:00 nhé!</b>', '<span class="when">' + B.icon('clock', 22) + 'Còn 2 giờ 15 phút nữa · hôm nay 17:00–17:30</span>', week()); },
+      loading: function () { return page('Chưa đến giờ học!', 'Bông đang xem lịch học của cậu…', '<span class="dsk" style="width:300px;height:36px"></span>', week(true)); },
+      empty: function () { TODAY = 6; var h = page('Hôm nay là ngày nghỉ!', 'Chủ nhật mình nghỉ học nhé. Hẹn cậu <b>thứ Hai lúc 17:00</b>!', '<span class="when">' + B.icon('sunrise', 22) + 'Thứ Hai · 17:00–17:30</span>', week()); TODAY = 5; return h; },
+      error: function () { return page('Chưa đến giờ học!', 'Giờ học của cậu bắt đầu lúc 17:00 nhé!', '', '<p class="body b-muted" style="margin:0">Chưa tải được lịch tuần.</p>', '<div role="alert" style="display:flex;gap:12px;align-items:center;background:var(--retry-soft);border-radius:var(--radius-md);padding:10px 14px">' + B.icon('wifi', 24) + '<span class="body" style="flex:1">Bông chưa xem được lịch học.</span>' + B.btn({ label: 'Thử lại', size: 's', variant: 'secondary', icon: 'replay', attrs: 'data-retry' }) + '</div>'); }
+    },
+    mount: { all: function (scr, ctx) {
+      var p = scr.querySelector('[data-parent]'); if (!p) return;
+      p.addEventListener('click', function () {
+        ctx.dialog({ expr: 'chao', title: 'Bố mẹ mở giờ học', body: 'Nhập mã PIN bố mẹ (4–6 số) để cho bé học thêm 30 phút ngoài giờ.<form class="pin" data-pinform><label class="label" for="pin">Mã PIN</label><input class="b-input" id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" aria-describedby="pin-e"><span class="err" id="pin-e" role="alert" hidden>' + B.icon('replay', 18) + '<span></span></span></form>',
+          actions: [{ label: 'Mở 30 phút', variant: 'primary', key: 'Enter' }, { label: 'Huỷ', variant: 'secondary' }] });
+        var ovs = ctx.scr.querySelectorAll('.b-overlay'), w = ovs[ovs.length - 1], inp = w.querySelector('#pin'), er = w.querySelector('#pin-e'), ok = w.querySelector('[data-dlg="0"]');
+        setTimeout(function () { inp.focus(); }, 60);
+        function check(e) { var v = inp.value.trim(), m = !/^\d{4,6}$/.test(v) ? 'Mã PIN gồm 4 đến 6 chữ số.' : v !== '2468' ? 'Mã PIN chưa đúng. Bố mẹ thử lại nhé.' : ''; if (m) { e.preventDefault(); e.stopImmediatePropagation(); er.hidden = false; er.querySelector('span').textContent = m; inp.setAttribute('aria-invalid', 'true'); inp.focus(); return false; } return true; }
+        ok.addEventListener('click', check, true);
+        w.querySelector('[data-pinform]').addEventListener('submit', function (e) { e.preventDefault(); if (check(e) !== false) ok.click(); });
+      });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

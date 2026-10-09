@@ -1,0 +1,47 @@
+<!-- @dsCard group="Màn Tiểu học · 44–49 Khám phá từ, Họ vần, Ghép chữ" height=700 subtitle="49a. Đọc cả đoạn và dịch nghĩa (ReadAloudParagraph): khung đoạn văn dùng chung (trong Khám phá từ và Họ vần) — “Đọc cả đoạn” (P) chữ sáng theo giọng, Tạm dừng, Đọc chậm; bấm câu để nghe riêng, bấm từ để nghe + nghĩa trong bong bóng; “Dịch nghĩa” (T) hiện bản dịch dưới từng câu, hoặc dịch riêng một câu. 3 trạng thái: chưa dịch · đang đọc · đã dịch" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Đọc cả đoạn và dịch nghĩa — preview</title>
+<style>
+  .rp { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; padding: 16px 48px; }
+  .rp .b-rap { max-width: 1060px; }
+  .rp__how { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; max-width: 1060px; font: 700 15px/20px var(--font-body); color: var(--ink-soft); }
+  .rp__how span { display: inline-flex; align-items: center; gap: 6px; }
+  .rp__h { display: flex; align-items: center; gap: 12px; align-self: stretch; max-width: 1060px; margin: 0 auto; width: 100%; }
+  .rp__h .b-dragon { width: 64px; height: auto; } .rp__h p { margin: 0; font: 700 18px/24px var(--font-body); color: var(--ink); }
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var B = window.Bong, W = B.W;
+  var SENTS = W.para('bird');
+  function page(o) {
+    return '<div class="rp"><div class="rp__h">' + B.dragon(o.reading ? 'vui' : 'chao', 64) + '<p>' + (o.tr ? 'Bản dịch tiếng Việt hiện dưới từng câu, chữ nhỏ và nhạt hơn. Bấm T để ẩn.' : o.reading ? 'Bông đang đọc: câu đang đọc nền vàng nhạt, chữ đang đọc nền vàng đậm.' : 'Nghe cả đoạn trước, tự đoán nghĩa rồi mới bấm Dịch nghĩa nhé!') + '</p></div>' +
+      W.paragraph({ sents: SENTS, title: 'Đọc cả đoạn về bird', tr: o.tr, one: o.one, reading: o.reading }) +
+      '<div class="rp__how"><span>' + B.key('P') + 'đọc / tạm dừng</span><span>' + B.key('T') + 'dịch nghĩa cả đoạn</span><span>' + B.icon('translate', 18) + 'dịch riêng một câu</span><span>' + B.icon('speaker', 18) + 'hoặc bấm vào câu: nghe riêng câu đó</span><span>bấm một từ: nghe + nghĩa ngắn</span></div></div>';
+  }
+  B.screen({
+    fit: true, level: 2, defaultState: 'plain', order: ['plain', 'reading', 'translated', 'one'], labels: { plain: 'Chưa dịch', reading: 'Đang đọc', translated: 'Đã dịch', one: 'Dịch riêng 1 câu' },
+    notes: {
+      plain: 'Mặc định ẩn bản dịch để bé tự nghe hiểu trước. Đầu khung: Đọc cả đoạn (P), Đọc chậm (bật thì mỗi chữ sáng `duration-read-word-slow` 640ms, giọng `read-rate-slow` 0.6), Dịch nghĩa (T, aria-pressed). Mỗi câu: nút dịch riêng ở đầu, nút nghe ở cuối; bấm vào câu để nghe riêng câu đó; bấm một từ để nghe và hiện nghĩa ngắn trong bong bóng.',
+      reading: 'Đang đọc: câu đang đọc nền `read-highlight`, chữ đang đọc nền `read-word-bg` (chữ `read-word-ink`), chạy theo giọng (`duration-read-word` 420ms mỗi chữ). Nút Đọc đổi thành Tạm dừng (P); dừng giữa chừng thì nút thành “Đọc tiếp”.',
+      translated: 'Đã dịch: bản dịch tiếng Việt hiện ngay dưới từng câu — kiểu chữ `translation` (18/26), màu `trans-ink`, vạch trái `trans-rule`. Bấm T hoặc nút Dịch nghĩa lần nữa để ẩn.',
+      one: 'Dịch riêng một câu: bấm biểu tượng dịch ở đầu câu 3 — chỉ câu đó hiện bản dịch.' },
+    states: {
+      plain: function () { return page({}); },
+      reading: function () { return page({ reading: { s: 2, w: 12 } }); },
+      translated: function () { return page({ tr: true }); },
+      one: function () { return page({ one: [false, false, true] }); }
+    },
+    mount: { all: function (scr, ctx) {
+      var r = W.wireParagraph(scr.querySelector('[data-rap]'));
+      ctx.onKey(function (e) { r.key(e); });
+      if (ctx.state === 'reading') ctx.later(function () { r.toggle(); }, 60);
+      var f = scr.querySelector(ctx.state === 'reading' ? '[data-rap-pause]' : ctx.state === 'one' ? '[data-rap-one="2"]' : ctx.state === 'translated' ? '[data-rap-tr]' : '[data-rap-play]'); f && f.focus({ preventScroll: true });
+    } }
+  });
+})();
+</script>
+</body>
+</html>

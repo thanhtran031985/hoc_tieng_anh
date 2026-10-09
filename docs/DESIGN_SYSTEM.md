@@ -4,7 +4,7 @@ Nguồn duy nhất cho mọi màu, chữ, khoảng cách, bo góc, bóng của w
 
 Nguồn: bản thiết kế Claude Design "Học cùng Bông" (https://claude.ai/artifact/JGCVaSgHCW5ZZn889noG5m), bản tải về nằm trong `designs/` (`tokens.json`, `README.md`, `components/*`). Khi thiết kế được cập nhật, sinh lại tệp này từ `designs/tokens.json`.
 
-Phạm vi: **lõi chung + bộ Tiểu học** (theme `tieu-hoc`), **bộ THCS** (theme `thcs` sáng, `thcs-toi` tối) và **khu người lớn** (bố mẹ + quản trị, luôn dùng `thcs` sáng). Giá trị Tiểu học không đổi so với bản trước; bản này chỉ thêm token và giá trị cho THCS, chế độ tối, khu người lớn.
+Phạm vi: **lõi chung + bộ Tiểu học** (theme `tieu-hoc`), **bộ THCS** (theme `thcs` sáng, `thcs-toi` tối) và **khu người lớn** (bố mẹ + quản trị, luôn dùng `thcs` sáng). Bản 09/10/2026 thêm token giai đoạn 2 (thẻ `Gd2Tokens`, `Gd3Tokens`, `Gd4Tokens`): dạng bài mới, trò chơi, trùm, phần thưởng, phòng của Bông, bản in, Khám phá từ, Họ vần. Giá trị các token đã có không đổi.
 
 Token có nhiều giá trị được ghi dạng `TH … · THCS … · Tối …` (TH = `tieu-hoc`, THCS = `thcs`, Tối = `thcs-toi`). Theme chưa ghi riêng thì dùng giá trị của theme đứng trước.
 
@@ -187,9 +187,80 @@ Khu bố mẹ: Cổng vào (PIN 4–6 số / mật khẩu) · Tổng quan · K�
 - **Khung chương trình** trong cây lộ trình: chủ đề có trong khung mà chưa có bài mang nhãn **“Chưa có bài”** — trung tính, viền nét đứt (`adm-status-none-ink`, `adm-status-none-line`), khác Nháp (nền xám) và Đã xuất bản (xanh) — kèm số từ mục tiêu. Bấm vào mở bảng từ mục tiêu với “Xuất Excel để điền” và “Nhập Excel”.
 - Bảng điều khiển có thẻ **Chủ đề chưa có bài** theo từng cấp (cột màu cấp + danh sách).
 
+### Bổ sung giai đoạn 2 · Tiểu học (cấp 1–5)
+
+#### Khung chung (`Bong.L`)
+Mọi dạng bài và trò chơi mới nằm trong khung của “Nghe và chọn hình”: × mở hộp thoại “Dừng bài học?”, thanh tiến độ, chân bài Nghe lại (Space) · Gợi ý (H) · Kiểm tra/Tiếp tục (Enter). Đúng: xanh + sao bay vào thanh tiến độ. Chưa đúng: cam nhẹ, Bông động viên, làm lại; **sai 2 lần tự bật gợi ý**. Không có màn thua, không trừ điểm, không đếm ngược. Mọi từ và câu tiếng Anh có loa; chữ trong đoạn đọc là nút `.b-kw` bấm để nghe + nghĩa.
+
+#### 7 dạng bài mới
+Ghép âm (`Screen23-Phonics`) · Truyện tranh có đọc to (`Screen24-Story`) · Luyện nói (`Screen25-Speak`, ghi âm màu tím `rec`, có trạng thái chưa cho micro / không có micro) · Sắp xếp từ thành câu (`Screen26-SentenceOrder`) · Nghe và gõ (`Screen27-Dictation`, gợi ý bằng phím ? vì H phải gõ được) · Điền từ vào câu (`Screen28-FillBlank`) · Đọc hiểu ngắn (`Screen29-ShortReading`).
+
+#### 3 mini game
+Mỗi game là một bước trong bài: lớp phủ bắt đầu (1 dòng cách chơi có hình, Bắt đầu · Enter), tạm dừng Esc/⏸ (Chơi tiếp · Thoát), bảng kết thúc (số đúng, sao, xu, Tiếp tục). Chân bài game `Bong.L.gfoot`: Bông + lời nhắn, Nghe lại, Gợi ý, điểm. Thời lượng chuyển động (`duration-bubble-rise`, `duration-mole-up`) là **tốc độ**, không phải đồng hồ.
+- Bong bóng từ vựng (`Screen30-Bubbles`): phím 1–5 in trên bóng; bóng bay mất sẽ bay lại.
+- Đập chuột chữ cái (`Screen31-WhackLetters`): phím 1–9 theo bàn phím số; đập sai chuột lè lưỡi.
+- Đua xe trả lời (`Screen32-Race`): xe ma = chính bé lần trước, đi theo **số câu**, không theo giờ; lần đầu không có xe ma.
+
+#### Trùm và bài thi lên cấp
+- Trận trùm (`Screen33-Boss`): trùm dễ thương theo vùng (Vua Khỉ Lém – Con vật). Thanh **năng lượng của trùm** (`boss-energy`, vàng cam, luôn kèm số) giảm khi bé đúng; trùm không bao giờ thắng; cuối trận trùm làm bạn.
+- Cổng lên cấp (`LevelGate`) ở cuối đường đảo (`Screen34-IslandMapGate`, màn mới): khoá hiện “Còn N vùng”, mở thì sáng `gate-glow`.
+- Giới thiệu bài thi (`Screen35-LevelTestIntro`): 20 câu, trộn dạng bài, không đếm giờ, cần 80%; thanh tiến độ **20 chấm** (`size-test-dot`).
+- Đạt (`Screen36-LevelUp`): Bông lớn lên trước/sau, đảo mới mở, sao + xu + huy hiệu. Chưa đạt (`Screen37-LevelTestRetry`): không dùng chữ “trượt”; 2–3 chủ đề nên ôn, “Ôn chủ đề này”, “Thi lại sau”.
+
+#### Rồng Bông lớn lên (`MascotGrowth`)
+5 dáng theo cấp: Hạt giống (trong vỏ trứng) → Mầm non (mầm lá) → Lá xanh (dáng gốc) → Cành cây (khăn quàng) → Cây lớn (gần tuổi teen, sừng dài). Cùng nét vẽ, cùng 4 màu bé chọn, cả 8 biểu cảm dùng được cho mọi dáng: `Bong.dragon(expr, size, { stage })`.
+
+#### Token mới
+Xem thẻ “Token bổ sung giai đoạn 2”: `read-highlight`, `phon-slot`, `rec*`, `bubble-1…5`, `bubble-shine`, `game-sky*`, `mole-*`, `race-*`, `boss-*`, `gate-*`, `dragon-egg*`, `dragon-leaf`, `dragon-scarf-4/5`, `size-phon-tile`, `size-mic`, `size-bubble`, `size-mole-hole`, `size-race-lane`, `size-test-dot`, `size-boss`, `duration-read-word`, `duration-rec-max`, `duration-bubble-rise`, `duration-mole-up`. Không có màu đỏ: ghi âm dùng tím, năng lượng trùm dùng vàng cam.
+
+### Bổ sung đợt 5B · Phần thưởng, phòng của tớ, người lớn giai đoạn 2
+
+#### Phần thưởng (Tiểu học)
+- Bộ sưu tập · Sticker (`Screen38-Stickers`): album theo chủ đề (Con vật, Xe cộ, Khủng long, Trái cây) như cuốn sổ dán; sticker đã có viền trắng cắt bế, nghiêng nhẹ, tên tiếng Anh + loa; ô chưa có là bóng mờ nét đứt. ← → đổi trang.
+- Bộ sưu tập · Huy hiệu (`Screen39-Badges`): huy hiệu tròn vành vàng + ruy băng; chưa đạt thì xám kem + điều kiện + thanh tiến độ luôn kèm số (63/100 từ).
+- Nhận phần thưởng (`RewardPopup`): hộp quà lắc nhẹ → mở → sticker/huy hiệu, Bông chúc mừng, tên tiếng Anh tự đọc 1 lần, xu thưởng, “Cho vào bộ sưu tập”. Kết thúc bài có sticker bất ngờ: `Screen40-LessonEndSticker` (màn cũ giữ nguyên).
+- Xu thưởng là token họ `coins`: bài học 20, sticker 10, huy hiệu 50, trận trùm 30.
+
+#### Phòng của tớ
+- Phòng (`Screen41-MyRoom`): Xem (bấm đồ nghe tên tiếng Anh) và Trang trí (kéo thả; bàn phím Tab chọn, mũi tên di chuyển, R xoay, Delete cất kho); Tủ đồ mặc mũ, áo cho Bông.
+- Cửa hàng (`Screen42-Shop`): Nội thất · Quần áo · Mũ; giá theo token (`price-furniture-s/m/l` 40/80/150, `price-special` 400, `price-clothes` 60, `price-hat` 50). Không đủ xu: nút mờ, Bông nói còn thiếu bao nhiêu và gợi ý học thêm một bài. **Xu chỉ dùng trong trò chơi: không có tiền thật, không quảng cáo.**
+- Bông mặc đồ: `Bong.dragon(expr, size, { top: 'tee'|'stripe'|'raincoat', hat: 'cap'|'beanie'|'sunhat', stage })`; không truyền thì rồng y như cũ. Trang chủ có Bông mặc đồ + thẻ nổi Chuỗi ngày (thẻ nghỉ phép còn / đã dùng): `Screen43-HomeDressed`.
+
+#### Chi tiết Tiểu học
+- Sổ từ bổ sung (`Screen44-NotebookPlus`): đã gặp / đã thuộc, lọc cấp + chủ đề, thẻ phóng to, “In danh sách từ”.
+- Bản in (`Screen45-WordListPrint`): A4 dọc, chỉ `print-*` trắng đen, ô 3 dòng kẻ tập viết; bố cục theo em nên bản xem trên màn và bản in giống nhau.
+- Học tập trung (`LessonTools` + `Screen46-LessonFocus`): nút Toàn màn hình (F, Esc thoát trước khi hỏi dừng bài) và Âm thanh (Nhạc nền, Hiệu ứng, Âm lượng; giọng đọc luôn bật).
+- Chưa đến giờ học (`Screen47-OutsideHours`): ban ngày, Bông chơi ngoài vườn, giờ bắt đầu, các ngày được học, “Bố mẹ mở” bằng PIN.
+
+#### Khu người lớn · giai đoạn 2
+Khung `Bong.A.shell2` thêm mục mới vào menu (nhãn “Mới”), menu cũ giữ nguyên: Bố mẹ · “Tiến độ & mở khoá” (`Adult17-Progress`); Quản trị · “Truyện tranh” (`Adult19-StoryEditor`), “Âm phonics” (`Adult20-PhonicsSounds`), “Phần thưởng” (`Adult21-Rewards`). Câu hỏi dạng mới (`Adult18-QuestionTypes2`) mở trong Ngân hàng câu hỏi. Mở khoá thủ công màu tím `adm-unlocked-manual`; thiếu âm thanh màu cam `adm-audio-missing`.
+
+#### Token mới
+Xem thẻ “Token bổ sung đợt 5B” (`Gd3Tokens`): `album-*`, `sticker-*`, `badge-*`, `gift-*`, `room-*`, `price-chip*`, `owned-chip`, `outfit-*`, `streak-day*`, `freeze-card*`, `print-*`, `focus-scrim`, `volume-*`, `garden-*`, `day-allowed`, `adm-lock`, `adm-unlocked-manual`, `adm-audio-missing`, `size-sticker*`, `size-badge`, `size-shop-card`, `size-room-item`, `size-print-*`, cùng họ mới `coins`. Vẫn không có màu đỏ.
+
+### Bổ sung đợt 6 · Khám phá từ, Họ vần, Ghép chữ đầu
+
+#### Ba chức năng học từ (Tiểu học)
+- Khám phá từ (`Screen48-WordExplorer`): thẻ từ lớn bên trái toả ra 4–6 nhánh đường cong đánh số, mỗi nhánh một câu hỏi (What’s this? · What color is a bird? · What does a bird like to eat? · What does a bird have? · What can a bird do? · Where does a bird live?). Nhánh chưa mở có ô “?”, đang hỏi thì bé đoán bằng 2–3 hình (phím 1–3), đã mở hiện hình + từ có loa. Mở đủ: Bông chúc mừng, “Đọc cả đoạn”, Nói theo, In (`Screen49-WordExplorerPrint`, A4 trắng đen, tuỳ chọn kèm bản dịch).
+- Họ vần (`Screen50-WordFamily`): vần ở giữa (bấm nghe cả họ), các từ cùng vần quanh đó, **phần vần tô cùng một màu** `rime-ink` ở mọi từ; từ chưa học mờ với nhãn “Sắp học”; ô “Bẫy chính tả” cho từ cùng chữ khác âm (eat, what) có lời Bông. Họ theo âm: “-ir” /ɜː/.
+- Ghép chữ đầu (`Screen51-BuildFamily`): kéo, bấm hoặc gõ chữ đầu vào trước vần; từ thật thì hình hiện ra và bay vào “Đã tìm được”, từ không có thật (zat) thì Bông nói nhẹ; đủ 5 từ là xong.
+- Mỗi màn có 2 cách hiện: **trong khung bài học** (thanh tiến độ, “Dừng bài học?”, chân bài Nghe lại · Gợi ý · Kiểm tra) và **tự khám phá từ Sổ từ** (chỉ có nút Đóng, không tính điểm). Làm sai không bị phạt, không đếm ngược; bấm vào từ hay câu tiếng Anh nào cũng nghe được.
+
+#### Đọc cả đoạn và dịch nghĩa (`ReadAloudParagraph`)
+Khung đoạn văn dùng chung trong Khám phá từ và Họ vần: P đọc cả đoạn (câu đang đọc `read-highlight`, chữ đang đọc `read-word-bg`), Tạm dừng, Đọc chậm; bấm câu để nghe riêng, bấm từ để nghe + nghĩa trong bong bóng. T bật “Dịch nghĩa”: **mặc định ẩn** để bé tự nghe hiểu trước; bản dịch hiện dưới từng câu, chữ `translation` nhỏ hơn, màu `trans-ink` nhạt hơn; có thể dịch riêng một câu.
+
+#### Liên kết qua lại (`WordLinks`)
+Chỉ ở chế độ tự khám phá: Quay lại (Backspace), đường dẫn tối đa 4 bậc (bird › họ -ir › Ghép chữ), nút “Họ vần của bird: -ir”, nút Ghép · Khám phá trên thẻ họ vần, bấm từ đã tìm được để khám phá. Trong khung bài học thì ẩn. Một lượt đi đầy đủ: `Screen53-WordJourney`. Thẻ từ trong Sổ từ có thêm tab Thẻ từ · Khám phá · Họ vần (`Screen52-NotebookWordTabs`, tab chưa có dữ liệu thì ẩn).
+
+#### Khu quản trị
+Soạn Khám phá từ (`Adult22-WordExplorerEditor`, tab “Khám phá” trong ngăn kéo của Ngân hàng từ vựng) và Họ vần (`Adult23-WordFamilies`, mục menu mới “Họ vần” qua `Bong.A.shell3`): bộ câu hỏi mẫu theo nhóm, nhánh kéo thả, đáp án từ kho, hình nhiễu, đoạn văn ghép từ câu trả lời + dịch + giọng đọc tự động; từ thành viên “Cùng âm / Bẫy: khác âm”, gợi ý từ trong kho, chữ đầu không thành từ. Báo lỗi dưới ô, “Xem như học sinh”, Nháp/Xuất bản.
+
+#### Token mới
+Xem thẻ “Token bổ sung đợt 6” (`Gd4Tokens`): `rime-*`, `branch-*`, `q-mark-*`, `trap-*`, `trans-ink`, `trans-rule`, `read-word-*`, `links-*`, `crumb-*`, `soon-*`, `letter-tile`, `build-slot-bg`, `found-chip`, `fake-word-bg`, `size-word-card`, `size-branch-node`, `size-branch-line`, `size-family-card`, `size-rime-hub`, `size-letter-tile`, `size-links-strip`, `size-print-answer-line`, `duration-branch-open`, `duration-read-word-slow`, kiểu chữ `translation`, họ mới `wordlab`. Vẫn không có màu đỏ.
+
 ### Dùng trong mã
 
-Tải `tokens.css`, `components/bundle.css` rồi `components/bundle.js` (không cần React). `window.Bong` cung cấp `icon`, `pic`, `dragon`, `avatar`, `btn`, `speak`, `key`, `stars`, `stat`, `topbar`, `bubble`, `stateBlock`, `feedback`, `dialog`, `burst`, `say` cùng dữ liệu mẫu `words`, `levels`, `kids`. Lớp CSS có tiền tố `b-`. Bộ THCS: gọi `Bong.suite('thcs')` rồi dùng `Bong.T` (`shell`, `btn`, `opt`, `chip`, `ring`, `bars`, `badge`, `dragon`, `tip`, `state`, `feedback`, `dialog`, `lessonHead`, `lessonFoot`); `Bong.setMode('thcs' | 'thcs-toi')` đổi sáng/tối. Lớp CSS THCS có tiền tố `t-`, đặt trong vùng `.thcs`. Kiểu chi tiết ở `components/index.d.ts`. Khu người lớn: gọi `Bong.suite('adult')` rồi dùng `Bong.A` (`shell`, `btn`, `kpi`, `status`, `field`, `validate`, `wireValidate`, `setErr`, `toggle`, `table`, `drawer`, `dialog`, `toast`, `sortable`, `vbars`, `hbars`, `line`, `empty`, `error`, `skel`) cùng dữ liệu mẫu `Bong.A.data`; lớp CSS tiền tố `a-` trong vùng `.adm`.
+Tải `tokens.css`, `components/bundle.css` rồi `components/bundle.js` (không cần React). `window.Bong` cung cấp `icon`, `pic`, `dragon`, `avatar`, `btn`, `speak`, `key`, `stars`, `stat`, `topbar`, `bubble`, `stateBlock`, `feedback`, `dialog`, `burst`, `say` cùng dữ liệu mẫu `words`, `levels`, `kids`. Lớp CSS có tiền tố `b-`. Bộ THCS: gọi `Bong.suite('thcs')` rồi dùng `Bong.T` (`shell`, `btn`, `opt`, `chip`, `ring`, `bars`, `badge`, `dragon`, `tip`, `state`, `feedback`, `dialog`, `lessonHead`, `lessonFoot`); `Bong.setMode('thcs' | 'thcs-toi')` đổi sáng/tối. Lớp CSS THCS có tiền tố `t-`, đặt trong vùng `.thcs`. Kiểu chi tiết ở `components/index.d.ts`. Khu người lớn: gọi `Bong.suite('adult')` rồi dùng `Bong.A` (`shell`, `btn`, `kpi`, `status`, `field`, `validate`, `wireValidate`, `setErr`, `toggle`, `table`, `drawer`, `dialog`, `toast`, `sortable`, `vbars`, `hbars`, `line`, `empty`, `error`, `skel`) cùng dữ liệu mẫu `Bong.A.data`; lớp CSS tiền tố `a-` trong vùng `.adm`. Giai đoạn 2 Tiểu học: `Bong.L` (`head`, `foot`, `dots`, `wire`, `ok`, `retry`, `say`, `words`, `overlay`, `gameStart`, `gamePause`, `gameEnd`, `gfoot`, `gmsg`, `grow`, `monkey`, `gate`), `Bong.LevelGate`, `Bong.MascotGrowth`. Đợt 5B: `Bong.R` (`sticker`, `medal`, `gift`, `reward`, `tools`, `wireTools`, `soundPanel`, `sound`, `roomWords`, `stickerWords`), `Bong.RewardPopup` (= `Bong.R.reward`), `Bong.LessonTools` (= `Bong.R.tools`; gắn phím F, Esc và bảng âm thanh bằng `Bong.R.wireTools`), `Bong.A.shell2`, và tuỳ chọn `top` / `hat` của `Bong.dragon`. Đợt 6: `Bong.W` (`explorer`, `lines`, `family`, `famLines`, `builder`, `paragraph`, `wireParagraph`, `links`, `linkBtn`, `frame`, `app`, dữ liệu mẫu `wx`, `fam`, `build`), `Bong.ReadAloudParagraph` (= `Bong.W.paragraph`), `Bong.WordLinks` (= `Bong.W.links`), `Bong.A.shell3`.
 
 
 ---
@@ -342,6 +413,141 @@ Tải `tokens.css`, `components/bundle.css` rồi `components/bundle.js` (không
 | `dragon-tool-head` | `#7d8597` | Đầu búa. |
 | `adm-status-none-ink` | `{ink-soft}` | Người lớn: chữ + icon nhãn “Chưa có bài” — chủ đề có trong khung chương trình nhưng chưa có bài. Trung tính, khác Nháp (nền xám) và Xuất bản (xanh). |
 | `adm-status-none-line` | `{line-strong}` | Người lớn: viền nét đứt của nhãn “Chưa có bài” và hàng chủ đề trống trong cây lộ trình. |
+| `read-highlight` | `#ffe48c` | Tiểu học: nền chữ đang được đọc (truyện đọc to, đoạn đọc hiểu) và ô chữ đang phát âm khi ghép âm. Chữ trên nền vẫn là `ink` (≥ 12:1). |
+| `phon-slot` | `#fffaf0` | Ghép âm: nền ô trống chờ ô chữ; viền nét đứt `line-strong`. |
+| `rec` | `#6a3fd6` | Luyện nói: nút micro khi đang ghi âm, sóng âm, vạch thời lượng. Tím (không dùng đỏ cho ghi âm). Chữ trên nền: `ink-on-dark`. |
+| `rec-soft` | `#efe8ff` | Luyện nói: vòng lan quanh micro khi đang ghi, nền thẻ kết quả nghe lại. |
+| `rec-track` | `#e6dccb` | Luyện nói: rãnh vạch thời lượng (tối đa `duration-rec-max`), cột sóng âm khi im lặng. |
+| `bubble-1` | `#bfe6ff` | Bong bóng từ vựng: màu bong bóng 1 (xanh trời). 5 màu xoay vòng, luôn kèm số phím in trên bong bóng. |
+| `bubble-2` | `#ffd3e8` | Bong bóng từ vựng: màu 2 (hồng). |
+| `bubble-3` | `#d3f5c2` | Bong bóng từ vựng: màu 3 (xanh lá). |
+| `bubble-4` | `#ffe7a8` | Bong bóng từ vựng: màu 4 (vàng). |
+| `bubble-5` | `#e3d9ff` | Bong bóng từ vựng: màu 5 (tím). |
+| `bubble-shine` | `#ffffff` | Bong bóng: vệt bóng sáng và viền trong. |
+| `game-sky` | `#d8f1ff` | Mini game: nền trời trên (bong bóng, đua xe). |
+| `game-sky-2` | `#f4fbff` | Mini game: nền trời dưới (dải chuyển). |
+| `mole-ground` | `#a4da7c` | Đập chuột: nền cỏ của sân. |
+| `mole-ground-shade` | `#7fbf57` | Đập chuột: gờ cỏ, viền sân. |
+| `mole-hole` | `#4a2f22` | Đập chuột: lòng hang. |
+| `mole-hole-rim` | `#9a6a46` | Đập chuột: miệng hang (đất). |
+| `mole-fur` | `#b98a66` | Đập chuột: lông chuột chũi. |
+| `mole-belly` | `#f3d8bb` | Đập chuột: mặt, bụng chuột; nền thẻ chữ trên tay chuột là `surface`. |
+| `mole-tongue` | `#ff8fa8` | Đập chuột: lưỡi lè vui khi bé đập chưa đúng. |
+| `race-grass` | `#a8df82` | Đua xe: cỏ hai bên đường. |
+| `race-track` | `#6f7889` | Đua xe: mặt đường. Chữ trên đường dùng `ink-on-dark`. |
+| `race-track-edge` | `#ffffff` | Đua xe: vạch mép đường, vạch chia làn. |
+| `race-ghost` | `rgba(239, 232, 255, 0.5)` | Đua xe: thân “xe ma” mờ, trong suốt một nửa trên mặt đường (thành tích lần trước của chính bé). |
+| `race-ghost-line` | `#d9ccff` | Đua xe: viền nét đứt của xe ma trên mặt đường `race-track`. Nhãn “Lần trước” dùng chữ `rec` trên `surface`. |
+| `race-finish-a` | `#2b2440` | Đua xe: ô cờ đích tối. |
+| `race-finish-b` | `#ffffff` | Đua xe: ô cờ đích sáng. |
+| `boss-energy` | `#ffb703` | Trận trùm: thanh “năng lượng của trùm” (vàng cam, không đỏ). Luôn kèm số “4/6” bằng chữ. |
+| `boss-energy-shade` | `#e08e00` | Trận trùm: gờ dưới thanh năng lượng. |
+| `boss-energy-track` | `#efe3cd` | Trận trùm: rãnh thanh năng lượng. |
+| `boss-fur` | `#b07a4f` | Trùm Vua Khỉ Lém: lông. |
+| `boss-face` | `#ffd9b0` | Trùm Vua Khỉ Lém: mặt, tai trong, bụng. |
+| `gate-stone` | `#d2c1a4` | Cổng thi lên cấp: đá cổng. |
+| `gate-stone-shade` | `#a38f72` | Cổng thi lên cấp: gờ đá, khe gạch. |
+| `gate-glow` | `#fff1a8` | Cổng thi lên cấp: ánh sáng trong cổng khi đã mở. |
+| `gate-dark` | `#4a3f5c` | Cổng thi lên cấp: lòng cổng tối và song chắn khi còn khoá. |
+| `dragon-egg` | `#fff6e3` | Rồng Bông dáng cấp 1 (Hạt giống): vỏ trứng. |
+| `dragon-egg-spot` | `#ffd59e` | Rồng Bông dáng cấp 1: chấm trên vỏ trứng. |
+| `dragon-leaf` | `{level-2}` | Rồng Bông dáng cấp 2 (Mầm non): mầm lá trên đầu. |
+| `dragon-scarf-4` | `{level-4}` | Rồng Bông dáng cấp 4 (Cành cây): khăn quàng. |
+| `dragon-scarf-5` | `{level-5}` | Rồng Bông dáng cấp 5 (Cây lớn): khăn quàng có đuôi. |
+| `album-page` | `#fffdf7` | Bộ sưu tập: nền trang album (giấy kem). Ô sticker đặt trên nền này. |
+| `album-spine` | `#c98b5a` | Bộ sưu tập: gáy album và mép bìa. |
+| `album-ring` | `#b0a491` | Bộ sưu tập: khoen gáy album. |
+| `album-animals` | `#ffe6c7` | Album Con vật: dải đầu trang và nền thẻ chủ đề (chữ `ink`). |
+| `album-vehicles` | `#d9eaff` | Album Xe cộ: dải đầu trang và nền thẻ chủ đề. |
+| `album-dino` | `#dff2cf` | Album Khủng long: dải đầu trang và nền thẻ chủ đề. |
+| `album-fruits` | `#ffe0ea` | Album Trái cây: dải đầu trang và nền thẻ chủ đề. |
+| `sticker-frame` | `#ffffff` | Sticker: viền trắng cắt bế quanh hình (độ dày `size-sticker-frame`). |
+| `sticker-shadow` | `rgba(91, 66, 30, 0.18)` | Sticker: bóng đổ dưới sticker đã dán. |
+| `sticker-slot` | `#f3ece0` | Sticker: nền ô chưa có (hình hiện bóng mờ). |
+| `sticker-slot-line` | `#d8c9b0` | Sticker: viền nét đứt của ô chưa có. |
+| `sticker-ghost` | `rgba(43, 36, 64, 0.14)` | Sticker: bóng mờ của sticker chưa có (đổ một màu lên hình). |
+| `sticker-new` | `#ff9f1c` | Sticker / huy hiệu: nhãn “Mới”. Chữ trên nền: `ink`. |
+| `badge-ring` | `{star}` | Huy hiệu: vành vàng của huy hiệu đã đạt. |
+| `badge-ring-shade` | `{star-shade}` | Huy hiệu: gờ vành, tia. |
+| `badge-ribbon-a` | `#3f8cff` | Huy hiệu: dải ruy băng trái. |
+| `badge-ribbon-b` | `#2bb38a` | Huy hiệu: dải ruy băng phải. |
+| `badge-locked` | `#e6dccb` | Huy hiệu chưa đạt: vành và lõi xám kem (luôn kèm điều kiện + thanh tiến độ bằng chữ). |
+| `badge-locked-ink` | `#8f8370` | Huy hiệu chưa đạt: biểu tượng mờ trong lõi (đồ hoạ, không phải chữ). |
+| `gift-box` | `#9b5de5` | Hộp quà (phần thưởng mới, sticker bất ngờ): thân hộp. |
+| `gift-box-shade` | `#7a3fc4` | Hộp quà: mặt bên, gờ nắp. |
+| `gift-ribbon` | `#ffc531` | Hộp quà: ruy băng và nơ. |
+| `gift-glow` | `#fff1a8` | Hộp quà: tia sáng khi nắp bật ra. |
+| `room-wall` | `#fde9c9` | Phòng của tớ: tường. |
+| `room-wall-pattern` | `#f9dcae` | Phòng của tớ: hoạ tiết chấm trên tường. |
+| `room-trim` | `#e9c08f` | Phòng của tớ: chân tường, viền cửa sổ. |
+| `room-floor` | `#dcae7a` | Phòng của tớ: sàn gỗ. |
+| `room-floor-line` | `#c48f5a` | Phòng của tớ: khe ván sàn. |
+| `room-window-sky` | `#bfe9f7` | Phòng của tớ: trời ngoài cửa sổ. |
+| `room-item-select` | `{brand}` | Phòng của tớ: vòng chọn đồ vật ở chế độ Trang trí (kèm tay nắm xoay). |
+| `room-drop` | `rgba(63, 140, 255, 0.14)` | Phòng của tớ: vùng đặt được khi đang kéo đồ. |
+| `room-shadow` | `rgba(91, 66, 30, 0.16)` | Phòng của tớ: bóng đổ dưới đồ đạc trên sàn. |
+| `price-chip` | `#fff3cc` | Cửa hàng: nền nhãn giá xu. |
+| `price-chip-ink` | `#7a5200` | Cửa hàng: chữ giá xu trên `price-chip` (≥ 7:1). |
+| `owned-chip` | `{success-soft}` | Cửa hàng: nền nhãn “Đã có”; chữ `success-shade`. |
+| `outfit-tee` | `#3f8cff` | Bông mặc đồ: áo phông. |
+| `outfit-stripe-a` | `#ffffff` | Bông mặc đồ: áo sọc, sọc sáng. |
+| `outfit-stripe-b` | `#2bb38a` | Bông mặc đồ: áo sọc, sọc xanh lá. |
+| `outfit-raincoat` | `#ffd23f` | Bông mặc đồ: áo mưa vàng. |
+| `outfit-cap` | `#3f8cff` | Bông mặc đồ: mũ lưỡi trai. |
+| `outfit-cap-brim` | `#2a6fd6` | Bông mặc đồ: vành mũ lưỡi trai. |
+| `outfit-beanie` | `#9b5de5` | Bông mặc đồ: mũ len. |
+| `outfit-pompom` | `#ffffff` | Bông mặc đồ: quả bông trên mũ len. |
+| `outfit-sunhat` | `#f2cf8a` | Bông mặc đồ: mũ rơm. |
+| `outfit-ribbon` | `#2bb38a` | Bông mặc đồ: dải ruy băng mũ rơm. |
+| `streak-day` | `{streak}` | Thẻ Chuỗi ngày: ngày đã học (nền lửa cam + dấu tick, kèm chữ thứ). |
+| `streak-day-soft` | `#ffe9d6` | Thẻ Chuỗi ngày: ngày hôm nay chưa học xong. |
+| `freeze-card` | `#bfe6ff` | Thẻ nghỉ phép của tuần (băng xanh): còn dùng được. |
+| `freeze-card-ink` | `#1d5f8c` | Thẻ nghỉ phép: chữ và biểu tượng trên `freeze-card` (≥ 4.5:1). |
+| `print-paper` | `#ffffff` | Bản in danh sách từ: giấy A4. |
+| `print-ink` | `#000000` | Bản in: chữ và kẻ bảng — chỉ trắng đen, in máy đen trắng không mất thông tin. |
+| `print-muted` | `#4d4d4d` | Bản in: chữ phụ (nghĩa, câu ví dụ). |
+| `print-rule` | `#9a9a9a` | Bản in: đường kẻ dòng trong ô tập viết. |
+| `focus-scrim` | `rgba(43, 36, 64, 0.04)` | Chế độ học tập trung: nền rất nhạt quanh khung bài để mắt tập trung giữa màn. |
+| `volume-track` | `{line}` | Bảng âm thanh: rãnh thanh kéo âm lượng. |
+| `volume-fill` | `{brand}` | Bảng âm thanh: phần đã kéo và núm kéo. |
+| `garden-sky` | `#cfeeff` | Chưa đến giờ học: trời ban ngày (cùng họ màn Hết giờ học ban đêm `bg-night`). |
+| `garden-grass` | `#9fd67a` | Chưa đến giờ học: bãi cỏ trong vườn. |
+| `garden-grass-shade` | `#7fbf57` | Chưa đến giờ học: gờ cỏ, bụi cây. |
+| `garden-flower` | `#ffb3c7` | Chưa đến giờ học: hoa trong vườn. |
+| `day-allowed` | `{success-soft}` | Chưa đến giờ học: ngày được học trong tuần (kèm dấu tick + chữ). |
+| `adm-lock` | `{ink-soft}` | Người lớn · Tiến độ của con: biểu tượng khoá của bài/chủ đề chưa mở. |
+| `adm-unlocked-manual` | `#6a3fd6` | Người lớn · Tiến độ của con: nhãn “Mở thủ công” (bố mẹ tự mở), tím `rec` để phân biệt với mở theo tiến độ. |
+| `adm-audio-missing` | `{field-error}` | Người lớn · Âm phonics: chấm “Thiếu âm thanh” (luôn kèm chữ). |
+| `rime-ink` | `#0a6e61` | Họ vần / Ghép chữ đầu: chữ của phần vần, tô cùng một màu ở mọi từ trong họ (≥ 4.5:1 trên `rime-bg` và `surface`). |
+| `rime-bg` | `#d4f3eb` | Họ vần: nền nhẹ sau phần vần trong từ, ô vần cố định ở Ghép chữ đầu. |
+| `rime-hub` | `#0b7a6b` | Họ vần: nút vần ở giữa (bấm để nghe cả họ). Chữ trên nền: `rime-hub-ink`. |
+| `rime-hub-ink` | `#ffffff` | Họ vần: chữ vần và phiên âm trên `rime-hub`. |
+| `rime-line` | `#8fd9c6` | Họ vần: đường nối từ vần ở giữa tới các thẻ từ. |
+| `branch-line` | `#cbc2df` | Khám phá từ: đường cong của nhánh chưa mở. |
+| `branch-line-open` | `#6cc48b` | Khám phá từ: đường cong của nhánh đã mở. |
+| `branch-line-active` | `{brand}` | Khám phá từ: đường cong của nhánh đang hỏi (nét đậm hơn). |
+| `branch-node` | `{surface}` | Khám phá từ: nền ô nhánh chưa mở / đang hỏi. |
+| `branch-node-open` | `{success-soft}` | Khám phá từ: nền ô nhánh đã mở. |
+| `branch-num` | `{brand-soft}` | Khám phá từ: nền số nhánh 1–6 (chữ `brand`). Đang hỏi: nền `brand`, chữ `on-brand`; đã mở: nền `success`. |
+| `q-mark-bg` | `#fff1c2` | Khám phá từ: ô “?” ở chỗ đáp án của nhánh chưa mở. |
+| `q-mark-ink` | `#7a5200` | Khám phá từ: dấu “?” trên `q-mark-bg` (≥ 4.5:1). |
+| `trap-bg` | `#fff4df` | Họ vần: nền ô “Bẫy chính tả” (từ cùng chữ, khác âm). |
+| `trap-line` | `#e5a23c` | Họ vần: viền nét đứt ô “Bẫy chính tả”. |
+| `trap-ink` | `#8a4600` | Họ vần: chữ cùng mặt chữ nhưng khác âm trong từ bẫy (gạch dưới lượn sóng, ≥ 4.5:1 trên `trap-bg`). |
+| `trans-ink` | `#655d7a` | Đọc cả đoạn: chữ bản dịch tiếng Việt dưới câu tiếng Anh — nhạt hơn `ink`, vẫn ≥ 4.5:1 trên `surface`. |
+| `trans-rule` | `#e4dcf3` | Đọc cả đoạn: vạch dọc nhỏ bên trái dòng dịch. |
+| `read-word-bg` | `#ffcd45` | Đọc cả đoạn: nền chữ đang được đọc (đậm hơn `read-highlight` của cả câu). |
+| `read-word-ink` | `{ink}` | Đọc cả đoạn: chữ đang được đọc. |
+| `links-bg` | `#e9f2ff` | Liên kết qua lại: nền dải nút liên kết + đường dẫn (chỉ ở chế độ tự khám phá). |
+| `links-line` | `#c3d9fb` | Liên kết qua lại: viền dải liên kết, mũi tên giữa các bậc đường dẫn. |
+| `crumb-ink` | `{ink-soft}` | Liên kết qua lại: bậc đã qua trong đường dẫn (bấm được). |
+| `crumb-now` | `{ink}` | Liên kết qua lại: bậc đang ở (đậm, không bấm). |
+| `soon-bg` | `#eeeaf5` | Họ vần: nhãn “Sắp học” trên thẻ từ bé chưa học (thẻ mờ). |
+| `soon-ink` | `#5a536d` | Họ vần: chữ nhãn “Sắp học”. |
+| `build-slot-bg` | `#f3f8ff` | Ghép chữ đầu: ô trống trước vần để thả chữ (viền nét đứt `brand`). |
+| `letter-tile` | `#fff9ee` | Ghép chữ đầu: nền ô chữ đầu kéo được. |
+| `found-chip` | `{success-soft}` | Ghép chữ đầu: thẻ từ trong danh sách “Đã tìm được”. |
+| `fake-word-bg` | `{retry-soft}` | Ghép chữ đầu: ô ghép khi ra từ không có thật (cam nhẹ, không phạt). |
 
 ## 3. Chữ
 
@@ -373,6 +579,7 @@ Họ chữ (Google Fonts, tải bằng `next/font/google`):
 | `label` | 16px / 20px / 800 | Nhãn, chip lọc, tên trên thẻ hồ sơ; phần dành cho bố mẹ. |
 | `caption` | 14px / 18px / 700 | Phiên âm, chú thích phụ. Không dùng cho lời hướng dẫn bé. |
 | `key` | 13px / 16px / 800 | Nhãn phím tắt (1–4, Enter, Space). |
+| `translation` | 18px / 26px / 600 | Bản dịch tiếng Việt dưới câu tiếng Anh (màu `trans-ink`), nhỏ hơn câu tiếng Anh. |
 
 **THCS · Be Vietnam Pro** (họ `thcs`)
 
@@ -489,6 +696,31 @@ Họ chữ (Google Fonts, tải bằng `next/font/google`):
 | `adm-content-max` | `1280px` | Người lớn: bề rộng nội dung tối đa, căn giữa trên màn 1920. |
 | `size-star-pip` | `28px` | Tiểu học: ngôi sao nhỏ trong thanh tiến độ 12 sao của bài xếp lớp. |
 | `size-memory-box` | `184px` | Tiểu học: rộng một hộp ghi nhớ trên màn Ôn tập hôm nay (5 hộp vừa 1366×768). |
+| `size-phon-tile` | `104px` | Ghép âm: cạnh ô chữ và ô trống (co theo chiều cao màn: min(104px, 12.5cqh)). |
+| `size-mic` | `132px` | Luyện nói: nút micro lớn (phím R). |
+| `size-bubble` | `150px` | Bong bóng từ vựng: đường kính bong bóng. |
+| `size-mole-hole` | `150px` | Đập chuột: rộng một hang (lưới 3×3). |
+| `size-race-lane` | `76px` | Đua xe: cao một làn đường. |
+| `size-test-dot` | `14px` | Bài thi lên cấp: chấm tiến độ (20 chấm). |
+| `size-boss` | `260px` | Trận trùm: cỡ nhân vật trùm ở màn mở đầu. |
+| `size-sticker` | `112px` | Sticker trong lưới album (cạnh ô). |
+| `size-sticker-frame` | `6px` | Độ dày viền trắng cắt bế của sticker. |
+| `size-badge` | `120px` | Huy hiệu trong lưới (đường kính). |
+| `size-shop-card` | `220px` | Rộng tối thiểu thẻ món đồ trong Cửa hàng. |
+| `size-room-item` | `120px` | Cỡ chuẩn một đồ vật trong Phòng của tớ (đồ lớn ×1.5). |
+| `size-print-page-w` | `210mm` | Bản in danh sách từ: rộng khổ A4 dọc. |
+| `size-print-page-h` | `297mm` | Bản in danh sách từ: cao khổ A4 dọc. |
+| `size-print-margin` | `14mm` | Bản in: lề trang. |
+| `size-print-pic` | `16mm` | Bản in: hình nhỏ cạnh từ. |
+| `size-print-write` | `48mm` | Bản in: rộng ô tập viết lại từ. |
+| `size-word-card` | `300px` | Khám phá từ: rộng thẻ từ lớn bên trái. |
+| `size-branch-node` | `72px` | Khám phá từ: cao tối thiểu ô nhánh (6 nhánh vừa 1366×768). |
+| `size-branch-line` | `4px` | Khám phá từ: độ dày đường cong nhánh (đang hỏi: ×1.5). |
+| `size-family-card` | `176px` | Họ vần: rộng thẻ từ quanh vần. |
+| `size-rime-hub` | `148px` | Họ vần: đường kính nút vần ở giữa. |
+| `size-letter-tile` | `76px` | Ghép chữ đầu: cạnh ô chữ đầu và ô thả chữ. |
+| `size-links-strip` | `56px` | Liên kết qua lại: cao dải liên kết ở đầu màn. |
+| `size-print-answer-line` | `9mm` | Bản in Khám phá từ: khoảng cách dòng trống để bé tự viết câu trả lời. |
 
 ## 8. Viền
 
@@ -505,6 +737,12 @@ Họ chữ (Google Fonts, tải bằng `next/font/google`):
 | `duration-base` | `220ms` | Rê chuột, đổi trạng thái thẻ. |
 | `duration-slide` | `320ms` | Dải phản hồi trượt lên. |
 | `duration-celebrate` | `900ms` | Sao bay, rồng nhảy mừng. |
+| `duration-rec-max` | `10000ms` | Luyện nói: ghi âm tối đa 10 giây, vạch thời lượng đầy dần. |
+| `duration-read-word` | `420ms` | Đọc to: thời gian sáng mỗi chữ khi giọng đọc chạy (ghép âm dùng 2 lần giá trị này mỗi âm). |
+| `duration-bubble-rise` | `11000ms` | Bong bóng: thời gian một bong bóng bay từ đáy lên đỉnh (chậm, bay lại sau khi mất). |
+| `duration-mole-up` | `3200ms` | Đập chuột: thời gian một con chuột ở trên hang trước khi thụt xuống rồi chui lên lại (không phải đếm ngược). |
+| `duration-branch-open` | `360ms` | Khám phá từ: nhánh mở ra (đáp án hiện dần); tắt khi giảm chuyển động. |
+| `duration-read-word-slow` | `640ms` | Đọc cả đoạn: thời gian sáng mỗi chữ khi bật “Đọc chậm” (thường: `duration-read-word`). |
 
 ## 10. Lớp (z-index)
 
@@ -515,6 +753,36 @@ Họ chữ (Google Fonts, tải bằng `next/font/google`):
 | `z-feedback` | `40` | Dải phản hồi. |
 | `z-dialog` | `50` | Hộp thoại và lớp phủ. |
 | `z-burst` | `60` | Hiệu ứng sao bay. |
+
+## 10b. Hằng số trò chơi (không phải biến CSS)
+
+Hai họ token dưới đây là **số**, không phải giá trị giao diện. Đặt thành hằng số trong `src/lib/rules/` (vd `src/lib/rules/constants.ts`) để quy tắc xu, giá và Khám phá từ / Họ vần đọc từ một chỗ; không đưa vào `globals.css`.
+
+**Xu và giá (họ `coins`)** · Xu là phần thưởng trong trò chơi, không đổi được ra tiền thật; không có mua bằng tiền, không có quảng cáo. Giá luôn hiện kèm biểu tượng xu.
+
+| Token | Giá trị | Dùng cho |
+|---|---|---|
+| `coin-sticker-lesson` | `10` | Xu thưởng khi bài học rơi sticker bất ngờ. |
+| `coin-badge` | `50` | Xu thưởng khi nhận một huy hiệu mới. |
+| `coin-boss` | `30` | Xu thưởng khi thắng trận trùm cuối vùng. |
+| `coin-lesson` | `20` | Xu thưởng cơ bản cho một bài học (+10 nếu 3 sao). |
+| `price-furniture-s` | `40` | Giá đồ nội thất nhỏ (đồng hồ, cây cảnh, tranh). |
+| `price-furniture-m` | `80` | Giá đồ nội thất vừa (đèn, ghế, thảm). |
+| `price-furniture-l` | `150` | Giá đồ nội thất lớn (giá sách, giường, sô-pha). |
+| `price-special` | `400` | Giá đồ đặc biệt (bể cá): để bé có mục tiêu tiết kiệm xu. |
+| `price-clothes` | `60` | Giá một bộ áo cho Bông. |
+| `price-hat` | `50` | Giá một chiếc mũ cho Bông. |
+
+**Khám phá từ, Họ vần, Ghép chữ đầu (họ `wordlab`)** · Số cố định của Khám phá từ, Họ vần, Ghép chữ đầu, Đọc cả đoạn và Liên kết qua lại. Không có đồng hồ đếm ngược, làm sai không bị trừ điểm.
+
+| Token | Giá trị | Dùng cho |
+|---|---|---|
+| `branch-min` | `4` | Khám phá từ: ít nhất 4 nhánh (câu hỏi) mỗi từ. |
+| `branch-max` | `6` | Khám phá từ: nhiều nhất 6 nhánh; sơ đồ co giãn theo số nhánh. |
+| `links-max-depth` | `4` | Liên kết qua lại: đường dẫn giữ tối đa 4 bậc; Quay lại (Backspace) về bậc trước. |
+| `build-goal` | `5` | Ghép chữ đầu: tìm đủ 5 từ thật là xong bài (có sao). |
+| `read-rate` | `0.82` | Đọc cả đoạn: tốc độ giọng đọc thường. |
+| `read-rate-slow` | `0.6` | Đọc cả đoạn: tốc độ khi bật “Đọc chậm”. |
 
 ---
 
@@ -530,14 +798,23 @@ Mỗi mục có `designs/components/<Tên>/README.md` (hướng dẫn) và `prev
 | `Dialog` | Hộp thoại giữa màn trên lớp phủ `scrim`: rồng Bông nhô lên trên mép, tiêu đề `title`, lời `body-l`, 1–2 nút cỡ `l`. |
 | `FeedbackBar` | Dải bo góc trên `radius-xl` trượt lên từ đáy màn trong `duration-slide` sau khi bé bấm Kiểm tra; rồng Bông thò đầu lên mép trái. |
 | `Gd1Tokens` | Token mới của đợt bổ sung giai đoạn 1 (có trong `tokens.json` và trang token của hệ thống): |
+| `Gd2Tokens` | Token bổ sung giai đoạn 2. |
+| `Gd3Tokens` | Token bổ sung đợt 5B (phần thưởng, phòng của tớ, chi tiết Tiểu học, khu người lớn giai đoạn 2). |
+| `Gd4Tokens` | Token bổ sung đợt 6 (Khám phá từ, Họ vần, Ghép chữ đầu, Đọc cả đoạn + dịch, Liên kết qua lại). |
 | `Icons` | Icon tự vẽ trên lưới 24px, nét 2.4px bo tròn, màu theo `currentColor`; riêng `star`, `starEmpty`, `coin`, `flame` có màu cố định từ token. |
 | `KeyHint` | Nhãn phím dạng nắp phím nhỏ (`key`, 13px, viền dưới 4px) cho người dùng chuột + bàn phím. |
+| `LessonTools` | 2 nút tròn trên đầu khung bài học — `Bong.LessonTools` (= `Bong.R.tools` + `Bong.R.wireTools`). |
 | `LevelColors` | Bảng màu 10 cấp: mỗi cấp có 5 token — `level-N` (nền), `level-N-shade` (gờ 3D), `level-N-soft` (nền nhạt), `level-N-ink` (chữ ≥ 4.5:1), `on-level-N` (chữ trên nền) — cùng màu phản hồi và 5 mức độ thuộc. |
+| `LevelGate` | 12a. Cổng bài thi lên cấp. |
 | `Mascot` | Rồng Bông — linh vật đồng hành của bộ Tiểu học, vẽ bằng SVG với nét viền `dragon-line`, 6 biểu cảm, 4 màu cho bé chọn. |
+| `MascotGrowth` | 16. Rồng Bông lớn lên. |
 | `MascotMore` | Hai biểu cảm bổ sung cho rồng Bông (thêm vào `Bong.dragon`, 6 biểu cảm gốc giữ nguyên): |
 | `ProgressBar` | Rãnh `surface-sunk` lõm (`shadow-inset`), phần đã làm tô `--lv` (màu cấp) với vệt sáng; chiều rộng tăng có nảy nhẹ. |
+| `ReadAloudParagraph` | Đọc cả đoạn và dịch nghĩa — khung đoạn văn dùng chung, đặt trong Khám phá từ và Họ vần. `Bong.ReadAloudParagraph(o)` (= `Bong.W.paragraph`), gắn hành vi bằng `Bong.W.wireParagraph(el)`. |
+| `RewardPopup` | Nhận phần thưởng mới — hộp thoại dùng chung `Bong.RewardPopup` (= `Bong.R.reward`). |
 | `SpeakerButton` | Nút loa tròn phát âm từ tiếng Anh; khi đang phát có vòng sóng lan ra (`is-playing`). |
 | `StatChip` | Chip bo tròn trên `surface`: biểu tượng màu (sao `star`, xu `coin`, lửa `streak`) + số kiểu `stat`. |
+| `WordLinks` | Liên kết qua lại — dải nút liên kết ở đầu Khám phá từ, Họ vần, Ghép chữ đầu; chỉ hiện ở chế độ tự khám phá, ẩn trong khung bài học. `Bong.WordLinks(stack, buttons)` (= `Bong.W.links`). |
 | `WordPictures` | Hình minh hoạ cho từ vựng tiếng Anh: viền `dragon-line` 3px, khối màu phẳng, khung 120×120, không chữ trong hình. |
 
 ## 12. Các màn Tiểu học
@@ -566,6 +843,37 @@ Mỗi mục có `designs/components/<Tên>/README.md` (hướng dẫn) và `prev
 | `Screen20-ReviewDone` | Ôn tập hôm nay · màn tổng kết: “Hôm nay cậu đã ôn 12 từ, 3 từ được chuyển lên hộp vàng!”. |
 | `Screen21-ExitDialog` | Hộp thoại “Dừng bài học?” khi bé bấm × giữa bài: rồng Bông biểu cảm `tiec` (hơi tiếc, không khóc), câu nhắc còn bao nhiêu câu và hẹn học tiếp. |
 | `Screen22-ComingSoon` | Màn “Sắp có” dùng chung cho các nút chưa làm (Bộ sưu tập, Phòng của tớ): rồng Bông `xaydung` đội mũ bảo hộ, cầm búa, khối chữ màu cấp đang xếp. |
+| `Screen23-Phonics` | 1. Ghép âm phonics. |
+| `Screen24-Story` | 2. Truyện tranh có đọc to. |
+| `Screen25-Speak` | 3. Luyện nói từ và câu. |
+| `Screen26-SentenceOrder` | 4. Sắp xếp từ thành câu. |
+| `Screen27-Dictation` | 5. Nghe và gõ. |
+| `Screen28-FillBlank` | 6. Điền từ vào câu. |
+| `Screen29-ShortReading` | 7. Đọc hiểu ngắn. |
+| `Screen30-Bubbles` | 8. Bong bóng từ vựng. |
+| `Screen31-WhackLetters` | 9. Đập chuột chữ cái. |
+| `Screen32-Race` | 10. Đua xe trả lời. |
+| `Screen33-Boss` | 11. Trận trùm cuối vùng. |
+| `Screen34-IslandMapGate` | 12. Bản đồ đảo có cổng thi lên cấp. |
+| `Screen35-LevelTestIntro` | 13. Giới thiệu bài thi lên cấp. |
+| `Screen36-LevelUp` | 14. Đạt bài thi lên cấp. |
+| `Screen37-LevelTestRetry` | 15. Chưa đạt bài thi lên cấp. |
+| `Screen38-Stickers` | Bộ sưu tập · tab Sticker. |
+| `Screen39-Badges` | Bộ sưu tập · tab Huy hiệu. |
+| `Screen40-LessonEndSticker` | Kết thúc bài có sticker bất ngờ — biến thể mới, màn Kết thúc bài cũ giữ nguyên. |
+| `Screen41-MyRoom` | Phòng của tớ — phòng của rồng Bông nhìn chính diện. |
+| `Screen42-Shop` | Cửa hàng — chỉ dùng xu trong trò chơi, không có tiền thật, không quảng cáo. |
+| `Screen43-HomeDressed` | Trang chủ có Bông mặc đồ — biến thể mới, trang chủ cũ giữ nguyên. |
+| `Screen44-NotebookPlus` | Sổ từ bổ sung — biến thể mới, Sổ từ cũ giữ nguyên. |
+| `Screen45-WordListPrint` | Bản in danh sách từ — trang A4 dọc, chỉ trắng đen. |
+| `Screen46-LessonFocus` | Bài học ở chế độ học tập trung — biến thể mới, khung bài học cũ giữ nguyên. |
+| `Screen47-OutsideHours` | Chưa đến giờ học — mở web ngoài khung giờ bố mẹ cho phép (ban ngày; cùng họ với màn Hết giờ học ban đêm). |
+| `Screen48-WordExplorer` | Khám phá từ — sơ đồ câu hỏi quanh một từ. |
+| `Screen49-WordExplorerPrint` | Bản in Khám phá từ — trang A4 dọc, chỉ trắng đen. |
+| `Screen50-WordFamily` | Họ vần — mạng các từ cùng vần. |
+| `Screen51-BuildFamily` | Ghép chữ đầu — ghép chữ đầu với vần để thành từ. |
+| `Screen52-NotebookWordTabs` | Thẻ từ trong Sổ từ có thêm tab — biến thể mới, màn Sổ từ cũ giữ nguyên. |
+| `Screen53-WordJourney` | Một lượt đi qua các liên kết: bird → họ -ir → Ghép chữ đầu → shirt → Khám phá shirt. |
 
 ## 13. Bộ THCS: thành phần và màn
 
@@ -616,6 +924,13 @@ Mỗi mục có `designs/components/<Tên>/README.md` (hướng dẫn) và `prev
 | `Adult14-Excel` | Nhập & xuất Excel theo 4 bước: tải file mẫu (từ vựng / câu hỏi) → chọn file → xem trước & sửa lỗi → lưu. |
 | `Adult15-Grammar` | Chủ điểm ngữ pháp: danh sách có tìm và lọc theo cấp; trình soạn bài giảng. |
 | `Adult16-ExamMatrix` | Tạo đề thi theo ma trận: dạng câu × mức độ (Nhận biết, Thông hiểu, Vận dụng, Vận dụng cao ↔ độ khó 1–5). |
+| `Adult17-Progress` | Bố mẹ · Tiến độ của con và mở khoá thủ công. |
+| `Adult18-QuestionTypes2` | Quản trị · Câu hỏi dạng mới trong Ngân hàng câu hỏi. |
+| `Adult19-StoryEditor` | Quản trị · Soạn truyện tranh. |
+| `Adult20-PhonicsSounds` | Quản trị · Âm phonics. |
+| `Adult21-Rewards` | Quản trị · Danh mục phần thưởng. |
+| `Adult22-WordExplorerEditor` | Quản trị · Soạn Khám phá từ — tab “Khám phá” trong ngăn kéo biểu mẫu của Ngân hàng từ vựng. |
+| `Adult23-WordFamilies` | Quản trị · Họ vần. |
 | `AdultCharts` | Biểu đồ khu người lớn (SVG/HTML, không thư viện ngoài). |
 | `AdultField` | Biểu mẫu và nút khu người lớn. |
 | `AdultKpi` | Thẻ số liệu, nhãn trạng thái và 4 trạng thái dữ liệu của khu người lớn. |
@@ -778,6 +1093,141 @@ Sinh tự động từ `designs/tokens.json`. `:root` mang giá trị Tiểu h�
   --dragon-tool-head:#7d8597;
   --adm-status-none-ink:{ink-soft};
   --adm-status-none-line:{line-strong};
+  --read-highlight:#ffe48c;
+  --phon-slot:#fffaf0;
+  --rec:#6a3fd6;
+  --rec-soft:#efe8ff;
+  --rec-track:#e6dccb;
+  --bubble-1:#bfe6ff;
+  --bubble-2:#ffd3e8;
+  --bubble-3:#d3f5c2;
+  --bubble-4:#ffe7a8;
+  --bubble-5:#e3d9ff;
+  --bubble-shine:#ffffff;
+  --game-sky:#d8f1ff;
+  --game-sky-2:#f4fbff;
+  --mole-ground:#a4da7c;
+  --mole-ground-shade:#7fbf57;
+  --mole-hole:#4a2f22;
+  --mole-hole-rim:#9a6a46;
+  --mole-fur:#b98a66;
+  --mole-belly:#f3d8bb;
+  --mole-tongue:#ff8fa8;
+  --race-grass:#a8df82;
+  --race-track:#6f7889;
+  --race-track-edge:#ffffff;
+  --race-ghost:rgba(239, 232, 255, 0.5);
+  --race-ghost-line:#d9ccff;
+  --race-finish-a:#2b2440;
+  --race-finish-b:#ffffff;
+  --boss-energy:#ffb703;
+  --boss-energy-shade:#e08e00;
+  --boss-energy-track:#efe3cd;
+  --boss-fur:#b07a4f;
+  --boss-face:#ffd9b0;
+  --gate-stone:#d2c1a4;
+  --gate-stone-shade:#a38f72;
+  --gate-glow:#fff1a8;
+  --gate-dark:#4a3f5c;
+  --dragon-egg:#fff6e3;
+  --dragon-egg-spot:#ffd59e;
+  --dragon-leaf:{level-2};
+  --dragon-scarf-4:{level-4};
+  --dragon-scarf-5:{level-5};
+  --album-page:#fffdf7;
+  --album-spine:#c98b5a;
+  --album-ring:#b0a491;
+  --album-animals:#ffe6c7;
+  --album-vehicles:#d9eaff;
+  --album-dino:#dff2cf;
+  --album-fruits:#ffe0ea;
+  --sticker-frame:#ffffff;
+  --sticker-shadow:rgba(91, 66, 30, 0.18);
+  --sticker-slot:#f3ece0;
+  --sticker-slot-line:#d8c9b0;
+  --sticker-ghost:rgba(43, 36, 64, 0.14);
+  --sticker-new:#ff9f1c;
+  --badge-ring:{star};
+  --badge-ring-shade:{star-shade};
+  --badge-ribbon-a:#3f8cff;
+  --badge-ribbon-b:#2bb38a;
+  --badge-locked:#e6dccb;
+  --badge-locked-ink:#8f8370;
+  --gift-box:#9b5de5;
+  --gift-box-shade:#7a3fc4;
+  --gift-ribbon:#ffc531;
+  --gift-glow:#fff1a8;
+  --room-wall:#fde9c9;
+  --room-wall-pattern:#f9dcae;
+  --room-trim:#e9c08f;
+  --room-floor:#dcae7a;
+  --room-floor-line:#c48f5a;
+  --room-window-sky:#bfe9f7;
+  --room-item-select:{brand};
+  --room-drop:rgba(63, 140, 255, 0.14);
+  --room-shadow:rgba(91, 66, 30, 0.16);
+  --price-chip:#fff3cc;
+  --price-chip-ink:#7a5200;
+  --owned-chip:{success-soft};
+  --outfit-tee:#3f8cff;
+  --outfit-stripe-a:#ffffff;
+  --outfit-stripe-b:#2bb38a;
+  --outfit-raincoat:#ffd23f;
+  --outfit-cap:#3f8cff;
+  --outfit-cap-brim:#2a6fd6;
+  --outfit-beanie:#9b5de5;
+  --outfit-pompom:#ffffff;
+  --outfit-sunhat:#f2cf8a;
+  --outfit-ribbon:#2bb38a;
+  --streak-day:{streak};
+  --streak-day-soft:#ffe9d6;
+  --freeze-card:#bfe6ff;
+  --freeze-card-ink:#1d5f8c;
+  --print-paper:#ffffff;
+  --print-ink:#000000;
+  --print-muted:#4d4d4d;
+  --print-rule:#9a9a9a;
+  --focus-scrim:rgba(43, 36, 64, 0.04);
+  --volume-track:{line};
+  --volume-fill:{brand};
+  --garden-sky:#cfeeff;
+  --garden-grass:#9fd67a;
+  --garden-grass-shade:#7fbf57;
+  --garden-flower:#ffb3c7;
+  --day-allowed:{success-soft};
+  --adm-lock:{ink-soft};
+  --adm-unlocked-manual:#6a3fd6;
+  --adm-audio-missing:{field-error};
+  --rime-ink:#0a6e61;
+  --rime-bg:#d4f3eb;
+  --rime-hub:#0b7a6b;
+  --rime-hub-ink:#ffffff;
+  --rime-line:#8fd9c6;
+  --branch-line:#cbc2df;
+  --branch-line-open:#6cc48b;
+  --branch-line-active:{brand};
+  --branch-node:{surface};
+  --branch-node-open:{success-soft};
+  --branch-num:{brand-soft};
+  --q-mark-bg:#fff1c2;
+  --q-mark-ink:#7a5200;
+  --trap-bg:#fff4df;
+  --trap-line:#e5a23c;
+  --trap-ink:#8a4600;
+  --trans-ink:#655d7a;
+  --trans-rule:#e4dcf3;
+  --read-word-bg:#ffcd45;
+  --read-word-ink:{ink};
+  --links-bg:#e9f2ff;
+  --links-line:#c3d9fb;
+  --crumb-ink:{ink-soft};
+  --crumb-now:{ink};
+  --soon-bg:#eeeaf5;
+  --soon-ink:#5a536d;
+  --build-slot-bg:#f3f8ff;
+  --letter-tile:#fff9ee;
+  --found-chip:{success-soft};
+  --fake-word-bg:{retry-soft};
   --space-0:0px;
   --space-1:4px;
   --space-2:8px;
@@ -841,12 +1291,43 @@ Sinh tự động từ `designs/tokens.json`. `:root` mang giá trị Tiểu h�
   --adm-content-max:1280px;
   --size-star-pip:28px;
   --size-memory-box:184px;
+  --size-phon-tile:104px;
+  --size-mic:132px;
+  --size-bubble:150px;
+  --size-mole-hole:150px;
+  --size-race-lane:76px;
+  --size-test-dot:14px;
+  --size-boss:260px;
+  --size-sticker:112px;
+  --size-sticker-frame:6px;
+  --size-badge:120px;
+  --size-shop-card:220px;
+  --size-room-item:120px;
+  --size-print-page-w:210mm;
+  --size-print-page-h:297mm;
+  --size-print-margin:14mm;
+  --size-print-pic:16mm;
+  --size-print-write:48mm;
+  --size-word-card:300px;
+  --size-branch-node:72px;
+  --size-branch-line:4px;
+  --size-family-card:176px;
+  --size-rime-hub:148px;
+  --size-letter-tile:76px;
+  --size-links-strip:56px;
+  --size-print-answer-line:9mm;
   --border-thin:2px;
   --border-thick:4px;
   --duration-fast:120ms;
   --duration-base:220ms;
   --duration-slide:320ms;
   --duration-celebrate:900ms;
+  --duration-rec-max:10000ms;
+  --duration-read-word:420ms;
+  --duration-bubble-rise:11000ms;
+  --duration-mole-up:3200ms;
+  --duration-branch-open:360ms;
+  --duration-read-word-slow:640ms;
   --z-map:1;
   --z-sticky:10;
   --z-feedback:40;
