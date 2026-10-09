@@ -49,15 +49,8 @@ export async function getLibrary(): Promise<MediaLibrary> {
   };
 }
 
-export type UploadResult =
-  | { ok: true; path: string; size: number; assigned: { id: number; word: string } | null; note: string | null }
-  | { ok: false; message: string };
-
-/**
- * Lưu một hình tải lên: chỉ nhận ảnh (PNG, JPEG, WebP, SVG an toàn, nhận dạng theo nội dung) tối đa 2 MB.
- * Có `wordId` thì gắn hình vào từ đó; không có thì tên tệp trùng một từ chưa có hình sẽ tự gắn.
- */
-export async function saveUpload(file: { name: string; bytes: Uint8Array }, wordId?: number): Promise<UploadResult> {
+/** Kiểm và lưu tệp hình vào `storage/uploads/` + thư viện (chưa gắn cho từ nào). Dùng chung cho hình của từ và tranh trang truyện. */
+export async function storeImageUpload(file: { name: string; bytes: Uint8Array }): Promise<{ ok: true; path: string; size: number } | { ok: false; message: string }> {
   if (file.bytes.byteLength === 0) return { ok: false, message: `“${file.name}” là tệp rỗng.` };
   if (file.bytes.byteLength > MEDIA_MAX_BYTES) return { ok: false, message: `“${file.name}” lớn hơn ${MEDIA_MAX_BYTES / 1024 / 1024} MB.` };
   const kind = sniffImage(file.bytes);
@@ -69,6 +62,21 @@ export async function saveUpload(file: { name: string; bytes: Uint8Array }, word
   if (!(await stat(filePath).then(() => true, () => false))) await writeFile(filePath, file.bytes);
   const publicPath = uploadPath(name);
   await db.media.upsert({ where: { path: publicPath }, create: { path: publicPath, type: "image", size: file.bytes.byteLength, alt: wordFromFileName(file.name) || null }, update: {} });
+  return { ok: true, path: publicPath, size: file.bytes.byteLength };
+}
+
+export type UploadResult =
+  | { ok: true; path: string; size: number; assigned: { id: number; word: string } | null; note: string | null }
+  | { ok: false; message: string };
+
+/**
+ * Lưu một hình tải lên: chỉ nhận ảnh (PNG, JPEG, WebP, SVG an toàn, nhận dạng theo nội dung) tối đa 2 MB.
+ * Có `wordId` thì gắn hình vào từ đó; không có thì tên tệp trùng một từ chưa có hình sẽ tự gắn.
+ */
+export async function saveUpload(file: { name: string; bytes: Uint8Array }, wordId?: number): Promise<UploadResult> {
+  const stored = await storeImageUpload(file);
+  if (!stored.ok) return stored;
+  const publicPath = stored.path;
 
   if (wordId !== undefined) {
     const result = await db.word.updateMany({ where: { id: wordId }, data: { image: publicPath } });

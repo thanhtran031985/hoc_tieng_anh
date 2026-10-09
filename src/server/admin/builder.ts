@@ -2,11 +2,12 @@ import { estimateMinutes, isBuilderActivity, isQuestionActivity, type BuilderAct
 import { extraQuestionSummary } from "@/lib/rules/admin-question-types";
 import { questionSummary } from "@/lib/rules/admin-questions";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
-import type { PlayWord } from "@/lib/rules/lesson-play";
+import type { PlayWord, StoryPlay } from "@/lib/rules/lesson-play";
 import { lessonIdSchema, saveLessonSchema, unitWordsSchema } from "@/lib/schemas/admin-builder";
 import { lessonStepConfigSchemas } from "@/lib/schemas/lesson-step-config";
 import { EXTRA_QUESTION_TYPES, isExtraQuestionType } from "@/lib/schemas/question-extra";
 import { db } from "../db";
+import { getStoriesPlay } from "../story-play";
 import { fail, firstIssue, type AdminResult } from "./result";
 
 // Soạn bài học (Adult12): danh sách bài, đọc một bài kèm gợi ý từ và câu hỏi, và lưu bài (tên, trạng thái, danh sách bước).
@@ -25,7 +26,8 @@ export async function getLessonList(): Promise<LessonListRow[]> {
   return lessons.map((l) => ({ id: l.id, title: l.title, unit: l.unit.title, level: l.unit.level.number, steps: l._count.steps, minutes: l.minutes, status: l.status === "published" ? "published" : "draft" }));
 }
 
-export type BuilderQuestion = { id: number; type: string; summary: string; difficulty: number; wordId: number | null };
+/** Câu hỏi để gắn vào bài. `data` có với 4 dạng bài mới và đọc hiểu (nội dung nằm trong câu hỏi) để Xem như học sinh dựng được bước. */
+export type BuilderQuestion = { id: number; type: string; summary: string; difficulty: number; wordId: number | null; data?: { prompt: unknown; options: unknown; answer: unknown } };
 
 export type BuilderData = {
   lesson: { id: number; title: string; status: "draft" | "published"; minutes: number; unitId: number; unitTitle: string; levelId: number; levelNumber: number; levelName: string };
@@ -37,6 +39,8 @@ export type BuilderData = {
   /** Từ đang dùng trong các bước và từ gắn với câu hỏi của cấp (có thể nằm ngoài chủ đề). */
   stepWords: PlayWord[];
   questions: BuilderQuestion[];
+  /** Truyện tranh đã xuất bản của cấp, để thêm thành một bước `story`. */
+  stories: StoryPlay[];
 };
 
 /** Từ của một chủ đề (theo bảng `topics` trùng tên chủ đề). */
@@ -66,14 +70,16 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
   if (!lesson || lesson.kind !== "lesson") return null;
   const { unit } = lesson;
 
-  const [suggestions, questions] = await Promise.all([
+  const [suggestions, questions, storyRows] = await Promise.all([
     getUnitWords({ unitId: unit.id }),
     db.question.findMany({
       where: { levelId: unit.level.id, type: { in: ["listen_choose_picture", "match_pairs", "choose_word_for_picture", ...EXTRA_QUESTION_TYPES] } },
       orderBy: { id: "asc" },
       select: { id: true, type: true, options: true, answer: true, difficulty: true, prompt: true },
     }),
+    db.story.findMany({ where: { levelId: unit.level.id, status: "published" }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true } }),
   ]);
+  const stories = [...(await getStoriesPlay(storyRows.map((r) => r.id))).values()];
 
   const seen = new Set<number>();
   const fromSteps = lesson.steps.flatMap((s) => (s.word && !seen.has(s.word.id) && seen.add(s.word.id) ? [s.word] : []));
@@ -104,7 +110,9 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
       summary: isExtraQuestionType(q.type) ? extraQuestionSummary(q.type, q.prompt) : questionSummary(q.type, q.options, q.answer),
       difficulty: q.difficulty,
       wordId: typeof (q.prompt as { wordId?: unknown } | null)?.wordId === "number" ? (q.prompt as { wordId: number }).wordId : null,
+      ...(isExtraQuestionType(q.type) ? { data: { prompt: q.prompt, options: q.options, answer: q.answer } } : {}),
     })),
+    stories,
   };
 }
 
@@ -132,6 +140,11 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
     const typeOf = new Map(types.map((q) => [q.id, q.type]));
     if (needQuestion.some((s) => typeOf.get(s.questionId!) !== s.activityType)) return fail("Có bước gắn câu hỏi khác dạng. Hãy tải lại trang rồi soạn lại.", "steps");
   }
+
+  // Bước truyện cần `config.storyId` trỏ tới một truyện có thật.
+  const storyIds = [...new Set(steps.filter((s) => s.activityType === "story").map((s) => (s.config as { storyId?: unknown } | null)?.storyId))];
+  if (steps.some((s) => s.activityType === "story") && storyIds.some((id) => typeof id !== "number" || !Number.isInteger(id) || id < 1)) return fail("Bước truyện chưa chọn truyện. Hãy thêm lại từ danh sách Truyện.", "steps");
+  if (storyIds.length && (await db.story.count({ where: { id: { in: storyIds as number[] } } })) !== storyIds.length) return fail("Có truyện không còn nữa. Hãy tải lại trang.", "steps");
 
   const wordIds = [...new Set(steps.flatMap((s) => (s.wordId === null ? [] : [s.wordId])))];
   const questionIds = [...new Set(steps.flatMap((s) => (s.questionId === null ? [] : [s.questionId])))];

@@ -26,7 +26,7 @@ import { getUnitWordsAction, saveLessonAction } from "./builder-actions";
 import styles from "./builder.module.css";
 import { StepsPreview } from "./StepsPreview";
 
-type Tab = "words" | "qs";
+type Tab = "words" | "qs" | "stories";
 type Errors = Record<string, string>;
 
 const toStep = (s: BuilderData["steps"][number]): BuilderStep => ({ key: `s${s.id}`, id: s.id, activityType: s.activityType, wordId: s.wordId, questionId: s.questionId, config: s.config });
@@ -61,6 +61,8 @@ export function BuilderView({ data }: { data: BuilderData }) {
   const minutes = estimateMinutes(steps);
   const hasCard = (wordId: number) => steps.some((s) => s.activityType === "word_card" && s.wordId === wordId);
   const hasQuestion = (id: number) => steps.some((s) => s.questionId === id);
+  const storyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => (s.activityType === "story" && typeof s.config?.storyId === "number" ? s.config.storyId : null);
+  const hasStory = (id: number) => steps.some((s) => storyIdOf(s) === id);
 
   function add(step: Omit<BuilderStep, "key">) {
     setErrors((e) => ({ ...e, steps: "" }));
@@ -85,6 +87,8 @@ export function BuilderView({ data }: { data: BuilderData }) {
   }
 
   const describe = (s: BuilderStep): string => {
+    const storyId = storyIdOf(s);
+    if (storyId !== null) return data.stories.find((st) => st.storyId === storyId)?.title ?? `Truyện #${storyId}`;
     if (s.questionId !== null) return data.questions.find((q) => q.id === s.questionId)?.summary ?? `Câu hỏi #${s.questionId}`;
     if (s.wordId !== null) return known.get(s.wordId)?.word ?? `Từ #${s.wordId}`;
     return s.activityType === "match_pairs" ? "Nối các từ có hình trong bài" : "Lật thẻ ghép các từ có hình";
@@ -117,10 +121,13 @@ export function BuilderView({ data }: { data: BuilderData }) {
   }
 
   function openPreview() {
-    const stored = steps.map((s, i) => ({ id: i + 1, activityType: s.activityType, config: parseLessonStepConfig(s.activityType, s.config), word: s.wordId === null ? null : (known.get(s.wordId) ?? null) }));
+    const stored = steps.map((s, i) => {
+      const q = s.questionId === null ? undefined : data.questions.find((x) => x.id === s.questionId);
+      return { id: i + 1, activityType: s.activityType, config: parseLessonStepConfig(s.activityType, s.config), word: s.wordId === null ? null : (known.get(s.wordId) ?? null), question: q?.data ? { id: q.id, type: q.type, ...q.data } : null };
+    });
     const unitWords = stored.flatMap((s) => (s.activityType === "word_card" && s.word ? [s.word] : []));
     const pool = [...new Map([...unitWords, ...suggestions].map((w) => [w.id, w])).values()];
-    const play = buildPlaySteps(stored, pool, "preview");
+    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known });
     if (play.length === 0) {
       toast(steps.length === 0 ? "Bài chưa có bước nào để xem trước." : "Chưa có bước nào xem trước được (các bước cần từ có hình và đủ từ trong bài).");
       return;
@@ -144,6 +151,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
             options={[
               ["words", `Từ vựng (${suggestions.length})`],
               ["qs", `Câu hỏi (${data.questions.length})`],
+              ["stories", `Truyện (${data.stories.length})`],
             ]}
           />
         </div>
@@ -176,6 +184,44 @@ export function BuilderView({ data }: { data: BuilderData }) {
                       </>
                     )}
                   </span>
+                </li>
+              ))}
+            </ul>
+          )
+        ) : tab === "stories" ? (
+          data.stories.length === 0 ? (
+            <AdultEmpty title="Chưa có truyện đã xuất bản cho cấp này" text="Soạn và xuất bản truyện ở màn Truyện tranh rồi quay lại đây để thêm vào bài." action={<AdultButtonLink href="/admin/stories" label="Mở Truyện tranh" variant="secondary" />} />
+          ) : (
+            <ul className={styles.sug}>
+              {data.stories.map((st) => (
+                <li key={st.storyId}>
+                  <span className={styles.thumb}>
+                    <Icon name="book" size={18} />
+                  </span>
+                  <span>
+                    <b className={adultStyles.body} lang="en">
+                      {st.title}
+                    </b>
+                    <br />
+                    <span className={cn(adultStyles.small, adultStyles.muted)}>{st.pages.filter((p) => p.kind === "page").length} trang</span>
+                  </span>
+                  {hasStory(st.storyId) ? (
+                    <span className={styles.in}>
+                      <Icon name="check" size={14} />
+                      Đã có
+                    </span>
+                  ) : (
+                    <AdultButton
+                      label="Thêm"
+                      icon="plus"
+                      variant="secondary"
+                      size="s"
+                      onClick={() => {
+                        add({ activityType: "story", wordId: null, questionId: null, config: { storyId: st.storyId } });
+                        toast("Đã thêm truyện vào bài.");
+                      }}
+                    />
+                  )}
                 </li>
               ))}
             </ul>

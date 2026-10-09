@@ -1,7 +1,7 @@
 // Giọng đọc mp3: quy tắc thuần (đặt tên tệp, văn bản cần đọc, chia lô, dải byte). Phần gọi mô hình và ghi tệp nằm ở src/server/audio/.
 
 /** Loại nội dung có tệp mp3: từ, câu ví dụ, câu hỏi, âm phonics. */
-export const AUDIO_KINDS = ["word", "example", "question", "phonics"] as const;
+export const AUDIO_KINDS = ["word", "example", "question", "phonics", "story"] as const;
 export type AudioKind = (typeof AUDIO_KINDS)[number];
 
 /** Giọng Kokoro mặc định cho cả web (Anh-Mỹ, nữ). Đổi bằng biến môi trường `TTS_VOICE` (vd `am_michael`). */

@@ -5,6 +5,7 @@ export * from "./admin-vocab";
 export * from "./answer-log";
 export * from "./admin-audio";
 export * from "./admin-phonics";
+export * from "./admin-story";
 export * from "./app-settings";
 export * from "./auth";
 export * from "./curriculum";
