@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { toMascotColor } from "@/features/kid/learner-art";
+import { toHair, toMascotColor } from "@/features/kid/learner-art";
 import { LessonEmpty } from "@/features/lesson/LessonEmpty";
 import { LessonPlayer } from "@/features/lesson/LessonPlayer";
+import { SoundProvider } from "@/features/sound/SoundProvider";
 import { requireActiveLearner } from "@/server/active-learner";
 import { LessonLockedError, getLessonPlay } from "@/server/lesson-play";
 import { requireUser } from "@/server/session";
@@ -29,5 +30,17 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
 
   const mascot = toMascotColor(learner.mascot);
   if (plan.steps.length === 0) return <LessonEmpty level={plan.levelNumber} mascot={mascot} />;
-  return <LessonPlayer plan={plan} learnerId={learner.id} learnerName={learner.name} mascot={mascot} />;
+  const { musicOn, soundOn, volume } = learner.settings;
+  return (
+    <SoundProvider initial={{ musicOn, soundOn, volume }}>
+      <LessonPlayer
+        plan={plan}
+        learnerId={learner.id}
+        learnerName={learner.name}
+        mascot={mascot}
+        hair={toHair(learner.avatar)}
+        learnerLevel={learner.currentLevel?.number ?? plan.levelNumber}
+      />
+    </SoundProvider>
+  );
 }

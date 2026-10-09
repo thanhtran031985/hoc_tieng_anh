@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { ButtonLink, Mascot, type MascotColor } from "@/components/ui";
+import { FocusBadge, LessonCrumb, LessonTools, useFocusMode } from "@/components/lesson";
+import { ButtonLink, Mascot, type AvatarHair, type MascotColor } from "@/components/ui";
 import type { LessonPlay } from "@/server/lesson-play";
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { rewardFor, starsFor } from "@/lib/rules/lesson-score";
@@ -19,7 +20,8 @@ import {
   type Session,
 } from "@/lib/rules/lesson-session";
 import type { LessonCompletion } from "@/lib/schemas";
-import { useTimeUpRedirect } from "@/features/study-clock/StudyClock";
+import { useSound } from "@/features/sound/SoundProvider";
+import { useStudyClock, useTimeUpRedirect } from "@/features/study-clock/StudyClock";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import { completeLessonAction } from "./actions";
 import { ExitDialog } from "./ExitDialog";
@@ -39,13 +41,19 @@ type Props = {
   learnerId: number;
   learnerName: string;
   mascot: MascotColor;
+  /** Kiểu tóc và cấp hiện tại của bé, cho ảnh nhỏ trên thanh đường dẫn. */
+  hair: AvatarHair;
+  learnerLevel: number;
 };
 
 type Progress = { session: Session; activeMs: number; /** Lúc bắt đầu bài (ms); 0 nghĩa là chưa xong bước nào. */ startedAt: number };
 
 // Trình học một bài: giữ trạng thái luồng câu hỏi, hỏi trước khi thoát, giữ tiến độ dở trên máy, ghi kết quả khi xong.
-export function LessonPlayer({ plan, learnerId, learnerName, mascot }: Props) {
+export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learnerLevel }: Props) {
   const router = useRouter();
+  const tools = useFocusMode();
+  const { sound, setSound } = useSound();
+  const { usedMinutes, limitMinutes } = useStudyClock();
   const stepsById = useMemo(() => new Map<string, PlayStep>(plan.steps.map((s) => [s.id, s])), [plan.steps]);
   const baseIds = useMemo(() => new Set(stepsById.keys()), [stepsById]);
   const freshProgress = useCallback((): Progress => ({ session: createSession(plan.steps.map((s) => s.id)), activeMs: 0, startedAt: 0 }), [plan.steps]);
@@ -165,7 +173,11 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot }: Props) {
     return () => window.clearTimeout(timer);
   }, [stopped, router, mapHref]);
 
-  useHotkeys({ Escape: () => setExitOpen(true) }, { enabled: !exitOpen && !stopped && state !== null && !finished });
+  // Esc thoát học tập trung trước; bấm Esc lần nữa mới hỏi "Dừng bài học?". F bật/tắt học tập trung.
+  useHotkeys(
+    { Escape: () => (tools.focus ? tools.setFocus(false) : setExitOpen(true)), f: tools.toggle },
+    { enabled: !exitOpen && !stopped && state !== null && !finished },
+  );
   useHotkeys({ Enter: () => router.push(mapHref) }, { enabled: stopped });
 
   if (stopped) {
@@ -215,7 +227,29 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot }: Props) {
   }
 
   return (
-    <LessonFrame level={plan.levelNumber} mascot={mascot} value={value} max={max} onExit={() => setExitOpen(true)}>
+    <LessonFrame
+      level={plan.levelNumber}
+      mascot={mascot}
+      value={value}
+      max={max}
+      onExit={() => setExitOpen(true)}
+      focus={tools.focus}
+      crumb={
+        <LessonCrumb
+          island={plan.levelName}
+          unit={plan.unitTitleVi}
+          lesson={plan.title}
+          learner={{ name: learnerName, level: learnerLevel, hair }}
+          minutes={usedMinutes === null ? null : { used: usedMinutes, limit: limitMinutes }}
+        />
+      }
+      extra={
+        <>
+          {tools.focus && <FocusBadge />}
+          <LessonTools focus={tools.focus} onToggleFocus={tools.toggle} sound={sound} onSoundChange={setSound} />
+        </>
+      }
+    >
       {step && stepId && (
         <StepView key={stepId} step={step} active={!exitOpen} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
       )}

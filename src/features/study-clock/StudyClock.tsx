@@ -36,9 +36,16 @@ function writeSeconds(learnerId: number, seconds: number): void {
   }
 }
 
-const ClockContext = createContext({ exhausted: false });
+type ClockValue = {
+  exhausted: boolean;
+  /** Phút đã học hôm nay và giới hạn bố mẹ đặt (null là không giới hạn); chưa tải xong thì cả hai null. */
+  usedMinutes: number | null;
+  limitMinutes: number | null;
+};
 
-/** Bé đã hết giờ học hôm nay (trình chơi dùng để chuyển sang /time-up sau khi xong câu hiện tại). */
+const ClockContext = createContext<ClockValue>({ exhausted: false, usedMinutes: null, limitMinutes: null });
+
+/** Giờ học hôm nay của bé: đã hết giờ chưa (trình chơi dùng để chuyển sang /time-up sau khi xong câu hiện tại) và số phút đã học. */
 export const useStudyClock = () => useContext(ClockContext);
 
 /**
@@ -140,6 +147,9 @@ export function StudyClock({ children }: { children: React.ReactNode }) {
     };
   }, [stopped, apply]);
 
-  const value = useMemo(() => ({ exhausted: status?.exhausted ?? false }), [status?.exhausted]);
+  const exhausted = status?.exhausted ?? false;
+  const usedMinutes = status?.usedMinutes ?? null;
+  const limitMinutes = status?.limitMinutes ?? null;
+  const value = useMemo(() => ({ exhausted, usedMinutes, limitMinutes }), [exhausted, usedMinutes, limitMinutes]);
   return <ClockContext.Provider value={value}>{children}</ClockContext.Provider>;
 }

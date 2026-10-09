@@ -24,6 +24,8 @@ export type LessonPlay = {
   unitTitle: string;
   unitTitleVi: string;
   levelNumber: number;
+  /** Tên đảo của cấp, vd "Lá xanh" (thanh đường dẫn trên khung bài học). */
+  levelName: string;
   /** Bộ câu hỏi đã dựng (đáp án nhiễu đã chọn). */
   steps: PlayStep[];
   /** Các từ của bài theo thứ tự xuất hiện, cho danh sách "Từ vừa học". */
@@ -41,7 +43,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
       id: true,
       title: true,
       kind: true,
-      unit: { select: { id: true, title: true, titleVi: true, level: { select: { id: true, number: true } } } },
+      unit: { select: { id: true, title: true, titleVi: true, level: { select: { id: true, number: true, name: true } } } },
       steps: { orderBy: { sortOrder: "asc" }, select: { id: true, activityType: true, config: true, word: { select: wordSelect } } },
     },
   });
@@ -73,5 +75,5 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   const seen = new Set<number>();
   const words = lesson.steps.flatMap((s) => (s.word && !seen.has(s.word.id) && seen.add(s.word.id) ? [s.word] : []));
 
-  return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, steps, words };
+  return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, steps, words };
 }

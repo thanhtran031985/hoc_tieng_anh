@@ -354,6 +354,14 @@
   --size-dialog-reward: 600px;
   --size-sticker-reward: 140px;
   --size-reward-glow: 260px;
+  /* Công cụ bài học (LessonTools, Screen46): thanh đường dẫn, bảng âm thanh, công tắc, thanh kéo âm lượng. */
+  --size-lesson-crumb: 48px;
+  --size-sound-panel: 320px;
+  --size-switch-w: 56px;
+  --size-switch-h: 32px;
+  --size-switch-knob: 24px;
+  --size-range-track: 10px;
+  --size-range-thumb: 26px;
   --feedback-mascot-lift: 64px;
 
   /* Trang chủ của bé (Screen04) và màn "Sắp có" (Screen22). */

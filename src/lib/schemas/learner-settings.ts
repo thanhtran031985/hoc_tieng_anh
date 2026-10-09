@@ -29,10 +29,24 @@ export const learnerSettingsSchema = z.object({
   voice: voiceSettingsSchema.prefault({}),
   /** Phút thêm sau khi bố mẹ nhập PIN ở màn Hết giờ học. */
   bonus: studyBonusSchema.nullable().default(null),
+  /** Hiệu ứng âm thanh (tiếng đúng, sai, nhận xu, mở quà). Bố mẹ và bé cùng chỉnh được. */
   soundOn: z.boolean().default(true),
+  /** Nhạc nền nhẹ khi học (GĐ2). */
+  musicOn: z.boolean().default(true),
+  /** Âm lượng nhạc nền và hiệu ứng, 0–100. Giọng đọc tiếng Anh không bị ảnh hưởng, luôn bật. */
+  volume: z.number().int().min(0).max(100).default(70),
   /** Mục tiêu phút học mỗi ngày (THCS chọn 10, 20 hoặc 30). */
   dailyGoalMinutes: z.union([z.literal(10), z.literal(20), z.literal(30)]).default(10),
 });
+
+/** Phần âm thanh bé chỉnh trong bảng Âm thanh của khung bài học (LessonTools). Lưu cùng `learners.settings`. */
+export const soundSettingsSchema = z.object({
+  musicOn: z.boolean(),
+  soundOn: z.boolean(),
+  volume: z.number().int().min(0).max(100),
+});
+
+export type SoundSettings = z.infer<typeof soundSettingsSchema>;
 
 export type LearnerSettings = z.infer<typeof learnerSettingsSchema>;
 export type LearnerSettingsInput = z.input<typeof learnerSettingsSchema>;

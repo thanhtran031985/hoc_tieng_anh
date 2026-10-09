@@ -14,6 +14,11 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 09/10/2026 | Esc ở lớp phủ bắt đầu = Bắt đầu; Esc ở bảng kết thúc = Tiếp tục; Esc ở Tạm dừng = Chơi tiếp. | Đúng `onEsc` của `loverlay` trong bundle.js. |
 | 09/10/2026 | `RewardPopup` bỏ hiệu ứng sao bay khi mở quà (còn hộp lắc, tia sáng, rồng chúc mừng). | `burstStars` bay về thanh tiến độ của bài học, hộp quà có thể mở ở màn không có thanh đó; sao bay chỉ là trang trí. Thêm sau nếu bố/mẹ muốn. |
 | 09/10/2026 | Tên tiếng Anh, nghĩa và hình của phần thưởng truyền qua props; không có bảng `STICKER_WORDS` cứng như bundle.js. | CLAUDE.md: nội dung học nằm trong database, không viết cứng vào component. |
+| 09/10/2026 | Cài đặt âm thanh dùng `soundOn` có sẵn làm công tắc Hiệu ứng; thêm `musicOn` và `volume` vào `learners.settings`. | Không tạo cột/trường trùng với "Hiệu ứng âm thanh" bố mẹ đã chỉnh ở Cài đặt (task 11); hai nơi chỉnh cùng một giá trị. Hồ sơ cũ thiếu trường thì lấy mặc định. |
+| 09/10/2026 | `SoundProvider` đặt ở trang bài học (không ở layout `(kid)`). | Layout không chạy lại khi bé đổi hồ sơ nên sẽ giữ cài đặt của hồ sơ cũ; trang gọi `requireActiveLearner` mỗi lần mở. Các màn khác (trò chơi, ôn tập) bọc tương tự khi cần. |
+| 09/10/2026 | Thanh đường dẫn `LessonCrumb` thêm vào mọi bài học (ẩn khi học tập trung). | Screen46 là "biến thể mới của màn cũ": khung bài có thanh Đảo › Chủ đề › Bài ở trên; cao thêm 48 px nhưng vẫn vừa 1366×768. |
+| 09/10/2026 | Học tập trung chỉ đổi nền, khoảng cách và ẩn thanh đường dẫn; thẻ đáp án không to thêm. | Màn "Nghe và chọn hình" của task 07 đã lấy cỡ thẻ theo chiều cao cửa sổ (tối đa 33vh), gần bằng cỡ học tập trung của thiết kế. |
+| 09/10/2026 | Công tắc Nhạc nền nhận prop `musicAvailable` (mặc định true); bước 5 đặt theo việc có tệp nhạc hay không. | Công tắc mờ kèm chú thích "Chưa có nhạc nền" theo task.md. |
 
 ### 09/10/2026 — Test token đang đỏ trước khi làm task này
 - `tests/e2e/01-nen-tang.spec.ts` ("mọi token màu dạng hex ... khớp designs/tokens.json") đang hỏng vì thiếu 108 token GĐ2 trong theme (xem `29-fix-ui-findings/decisions.md`). Thêm token vào theme ở bước đầu của task này và chạy lại `npx playwright test 01-`; test phải đạt, không nới test.

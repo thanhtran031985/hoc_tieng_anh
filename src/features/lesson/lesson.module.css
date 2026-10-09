@@ -8,6 +8,13 @@
   color: var(--ink);
   overflow: hidden;
 }
+/* Học tập trung (Screen46): nền dịu hơn và các khối trong bài cách xa nhau hơn. */
+.screen[data-focus] {
+  box-shadow: inset 0 0 0 100vmax var(--focus-scrim);
+}
+.screen[data-focus] .main {
+  gap: min(var(--space-8), 4vh);
+}
 .head {
   flex: none;
   height: var(--size-lesson-head);

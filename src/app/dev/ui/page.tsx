@@ -23,6 +23,7 @@ import {
 import { ClickableWords, GameFoot } from "@/components/lesson";
 import { Gd2Tokens } from "./gd2-tokens";
 import { RewardsDemo } from "./rewards-demo";
+import { ToolsDemo } from "./tools-demo";
 import { GrowthDemo } from "./growth-demo";
 import { HotkeysDemo } from "./hotkeys-demo";
 import { OverlaysDemo } from "./overlays-demo";
@@ -385,6 +386,14 @@ export default function DevUiPage() {
             Mở khung trò chơi thử (/dev/game)
           </a>
         </p>
+      </Section>
+
+      <Section
+        id="sec-lesson-tools"
+        title="Công cụ bài học (LessonTools) và thanh đường dẫn"
+        note="Học tập trung (F) và Âm thanh. Bảng âm thanh đóng bằng Esc hoặc Tab ra ngoài; thử thật trong bài học ở /lesson/…"
+      >
+        <ToolsDemo />
       </Section>
 
       <Section

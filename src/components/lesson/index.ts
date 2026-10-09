@@ -9,3 +9,6 @@ export {
   type GameStartDialogProps,
 } from "./GameDialogs";
 export { GameFoot, type GameFootProps } from "./GameFoot";
+export { LessonCrumb, type LessonCrumbProps } from "./LessonCrumb";
+export { FocusBadge, LessonTools, type LessonToolsProps } from "./LessonTools";
+export { useFocusMode } from "./use-focus-mode";

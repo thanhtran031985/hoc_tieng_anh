@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 1 | Rồng Bông lớn lên (MascotGrowth) | ✅ | Mascot có prop `stage`, thêm `MascotGrowth`; 40/40 hình khớp bundle.js |
 | 2 | Chữ bấm được và khung trò chơi | ✅ | `ClickableWords`, 3 hộp thoại game, `GameFoot`, `GameFrame`; trang thử `/dev/game` |
 | 3 | Hộp quà nhận thưởng (RewardPopup) | ✅ | `RewardPopup`, `GiftBox`, `Sticker`, `Medal` ở `src/components/rewards/` |
-| 4 | Công cụ bài học (LessonTools) và học tập trung | ⬜ | |
+| 4 | Công cụ bài học (LessonTools) và học tập trung | ✅ | `LessonTools`, `LessonCrumb`, `useFocusMode`, `SoundProvider`; đã nối vào `LessonPlayer` |
 | 5 | Âm thanh hiệu ứng và nhạc nền | ⬜ | |
 
 ## Nhật ký
@@ -49,6 +49,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 199/199 ✅, `build` ✅. Edge không đầu ở 1366×768, 15 điều kiện đạt: Enter, bấm hộp, nút "Mở quà" và Esc đều mở quà; tên "cat" tự đọc đúng 1 lần (`speechSynthesis.speak`); hiện nghĩa, "+10 xu" (huy hiệu "+50 xu" kèm điều kiện đã đạt); Enter, Esc hoặc bấm nút "Cho vào bộ sưu tập" đều gọi `onAdd` đúng một lần; bật giảm chuyển động thì `animation-name` của hộp quà là `none` (bình thường có lắc); không lỗi console.
 - Không có sao bay (`Bong.burst`) khi mở quà: chỉ còn tia sáng và hộp lắc, vì hiệu ứng sao bay hiện có (`burstStars`) bay về thanh tiến độ, không áp dụng cho hộp quà.
 
+### Bước 4 — 09/10/2026
+- `src/components/lesson/`: `LessonTools` (nút Học tập trung F và nút Âm thanh; bảng âm thanh dưới nút loa có công tắc Nhạc nền, Hiệu ứng, thanh kéo Âm lượng ← → mỗi 10%, chú thích "Giọng đọc tiếng Anh luôn bật"), `FocusBadge`, `LessonCrumb` (thanh đường dẫn Đảo › Chủ đề › Bài kèm ảnh bé và số phút học hôm nay), hook `useFocusMode` (Fullscreen API).
+- Cài đặt âm thanh: `learnerSettingsSchema` thêm `musicOn` (mặc định bật) và `volume` 0–100 (mặc định 70); `soundOn` có sẵn của bố mẹ chính là công tắc Hiệu ứng. `soundSettingsSchema` (Zod dùng chung) kiểm dữ liệu gửi lên. `src/features/sound/`: `saveSoundSettingsAction` (kiểm đăng nhập và hồ sơ đang chọn thuộc tài khoản, chỉ ghi 3 trường, giữ phần còn lại của `learners.settings`) và `SoundProvider`/`useSound` (áp dụng ngay, lưu sau 400 ms, lưu nốt khi rời màn).
+- Nối vào bài học: `LessonFrame` thêm `crumb`, `extra`, `focus`; `LessonPlayer` dùng F bật/tắt, Esc thoát học tập trung trước rồi Esc lần nữa mới hỏi "Dừng bài học?"; trang bài học bọc `SoundProvider` với cài đặt của hồ sơ. `getLessonPlay` trả thêm `levelName`; `StudyClock` đưa `usedMinutes`/`limitMinutes` ra `useStudyClock()`.
+- Token thêm: `--size-lesson-crumb`, `--size-sound-panel`, `--size-switch-w/-h/-knob`, `--size-range-track/-thumb` (lấy từ `.crumb`, `.b-snd`, `.b-switch`, `.b-range` của thiết kế).
+- `/dev/ui` có mục "Công cụ bài học (LessonTools) và thanh đường dẫn" (kể cả công tắc Nhạc nền mờ khi chưa có tệp nhạc).
+- Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 202/202 ✅ (thêm 3 test cài đặt âm thanh), `build` ✅. Edge không đầu, hồ sơ "Mai Linh" ở `/lesson/220` (cấp 3): 1366×768 và 1920×1080 không cuộn; F vào học tập trung (toàn màn hình thật, ẩn đường dẫn, nhãn "Đang học tập trung · Esc để thoát", nút đổi thành "Thoát học tập trung (Esc)"); Esc 1 thoát học tập trung mà chưa mở hộp thoại, Esc 2 mở "Dừng bài học?"; bảng âm thanh đóng bằng Esc (focus về nút loa, không mở "Dừng bài học?") hoặc Tab ra ngoài; ← ← đổi 70 → 50 mà không chạy phím tắt bài học; sau 1 giây `learners.settings` có `volume: 50, soundOn: false` và vẫn giữ giới hạn giờ; tải lại trang bảng hiện đúng 50% và Hiệu ứng tắt; không lỗi console. Đã khôi phục `settings` của hồ sơ thử.
+- Chưa chạy Playwright (cần reset DB test): các test bài học `07-` có thể cần cập nhật nếu chúng giả định khung bài không có thanh đường dẫn.
+
 ## Bước tiếp theo
 
-Bước 4 — Công cụ bài học (LessonTools) và học tập trung.
+Bước 5 — Âm thanh hiệu ứng và nhạc nền.
