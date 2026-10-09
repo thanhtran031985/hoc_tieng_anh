@@ -4,7 +4,7 @@ import { count, seedInfo, sql } from "./helpers/db";
 import { expect, test } from "./helpers/fixtures";
 import { cssVar } from "./helpers/layout";
 
-const ADMIN_PAGES = ["/admin", "/admin/tree", "/admin/vocab", "/admin/questions", "/admin/builder", "/admin/media", "/admin/excel"];
+const ADMIN_PAGES = ["/admin", "/admin/tree", "/admin/vocab", "/admin/questions", "/admin/builder", "/admin/media", "/admin/excel", "/admin/phonics"];
 const NO_STATE = { cookies: [], origins: [] };
 
 test.describe("Chặn quyền: tài khoản thường (parent) đã mở cổng bố mẹ", () => {
@@ -28,6 +28,7 @@ test.describe("Chặn quyền: tài khoản thường (parent) đã mở cổng 
     const post = async (url: string) => (await page.request.post(url, { multipart: { file: { name: "a.png", mimeType: "image/png", buffer: Buffer.from("x") }, kind: "vocab" }, maxRedirects: 0 })).status();
     expect(await post("/admin/excel/parse")).toBe(403);
     expect(await post("/admin/media/upload")).toBe(403);
+    expect(await post("/admin/phonics/upload")).toBe(403); // task 14: tải âm phonics lên
   });
 
   test("menu bố mẹ không có mục Quản trị dẫn vào được (gõ thẳng URL vẫn 404)", async ({ page }) => {
@@ -117,11 +118,12 @@ test.describe("Bước 0 — Bảng điều khiển (Adult08)", () => {
   // Kiểm tra: "cảnh báo thiếu hình, âm thanh"
   test("khối Cần bổ sung: thiếu hình, thiếu âm thanh, chủ đề chưa đủ 4 bài, bài nháp — số khớp database", async ({ page }) => {
     const noImage = await count("words", "image IS NULL");
-    const noAudio = await count("words", "audio IS NULL");
+    // Task 14: “chưa có âm thanh” = thiếu tệp của từ hoặc của câu ví dụ.
+    const noAudio = await count("words", "audio IS NULL OR example_audio IS NULL");
     const region = page.getByRole("region", { name: "Cần bổ sung" });
     await expect(region).toContainText(`${noImage} từ chưa có hình`);
     await expect(region).toContainText(`${noAudio} từ chưa có âm thanh`);
-    await expect(region).toContainText("Giai đoạn 1 đọc bằng giọng có sẵn của trình duyệt");
+    await expect(region).toContainText("Bé vẫn nghe bằng giọng có sẵn của trình duyệt");
     await expect(region).toContainText("chủ đề chưa đủ 4 bài học");
     await expect(region).toContainText("1 bài học đang là bản nháp");
     await expect(region.getByRole("link", { name: "Mở thư viện hình →" })).toHaveAttribute("href", "/admin/media");
@@ -147,7 +149,7 @@ test.describe("Bước 0 — Bảng điều khiển (Adult08)", () => {
 
   test("menu quản trị: các mục GĐ1 bật, ngữ pháp và đề thi hiện mờ 'Sắp có'", async ({ page }) => {
     const nav = page.getByRole("navigation").first();
-    for (const name of ["Bảng điều khiển", "Cấu trúc lộ trình", "Ngân hàng từ vựng", "Ngân hàng câu hỏi", "Soạn bài học", "Hình ảnh & âm thanh", "Nhập & xuất Excel"]) {
+    for (const name of ["Bảng điều khiển", "Cấu trúc lộ trình", "Ngân hàng từ vựng", "Ngân hàng câu hỏi", "Soạn bài học", "Hình ảnh & âm thanh", "Nhập & xuất Excel", "Âm phonics"]) {
       await expect(nav.getByRole("link", { name })).toBeVisible();
     }
     await expect(nav.getByRole("link", { name: "Chủ điểm ngữ pháp" })).toHaveCount(0);

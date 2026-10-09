@@ -22,7 +22,8 @@ test.describe("Bước 2 — Ngân hàng từ vựng (Adult10)", () => {
   test("tiêu đề tóm tắt khớp database; bảng có phân trang", async ({ page }) => {
     const total = await count("words");
     const noImage = await count("words", "image IS NULL");
-    const noAudio = await count("words", "audio IS NULL");
+    // Task 14: “chưa có âm thanh” = thiếu tệp của từ hoặc của câu ví dụ.
+    const noAudio = await count("words", "audio IS NULL OR example_audio IS NULL");
     await expect(page.getByText(`${total} từ · ${noImage} chưa có hình · ${noAudio} chưa có âm thanh`)).toBeVisible();
     const region = page.getByRole("region", { name: "Ngân hàng từ vựng" });
     await expect(region.getByText(new RegExp(`1–\\d+ / ${total}`))).toBeVisible();

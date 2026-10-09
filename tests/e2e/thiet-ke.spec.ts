@@ -121,6 +121,7 @@ const SIMPLE: Simple[] = [
   { dir: "Adult11-Questions", name: "a11-ngan-hang-cau-hoi", state: "admin", route: "/admin/questions", gate: "admin" },
   { dir: "Adult12-LessonBuilder", name: "a12-soan-bai", state: "admin", route: "/admin/builder/LESSON_DRAFT", gate: "admin" },
   { dir: "Adult13-Media", name: "a13-hinh-am-thanh", state: "admin", route: "/admin/media", gate: "admin" },
+  { dir: "Adult20-PhonicsSounds", name: "a20-am-phonics", state: "admin", route: "/admin/phonics", gate: "admin" },
   { dir: "Adult14-Excel", name: "a14-nhap-xuat-excel", state: "admin", route: "/admin/excel", gate: "admin" },
 ];
 

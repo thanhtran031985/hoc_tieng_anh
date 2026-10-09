@@ -15,7 +15,7 @@ export const TTS_BATCH_SIZE = 20;
 /** Khóa cài đặt hệ thống của công tắc "Giọng mp3". */
 export const VOICE_MP3_SETTING_KEY = "voice_mp3";
 
-const NAME_PATTERN = new RegExp(`^(?:${AUDIO_KINDS.join("|")})-[0-9]{1,10}-[0-9a-f]{8}\\.mp3$`);
+const NAME_PATTERN = new RegExp(`^(?:${AUDIO_KINDS.join("|")})-[0-9]{1,10}-[0-9a-f]{8}\\.(?:mp3|wav)$`);
 const URL_PREFIX = "/audio/";
 
 /** Gọn khoảng trắng và dấu xuống dòng trước khi đưa cho giọng đọc. */
@@ -35,11 +35,19 @@ export function audioKey(text: string): string {
   return spokenText(text).toLowerCase();
 }
 
-/** Tên tệp mp3, ví dụ `word-12-ab12cd34.mp3`; `hash` là 8 ký tự hex tính từ văn bản và giọng (đổi chữ thì đổi tên tệp). */
-export function audioFileName(kind: AudioKind, id: number, hash: string): string {
+/** Đuôi tệp âm thanh được lưu: mp3 (giọng tạo tự động) và wav (âm phonics tải lên). */
+export type AudioExt = "mp3" | "wav";
+
+/** Tên tệp, ví dụ `word-12-ab12cd34.mp3`; `hash` là 8 ký tự hex tính từ văn bản và giọng (đổi chữ thì đổi tên tệp). */
+export function audioFileName(kind: AudioKind, id: number, hash: string, ext: AudioExt = "mp3"): string {
   if (!Number.isInteger(id) || id < 1) throw new RangeError("id phải là số nguyên dương");
   if (!/^[0-9a-f]{8}$/.test(hash)) throw new RangeError("hash phải là 8 ký tự hex");
-  return `${kind}-${id}-${hash}.mp3`;
+  return `${kind}-${id}-${hash}.${ext}`;
+}
+
+/** Kiểu nội dung (Content-Type) theo đuôi tên tệp hợp lệ. */
+export function audioMimeOf(name: string): string {
+  return name.endsWith(".wav") ? "audio/wav" : "audio/mpeg";
 }
 
 /** Tên tệp hợp lệ: chặn mọi đường dẫn lạ (`../`, thư mục con, đuôi khác). */

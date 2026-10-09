@@ -1,0 +1,118 @@
+/* Âm phonics (Adult20). */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.sub {
+  flex: 1;
+  margin: 0;
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 1.4fr;
+  gap: var(--space-4);
+}
+.bulk {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.off {
+  opacity: 0.7;
+}
+.gl {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.gl b {
+  min-width: var(--space-8);
+  font-size: var(--text-adm-h2);
+  line-height: var(--text-adm-h2--line-height);
+  font-weight: 700;
+  color: var(--ink);
+}
+.gl span {
+  color: var(--ink-soft);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+}
+.ex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.w {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-right: var(--space-2);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface-soft);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+}
+.w b {
+  font-weight: 700;
+  color: var(--brand-shade);
+}
+.au {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+  color: var(--ink);
+}
+.miss {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-adm-label);
+  line-height: var(--text-adm-label--line-height);
+  font-weight: 600;
+  color: var(--adm-audio-missing);
+}
+.miss i {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--adm-audio-missing);
+}
+.btns {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.up {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.drop {
+  border: var(--border-thick) dashed var(--line-strong);
+  border-radius: var(--adm-radius-md);
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+}
+.drop[data-over] {
+  border-color: var(--brand);
+  background: var(--surface-soft);
+}
+
+@media (max-width: 1200px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -55,10 +55,12 @@ test.describe("Bước 5 — Thư viện hình và âm thanh (Adult13)", () => {
     await expect(page.getByRole("button", { name: "Thay hình" }).first()).toBeVisible();
   });
 
-  test("tab Âm thanh: bảng theo dõi từ chưa có tệp; nút tạo giọng đọc mờ 'Sắp có'", async ({ page }) => {
+  // Task 14: nút tạo giọng đọc không còn “Sắp có”; mờ khi công tắc “Giọng mp3” (mặc định tắt) chưa bật.
+  test("tab Âm thanh: bảng theo dõi từ chưa có tệp; công tắc Giọng mp3 tắt thì nút tạo giọng đọc mờ", async ({ page }) => {
     await page.getByRole("radio", { name: /^Âm thanh/ }).click();
-    await expect(page.getByRole("button", { name: /Tạo giọng đọc|Tạo/ }).first()).toBeDisabled();
-    await expect(page.getByText("Sắp có").first()).toBeVisible();
+    await expect(page.getByRole("switch", { name: "Giọng mp3" })).toHaveAttribute("aria-checked", "false");
+    await expect(page.getByRole("button", { name: /^Tạo/ }).first()).toBeDisabled();
+    await expect(page.getByText("Sắp có")).toHaveCount(0);
     await expect(page.getByRole("table")).toBeVisible();
   });
 

@@ -8,10 +8,10 @@ import styles from "./audio.module.css";
 const nf = (n: number) => n.toLocaleString("vi-VN");
 
 /** Thanh tiến trình tạo giọng đọc hàng loạt: số mục đã xong, nút Dừng, kết quả và danh sách mục lỗi. */
-export function AudioBatchStatus({ state, onStop }: { state: AudioBatchState; onStop: () => void }) {
+export function AudioBatchStatus({ state, onStop, unit = "từ" }: { state: AudioBatchState; onStop: () => void; unit?: string }) {
   if (state.phase === "idle") return null;
   const busy = state.phase === "run" || state.phase === "stopping";
-  const summary = `Đã xử lý ${nf(state.done)}/${nf(state.total)} từ · tạo mới ${nf(state.made)} · đã có sẵn ${nf(state.skipped)} · lỗi ${nf(state.errors.length)}`;
+  const summary = `Đã xử lý ${nf(state.done)}/${nf(state.total)} ${unit} · tạo mới ${nf(state.made)} · đã có sẵn ${nf(state.skipped)} · lỗi ${nf(state.errors.length)}`;
   return (
     <div className={styles.status} role="status" aria-live="polite">
       <div className={styles.row}>
@@ -28,7 +28,7 @@ export function AudioBatchStatus({ state, onStop }: { state: AudioBatchState; on
         </p>
       )}
       {state.errors.length > 0 && (
-        <ul className={styles.errors} aria-label="Các từ chưa tạo được">
+        <ul className={styles.errors} aria-label={`Các ${unit} chưa tạo được`}>
           {state.errors.map((e) => (
             <li key={e.id} className={adultStyles.small}>
               <b lang="en">{e.word}</b>: {e.message ?? "Chưa tạo được."}

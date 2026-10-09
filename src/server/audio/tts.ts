@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import path from "node:path";
+import { PHONICS_MIN_GENERATED_SECONDS, padToMinimum, trimSilence } from "@/lib/rules/phonics";
 import { TTS_DEFAULT_VOICE, TTS_MAX_CHARS, TTS_SPEED, spokenText, splitSentences } from "@/lib/rules/tts";
 import { encodeMp3 } from "./mp3";
 
@@ -28,7 +29,11 @@ export class TtsTextError extends Error {
 }
 
 type RawAudio = { audio: Float32Array; sampling_rate: number };
-type Engine = { generate: (text: string, options: { voice: string; speed: number }) => Promise<RawAudio> };
+type Engine = {
+  generate: (text: string, options: { voice: string; speed: number }) => Promise<RawAudio>;
+  tokenizer: (text: string, options: { truncation: boolean }) => { input_ids: unknown };
+  generate_from_ids: (ids: unknown, options: { voice: string; speed: number }) => Promise<RawAudio>;
+};
 
 type KokoroModule = { KokoroTTS: { from_pretrained: (id: string, options: { dtype: string; device: string }) => Promise<unknown> } };
 
@@ -91,4 +96,18 @@ export async function synthesizeMp3(text: string, voice: string = currentVoice()
     offset += c.length;
   }
   return encodeMp3(samples, rate);
+}
+
+/**
+ * Đọc một âm phonics (ký hiệu âm, không phải chữ) thành mp3 ngắn: đưa ký hiệu thẳng cho mô hình nên không bị đọc tên chữ cái.
+ * Cắt khoảng lặng đầu và cuối. Trả về tệp và độ dài (mili giây). Chất lượng từng âm cần nghe thử; không ưng thì tải tệp ghi âm lên.
+ */
+export async function synthesizePhonemeMp3(phonemes: string, voice: string = currentVoice()): Promise<{ bytes: Buffer; ms: number }> {
+  if (spokenText(phonemes).length === 0) throw new TtsTextError("Không có ký hiệu âm để đọc");
+  const engine = await loadEngine();
+  const { input_ids } = engine.tokenizer(phonemes, { truncation: true });
+  const part = await engine.generate_from_ids(input_ids, { voice, speed: TTS_SPEED });
+  const samples = padToMinimum(trimSilence(part.audio), Math.round(part.sampling_rate * PHONICS_MIN_GENERATED_SECONDS));
+  if (samples.length === 0) throw new TtsTextError("Giọng đọc không tạo ra âm thanh");
+  return { bytes: encodeMp3(samples, part.sampling_rate), ms: Math.round((samples.length / part.sampling_rate) * 1000) };
 }

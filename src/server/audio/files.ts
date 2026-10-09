@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { audioFileName, audioNameFromUrl, audioUrlPath, isAudioFileName, type AudioKind } from "@/lib/rules/tts";
+import { audioFileName, audioNameFromUrl, audioUrlPath, isAudioFileName, type AudioExt, type AudioKind } from "@/lib/rules/tts";
 
 // Tệp mp3 lưu ở storage/uploads/audio/ (ngoài public/), trả về qua route /audio/[name] có kiểm tra đăng nhập.
 // Tên tệp chứa mã băm của văn bản và giọng, nên đổi chữ hoặc giọng thì ra tệp mới, tạo lại cùng nội dung thì ghi đè đúng tệp cũ.
@@ -14,8 +14,8 @@ export function contentHash(text: string, voice: string): string {
 }
 
 /** Ghi tệp mp3 của một mục; trả về đường dẫn để lưu vào cột `audio`/`example_audio`. */
-export async function saveAudioFile(kind: AudioKind, id: number, text: string, voice: string, bytes: Buffer): Promise<string> {
-  const name = audioFileName(kind, id, contentHash(text, voice));
+export async function saveAudioFile(kind: AudioKind, id: number, text: string, voice: string, bytes: Buffer, ext: AudioExt = "mp3"): Promise<string> {
+  const name = audioFileName(kind, id, contentHash(text, voice), ext);
   await mkdir(AUDIO_DIR, { recursive: true });
   await writeFile(path.join(AUDIO_DIR, name), bytes);
   return audioUrlPath(name);

@@ -81,6 +81,7 @@ export const ICON_PATHS = {
   print: "<path d=\"M7 9V4h10v5\"/><rect x=\"4\" y=\"9\" width=\"16\" height=\"7\" rx=\"2\" fill=\"none\"/><path d=\"M7 14h10v6H7z\" fill=\"none\"/>",
   snow: "<path d=\"M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5\"/>",
   sunrise: "<path d=\"M4 18h16M7 18a5 5 0 0 1 10 0M12 5v4M5.5 9.5l2 2M18.5 9.5l-2 2\"/>",
+  wand: "<path d=\"M4 20L15 9M13 7l4 4\"/><path d=\"M18 3v3M16.5 4.5h3M20.5 9v2M19.5 10h2M9.5 3v2M8.5 4h2\"/>",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

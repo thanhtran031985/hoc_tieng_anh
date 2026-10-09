@@ -1,6 +1,6 @@
 # Tiến độ — 14-tts-audio — Giọng đọc mp3 và âm phonics
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 1 | Hàm tạo và phát mp3 | ✅ | `synthesizeMp3` (Kokoro) + mp3, route `/audio/[name]`, bảng `app_settings`, `SpeechConfig`; kiểm bằng Edge không đầu |
 | 2 | Nút tạo giọng đọc trong quản trị (Adult10, Adult13) | ✅ | Công tắc “Giọng mp3”, tạo từng từ và hàng loạt có tiến trình + Dừng, cảnh báo Adult08 đếm đủ tiếng |
 | 3 | Lệnh tạo mp3 cho nội dung seed | ✅ | `npm run audio:generate -- --level 3 --missing`; chạy lại bỏ qua mục đã có |
-| 4 | Âm phonics (Adult20) | ⬜ | |
+| 4 | Âm phonics (Adult20) | ✅ | Bảng `phonics_sounds` (36 âm, seed), màn `/admin/phonics`, tải lên .mp3/.wav, tạo âm tự động |
 
 ## Nhật ký
 
@@ -50,6 +50,30 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 230/230 ✅. Trên DB verify: `--help`; `--level 0` báo lỗi; `--level 3 --dry-run` báo 250 từ cần tạo (500 tệp); `--level 3 --limit 20 --missing` tạo 40 tệp trong 86 giây (≈ 2 giây mỗi tệp, nên cả cấp 3 khoảng 18 phút), 0 lỗi; sau đó `--dry-run` báo “đã đủ: 20”; gọi lại đúng 20 từ đó thì cả 20 được bỏ qua trong 12 ms (không nạp giọng đọc); mở `/lesson/220` bật “Giọng mp3”: bấm loa phát `/audio/word-351-….mp3` (1,58 giây, phát hết, không lỗi). Đã dọn tệp và dữ liệu thử.
 - **Chưa chạy hết cấp 3** (và các cấp khác) trên database thật: bố/mẹ chạy `npm run audio:generate -- --level 3 --missing` ở máy dev khi tiện (≈ 18 phút cho cấp 3, ≈ 55 phút cho cấp 1–4 hai tệp mỗi từ; lần đầu tải mô hình ~160 MB). Tệp nằm ở `storage/uploads/audio/` (không đưa lên git); đưa thư mục này lên hosting cùng cột `audio` trong database.
 
+### Bước 4 — 09/10/2026
+- Cơ sở dữ liệu: bảng `phonics_sounds` (migration `20261009145622_phonics_sounds`; chạy được trên MariaDB và MySQL 8): `grapheme` (duy nhất), `kind` (single, consonant_digraph, vowel_digraph), `ipa`, `examples` (JSON 2 từ kèm phần chữ tạo ra âm), `audio`, `audio_ms`, `audio_auto`, `sort_order`, `status`. Bộ 36 âm mẫu (26 chữ đơn, 5 âm ghép phụ âm, 5 âm ghép nguyên âm, IPA và 2 từ ví dụ mỗi âm) ở `src/lib/rules/phonics-data.ts`, nạp bằng `npx prisma db seed` (`prisma/seed/phonics.ts`, chạy lại không đụng tệp âm thanh) hoặc nút “Nhập bộ âm mẫu” khi bảng trống.
+- Màn `/admin/phonics` (Adult20, thêm mục “Âm phonics” vào menu quản trị): 3 thẻ số (tổng 36 âm · 26 chữ đơn · 10 âm ghép, đã có âm thanh kèm số tạo tự động, còn thiếu kèm danh sách), thẻ “Tạo âm thanh cho N âm còn thiếu” (lượt 5 âm, thanh tiến trình, Dừng, danh sách lỗi), bảng có tìm (“sh”, “/ʃ/”), lọc Loại và Âm thanh, sắp xếp, phân trang; mỗi dòng: âm + IPA, loại, 2 từ ví dụ (phần âm in đậm, có loa), tệp âm thanh (nghe, tên tệp, độ dài, “tự động”) hoặc chấm “Thiếu âm thanh”, nút “Tải lên” và “Tạo âm thanh/Tạo lại”; nút “Lọc âm còn thiếu” trên đầu trang. Đủ 4 trạng thái: bình thường, đang tải (`loading.tsx`), trống (nút nhập bộ mẫu), lỗi (`error.tsx`, mã PHN-500, Thử lại).
+- Tải lên: hộp thoại chọn hoặc kéo tệp; kiểm theo **nội dung** (không tin đuôi tệp): chỉ .mp3/.wav thật, tối đa 1 MB, dài 0,3–2 giây (`checkPhonicsUpload`, đo độ dài mp3 bằng đếm khung và WAV bằng tiêu đề, 14 test); lỗi hiện dưới ô chọn tệp, kiểm cả ở trình duyệt lẫn máy chủ (route `/admin/phonics/upload`, 403 nếu không phải admin). Tên tệp `phonics-<id>-<mã băm nội dung>.wav|mp3`; `/audio/[name]` nay nhận cả `.wav`.
+- Tạo âm tự động: đưa ký hiệu âm thẳng cho Kokoro (`phonicsPhonemes`: /tʃ/ → “ʧ”, /eɪ/ → “A”…, âm chặn như /k/ thêm “ə”), nên không bị đọc tên chữ cái; cắt khoảng lặng và đệm cho đủ 0,35 giây. Chỉ chạy khi công tắc “Giọng mp3” bật và máy có `kokoro-js` (như tạo giọng cho từ).
+- `wand` thêm vào bộ icon (chép từ `bundle.js`).
+- Kiểm tra: `tsc` ✅, `lint` ✅, `npm test` 250/250 ✅, `build` ✅ (có `/admin/phonics`, `/admin/phonics/upload`, `/audio/[name]`). Edge không đầu (DB verify, admin PIN) ở 1366×768 và 1920×1080: trạng thái trống → nhập bộ mẫu ra đúng 36 âm; KPI “26 chữ đơn · 10 âm ghép”; tìm “sh”; công tắc tắt thì “Tạo âm thanh” mờ còn “Tải lên” dùng được; tải lên: chưa chọn tệp, `.txt`, `.wav` giả (nội dung là chữ), tệp 3 giây đều báo lỗi dưới ô và không lưu gì; tệp hợp lệ 0,7 giây lưu `phonics-….wav` (700 ms, không “tự động”), bảng hiện “0,7 giây”, `/audio` trả 200 `audio/wav`; “Lọc âm còn thiếu” bật/tắt; công tắc bật: tạo âm “sh” mất 2 giây; hàng loạt 34 âm còn lại xong, 0 lỗi (35 âm tự động + 1 âm tải lên), cả 36 âm có tệp dài 0,35–2 giây; không cuộn ngang; đổi tên bảng thì hiện lỗi PHN-500 kèm Thử lại; không lỗi console. Đã dọn tệp và dữ liệu thử.
+- **Chưa nghe bằng tai** các âm tự động: tôi chỉ đo được độ dài và có tiếng, không đánh giá được âm có đúng không (đặc biệt âm chặn /b/ /d/ /g/ và âm ghép). Bố/mẹ nghe thử từng âm ở màn này; âm nào chưa đúng thì tải tệp ghi âm lên (tệp tải lên thay thế tệp tự động).
+- Thêm test Playwright `tests/e2e/14-giong-doc.spec.ts` (6 test), thêm `/admin/phonics` vào danh sách của `chung.spec.ts`, `thiet-ke.spec.ts` và chặn quyền ở `12a-`; cập nhật 3 test cũ của task 12 cho khớp hành vi mới (đếm “chưa có âm thanh” theo cả câu ví dụ, nút tạo giọng đọc không còn “Sắp có”, menu có “Âm phonics”). Chưa chạy được (cần reset DB test): chạy khi xong hết các task theo quyết định của bố/mẹ.
+
 ## Bước tiếp theo
 
-Bước 4 — Âm phonics (Adult20).
+Hoàn thành. Bố/mẹ làm checklist “Kiểm tra thủ công” bên dưới; chạy Playwright khi xong hết các task.
+
+## Kiểm tra cuối task — 09/10/2026
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` chạy không lỗi; `npm test` 250/250 (task này thêm 41 test: tên tệp và dải byte, tách câu, bảng tra mp3, đích tạo giọng đọc, tham số dòng lệnh, nhận dạng và kiểm tệp âm thanh, bộ 36 âm).
+- Bài học cấp 3 (`/lesson/220`) phát mp3 thật khi công tắc “Giọng mp3” bật (1,58 giây, phát hết, không lỗi); tắt công tắc hoặc thiếu tệp thì đọc bằng giọng trình duyệt đúng giọng Anh/Mỹ của hồ sơ, không báo lỗi cho bé. Mp3 phát từ chính máy chủ (không cần mạng ngoài), giọng trình duyệt có sẵn trong máy, nên tắt mạng vẫn nghe được.
+- Chưa chạy Playwright (cần bố/mẹ đồng ý reset `hoc_tieng_anh_test`; hoãn tới khi xong hết các task).
+
+## Kiểm tra thủ công (checklist)
+- [ ] Chạy `npx prisma migrate deploy` rồi `npx prisma db seed` để có bảng `app_settings`, `phonics_sounds` và bộ 36 âm (hoặc bấm “Nhập bộ âm mẫu” ở `/admin/phonics`).
+- [ ] Ở Hình ảnh & âm thanh › Âm thanh: công tắc “Giọng mp3” mặc định tắt; bật lên thì các nút Tạo sáng; tạo thử cho một từ, bấm loa nghe tệp.
+- [ ] Chạy `npm run audio:generate -- --level 3 --missing` (≈ 18 phút, lần đầu tải mô hình ~160 MB; thêm `--dry-run` để xem trước). Mở một bài cấp 3 với công tắc bật: từ và câu ví dụ nghe bằng mp3; tắt công tắc: nghe bằng giọng trình duyệt.
+- [ ] Nghe thử chất lượng giọng `af_heart`; muốn giọng khác (vd `am_michael`) thì đặt `TTS_VOICE` trong `.env` rồi tạo lại.
+- [ ] Ở `/admin/phonics`: bấm “Tạo âm thanh cho N âm còn thiếu”, nghe từng âm (loa ở cột Âm thanh); âm nào chưa đúng thì “Tải lên” tệp ghi âm 0,3–2 giây (.mp3/.wav, ≤ 1 MB).
+- [ ] Thử tải tệp sai loại, quá lớn, quá dài: lỗi hiện dưới ô, không lưu gì.
+- [ ] Khi triển khai hosting: đưa cả thư mục `storage/uploads/audio/` lên cùng database (hosting không cần cài `kokoro-js`).

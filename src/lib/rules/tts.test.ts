@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { audioFileName, audioTargets, buildAudioMap, hasFullAudio, audioKey, audioNameFromUrl, audioUrlPath, chunk, isAudioFileName, parseByteRange, splitSentences, spokenText } from "./tts.ts";
+import { audioFileName, audioMimeOf, audioTargets, buildAudioMap, hasFullAudio, audioKey, audioNameFromUrl, audioUrlPath, chunk, isAudioFileName, parseByteRange, splitSentences, spokenText } from "./tts.ts";
 
 describe("văn bản cần đọc", () => {
   it("gọn khoảng trắng; khóa tra cứu không phân biệt hoa thường", () => {
@@ -24,6 +24,9 @@ describe("tên tệp mp3", () => {
   it("đặt tên theo loại, id và mã băm", () => {
     assert.equal(audioFileName("word", 12, "ab12cd34"), "word-12-ab12cd34.mp3");
     assert.equal(audioUrlPath("example-7-00ff00ff.mp3"), "/audio/example-7-00ff00ff.mp3");
+    assert.equal(audioFileName("phonics", 3, "0a1b2c3d", "wav"), "phonics-3-0a1b2c3d.wav");
+    assert.equal(audioMimeOf("phonics-3-0a1b2c3d.wav"), "audio/wav");
+    assert.equal(audioMimeOf("word-12-ab12cd34.mp3"), "audio/mpeg");
   });
 
   it("từ chối id hoặc mã băm sai", () => {
@@ -34,7 +37,8 @@ describe("tên tệp mp3", () => {
 
   it("chỉ nhận tên hợp lệ, chặn đường dẫn lạ", () => {
     assert.equal(isAudioFileName("phonics-3-0a1b2c3d.mp3"), true);
-    for (const bad of ["../word-1-ab12cd34.mp3", "word-1-ab12cd34.mp3/", "sub/word-1-ab12cd34.mp3", "word-1-ab12cd34.wav", "word-1-AB12CD34.mp3", "other-1-ab12cd34.mp3", "word--ab12cd34.mp3", "word-1-ab12cd3.mp3", "..%2Fword-1-ab12cd34.mp3", "word-1-ab12cd34.mp3\0.png", ""]) {
+    assert.equal(isAudioFileName("phonics-3-0a1b2c3d.wav"), true);
+    for (const bad of ["../word-1-ab12cd34.mp3", "word-1-ab12cd34.mp3/", "sub/word-1-ab12cd34.mp3", "word-1-ab12cd34.ogg", "word-1-ab12cd34.mp4", "word-1-AB12CD34.mp3", "other-1-ab12cd34.mp3", "word--ab12cd34.mp3", "word-1-ab12cd3.mp3", "..%2Fword-1-ab12cd34.mp3", "word-1-ab12cd34.mp3\0.png", ""]) {
       assert.equal(isAudioFileName(bad), false, bad);
     }
   });

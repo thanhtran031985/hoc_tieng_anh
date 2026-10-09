@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { chunk, TTS_UI_BATCH_SIZE } from "@/lib/rules/tts";
-import type { AudioItemResult } from "@/lib/schemas";
+import type { AudioItemResult, GenerateAudioResult } from "@/lib/schemas";
 import { generateAudioAction } from "./audio-actions";
 
 export type AudioBatchState = {
@@ -19,13 +19,18 @@ export type AudioBatchState = {
   stopped: boolean;
 };
 
+/** Hàm tạo giọng đọc cho một lượt mục (id từ hoặc id âm); `word` trong kết quả là nhãn hiện cho mục đó. */
+export type AudioBatchRunner = (ids: number[], force: boolean) => Promise<GenerateAudioResult>;
+
+const runWords: AudioBatchRunner = (ids, force) => generateAudioAction({ wordIds: ids, force });
+
 const IDLE: AudioBatchState = { phase: "idle", total: 0, done: 0, made: 0, skipped: 0, errors: [], message: null, stopped: false };
 
 /**
  * Tạo giọng đọc theo từng lượt nhỏ (`TTS_UI_BATCH_SIZE` từ mỗi lần gọi), có tiến trình và nút Dừng.
  * Bấm Dừng thì lượt đang chạy làm nốt rồi dừng; chạy lại thì bỏ qua mục đã có tệp (trừ khi `force`).
  */
-export function useAudioBatch(onFinish?: () => void) {
+export function useAudioBatch(onFinish?: () => void, runner: AudioBatchRunner = runWords) {
   const [state, setState] = useState<AudioBatchState>(IDLE);
   const stopRef = useRef(false);
   const runningRef = useRef(false);
@@ -38,7 +43,7 @@ export function useAudioBatch(onFinish?: () => void) {
     setState(next);
     for (const group of chunk(ids, TTS_UI_BATCH_SIZE)) {
       if (stopRef.current) break;
-      const result = await generateAudioAction({ wordIds: group, force });
+      const result = await runner(group, force);
       if (!result.ok) {
         next = { ...next, message: result.message };
         break;

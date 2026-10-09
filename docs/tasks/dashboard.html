@@ -91,14 +91,14 @@
           <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">⋯</button>
         </div>
       </div>
-      <p class="subtitle">Sinh lúc 2026-10-09 21:52 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
+      <p class="subtitle">Sinh lúc 2026-10-09 22:13 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
     </div>
 
     <div class="stats">
       <div class="stat"><div class="stat-value">29</div><div class="stat-label">tổng số task</div></div>
-      <div class="stat"><div class="stat-value" style="color:#34d399">14</div><div class="stat-label">✅ xong</div></div>
-      <div class="stat"><div class="stat-value"><span style="color:#22d3ee">1</span> / <span style="color:#94a3b8">14</span></div><div class="stat-label">🔄 đang làm / ⬜ chưa làm</div></div>
-      <div class="stat"><div class="stat-value">53%</div><div class="stat-label">bước đã xong (76/144)</div></div>
+      <div class="stat"><div class="stat-value" style="color:#34d399">15</div><div class="stat-label">✅ xong</div></div>
+      <div class="stat"><div class="stat-value"><span style="color:#22d3ee">0</span> / <span style="color:#94a3b8">14</span></div><div class="stat-label">🔄 đang làm / ⬜ chưa làm</div></div>
+      <div class="stat"><div class="stat-value">53%</div><div class="stat-label">bước đã xong (77/144)</div></div>
     </div>
 
     
@@ -340,17 +340,17 @@
           <rect x="1642" y="480" width="206" height="5" rx="2.5" fill="#34d399"/>
         </g>
         <g>
-          <title>14 — 14-tts-audio: Giọng đọc mp3 và âm phonics (đang làm)</title>
+          <title>14 — 14-tts-audio: Giọng đọc mp3 và âm phonics (xong)</title>
           <rect x="1950" y="156" width="230" height="92" rx="6" fill="#0f172a"/>
-          <rect x="1950" y="156" width="230" height="92" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
-          <text x="1962" y="176" fill="#22d3ee" font-size="10" font-weight="700">14</text>
-          <text x="2168" y="177" font-size="12" text-anchor="end">🔄</text>
+          <rect x="1950" y="156" width="230" height="92" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1962" y="176" fill="#34d399" font-size="10" font-weight="700">14</text>
+          <text x="2168" y="177" font-size="12" text-anchor="end">✅</text>
           <text x="1986" y="176" fill="white" font-size="12" font-weight="600">14-tts-audio</text>
           <text x="1962" y="196" fill="#94a3b8" font-size="9">Giọng đọc mp3 và âm phonics</text>
-          <text x="1962" y="218" fill="#cbd5e1" font-size="9">4/5 bước</text>
-          <text x="2168" y="218" fill="#94a3b8" font-size="9" text-anchor="end">80%</text>
+          <text x="1962" y="218" fill="#cbd5e1" font-size="9">5/5 bước</text>
+          <text x="2168" y="218" fill="#94a3b8" font-size="9" text-anchor="end">100%</text>
           <rect x="1962" y="228" width="206" height="5" rx="2.5" fill="#1e293b"/>
-          <rect x="1962" y="228" width="165" height="5" rx="2.5" fill="#34d399"/>
+          <rect x="1962" y="228" width="206" height="5" rx="2.5" fill="#34d399"/>
         </g>
         <g>
           <title>15 — 15-lesson-types-a: Dạng bài mới: ghép âm, sắp xếp câu, nghe gõ, điền từ (chưa làm)</title>
@@ -720,14 +720,14 @@
       </div>
       <div class="card task-card">
         <div class="card-header">
-          <div class="card-dot" style="background:#22d3ee"></div>
+          <div class="card-dot" style="background:#34d399"></div>
           <h3>14 — 14-tts-audio</h3>
-          <span class="badge" style="color:#22d3ee;border-color:#22d3ee">🔄 đang làm</span>
+          <span class="badge" style="color:#34d399;border-color:#34d399">✅ xong</span>
         </div>
         <p class="task-title">Giọng đọc mp3 và âm phonics</p>
         <p class="meta">Nhánh: <code>feat/14-tts-audio</code> · Cập nhật: 09/10/2026 · Phụ thuộc: 12, 13</p>
-        <div class="bar"><div class="bar-fill" style="width:80%"></div></div><div class="bar-label">4/5 bước · 80%</div>
-        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Chọn dịch vụ TTS (DỪNG chờ tôi)</div><div class="note">Đã chốt Kokoro chạy trên máy, giọng en-US, không dùng API; chờ bố/mẹ nghe 10 tệp mẫu và chọn giọng</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 1 · Hàm tạo và phát mp3</div><div class="note"><code>synthesizeMp3</code> (Kokoro) + mp3, route <code>/audio/[name]</code>, bảng <code>app_settings</code>, <code>SpeechConfig</code>; kiểm bằng Edge không đầu</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 2 · Nút tạo giọng đọc trong quản trị (Adult10, Adult13)</div><div class="note">Công tắc “Giọng mp3”, tạo từng từ và hàng loạt có tiến trình + Dừng, cảnh báo Adult08 đếm đủ tiếng</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 3 · Lệnh tạo mp3 cho nội dung seed</div><div class="note"><code>npm run audio:generate -- --level 3 --missing</code>; chạy lại bỏ qua mục đã có</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 4 · Âm phonics (Adult20)</div></div></li></ul>
+        <div class="bar"><div class="bar-fill" style="width:100%"></div></div><div class="bar-label">5/5 bước · 100%</div>
+        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Chọn dịch vụ TTS (DỪNG chờ tôi)</div><div class="note">Đã chốt Kokoro chạy trên máy, giọng en-US, không dùng API; chờ bố/mẹ nghe 10 tệp mẫu và chọn giọng</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 1 · Hàm tạo và phát mp3</div><div class="note"><code>synthesizeMp3</code> (Kokoro) + mp3, route <code>/audio/[name]</code>, bảng <code>app_settings</code>, <code>SpeechConfig</code>; kiểm bằng Edge không đầu</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 2 · Nút tạo giọng đọc trong quản trị (Adult10, Adult13)</div><div class="note">Công tắc “Giọng mp3”, tạo từng từ và hàng loạt có tiến trình + Dừng, cảnh báo Adult08 đếm đủ tiếng</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 3 · Lệnh tạo mp3 cho nội dung seed</div><div class="note"><code>npm run audio:generate -- --level 3 --missing</code>; chạy lại bỏ qua mục đã có</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 4 · Âm phonics (Adult20)</div><div class="note">Bảng <code>phonics_sounds</code> (36 âm, seed), màn <code>/admin/phonics</code>, tải lên .mp3/.wav, tạo âm tự động</div></div></li></ul>
         <p class="links"><a href="14-tts-audio/task.md">task.md</a> · <a href="14-tts-audio/progress.md">progress.md</a></p>
       </div>
       <div class="card task-card">
@@ -919,7 +919,7 @@
   </div>
 
   <script type="application/json" id="tasks-data">{
-  "generatedAt": "2026-10-09 21:52 (UTC+07:00)",
+  "generatedAt": "2026-10-09 22:13 (UTC+07:00)",
   "warnings": [],
   "tasks": [
     {
@@ -1676,7 +1676,7 @@
       "slug": "14-tts-audio",
       "name": "14-tts-audio",
       "title": "Giọng đọc mp3 và âm phonics",
-      "status": "doing",
+      "status": "done",
       "deps": [
         "12",
         "13"
@@ -1685,7 +1685,7 @@
       "inReadme": true,
       "hasFolder": true,
       "progress": {
-        "overall": "doing",
+        "overall": "done",
         "updated": "09/10/2026",
         "steps": [
           {
@@ -1720,14 +1720,14 @@
             "step": "4",
             "numbered": true,
             "name": "Âm phonics (Adult20)",
-            "status": "todo",
-            "note": ""
+            "status": "done",
+            "note": "Bảng `phonics_sounds` (36 âm, seed), màn `/admin/phonics`, tải lên .mp3/.wav, tạo âm tự động"
           }
         ],
         "hasTable": true
       },
       "stepsTotal": 5,
-      "stepsDone": 4,
+      "stepsDone": 5,
       "level": 6
     },
     {

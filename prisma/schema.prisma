@@ -311,6 +311,38 @@ model AppSetting {
   @@map("app_settings")
 }
 
+/// Loại âm phonics: chữ đơn (a–z), âm ghép phụ âm (sh, ch, th, ck, ng), âm ghép nguyên âm (ee, oo, ai, ar, or).
+enum PhonicsKind {
+  single
+  consonant_digraph
+  vowel_digraph
+}
+
+/// Âm phonics cho bài Ghép âm (PRD Phần G, bảng phonics_sounds): 36 âm, mỗi âm có phiên âm, 2 từ ví dụ và tệp âm thanh.
+model PhonicsSound {
+  id        Int           @id @default(autoincrement())
+  /// Chữ hoặc cụm chữ tạo ra âm, vd "c", "sh".
+  grapheme  String        @unique @db.VarChar(8)
+  kind      PhonicsKind
+  /// Phiên âm, vd "/k/".
+  ipa       String        @db.VarChar(16)
+  /// Hai từ ví dụ: [{ "word": "cat", "part": "c" }] (part là phần chữ tạo ra âm, in đậm khi hiển thị).
+  examples  Json
+  /// Đường dẫn tệp âm thanh (`/audio/phonics-<id>-<mã>.mp3|wav`); chưa có thì ô chữ phát từ ví dụ thay cho âm.
+  audio     String?       @db.VarChar(255)
+  /// Độ dài tệp (mili giây).
+  audioMs   Int?          @map("audio_ms")
+  /// true: tệp do giọng đọc tự động tạo; false: tải lên.
+  audioAuto Boolean       @default(false) @map("audio_auto")
+  sortOrder Int           @map("sort_order")
+  status    ContentStatus @default(published)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@index([sortOrder])
+  @@map("phonics_sounds")
+}
+
 // ---------------------------------------------------------------------------
 // Kết quả học
 // ---------------------------------------------------------------------------
