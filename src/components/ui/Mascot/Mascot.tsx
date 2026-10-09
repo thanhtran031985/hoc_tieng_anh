@@ -1,9 +1,10 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
-import { DRAGON_PARTS, type Expr } from "./dragon-parts";
+import type { Expr } from "./dragon-parts";
+import { dragonMarkup, type Stage } from "./dragon-stages";
 import styles from "./Mascot.module.css";
 
-export type { Expr };
+export type { Expr, Stage };
 export type MascotColor = "ngoc" | "dao" | "nang" | "tim";
 
 const EXPR_LABEL: Record<Expr, string> = {
@@ -24,10 +25,12 @@ export type MascotProps = Omit<ComponentProps<"svg">, "children" | "role"> & {
   size?: number;
   /** Màu rồng. Bỏ trống thì theo `data-dragon` của vùng chứa, rồi tới màu ngọc mặc định. */
   color?: MascotColor;
+  /** Dáng lớn lên theo cấp 1–5 (1 Hạt giống … 5 Cây lớn). Bỏ trống hoặc 3 thì là dáng gốc. */
+  stage?: Stage;
 };
 
 /** Rồng Bông, linh vật đồng hành. Không bao giờ buồn bã hay chê: khi sai luôn dùng `dongvien`. Chuyển động tắt khi bật giảm chuyển động. */
-export function Mascot({ expr, size = 200, color, className, ...rest }: MascotProps) {
+export function Mascot({ expr, size = 200, color, stage, className, ...rest }: MascotProps) {
   return (
     <svg
       className={cn(styles.dragon, styles[expr], className)}
@@ -35,11 +38,11 @@ export function Mascot({ expr, size = 200, color, className, ...rest }: MascotPr
       height={size}
       viewBox="0 -10 200 210"
       role="img"
-      aria-label={`Rồng Bông ${EXPR_LABEL[expr]}`}
+      aria-label={`Rồng Bông ${EXPR_LABEL[expr]}${stage ? `, dáng cấp ${stage}` : ""}`}
       data-dragon={color}
       {...rest}
-      // Nội dung là hằng số trong dragon-parts.ts, không có dữ liệu người dùng.
-      dangerouslySetInnerHTML={{ __html: DRAGON_PARTS[expr] }}
+      // Nội dung ghép từ hằng số trong dragon-parts.ts và dragon-stages.ts, không có dữ liệu người dùng.
+      dangerouslySetInnerHTML={{ __html: dragonMarkup(expr, stage) }}
     />
   );
 }

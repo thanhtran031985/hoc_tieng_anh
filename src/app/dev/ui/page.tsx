@@ -21,6 +21,7 @@ import {
   type MascotColor,
 } from "@/components/ui";
 import { Gd2Tokens } from "./gd2-tokens";
+import { GrowthDemo } from "./growth-demo";
 import { HotkeysDemo } from "./hotkeys-demo";
 import { OverlaysDemo } from "./overlays-demo";
 import { TopbarDemo } from "./topbar-demo";
@@ -210,6 +211,14 @@ export default function DevUiPage() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section
+        id="sec-mascot-growth"
+        title="Rồng Bông lớn lên (MascotGrowth)"
+        note="5 dáng theo cấp 1–5, cùng nét vẽ; đổi biểu cảm (8) và màu (4) cho mọi dáng. Dáng 3 là dáng gốc."
+      >
+        <GrowthDemo />
       </Section>
 
       <Section id="sec-wordpicture" title="Hình từ vựng" note="Khung 120×120, nét viền dragon-line. Màu trong hình là màu vẽ.">
