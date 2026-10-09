@@ -1,0 +1,16 @@
+# Tiến độ — 23-notebook-plus — Sổ từ bổ sung và in danh sách từ
+
+Trạng thái chung: ⬜ · Cập nhật lần cuối: 09/10/2026
+
+| Bước | Tên | Trạng thái | Ghi chú |
+|---|---|---|---|
+| 0 | Sổ từ bổ sung (Screen44) | ⬜ | |
+| 1 | In danh sách từ (Screen45) | ⬜ | |
+
+## Nhật ký
+
+(Claude ghi sau mỗi bước: đã làm gì, kết quả kiểm tra, việc cần làm thủ công.)
+
+## Bước tiếp theo
+
+Bước 0 — Sổ từ bổ sung (Screen44)

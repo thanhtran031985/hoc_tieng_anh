@@ -131,6 +131,18 @@ Các `preview.html` KHÔNG phải React: chúng gọi `window.Bong` trong `compo
 - Bỏ dữ liệu mẫu (`Bong.kids`, `Bong.words`…); thay bằng dữ liệu và điều hướng thật.
 - Khớp thiết kế CHÍNH XÁC: bố cục, khoảng cách, thành phần, phím tắt.
 
+Phần GĐ2 trong `bundle.js` (dùng chung cho Tiểu học):
+- `Bong.L.*`: khung bài học và trò chơi (head, foot, gfoot, words, overlay, gameStart, gamePause,
+  gameEnd, grow, gate). Component đặt ở `src/components/lesson/`.
+- `Bong.R.*`: phần thưởng và công cụ (sticker, medal, reward, tools, wireTools, soundPanel).
+  Component đặt ở `src/components/rewards/`; `LessonTools` đặt cùng khung bài học.
+- `Bong.W.*`: Khám phá từ, Họ vần, Ghép chữ đầu, Đọc cả đoạn, liên kết (explorer, family,
+  builder, paragraph, links). Component đặt ở `src/components/wordlab/`.
+- Màn có chữ "biến thể mới, màn cũ giữ nguyên" trong README (Screen34, 40, 43, 44, 46, 52)
+  là bản cập nhật của màn thật đã có, không tạo route mới.
+- Hằng số trò chơi (`coins`, `wordlab`) ở mục 10b của `docs/DESIGN_SYSTEM.md` không phải biến
+  CSS: đặt trong `src/lib/rules/constants.ts`.
+
 ## Bảo mật môi trường
 - KHÔNG đọc file `.env`. Danh sách biến môi trường nằm trong `.env.example`
   (giá trị giữ chỗ, không có secret thật). Khi cần biến mới: thêm vào `.env.example`

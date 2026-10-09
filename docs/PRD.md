@@ -431,7 +431,7 @@ Trả lời đúng thì lên một hộp, sai thì về hộp 1.
 | Bảng | Dùng để | Cột chính |
 |---|---|---|
 | users | Tài khoản gia đình và quản trị | name, email, password, role (admin, parent), parent_pin |
-| learners | Hồ sơ học sinh | user_id, name, birth_year, school_grade, textbook, avatar, mascot, mascot_name, ui_theme, current_level_id, stars, coins, xp, streak_days, streak_freezes, last_study_date, pin, settings (JSON: giới hạn giờ, giọng đọc, mục tiêu ngày) |
+| learners | Hồ sơ học sinh | user_id, name, birth_year, school_grade, textbook, avatar, mascot, mascot_name, ui_theme, current_level_id, stars, coins, xp, streak_days, streak_freezes, last_study_date, pin, settings (JSON: giới hạn giờ, khung giờ được học theo ngày, giờ mở tạm của bố mẹ, giọng đọc, nhạc nền, hiệu ứng, âm lượng, chấm phát âm, mục tiêu ngày) |
 
 **Lộ trình**
 
@@ -447,6 +447,8 @@ Trả lời đúng thì lên một hộp, sai thì về hộp 1.
 
 | Bảng | Dùng để | Cột chính |
 |---|---|---|
+| stories, story_pages | Truyện tranh đọc to (8.6) | level_id, unit_id, title, title_vi, cover, new_words (JSON), status, sort_order / story_id, sort_order, kind (page, question), image, sentences (JSON: en, vi), audio, question_id |
+| phonics_sounds | Âm phonics (8.5) | grapheme, kind (single, consonant_digraph, vowel_digraph), ipa, examples (JSON), audio, sort_order, status |
 | words | Từ vựng | word, ipa, part_of_speech, meaning_vi, example_en, example_vi, image, audio, example_audio, level_id, extra (JSON: họ từ, cụm từ đi kèm) |
 | topics, word_topic | Chủ đề từ vựng (một từ có thể thuộc nhiều chủ đề) | name, name_vi / word_id, topic_id |
 | grammar_points | Chủ điểm ngữ pháp | level_id, title, title_vi, content, formula, examples (JSON), sort_order |
@@ -468,6 +470,8 @@ Trả lời đúng thì lên một hộp, sai thì về hộp 1.
 | exam_attempts | Bài thi đã làm hoặc đang làm dở | learner_id, exam_id, started_at, submitted_at, status, score, answers (JSON) |
 | writings | Bài viết | learner_id, question_id, text, word_count, auto_score, parent_score, parent_comment, ai_feedback (JSON) |
 | recordings | Bản ghi âm | learner_id, question_id hoặc word_id, file_path, score, transcript |
+| game_records | Thành tích mini game, dùng cho "xe ma" của Đua xe | learner_id, game, lesson_id, correct, total, sequence (JSON: đúng/sai từng lượt), played_at |
+| manual_unlocks | Bố mẹ mở khóa thủ công | learner_id, target_type (level, unit, lesson), target_id, unlocked_by, created_at |
 | study_sessions | Phiên học, để tính phút học và giới hạn giờ | learner_id, started_at, ended_at, minutes |
 | school_tests | Lịch kiểm tra ở trường | learner_id, test_date, textbook_unit_ids (JSON), note |
 
@@ -556,6 +560,8 @@ Prisma dùng một schema chung cho MariaDB và MySQL, nên chuyển từ XAMPP 
 | **2. Hấp dẫn, trọn tiểu học** | Bộ sưu tập, phòng của linh vật, các mini game, phonics, truyện, luyện nói, chính tả, nội dung cấp 3–5, bài thi lên cấp | Trọn bộ tiểu học |
 | **3. THCS** | Giao diện THCS, nội dung cấp 6–8, các dạng bài THCS, thư viện ngữ pháp, học theo SGK, đề kiểm tra, tạo đề trong quản trị, lịch kiểm tra, báo cáo chi tiết | Dùng được suốt lớp 6–8 |
 | **4. Nâng cao** | Nội dung cấp 9–10, thi thử vào 10, đề làm quen A2 Key và B1 Preliminary, AI chấm viết, nói và trò chuyện, trợ lý AI soạn nội dung | Luyện thi, luyện viết và nói |
+
+- GĐ2 chia thành task 13–28 (09/10/2026): 13 bộ thành phần GĐ2, 14 giọng đọc mp3 và âm phonics, 15 dạng bài ghép âm, sắp xếp câu, nghe gõ, điền từ, 16 truyện và đọc hiểu ngắn, 17 luyện nói, 18 mini game, 19 nội dung dạng bài mới cấp 1–4, 20 trận trùm và bài thi lên cấp, 21 bộ sưu tập, 22 phòng của tớ và cửa hàng, 23 sổ từ bổ sung và in, 24 khu bố mẹ GĐ2, 25 Khám phá từ, 26 Họ vần và Ghép chữ đầu, 27 nội dung Khám phá từ và Họ vần, 28 nội dung cấp 5.
 
 - Có thể đưa lên hosting bất kỳ lúc nào sau GĐ1.
 - Nếu bé đang học lớp cao hơn, mình sẽ đưa nội dung cấp của bé lên làm trước.
