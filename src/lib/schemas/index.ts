@@ -17,4 +17,5 @@ export * from "./placement";
 export * from "./question";
 export * from "./question-extra";
 export * from "./review-complete";
+export * from "./story";
 export * from "./word-extra";

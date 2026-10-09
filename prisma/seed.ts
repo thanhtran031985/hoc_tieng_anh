@@ -7,6 +7,7 @@ import { PrismaClient } from "../src/generated/prisma/client.ts";
 import { seedContent } from "./seed/content.ts";
 import { seedCurriculum } from "./seed/curriculum.ts";
 import { seedPhonics } from "./seed/phonics.ts";
+import { seedStories } from "./seed/stories.ts";
 
 try {
   process.loadEnvFile(".env");
@@ -148,6 +149,7 @@ async function main() {
   await seedCurriculum(db);
   await seedContent(db);
   await seedPhonics(db);
+  await seedStories(db);
 
   const [stages, levels, units] = await Promise.all([db.stage.count(), db.level.count(), db.unit.count()]);
   await seedAdmin();

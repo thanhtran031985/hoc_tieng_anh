@@ -140,6 +140,7 @@ model Level {
   units     Unit[]
   words     Word[]
   questions Question[]
+  stories   Story[]
   learners  Learner[]  @relation("LearnerCurrentLevel")
 
   @@index([stageId])
@@ -164,6 +165,7 @@ model Unit {
 
   level   Level    @relation(fields: [levelId], references: [id], onDelete: Restrict)
   lessons Lesson[]
+  stories Story[]
 
   @@unique([levelId, slug])
   @@index([levelId, sortOrder])
@@ -284,6 +286,7 @@ model Question {
   steps       LessonStep[]
   answerLogs  AnswerLog[]
   reviewCards ReviewCard[]
+  storyPages  StoryPage[]
 
   @@index([levelId, type])
   @@map("questions")
@@ -457,4 +460,58 @@ model StudySession {
 
   @@index([learnerId, startedAt])
   @@map("study_sessions")
+}
+
+/// Loại trang của truyện tranh: trang truyện (tranh + 1–2 câu) hoặc trang câu hỏi xen giữa.
+enum StoryPageKind {
+  page
+  question
+}
+
+/// Truyện tranh có đọc to (dạng bài 8.6, task 16). Một truyện là một bước `story` trong bài (`lesson_steps.config.storyId`).
+model Story {
+  id        Int           @id @default(autoincrement())
+  levelId   Int           @map("level_id")
+  unitId    Int?          @map("unit_id")
+  /// Khóa ổn định trong cấp (kebab-case), để seed chạy lại không trùng.
+  slug      String        @db.VarChar(100)
+  title     String        @db.VarChar(150)
+  titleVi   String        @map("title_vi") @db.VarChar(150)
+  cover     String?       @db.VarChar(255)
+  /// Từ mới của truyện (mảng chữ thường), hiện ở trang "Hết truyện".
+  newWords  Json          @map("new_words")
+  status    ContentStatus @default(draft)
+  sortOrder Int           @default(0) @map("sort_order")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  level Level       @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  unit  Unit?       @relation(fields: [unitId], references: [id], onDelete: SetNull)
+  pages StoryPage[]
+
+  @@unique([levelId, slug])
+  @@index([levelId, sortOrder])
+  @@index([unitId])
+  @@map("stories")
+}
+
+/// Một trang của truyện. Trang `page` có tranh, `sentences` ([{ "en": "...", "vi": "..." }], 1–2 câu) và tệp âm thanh đọc;
+/// trang `question` trỏ tới một dòng `questions` (type `story_question`).
+model StoryPage {
+  id         Int           @id @default(autoincrement())
+  storyId    Int           @map("story_id")
+  sortOrder  Int           @map("sort_order")
+  kind       StoryPageKind @default(page)
+  image      String?       @db.VarChar(255)
+  sentences  Json
+  /// Đường dẫn tệp âm thanh đọc trang (`/audio/story-<id>-<mã>.mp3`); chưa có thì chưa xuất bản được.
+  audio      String?       @db.VarChar(255)
+  questionId Int?          @map("question_id")
+
+  story    Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: SetNull)
+
+  @@index([storyId, sortOrder])
+  @@index([questionId])
+  @@map("story_pages")
 }

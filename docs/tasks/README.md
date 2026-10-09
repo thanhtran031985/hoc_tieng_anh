@@ -19,7 +19,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 13 | [13-gd2-ui-kit](13-gd2-ui-kit/task.md) — Bộ thành phần GĐ2 và khung bài học mới | ✅ | 02, 07 | `feat/13-gd2-ui-kit` |
 | 14 | [14-tts-audio](14-tts-audio/task.md) — Giọng đọc mp3 và âm phonics | ✅ | 12, 13 | `feat/14-tts-audio` |
 | 15 | [15-lesson-types-a](15-lesson-types-a/task.md) — Dạng bài mới: ghép âm, sắp xếp câu, nghe gõ, điền từ | ✅ | 13, 14 | `feat/15-lesson-types-a` |
-| 16 | [16-story-reading](16-story-reading/task.md) — Truyện tranh đọc to và đọc hiểu ngắn | ⬜ | 15 | `feat/16-story-reading` |
+| 16 | [16-story-reading](16-story-reading/task.md) — Truyện tranh đọc to và đọc hiểu ngắn | 🔄 | 15 | `feat/16-story-reading` |
 | 17 | [17-speaking](17-speaking/task.md) — Luyện nói từ và câu | ⬜ | 15 | `feat/17-speaking` |
 | 18 | [18-mini-games](18-mini-games/task.md) — Mini game: mưa từ, bong bóng, đập chuột, đua xe | ⬜ | 13, 14 | `feat/18-mini-games` |
 | 19 | [19-content-new-types-l1-l4](19-content-new-types-l1-l4/task.md) — Nội dung dạng bài mới cho cấp 1–4 | ⬜ | 15, 16, 17, 18 | `feat/19-content-new-types-l1-l4` |

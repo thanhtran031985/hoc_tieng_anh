@@ -41,7 +41,7 @@ const matchOptionsSchema = z.object({
 });
 const matchAnswerSchema = z.object({ pairs: z.array(z.object({ left: z.string().min(1), right: z.string().min(1) })).min(3) });
 
-const choiceQuestionSchema = z
+export const choiceQuestionSchema = z
   .object({ prompt: questionPromptSchema, options: choiceOptionsSchema, answer: choiceAnswerSchema })
   .refine((q) => q.answer.correct.every((id) => q.options.some((o) => o.id === id)), {
     message: "Đáp án đúng phải nằm trong các lựa chọn",
