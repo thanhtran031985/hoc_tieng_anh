@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "six",
+    "ten",
+    "bed"
+  ],
+  "sentence_order": [
+    "I have three cats.",
+    "She is seven years old.",
+    "There are five fish."
+  ],
+  "fill_blank": [
+    "One, two, ___. | three | five | ten",
+    "Five, six, ___. | seven | nine | two",
+    "Nine, ___, eleven. | ten | one | five"
+  ],
+  "dictation": [],
+  "speaking": [
+    "I am seven years old.",
+    "One, two, three!",
+    "I have two cats."
+  ],
+  "short_reading": []
+}

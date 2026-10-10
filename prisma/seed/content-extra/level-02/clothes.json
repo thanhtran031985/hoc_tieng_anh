@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "hat",
+    "cap"
+  ],
+  "sentence_order": [
+    "She has a red dress.",
+    "I put on my shoes.",
+    "My shirt is very big."
+  ],
+  "fill_blank": [
+    "I put a ___ on my head. | hat | sock | glove",
+    "I put my feet in my ___. | shoes | gloves | hats",
+    "It is cold. I put on my ___. | coat | shorts | t-shirt"
+  ],
+  "dictation": [
+    "shoe",
+    "dress",
+    "skirt"
+  ],
+  "speaking": [
+    "I like my new shoes.",
+    "This is my school uniform.",
+    "I have a red hat."
+  ],
+  "short_reading": []
+}

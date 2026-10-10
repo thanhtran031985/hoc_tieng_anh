@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "box",
+    "bed",
+    "pig"
+  ],
+  "sentence_order": [
+    "I play with my ball.",
+    "She has a new doll.",
+    "The robot is big."
+  ],
+  "fill_blank": [
+    "I play a ___ with my friend. | game | bed | door",
+    "I like my new ___. It is a toy. | robot | window | table",
+    "My ___ is very old. | teddy | table | door"
+  ],
+  "dictation": [],
+  "speaking": [
+    "I like my teddy.",
+    "This is my toy car.",
+    "I have a kite."
+  ],
+  "short_reading": []
+}

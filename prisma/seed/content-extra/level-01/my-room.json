@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "bed",
+    "box",
+    "bag"
+  ],
+  "sentence_order": [
+    "The book is on the table.",
+    "My bed is in my room.",
+    "I see a big window."
+  ],
+  "fill_blank": [
+    "I sleep in my ___. | bed | desk | clock",
+    "I sit on a ___. | chair | window | lamp",
+    "I open the ___. | door | pillow | blanket"
+  ],
+  "dictation": [],
+  "speaking": [
+    "This is my room.",
+    "I sit on the chair.",
+    "The book is on the desk."
+  ],
+  "short_reading": []
+}

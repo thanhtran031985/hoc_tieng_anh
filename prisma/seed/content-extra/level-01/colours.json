@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "red",
+    "pink",
+    "green"
+  ],
+  "sentence_order": [
+    "The banana is yellow.",
+    "I like blue and green.",
+    "My cat is black and white."
+  ],
+  "fill_blank": [
+    "A banana is ___. | yellow | purple | black",
+    "An apple is ___. | red | blue | grey",
+    "A ___ has many colours. | rainbow | banana | friend"
+  ],
+  "dictation": [],
+  "speaking": [
+    "I like blue.",
+    "My bag is red.",
+    "This is a rainbow."
+  ],
+  "short_reading": []
+}

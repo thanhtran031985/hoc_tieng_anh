@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "run",
+    "sit"
+  ],
+  "sentence_order": [
+    "I can jump and run.",
+    "The bird can fly.",
+    "We sing and dance."
+  ],
+  "fill_blank": [
+    "A fish can ___. | swim | fly | run",
+    "I ___ my hands before I eat. | wash | throw | kick",
+    "I ___ the door. | open | sing | dance"
+  ],
+  "dictation": [
+    "jump",
+    "swim",
+    "dance"
+  ],
+  "speaking": [
+    "I can swim.",
+    "I like to dance.",
+    "Please stand up."
+  ],
+  "short_reading": []
+}

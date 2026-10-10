@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "fox",
+    "bat"
+  ],
+  "sentence_order": [
+    "The zebra is black and white.",
+    "A whale is very big.",
+    "I see a fox."
+  ],
+  "fill_blank": [
+    "A ___ can fly. | owl | seal | crab",
+    "A ___ is black and white. | zebra | fox | camel",
+    "A ___ eats fish. | penguin | zebra | deer"
+  ],
+  "dictation": [
+    "zebra",
+    "panda",
+    "wolf"
+  ],
+  "speaking": [
+    "I like pandas.",
+    "The whale is big.",
+    "I see a zebra."
+  ],
+  "short_reading": []
+}

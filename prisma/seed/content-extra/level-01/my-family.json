@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "mum",
+    "dad",
+    "man"
+  ],
+  "sentence_order": [
+    "This is my mum.",
+    "I love my family.",
+    "My brother is big."
+  ],
+  "fill_blank": [
+    "My father is a ___. | man | woman | baby",
+    "My sister is a ___. | girl | boy | man",
+    "We are one ___. | family | uncle | friend"
+  ],
+  "dictation": [],
+  "speaking": [
+    "This is my family.",
+    "I love my mum and dad.",
+    "My grandpa is old."
+  ],
+  "short_reading": []
+}

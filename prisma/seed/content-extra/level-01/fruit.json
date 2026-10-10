@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "plum",
+    "pig",
+    "hen"
+  ],
+  "sentence_order": [
+    "I like apples and bananas.",
+    "The grapes are purple.",
+    "She eats a red cherry."
+  ],
+  "fill_blank": [
+    "Apples, bananas and pears are all ___. | fruit | colour | family",
+    "I eat a big ___. | watermelon | rainbow | table",
+    "The monkey likes ___. | bananas | beds | doors"
+  ],
+  "dictation": [],
+  "speaking": [
+    "I like apples.",
+    "This is a banana.",
+    "I eat an orange."
+  ],
+  "short_reading": []
+}

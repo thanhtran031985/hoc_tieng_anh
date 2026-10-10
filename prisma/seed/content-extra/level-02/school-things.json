@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "pen",
+    "bag"
+  ],
+  "sentence_order": [
+    "I have a red pencil.",
+    "The teacher writes on the board.",
+    "This is my new notebook."
+  ],
+  "fill_blank": [
+    "I write with a ___. | pen | ruler | glue",
+    "I put my books in my ___. | schoolbag | board | page",
+    "I do my ___ at home. | homework | board | ruler"
+  ],
+  "dictation": [
+    "pencil",
+    "ruler",
+    "paper"
+  ],
+  "speaking": [
+    "This is my pencil.",
+    "I like school.",
+    "Open your book, please."
+  ],
+  "short_reading": []
+}

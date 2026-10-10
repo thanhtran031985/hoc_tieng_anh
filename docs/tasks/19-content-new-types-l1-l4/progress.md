@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 0 | Đề xuất số lượng và cách trộn bài (DỪNG chờ tôi) | ✅ | Tự duyệt theo ủy quyền “làm liền, không hỏi” (10/10/2026); chỉnh số lượng bằng cách sửa dữ liệu rồi seed lại |
 | 1 | lesson-builder bản 2 | ✅ | |
 | 2 | Nội dung cấp 3–4 | ✅ | |
-| 3 | Nội dung cấp 1–2 | ⬜ | |
+| 3 | Nội dung cấp 1–2 | ✅ | |
 | 4 | Kiểm tra toàn bộ nội dung | ⬜ | |
 
 ## Nhật ký
@@ -20,6 +20,8 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 
 **10/10/2026 — Bước 2.** 16 tệp `prisma/seed/content-extra/level-03|04/<chủ đề>.json` (256 câu: cấp 3 mỗi chủ đề 2 ghép âm / 4 sắp xếp / 4 điền từ / 3 nghe-gõ câu / 3 luyện nói / 1 đọc hiểu; cấp 4 như vậy trừ ghép âm), 3 truyện mới có 6 tranh SVG mỗi truyện (“A Rainy Day” cấp 3; “The Lost Wallet”, “The Little Dragon” cấp 4) vẽ bằng `scripts/gen-story-art.mjs` + `scripts/story-art/scenes.mjs` (nền + hình từ thư viện hình từ vựng + nhân vật bé/người lớn), dữ liệu `STORY_SEED`. `builder` bản 2 có thêm bước truyện (`story:<slug>`, truyện của chủ đề vào bài thường cuối, trước trò chơi); `seed.ts` nạp truyện trước nội dung. Kiểm vốn từ: `npm run content:check-extra -- 3 4` — 0 lỗi (chỉ 1 từ ngoài khung được phép kèm lý do: “season”, ghi ở `allowed-extra.json`). Seed trên DB verify: 256 câu hỏi, 149 bài mới, bài đã học (daily-routines) chỉ được thêm 21 bước. mp3: `npm run audio:generate -- --content` tạo 473 câu + 49 âm thanh mẫu luyện nói + 24 trang truyện (20 phút), tự xuất bản truyện đã đủ âm thanh. Kiểm (Edge, DB verify): mỗi dạng mới (sắp xếp, điền từ, nghe-gõ, đọc hiểu, ghép âm, luyện nói) và truyện mở ra đúng màn, không lỗi console, nút nghe tải đúng mp3 theo câu (khi bật “Giọng mp3”); lesson 220 cấp 3 có đủ 5 dạng GĐ1 + ghép âm + sắp xếp + điền từ + nghe-gõ + luyện nói + đọc hiểu + mưa từ vựng. tsc, lint, 439/439 test sạch.
 
+**10/10/2026 — Bước 3.** 16 tệp `content-extra/level-01|02/<chủ đề>.json` (208 câu: cấp 1 mỗi chủ đề 3 ghép âm / 3 sắp xếp / 3 điền từ / 3 luyện nói, không nghe-gõ; cấp 2 có 2 ghép âm / 3 / 3 / 3 nghe-gõ **từ** / 3 luyện nói), 4 truyện mới 6 tranh/truyện (cấp 1: “My Cat Mimi”, “My Family Day”; cấp 2: “Mum’s Soup”, “The Little Fox”). `npm run content:check-extra -- --strict`: cả 4 cấp 0 lỗi (đủ số câu theo bảng, 2 truyện mỗi cấp, vốn từ trong cấp). Seed lần 2 trên DB verify: 464 câu hỏi dạng mới, 0 bước thêm vào bài đã học (chạy lại không nhân đôi). mp3: 235 câu + 48 âm thanh mẫu + 24 trang truyện (5 phút), truyện tự xuất bản. `scripts/report-content.mjs` (báo cáo số câu theo cấp/dạng, truyện, bài thiếu dạng mới/trò chơi, từ thiếu hình/âm thanh). Kiểm (Edge, DB verify, bé tạm ở cấp 1 rồi cấp 2): mỗi dạng có ở cấp đó (ghép âm, sắp xếp, điền từ, luyện nói, nghe-gõ cấp 2, truyện) mở ra đúng màn, không lỗi console, nút nghe tải mp3 theo câu. Spec `tests/e2e/19-noi-dung-moi.spec.ts` đã viết, chưa chạy. tsc, lint sạch.
+
 ## Bước tiếp theo
 
-Bước 3 — Nội dung cấp 1–2
+Bước 4 — Kiểm tra toàn bộ nội dung

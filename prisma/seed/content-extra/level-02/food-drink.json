@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "egg",
+    "jam"
+  ],
+  "sentence_order": [
+    "I drink milk every day.",
+    "She eats rice and fish.",
+    "We like pizza and chips."
+  ],
+  "fill_blank": [
+    "I drink ___. | water | bread | rice",
+    "I eat ___ with butter. | bread | juice | milk",
+    "A ___ is a very sweet food. | cake | onion | salad"
+  ],
+  "dictation": [
+    "bread",
+    "juice",
+    "cheese"
+  ],
+  "speaking": [
+    "I like pizza.",
+    "I drink milk.",
+    "I want some water, please."
+  ],
+  "short_reading": []
+}

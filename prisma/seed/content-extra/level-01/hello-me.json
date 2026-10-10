@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "yes",
+    "boy",
+    "sit"
+  ],
+  "sentence_order": [
+    "Hello, I am Mai.",
+    "This is my friend.",
+    "My name is Tom."
+  ],
+  "fill_blank": [
+    "My ___ is Lan. | name | girl | boy",
+    "I am a boy. She is a ___. | girl | boy | dog",
+    "Say ___ and thank you. | please | goodbye | no"
+  ],
+  "dictation": [],
+  "speaking": [
+    "Hello, my name is Mai.",
+    "This is my friend.",
+    "Goodbye, teacher!"
+  ],
+  "short_reading": []
+}

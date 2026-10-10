@@ -1,0 +1,24 @@
+{
+  "phonics": [
+    "cat",
+    "pig",
+    "hen"
+  ],
+  "sentence_order": [
+    "The cat is on the bed.",
+    "I see a big elephant.",
+    "The duck can swim."
+  ],
+  "fill_blank": [
+    "A ___ can swim. | fish | cow | pig",
+    "The ___ is very big. | elephant | ant | bee",
+    "A ___ eats a banana. | monkey | fish | cow"
+  ],
+  "dictation": [],
+  "speaking": [
+    "I like cats.",
+    "The dog is big.",
+    "I see a bird."
+  ],
+  "short_reading": []
+}

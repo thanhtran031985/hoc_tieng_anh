@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "bath",
+    "bed"
+  ],
+  "sentence_order": [
+    "My house has a big garden.",
+    "I sleep in my bedroom.",
+    "The cat is in the kitchen."
+  ],
+  "fill_blank": [
+    "I cook in the ___. | kitchen | bedroom | garage",
+    "I take a ___ in the bathroom. | shower | roof | stairs",
+    "The car is in the ___. | garage | bath | fridge"
+  ],
+  "dictation": [
+    "house",
+    "kitchen",
+    "garden"
+  ],
+  "speaking": [
+    "This is my house.",
+    "I live in a small flat.",
+    "The kitchen is big."
+  ],
+  "short_reading": []
+}

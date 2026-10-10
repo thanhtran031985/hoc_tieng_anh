@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "big",
+    "hot"
+  ],
+  "sentence_order": [
+    "The cat is under the table.",
+    "Where is my bag?",
+    "The giraffe is very tall."
+  ],
+  "fill_blank": [
+    "The ball is ___ the box. | in | tall | hot",
+    "The cat is ___ the chair. | behind | happy | fast",
+    "A snail is ___. | slow | fast | tall"
+  ],
+  "dictation": [
+    "tall",
+    "happy",
+    "behind"
+  ],
+  "speaking": [
+    "Where is my bag?",
+    "The cat is on the bed.",
+    "I am very happy."
+  ],
+  "short_reading": []
+}

@@ -46,4 +46,52 @@ export const SCENES = [
       { bg: "castle", items: [["pic", "king", 95, 200, 90], ["pic", "queen", 190, 205, 90], ["pic", "dragon", 300, 205, 105], ["sparkle", 300, 100, 1], ["sparkle", 90, 90, 0.8]] },
     ],
   },
+  {
+    slug: "my-cat-mimi",
+    title: "My Cat Mimi",
+    pages: [
+      { bg: "indoor", items: [["person", "kid", 140, 205, 1.1, LIN], ["pic", "cat", 270, 215, 90]] },
+      { bg: "indoor", items: [["pic", "cat", 200, 175, 170], ["sparkle", 90, 80, 1], ["sparkle", 320, 90, 0.8]] },
+      { bg: "indoor", items: [["pic", "cat", 130, 205, 100], ["pic", "fish", 290, 190, 100]] },
+      { bg: "indoor", items: [["pic", "bed", 240, 175, 190], ["pic", "cat", 235, 158, 75]] },
+      { bg: "indoor", items: [["person", "kid", 130, 205, 1.1, { ...LIN, arm: "up" }], ["pic", "cat", 270, 215, 90], ["pic", "heart", 200, 90, 70]] },
+      { bg: "sky", items: [["person", "kid", 130, 205, 1.1, LIN], ["pic", "cat", 260, 218, 90], ["sparkle", 200, 80, 1], ["sparkle", 330, 110, 0.7]] },
+    ],
+  },
+  {
+    slug: "my-family-day",
+    title: "My Family Day",
+    pages: [
+      { bg: "indoor", items: [["pic", "mum", 120, 195, 110], ["pic", "dad", 250, 195, 110], ["person", "kid", 340, 225, 0.8, LIN]] },
+      { bg: "indoor", items: [["pic", "brother", 130, 195, 120], ["pic", "sister", 270, 205, 90]] },
+      { bg: "indoor", items: [["pic", "grandma", 200, 185, 130], ["pic", "chair", 330, 200, 90]] },
+      { bg: "indoor", items: [["pic", "apple", 120, 200, 80], ["pic", "banana", 210, 205, 80], ["person", "kid", 310, 205, 1.0, LIN]] },
+      { bg: "sky", items: [["pic", "dad", 130, 190, 110], ["pic", "ball", 260, 225, 70], ["person", "kid", 340, 215, 0.9, BEN]] },
+      { bg: "indoor", items: [["pic", "mum", 100, 195, 100], ["pic", "dad", 200, 195, 100], ["person", "kid", 300, 215, 0.9, LIN], ["pic", "heart", 200, 80, 80]] },
+    ],
+  },
+  {
+    slug: "mums-soup",
+    title: "Mum's Soup",
+    pages: [
+      { bg: "indoor", items: [["pic", "mum", 140, 190, 120], ["pic", "soup", 280, 200, 110]] },
+      { bg: "indoor", items: [["person", "kid", 130, 205, 1.1, BEN], ["pic", "bread", 250, 195, 90], ["pic", "sandwich", 340, 215, 70]] },
+      { bg: "indoor", items: [["pic", "brother", 150, 195, 110], ["pic", "milk", 280, 200, 100]] },
+      { bg: "indoor", items: [["pic", "dad", 140, 190, 110], ["pic", "rice", 260, 205, 85], ["pic", "fish", 340, 215, 75]] },
+      { bg: "indoor", items: [["person", "kid", 150, 205, 1.1, { ...BEN, arm: "up" }], ["pic", "sandwich", 280, 200, 110]] },
+      { bg: "indoor", items: [["pic", "mum", 90, 195, 100], ["pic", "dad", 190, 195, 100], ["person", "kid", 290, 215, 0.9, BEN], ["sparkle", 200, 70, 1], ["sparkle", 340, 100, 0.8]] },
+    ],
+  },
+  {
+    slug: "the-little-fox",
+    title: "The Little Fox",
+    pages: [
+      { bg: "sky", items: [["tree", 60, 150, 0.8], ["pic", "fox", 230, 205, 120]] },
+      { bg: "sky", items: [["pic", "fox", 140, 200, 120], ["pic", "bread", 300, 200, 70]] },
+      { bg: "sky", items: [["pic", "fox", 130, 205, 110], ["pic", "apple", 290, 120, 90], ["tree", 350, 150, 0.8]] },
+      { bg: "sky", items: [["pic", "fox", 190, 140, 120], ["pic", "apple", 300, 80, 70], ["sparkle", 100, 100, 1]] },
+      { bg: "sky", items: [["pic", "fox", 190, 200, 125], ["pic", "apple", 300, 215, 75]] },
+      { bg: "sky", items: [["pic", "fox", 170, 195, 130], ["pic", "apple", 290, 215, 75], ["sparkle", 90, 80, 1], ["sparkle", 320, 90, 0.8]] },
+    ],
+  },
 ];

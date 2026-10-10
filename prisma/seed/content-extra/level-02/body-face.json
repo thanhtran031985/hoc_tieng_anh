@@ -1,0 +1,27 @@
+{
+  "phonics": [
+    "leg",
+    "chin"
+  ],
+  "sentence_order": [
+    "I have two big eyes.",
+    "She washes her hands.",
+    "He has a small nose."
+  ],
+  "fill_blank": [
+    "I walk with my ___. | legs | arms | ears",
+    "I clap my ___. | hands | feet | eyes",
+    "I look with my ___. | eyes | nose | mouth"
+  ],
+  "dictation": [
+    "head",
+    "hand",
+    "foot"
+  ],
+  "speaking": [
+    "I have two hands.",
+    "This is my nose.",
+    "Clap your hands."
+  ],
+  "short_reading": []
+}
