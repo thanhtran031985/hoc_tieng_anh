@@ -588,6 +588,11 @@ model AudioClip {
   @@map("audio_clips")
 }
 
+enum RewardStatus {
+  draft
+  published
+}
+
 enum RewardType {
   sticker
   badge
@@ -599,20 +604,28 @@ enum RewardType {
 
 /// Danh mục phần thưởng (PRD G). Task 20 nạp huy hiệu trùm cuối vùng (`boss:<cấp>:<chủ đề>`) và huy hiệu qua đảo (`level:<cấp>`); task 21 làm giao diện bộ sưu tập.
 model Reward {
-  id        Int        @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   type      RewardType
   /// Mã ổn định để nạp lại không trùng và để mã nguồn tham chiếu.
-  code      String     @unique @db.VarChar(80)
-  name      String     @db.VarChar(150)
-  image     String?    @db.VarChar(255)
+  code      String       @unique @db.VarChar(80)
+  name      String       @db.VarChar(150)
+  image     String?      @db.VarChar(255)
   /// Giá bằng xu (đồ trong cửa hàng); null nếu không bán.
   price     Int?
-  /// Điều kiện nhận (JSON), vd `{"kind":"boss","level":2,"unit":"food-drink"}`.
+  /// Tên tiếng Anh (đọc to ở hộp nhận quà, thẻ huy hiệu); tên tiếng Việt ở `name`.
+  nameEn    String?      @map("name_en") @db.VarChar(150)
+  /// Album của sticker: animals | vehicles | dino | fruits.
+  album     String?      @db.VarChar(30)
+  /// Nháp không rơi, không hiện ở Bộ sưu tập của bé.
+  status    RewardStatus @default(published)
+  /// Xu thưởng khi nhận (sticker khi mở quà, huy hiệu khi đạt); null thì theo `COINS` (sticker 10, huy hiệu 50).
+  coins     Int?
+  /// Điều kiện nhận (JSON), vd `{"kind":"boss","level":2,"unit":"food-drink"}` hoặc `{"kind":"streak","goal":7}`.
   condition Json?
   /// Dáng rồng/cấp mà phần thưởng thuộc về (1–5), nếu có.
-  forStage  Int?       @map("for_stage") @db.TinyInt
-  sortOrder Int        @default(0) @map("sort_order")
-  createdAt DateTime   @default(now()) @map("created_at")
+  forStage  Int?         @map("for_stage") @db.TinyInt
+  sortOrder Int          @default(0) @map("sort_order")
+  createdAt DateTime     @default(now()) @map("created_at")
 
   learnerRewards LearnerReward[]
 
@@ -622,13 +635,17 @@ model Reward {
 
 /// Phần thưởng bé đã có.
 model LearnerReward {
-  id         Int      @id @default(autoincrement())
-  learnerId  Int      @map("learner_id")
-  rewardId   Int      @map("reward_id")
-  acquiredAt DateTime @default(now()) @map("acquired_at")
-  equipped   Boolean  @default(false)
+  id              Int       @id @default(autoincrement())
+  learnerId       Int       @map("learner_id")
+  rewardId        Int       @map("reward_id")
+  acquiredAt      DateTime  @default(now()) @map("acquired_at")
+  /// Quà sticker rơi cuối bài: null = chưa mở (xu cộng khi mở). Huy hiệu và đồ mua được mở ngay.
+  openedAt        DateTime? @map("opened_at")
+  /// Lượt học (`lesson_attempts.id`, không có khóa ngoại) đã rơi quà này, để gửi lại kết quả vẫn trả đúng quà cũ.
+  sourceAttemptId Int?      @map("source_attempt_id")
+  equipped        Boolean   @default(false)
   /// Vị trí đồ trong phòng (JSON), dùng ở task 22.
-  position   Json?
+  position        Json?
 
   learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
   reward  Reward  @relation(fields: [rewardId], references: [id], onDelete: Cascade)
