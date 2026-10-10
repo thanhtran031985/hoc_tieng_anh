@@ -1,6 +1,6 @@
 # Tiến độ — 24-parent-gd2 — Khu bố mẹ GĐ2: kỹ năng, mở khóa thủ công, khung giờ học
 
-Trạng thái chung: ⬜ · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
