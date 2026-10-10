@@ -21,7 +21,7 @@ const { isGameActivity } = await import("../src/lib/rules/games.ts");
 
 const strict = process.argv.includes("--strict");
 const list = process.argv.includes("--list");
-const LEVELS = [1, 2, 3, 4];
+const LEVELS = [1, 2, 3, 4, 5];
 const problems = [];
 const pad = (s, n) => String(s).padStart(n);
 

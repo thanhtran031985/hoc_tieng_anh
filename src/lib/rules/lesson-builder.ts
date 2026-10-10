@@ -14,11 +14,11 @@ export type ExtraKind = (typeof EXTRA_KINDS)[number];
 /** Cấp được dùng từng dạng (task.md): ghép âm cấp 1–3; nghe-gõ từ cấp 2 (nghe-gõ câu từ cấp 3); đọc hiểu từ cấp 3. */
 export const EXTRA_LEVELS: Record<ExtraKind, readonly [min: number, max: number]> = {
   phonics: [1, 3],
-  sentence_order: [1, 4],
-  fill_blank: [1, 4],
-  dictation: [2, 4],
-  speaking: [1, 4],
-  short_reading: [3, 4],
+  sentence_order: [1, 5],
+  fill_blank: [1, 5],
+  dictation: [2, 5],
+  speaking: [1, 5],
+  short_reading: [3, 5],
 };
 
 /** Khóa các câu hỏi của chủ đề theo dạng (đúng thứ tự trong tệp nội dung). */

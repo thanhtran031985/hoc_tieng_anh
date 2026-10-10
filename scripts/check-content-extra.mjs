@@ -19,7 +19,7 @@ const args = process.argv.slice(2);
 const strict = args.includes("--strict");
 const verbose = args.includes("--verbose");
 const requested = args.map(Number).filter(Boolean);
-const levels = requested.length ? requested : [1, 2, 3, 4];
+const levels = requested.length ? requested : [1, 2, 3, 4, 5];
 
 // Số câu mỗi chủ đề theo dạng (bảng số lượng đã duyệt ở Bước 0).
 const EXPECTED = {
@@ -27,6 +27,7 @@ const EXPECTED = {
   2: { phonics: 2, sentence_order: 3, fill_blank: 3, dictation: 3, speaking: 3, short_reading: 0 },
   3: { phonics: 2, sentence_order: 4, fill_blank: 4, dictation: 3, speaking: 3, short_reading: 1 },
   4: { phonics: 0, sentence_order: 4, fill_blank: 4, dictation: 3, speaking: 3, short_reading: 1 },
+  5: { phonics: 0, sentence_order: 5, fill_blank: 5, dictation: 3, speaking: 3, short_reading: 2 },
 };
 const EXPECTED_STORIES = 2;
 

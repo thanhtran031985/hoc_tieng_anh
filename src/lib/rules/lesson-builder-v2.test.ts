@@ -131,7 +131,7 @@ describe("distribute / planGame / extraAllowed", () => {
     assert.equal(planGame(6, 0, words(12)), "word_bubbles", "ngoài cấp 3–5 không có mưa từ vựng");
   });
   it("luật cấp của từng dạng", () => {
-    assert.deepEqual(EXTRA_KINDS.map((k) => [1, 2, 3, 4].filter((l) => extraAllowed(k, l)).join("")), ["123", "1234", "1234", "234", "1234", "34"]);
+    assert.deepEqual(EXTRA_KINDS.map((k) => [1, 2, 3, 4, 5].filter((l) => extraAllowed(k, l)).join("")), ["123", "12345", "12345", "2345", "12345", "345"]);
   });
 });
 

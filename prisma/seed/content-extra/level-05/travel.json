@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "We go to the airport by taxi.",
+    "Our flight leaves at nine o'clock.",
+    "I will pack my bag tonight.",
+    "They are going to visit a museum.",
+    "You must wear your seat belt."
+  ],
+  "fill_blank": [
+    "We wait for the train on the ___. | platform | harbour | border",
+    "The ___ shows us the old castle. | guide | fare | visa",
+    "We sleep in a small ___ on the ship. | cabin | platform | runway",
+    "The plane is on the ___ now. | runway | deck | harbour",
+    "I send a ___ to my grandma. | postcard | luggage | booking"
+  ],
+  "dictation": [
+    "The train arrives at nine o'clock.",
+    "We go sightseeing in the city.",
+    "I put my luggage in the car."
+  ],
+  "speaking": [
+    "Where is your hotel?",
+    "I want to go abroad.",
+    "We are going on a tour."
+  ],
+  "short_reading": [
+    {
+      "title": "A Trip to the Beach",
+      "text": "Mai and her family go on a trip. They arrive at the airport early. Her dad shows the tickets at the desk. Then they get on the plane.",
+      "questions": [
+        {
+          "q": "Where do they arrive early?",
+          "a": [
+            "At the airport",
+            "At the hotel",
+            "At the station"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Who shows the tickets?",
+          "a": [
+            "Her dad",
+            "Her mum",
+            "Mai"
+          ],
+          "evidence": 2
+        }
+      ]
+    },
+    {
+      "title": "The Big Ship",
+      "text": "We go on a cruise. Our cabin is small, but it has a great view. In the evening, we sit on the deck. The sea is quiet and beautiful.",
+      "questions": [
+        {
+          "q": "What does the cabin have?",
+          "a": [
+            "A great view",
+            "A big bed",
+            "A small kitchen"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Where do they sit in the evening?",
+          "a": [
+            "On the deck",
+            "In the cabin",
+            "At the port"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}
