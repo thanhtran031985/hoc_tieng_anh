@@ -6,6 +6,8 @@ import {
   allBranchesOpen,
   buildChoices,
   canPublish,
+  composeSentence,
+  joinList,
   dimWrongChoice,
   explorerIssues,
   fillQuestionSet,
@@ -245,7 +247,7 @@ describe("Khám phá từ trong ôn tập", () => {
       const without = buildReviewSteps(due, pool, seed, 15);
       const withEmpty = buildReviewSteps(due, pool, seed, 15, new Map());
       assert.deepEqual(withEmpty, without);
-      assert.ok(without.every((st) => st.kind !== "explorer_branch"));
+      assert.ok(without.every((st) => String(st.kind) !== "explorer_branch"));
     }
   });
 
@@ -266,5 +268,27 @@ describe("Khám phá từ trong ôn tập", () => {
   it("Khám phá chưa đủ nhánh thì không thay câu ôn", () => {
     const explorers = new Map([[7, content(bird, 3)]]);
     for (let i = 0; i < 12; i++) assert.notEqual(buildReviewSteps(due, pool, `s${i}`, 15, explorers)[0].kind, "explorer_branch");
+  });
+});
+
+describe("ghép đoạn văn từ đáp án", () => {
+  const a = (...texts: string[]) => texts.map((text) => ({ text }));
+  it("joinList nối theo kiểu tiếng Anh", () => {
+    assert.equal(joinList([]), "");
+    assert.equal(joinList(["seeds"]), "seeds");
+    assert.equal(joinList(["seeds", "insects"]), "seeds and insects");
+    assert.equal(joinList(["brown", "yellow", "blue"], "or"), "brown, yellow or blue");
+  });
+  it("composeSentence theo loại câu hỏi của bird và cat", () => {
+    assert.equal(composeSentence("identify", "bird", a("a bird")), "This is a bird.");
+    assert.equal(composeSentence("color", "bird", a("brown", "yellow", "blue")), "It is brown, yellow or blue.");
+    assert.equal(composeSentence("food", "bird", a("seeds", "insects", "berries")), "It likes to eat seeds, insects and berries.");
+    assert.equal(composeSentence("parts", "bird", a("wings", "feathers", "a beak", "claws")), "It has wings, feathers, a beak and claws.");
+    assert.equal(composeSentence("action", "cat", a("run", "jump", "climb")), "It can run, jump and climb.");
+    assert.equal(composeSentence("place", "bird", a("in the nest", "on the tree")), "It lives in the nest and on the tree.");
+  });
+  it("không có đáp án thì không có câu", () => {
+    assert.equal(composeSentence("color", "bird", []), "");
+    assert.equal(composeSentence("color", "bird", a(" ")), "");
   });
 });

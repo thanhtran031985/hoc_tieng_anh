@@ -9,7 +9,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 2 | Khám phá từ (Screen48) | ✅ | Dạng bài word_explorer, ExplorerMap/Player, /explore, Soạn bài |
 | 3 | Bản in (Screen49) | ✅ | Route in, công tắc dịch, PDF 1 trang A4 |
 | 4 | Trong Sổ từ và ôn tập | ✅ | Tab Khám phá ở WordZoom, explorer_branch trong ôn tập |
-| 5 | Soạn Khám phá từ (Adult22) | ⬜ | |
+| 5 | Soạn Khám phá từ (Adult22) | ✅ | Cột + lọc + ngăn kéo Soạn Khám phá, tạo giọng đọc, chặn xuất bản |
 
 ## Nhật ký
 
@@ -49,6 +49,16 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Ôn tập: `buildReviewSteps` (thêm tham số `explorers`, có overload nên cách gọi cũ không đổi) thay một phần lượt ôn của từ có Khám phá (xác suất 0,5 theo hạt giống ngày) bằng bước `explorer_branch`: Bông hỏi một nhánh, bé chọn 1 trong 2–3 hình (`ExplorerBranchStep`, dùng lại luồng câu chọn: sai không phạt, sai 2 lần mờ hình, sai lần 3 xem đáp án). Kết quả tính cho từ nên đi vào 5 hộp như câu thường.
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-notebook.mjs`): thẻ bird có 2 tab, tab Khám phá hiện 6 nhánh đã mở, nút Mở đầy đủ đúng địa chỉ, ← → đổi tab / đổi từ, thẻ vừa 1366×768; cat (còn Nháp) chỉ có tab Thẻ từ kèm dòng giải thích; mở đầy đủ rồi Esc quay về đúng thẻ ở tab Khám phá; ôn tập có câu nhánh của bird không cuộn, chọn đúng thì hộp 2 → 3. 31 test của `word-explorer.test.ts` (thêm ôn tập), `tsc`, `eslint` sạch.
 
+### Bước 5 — Soạn Khám phá từ (Adult22) (10/10/2026)
+- Ngân hàng từ vựng: cột “Khám phá” (“6 nhánh · Nháp / Đã xuất bản” hoặc “Chưa có”), bộ lọc Khám phá, nút “Sửa Khám phá” ở mỗi hàng và trong ngăn kéo sửa từ. Ngăn kéo rộng riêng `ExplorerDrawer` (nạp bằng server action):
+  - cảnh báo đầu ngăn kéo từ `explorerIssues` — bấm một mục thì mở nhánh và nhảy tới đúng ô cần sửa (hình, âm thanh, bản dịch, hình nhiễu, câu của đoạn văn);
+  - bộ câu hỏi mẫu 5 nhóm (Con vật, Đồ ăn, Đồ vật, Nghề nghiệp, Nơi chốn) “Điền sẵn câu hỏi” giữ đáp án; 4–6 nhánh đổi thứ tự bằng kéo thả hoặc ↑ ↓ ở tay nắm, thu/mở, xóa qua hộp thoại;
+  - mỗi nhánh: câu hỏi Anh + Việt, loại câu hỏi, đáp án (gõ mới hoặc lấy từ kho từ vựng kèm nghĩa, hình, âm thanh; chọn đáp án nào là hình để đoán), 1–2 hình nhiễu, hình chọn từ thư viện hình;
+  - đoạn văn: “Ghép đoạn từ các câu trả lời” (`composeSentence`), dịch từng câu (câu đi theo nhánh khi đổi thứ tự), “Tạo giọng đọc tự động” theo lượt có tiến trình và nút Dừng (Kokoro, tệp `explorer-<mã>-<băm>.mp3`), “Xem như học sinh” dùng đúng bước `word_explorer` của bài học;
+  - Nháp / Xuất bản: xuất bản bị chặn kèm lý do (cả ở trình duyệt lẫn server) khi còn thiếu hình, âm thanh, bản dịch, hình nhiễu hoặc số nhánh ngoài 4–6; đổi chữ đáp án hoặc đoạn văn thì tệp âm thanh cũ bị bỏ; tệp không còn dùng bị xóa; lưu 0 nhánh là gỡ Khám phá.
+- Server `server/admin/word-explorer.ts` (kiểm Zod `lib/schemas/admin-word-explorer.ts`; hình chỉ nhận đường dẫn trong thư viện hoặc tải lên, âm thanh chỉ nhận tên tệp mp3 hợp lệ của máy chủ hoặc của từ trong kho) và 3 server action đều gọi `requireAdmin()` ở dòng đầu.
+- Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-editor.mjs`, 1440×900): cột, lọc, mở ngăn kéo, 16 cảnh báo, bấm cảnh báo nhảy tới `branch-0-answer-0-audio` và tự mở nhánh, Điền sẵn câu hỏi giữ đáp án, ↓ ở tay nắm đổi chỗ, Xem như học sinh, hộp thoại xóa, Hủy không đổi database, xuất bản bị chặn khi thiếu âm thanh, tạo giọng đọc thật cho 17 đáp án + đoạn văn (51 giây), xuất bản được, bé mở được `/explore`, đổi về Nháp thì bé thấy 404. 623 test (thêm `admin-word-explorer.test.ts`, `composeSentence`), `tsc`, `eslint` sạch.
+
 ## Bước tiếp theo
 
-Bước 5 — Soạn Khám phá từ (Adult22)
+Đóng task: spec Playwright, tsc, lint, test, build, cập nhật README

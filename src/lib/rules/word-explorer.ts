@@ -237,3 +237,42 @@ export function fillQuestionSet(set: QuestionSetKey, word: string, meaningVi: st
     questionVi: q.vi.startsWith("{vi}") ? q.vi.replace("{vi}", capital).replaceAll("{vi}", vi) : q.vi.replaceAll("{vi}", vi),
   }));
 }
+
+// ---- Ghép đoạn văn từ các câu trả lời (Adult22) ----
+
+/** “a, b and c” / “a, b or c”: nối danh sách tiếng Anh. */
+export function joinList(items: readonly string[], conjunction: "and" | "or" = "and"): string {
+  const list = items.map((i) => i.trim()).filter(Boolean);
+  if (list.length <= 1) return list[0] ?? "";
+  return `${list.slice(0, -1).join(", ")} ${conjunction} ${list[list.length - 1]}`;
+}
+
+/**
+ * Câu nháp của một nhánh từ các đáp án (người soạn đọc lại và sửa): “This is a bird.”, “It is brown, yellow or blue.”, “It has wings and a beak.”…
+ * Mẫu theo loại câu hỏi; loại khác thì liệt kê đáp án. Không có đáp án thì chuỗi rỗng.
+ */
+export function composeSentence(kind: WordQuestionKind, word: string, answers: readonly Pick<ExplorerAnswer, "text">[]): string {
+  const texts = answers.map((a) => a.text.trim()).filter(Boolean);
+  if (texts.length === 0) return "";
+  const list = (conjunction: "and" | "or" = "and") => joinList(texts, conjunction);
+  switch (kind) {
+    case "identify":
+      return `This is ${texts[0]}.`;
+    case "color":
+      return `It is ${list("or")}.`;
+    case "food":
+      return `It likes to eat ${list()}.`;
+    case "parts":
+      return `It has ${list()}.`;
+    case "action":
+      return `It can ${list()}.`;
+    case "place":
+      return `It lives ${list()}.`;
+    case "time":
+      return `You can see ${withArticle(word)} ${list()}.`;
+    case "use":
+      return `You use it to ${list()}.`;
+    default:
+      return `It is ${list()}.`;
+  }
+}

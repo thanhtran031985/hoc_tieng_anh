@@ -10,11 +10,12 @@ import { PARTS_OF_SPEECH } from "@/lib/schemas/content";
 import { PART_OF_SPEECH_LABEL, saveWordSchema } from "@/lib/schemas/admin-vocab";
 import type { VocabData, VocabRow } from "@/server/admin/vocab";
 import { AudioBatchStatus } from "./AudioBatchStatus";
+import { ExplorerDrawer } from "./ExplorerDrawer";
 import { useAudioBatch } from "./useAudioBatch";
 import { saveWordAction } from "./vocab-actions";
 import styles from "./vocab.module.css";
 
-type Row = VocabRow & { posLabel: string; topicText: string; hasImage: boolean; hasAudio: boolean };
+type Row = VocabRow & { posLabel: string; topicText: string; hasImage: boolean; hasAudio: boolean; explorerState: "published" | "draft" | "none" };
 type Errors = Record<string, string>;
 
 const nf = (n: number) => n.toLocaleString("vi-VN");
@@ -25,13 +26,15 @@ const posLabel = (pos: string) => PART_OF_SPEECH_LABEL[pos as keyof typeof PART_
 export function VocabView({ data }: { data: VocabData }) {
   // `editing`: null là đóng, "new" là thêm từ, số là id từ đang sửa.
   const [editing, setEditing] = useState<number | "new" | null>(null);
+  // `exploring`: id từ đang soạn Khám phá (ngăn kéo rộng riêng).
+  const [exploring, setExploring] = useState<number | null>(null);
   const levelName = new Map(data.levels.map((l) => [l.number, l.name]));
   const router = useRouter();
   const batch = useAudioBatch(() => router.refresh());
   const canMake = data.mp3Enabled && data.ttsAvailable;
   const why = !data.ttsAvailable ? "Máy chủ này chưa có công cụ tạo giọng đọc" : !data.mp3Enabled ? "Bật “Giọng mp3” ở Hình ảnh & âm thanh để tạo giọng đọc" : undefined;
 
-  const rows: Row[] = data.rows.map((r) => ({ ...r, posLabel: posLabel(r.pos), topicText: r.topics.join(", "), hasImage: Boolean(r.image), hasAudio: hasFullAudio(r) }));
+  const rows: Row[] = data.rows.map((r) => ({ ...r, posLabel: posLabel(r.pos), topicText: r.topics.join(", "), hasImage: Boolean(r.image), hasAudio: hasFullAudio(r), explorerState: r.explorer?.status ?? "none" }));
   const noImage = rows.filter((r) => !r.hasImage).length;
   const noAudio = rows.filter((r) => !r.hasAudio).length;
   const topicNames = [...new Set(rows.flatMap((r) => r.topics))].sort((a, b) => a.localeCompare(b));
@@ -76,6 +79,20 @@ export function VocabView({ data }: { data: VocabData }) {
         </span>
       ),
     },
+    {
+      key: "explorerState",
+      label: "Khám phá",
+      sort: true,
+      render: (r) =>
+        r.explorer ? (
+          <span className={cn(styles.exp, r.explorer.status === "published" ? styles.expOn : styles.expDraft)} title={r.explorer.status === "published" ? "Đã xuất bản" : "Nháp (chưa tới bé)"}>
+            <Icon name="branch" size={14} />
+            {r.explorer.count} nhánh · {r.explorer.status === "published" ? "Đã xuất bản" : "Nháp"}
+          </span>
+        ) : (
+          <span className={cn(adultStyles.small, adultStyles.muted)}>Chưa có</span>
+        ),
+    },
   ];
 
   const addButton = <AdultButton label="Thêm từ" icon="plus" onClick={() => setEditing("new")} />;
@@ -117,6 +134,16 @@ export function VocabView({ data }: { data: VocabData }) {
           { key: "level", label: "Cấp", options: data.levels.map((l) => [String(l.number), `Cấp ${l.number} · ${l.name}`] as const), match: (r, v) => String(r.level) === v },
           { key: "topic", label: "Chủ đề", options: topicNames.map((t) => [t, t] as const), match: (r, v) => r.topics.includes(v) },
           {
+            key: "explorer",
+            label: "Khám phá",
+            options: [
+              ["published", "Đã xuất bản"],
+              ["draft", "Nháp"],
+              ["none", "Chưa có"],
+            ],
+            match: (r, v) => r.explorerState === v,
+          },
+          {
             key: "missing",
             label: "Thiếu",
             options: [
@@ -140,15 +167,21 @@ export function VocabView({ data }: { data: VocabData }) {
           );
         }}
         onRowClick={(r) => setEditing(r.id)}
-        actions={(r) => <AdultIconButton icon="pen" label={`Sửa từ ${r.word}`} onClick={() => setEditing(r.id)} />}
+        actions={(r) => (
+          <span className={styles.acts}>
+            <AdultIconButton icon="branch" label={`Sửa Khám phá của từ ${r.word}`} onClick={() => setExploring(r.id)} />
+            <AdultIconButton icon="pen" label={`Sửa từ ${r.word}`} onClick={() => setEditing(r.id)} />
+          </span>
+        )}
       />
-      {editing !== null && <WordDrawer key={editing} data={data} row={current} onClose={() => setEditing(null)} />}
+      {editing !== null && <WordDrawer key={editing} data={data} row={current} onClose={() => setEditing(null)} onExplore={(id) => (setEditing(null), setExploring(id))} />}
+      {exploring !== null && <ExplorerDrawer key={`x${exploring}`} wordId={exploring} onClose={() => setExploring(null)} />}
     </div>
   );
 }
 
 /** Ngăn kéo thêm / sửa một từ. Hình chỉ xem ở đây (gán hình ở Thư viện hình ảnh); giọng đọc mp3 tạo được ngay ở đây khi công tắc “Giọng mp3” bật. */
-function WordDrawer({ data, row, onClose }: { data: VocabData; row: VocabRow | undefined; onClose: () => void }) {
+function WordDrawer({ data, row, onClose, onExplore }: { data: VocabData; row: VocabRow | undefined; onClose: () => void; onExplore?: (id: number) => void }) {
   const toast = useToast();
   const router = useRouter();
   const batch = useAudioBatch(() => router.refresh());
@@ -280,6 +313,16 @@ function WordDrawer({ data, row, onClose }: { data: VocabData; row: VocabRow | u
           </div>
           <AudioBatchStatus state={batch.state} onStop={batch.stop} />
         </section>
+
+        {row && onExplore && (
+          <section className={styles.section} aria-label="Khám phá từ">
+            <h3 className={adultStyles.h3}>Khám phá từ</h3>
+            <div className={styles.audio}>
+              <span className={cn(adultStyles.small, adultStyles.muted)}>{row.explorer ? `${row.explorer.count} nhánh · ${row.explorer.status === "published" ? "đã xuất bản" : "nháp"}` : "Từ này chưa có Khám phá (4–6 câu hỏi quanh từ)."}</span>
+              <AdultButton label="Sửa Khám phá" icon="branch" variant="secondary" size="s" onClick={() => onExplore(row.id)} />
+            </div>
+          </section>
+        )}
 
         <div className={cn(styles.grid, styles.section)}>
           <AdultSelect

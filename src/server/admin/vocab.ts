@@ -24,6 +24,8 @@ export type VocabRow = {
   image: string | null;
   audio: string | null;
   exampleAudio: string | null;
+  /** Khám phá từ (task 25): số nhánh và trạng thái (đã xuất bản khi mọi nhánh đã xuất bản); null là chưa có. */
+  explorer: { count: number; status: "draft" | "published" } | null;
 };
 
 export type VocabData = {
@@ -38,7 +40,7 @@ export type VocabData = {
 };
 
 export async function getVocab(): Promise<VocabData> {
-  const [words, levels, units, mp3Enabled, ttsAvailable] = await Promise.all([
+  const [words, levels, units, mp3Enabled, ttsAvailable, explorerRows] = await Promise.all([
     db.word.findMany({
       orderBy: [{ level: { number: "asc" } }, { id: "asc" }],
       select: {
@@ -61,7 +63,15 @@ export async function getVocab(): Promise<VocabData> {
     db.unit.findMany({ orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { levelId: true, title: true } }),
     getVoiceMp3Enabled(),
     isTtsAvailable(),
+    db.wordQuestion.groupBy({ by: ["wordId", "status"], _count: { _all: true } }),
   ]);
+  const explorerOf = new Map<number, { count: number; published: number }>();
+  for (const r of explorerRows) {
+    const cur = explorerOf.get(r.wordId) ?? { count: 0, published: 0 };
+    cur.count += r._count._all;
+    if (r.status === "published") cur.published += r._count._all;
+    explorerOf.set(r.wordId, cur);
+  }
   const topicsByLevel: Record<number, string[]> = {};
   for (const level of levels) topicsByLevel[level.id] = [];
   for (const unit of units) topicsByLevel[unit.levelId]?.push(unit.title);
@@ -80,6 +90,7 @@ export async function getVocab(): Promise<VocabData> {
       image: w.image,
       audio: w.audio,
       exampleAudio: w.exampleAudio,
+      explorer: explorerOf.has(w.id) ? { count: explorerOf.get(w.id)!.count, status: explorerOf.get(w.id)!.published === explorerOf.get(w.id)!.count ? "published" : "draft" } : null,
     })),
     levels,
     topicsByLevel,

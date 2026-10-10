@@ -1,0 +1,299 @@
+/* Soạn Khám phá từ (Adult22): ngăn kéo rộng của Ngân hàng từ vựng. Khu người lớn, không linh vật. */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.wordHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--adm-radius-lg);
+  background: var(--surface-soft);
+}
+.thumb {
+  flex: none;
+  width: var(--space-8);
+  height: var(--space-8);
+  display: grid;
+  place-items: center;
+  border-radius: var(--adm-radius-md);
+  background: var(--surface-sunk);
+  color: var(--ink-soft);
+  overflow: hidden;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.warn {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--adm-radius-lg);
+  background: var(--retry-soft);
+}
+.warn h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+}
+.warn ul {
+  margin: 0;
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.warn button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+  cursor: pointer;
+}
+.warn button:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.sec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.sec[tabindex]:focus,
+.readAudio:focus,
+.group:focus {
+  outline: none;
+}
+.secHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.setRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+.setRow > :first-child {
+  flex: 1;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.branch {
+  position: relative;
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-lg);
+  background: var(--surface);
+}
+.branch[data-dragging] {
+  opacity: 0.4;
+}
+.branch[data-drop="before"]::before,
+.branch[data-drop="after"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+}
+.branch[data-drop="before"]::before {
+  top: calc(-1 * var(--space-2));
+}
+.branch[data-drop="after"]::after {
+  bottom: calc(-1 * var(--space-2));
+}
+.bHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+.grip {
+  width: var(--space-6);
+  height: var(--space-6);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--adm-radius-sm);
+  background: none;
+  color: var(--ink-soft);
+  cursor: grab;
+}
+.grip:focus-visible,
+.bTitle:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.no {
+  flex: none;
+  width: var(--space-6);
+  height: var(--space-6);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand-shade);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+}
+.bTitle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: var(--adm-radius-md);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.bTitle b {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-4);
+  border-top: var(--border-thin) solid var(--line);
+  padding-top: var(--space-3);
+}
+.q2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.lab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+}
+.group {
+  margin: 0;
+  padding: var(--space-3);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.group legend {
+  padding: 0 var(--space-2);
+}
+.ans {
+  display: grid;
+  grid-template-columns: 1fr 1fr var(--adm-control);
+  gap: var(--space-2);
+  align-items: center;
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-thin) dashed var(--line);
+}
+.ans:last-of-type {
+  border-bottom: 0;
+}
+.pic {
+  grid-column: 1 / 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.chip {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-self: start;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+}
+.chip:focus {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.chipOk {
+  background: var(--success-soft);
+  color: var(--success-shade);
+}
+.chipNo {
+  background: var(--surface-sunk);
+  color: var(--ink-soft);
+}
+.addRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.bank {
+  flex: 1;
+  min-width: calc(var(--space-16) * 3);
+}
+.dis {
+  display: grid;
+  grid-template-columns: var(--space-8) 1fr 1.5fr var(--adm-control);
+  gap: var(--space-2);
+  align-items: center;
+}
+.sents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sents li {
+  display: grid;
+  grid-template-columns: var(--space-6) 1fr 1fr;
+  gap: var(--space-2);
+  align-items: center;
+}
+.readAudio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.audioBtns {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
