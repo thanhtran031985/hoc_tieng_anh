@@ -9,6 +9,7 @@ export * from "./admin-story";
 export * from "./app-settings";
 export * from "./auth";
 export * from "./curriculum";
+export * from "./exam";
 export * from "./learner";
 export * from "./learner-settings";
 export * from "./lesson-complete";

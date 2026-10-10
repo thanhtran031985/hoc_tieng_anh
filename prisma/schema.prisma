@@ -86,6 +86,7 @@ model Learner {
   recordings     Recording[]
   gameRecords    GameRecord[]
   rewards        LearnerReward[]
+  examAttempts   ExamAttempt[]
   studySessions  StudySession[]
 
   @@index([userId])
@@ -144,6 +145,7 @@ model Level {
   words     Word[]
   questions Question[]
   stories   Story[]
+  exams     Exam[]
   learners  Learner[]  @relation("LearnerCurrentLevel")
 
   @@index([stageId])
@@ -286,12 +288,13 @@ model Question {
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
-  level       Level        @relation(fields: [levelId], references: [id], onDelete: Restrict)
-  steps       LessonStep[]
-  answerLogs  AnswerLog[]
-  reviewCards ReviewCard[]
-  storyPages  StoryPage[]
-  recordings  Recording[]
+  level         Level          @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  steps         LessonStep[]
+  answerLogs    AnswerLog[]
+  reviewCards   ReviewCard[]
+  storyPages    StoryPage[]
+  recordings    Recording[]
+  examQuestions ExamQuestion[]
 
   @@index([levelId, type])
   @@map("questions")
@@ -632,4 +635,73 @@ model LearnerReward {
 
   @@unique([learnerId, rewardId])
   @@map("learner_rewards")
+}
+
+enum ExamKind {
+  level_test
+}
+
+enum ExamAttemptStatus {
+  in_progress
+  passed
+  retry
+}
+
+/// Đề thi. Task 20: mỗi cấp 1–4 một đề `level_test` (thi lên cấp, đạt từ `pass_percent`); các loại đề khác của PRD dùng ở giai đoạn sau.
+model Exam {
+  id            Int      @id @default(autoincrement())
+  title         String   @db.VarChar(150)
+  kind          ExamKind
+  levelId       Int      @map("level_id")
+  /// Số câu của một lượt thi và phần trăm câu đúng ngay lần đầu để đạt.
+  questionCount Int      @default(20) @map("question_count")
+  passPercent   Int      @default(80) @map("pass_percent") @db.TinyInt
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  level     Level          @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  questions ExamQuestion[]
+  attempts  ExamAttempt[]
+
+  @@unique([kind, levelId])
+  @@map("exams")
+}
+
+/// Câu hỏi trong đề cố định (PRD). Bài thi lên cấp của task 20 tự dựng mỗi lượt thi (xem `exam_attempts.items`) nên chưa dùng bảng này; để dành cho đề cố định ở giai đoạn sau.
+model ExamQuestion {
+  id         Int @id @default(autoincrement())
+  examId     Int @map("exam_id")
+  questionId Int @map("question_id")
+  sortOrder  Int @default(0) @map("sort_order")
+  points     Int @default(1)
+
+  exam     Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, questionId])
+  @@map("exam_questions")
+}
+
+/// Một lượt thi của bé. `items` là bộ 20 câu đã chọn khi bắt đầu (mã bước bài học + chủ đề), giữ nguyên để tải lại trang vẫn ra đúng bộ câu và để chấm lúc nộp.
+model ExamAttempt {
+  id          Int               @id @default(autoincrement())
+  examId      Int               @map("exam_id")
+  learnerId   Int               @map("learner_id")
+  startedAt   DateTime          @default(now()) @map("started_at")
+  submittedAt DateTime?         @map("submitted_at")
+  status      ExamAttemptStatus @default(in_progress)
+  /// Số câu đúng ngay lần đầu; null khi chưa nộp.
+  score       Int?
+  total       Int
+  /// Bộ câu: [{ stepId, unitId }]. Schema: src/lib/schemas/exam.ts.
+  items       Json
+  /// Kết quả từng câu khi nộp: [{ stepId, correct }].
+  answers     Json?
+  /// Tối đa 3 chủ đề sai nhiều nhất: [{ unitId, wrong, total, wordIds }].
+  weakUnits   Json?             @map("weak_units")
+
+  exam    Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+
+  @@index([learnerId, examId, startedAt])
+  @@map("exam_attempts")
 }

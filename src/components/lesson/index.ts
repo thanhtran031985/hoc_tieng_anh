@@ -14,3 +14,4 @@ export { FocusBadge, LessonTools, type LessonToolsProps } from "./LessonTools";
 export { useFocusMode } from "./use-focus-mode";
 export { Clouds } from "./games/Clouds";
 export { BossArt, type BossMood } from "./BossArt";
+export { TestDots, type TestDotsProps } from "./TestDots";

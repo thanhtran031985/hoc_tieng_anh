@@ -50,7 +50,7 @@ function bossOf(levelNumber: number, slug: string): LessonPlay["boss"] {
   return { name: boss.name, accessory: boss.accessory, fur: boss.fur };
 }
 
-const wordSelect = { id: true, word: true, ipa: true, meaningVi: true, exampleEn: true, exampleVi: true, image: true } as const;
+export const wordSelect = { id: true, word: true, ipa: true, meaningVi: true, exampleEn: true, exampleVi: true, image: true } as const;
 
 /** Bài không tồn tại, chưa xuất bản hoặc không chơi được (bài thi, ôn tập) thì null; bài còn khóa thì ném `LessonLockedError`. */
 export async function getLessonPlay(userId: number, learnerId: number, lessonId: number): Promise<LessonPlay | null> {
@@ -121,7 +121,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
 }
 
 /** Bảng mp3 của các từ (theo id): tra thêm cột `audio`/`example_audio` vì `wordSelect` không lấy chúng. */
-async function getAudioMap(wordIds: number[]): Promise<Record<string, string>> {
+export async function getAudioMap(wordIds: number[]): Promise<Record<string, string>> {
   const rows = await db.word.findMany({
     where: { id: { in: [...new Set(wordIds)] }, OR: [{ audio: { not: null } }, { exampleAudio: { not: null } }] },
     select: { word: true, audio: true, exampleEn: true, exampleAudio: true },
@@ -132,7 +132,7 @@ async function getAudioMap(wordIds: number[]): Promise<Record<string, string>> {
 type QuestionRow = { id: number; type: string; prompt: unknown; options: unknown; answer: unknown };
 
 /** Tra thêm cho các dạng bài lấy nội dung từ câu hỏi: hình của từ tham chiếu, nghĩa của các thẻ điền từ, âm phonics. */
-async function getPlayExtras(questions: QuestionRow[], storyIds: number[], speechScoring: boolean): Promise<PlayExtras> {
+export async function getPlayExtras(questions: QuestionRow[], storyIds: number[], speechScoring: boolean): Promise<PlayExtras> {
   const wordIds = new Set<number>();
   const cardWords = new Set<string>();
   const graphemes = new Set<string>();
