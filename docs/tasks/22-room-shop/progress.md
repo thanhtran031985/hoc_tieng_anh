@@ -6,8 +6,8 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 |---|---|---|---|
 | 0 | Seed đồ và cửa hàng (Screen42) | ✅ | Tự duyệt; Edge 22/22 đạt |
 | 1 | Phòng của tớ (Screen41) | ✅ | Tự duyệt; Edge 34/34 đạt |
-| 2 | Trang chủ có Bông mặc đồ (Screen43) | ⬜ | |
-| 3 | Thẻ nghỉ phép | ⬜ | |
+| 2 | Trang chủ có Bông mặc đồ (Screen43) | ✅ | Tự duyệt; Edge 25/25 đạt |
+| 3 | Thẻ nghỉ phép | ✅ | Tự duyệt; 8 test mới, Edge đạt cùng Bước 2 |
 | 4 | Đồ trong phòng ở Adult21 | ⬜ | |
 
 ## Nhật ký
@@ -20,6 +20,11 @@ Việc thủ công: `npx prisma db seed` (nạp 19 món).
 **10/10/2026 — Bước 1.** Trang `/room` thay màn “Sắp có” (+ `loading.tsx` khung xương, `error.tsx`). `server/room.ts`: `getRoom` (nội thất đang đặt `{x, y, flip}`, kho đồ, tủ đồ mọi mũ/áo đang bán kèm đã có/đang mặc, xu), `placeItem` (kẹp vào phòng, thảm sát sàn), `stowItem` (`position` = null), `wearItem` (một transaction: bỏ món cũ cùng nhóm rồi mặc món mới; `code` null là bỏ đồ), cả ba đi qua `requireLearner` và kiểm bé sở hữu đúng món, đúng nhóm; server action `placeItemAction`/`stowItemAction`/`wearItemAction` (Zod ở server). `features/room/RoomView.tsx` + `room.module.css`: phòng (tường, hoa văn, sàn, cửa sổ, bóng đồ bằng token `room-*`), 3 chế độ (nhóm radio ← →): Xem (bấm đồ nghe tên + nghĩa, bấm Bông chào theo tên bé), Trang trí (kéo thả bằng pointer, Tab chọn, mũi tên di chuyển 2%, Shift 6%, R xoay, Delete cất, thanh Xoay / Cất vào kho cũng nhận R/Del, kho đồ bên phải, bấm hoặc Enter để đặt vào (40, 20); lưu sau 0,5 giây khi dùng mũi tên và ngay khi thả/xoay/cất), Tủ đồ (tab Mũ/Áo, Không đội/Không mặc, món chưa có mờ + giá + lời Bông “Cần N xu”, mặc ngay có hoàn tác khi lỗi). `KidTopbar` thêm `extra` và `coinsOnly` (thanh trên chỉ có xu + nút Cửa hàng). Phòng trống: Bông nói “Phòng còn trống trơn!”. Kiểm (Edge, DB verify, `.tmp-verify/check-22-room.mjs`, 34/34): đặt, dời, kẹp biên, kéo thả lưu đúng vị trí, xoay, cất bằng Delete và nút, đặt từ kho, mặc/bỏ mũ áo, món chưa có không vào database, tải lại giữ nguyên vị trí và đồ Bông mặc, đổi 1366×768 → 1920×1080 giữ tỷ lệ, không cuộn ở cả ba chế độ, không lỗi console. tsc, lint sạch.
 Việc thủ công: không có.
 
+**10/10/2026 — Bước 2.** Trang chủ (route cũ, không tạo route mới): Bông mặc đồ đã chọn (`getEquippedOutfit` → `Mascot outfit`, lỗi lấy đồ thì Bông mặc bộ mặc định), nút Phòng của tớ hiện “n đồ” (`HomeData.roomItems`) hoặc “Phòng còn trống”, không còn “Sắp có”. Số chuỗi ngày ở thanh trên thành nút `StreakButton` (`aria-haspopup`, `aria-expanded`) mở thẻ nổi “Chuỗi N ngày”: 7 ô T2–CN (đã học: lửa cam + tick; hôm nay viền cam; bỏ lỡ/chưa tới nhạt; ngày dùng thẻ: bông tuyết, mỗi ô có chữ cho trình đọc màn hình), thẻ nghỉ phép (còn 1 / đã dùng (thứ …) / đã hết, lời giải thích), lời nhắc “còn 1 bài là thành N ngày” hoặc lời khen khi hôm nay đã học; Esc, nút Đóng hoặc bấm ra ngoài đều đóng và trả tiêu điểm về nút chuỗi ngày. `Topbar`/`KidTopbar` thêm `streakSlot`. `server/streak-card.ts` (`getStreakCard`, đi qua `requireLearner`) lấy ngày có học trong tuần từ `lesson_attempts.finished_at` và lượt ôn trong `answer_logs` cộng `learners.last_study_date`. Kiểm (Edge, DB verify, `.tmp-verify/check-22-home.mjs`, 25/25): Bông mặc áo phông + mũ lưỡi trai, “3 đồ”, 7 ô đúng trạng thái (T2 T3 học, T4 bông tuyết, T5 T6 học, T7 hôm nay chưa học, CN chưa tới), thẻ “đã dùng (thứ Tư)”, lời nhắc “thành 5 ngày”, Esc/Đóng/bấm ngoài, hôm nay đã học thì ô đổi và có lời khen, 4 nút mở /room, /collection, /notebook, /map (màn thật), không cuộn ở 1366×768 và 1920×1080, không lỗi console. tsc, lint, `npm test` (540 đạt) sạch.
+
+**10/10/2026 — Bước 3.** Quy tắc thẻ nghỉ phép đã có từ task 04 (`recordStudyDay`, `freezesAvailable`, `streakForDisplay`); bổ sung hàm thuần trong `src/lib/rules/streak.ts`: `freezeDayOfWeek` (database không lưu ngày dùng thẻ nên suy ra: thẻ đã hết trong tuần và có một ngày bỏ nằm giữa hai ngày học liền nhau mà chuỗi còn phủ tới ngày trước đó), `weekCells` (7 ô done/today/freeze/missed/future), `WEEK_LABELS`, `WEEKDAY_NAMES`. 8 test mới trong `streak.test.ts`: học liên tiếp; hôm nay chưa học; bỏ 1 ngày có thẻ thì chuỗi giữ và ô thứ Tư là bông tuyết; bỏ 2 ngày trong tuần thì chuỗi về 0 và không có bông tuyết; bỏ 2 ngày rồi học lại (chuỗi về 1, không bông tuyết); hết thẻ rồi bỏ 1 ngày (chuỗi về 1, không bông tuyết); sang tuần mới có lại thẻ; thẻ dùng vào thứ Hai khi Chủ nhật tuần trước có học. Edge: dựng ngày học trong DB verify, thẻ chuỗi hiện bông tuyết đúng ô thứ Tư (kịch bản ở `check-22-home.mjs`). `npm test` 540 đạt.
+Việc thủ công: không có.
+
 ## Bước tiếp theo
 
-Bước 2 — Trang chủ có Bông mặc đồ (Screen43)
+Bước 4 — Đồ trong phòng ở Adult21

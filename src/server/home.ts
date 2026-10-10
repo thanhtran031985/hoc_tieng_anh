@@ -43,6 +43,8 @@ export type HomeData = {
   studyToday: { minutes: number; goalMinutes: number; remainingMinutes: number | null };
   /** Số sticker và huy hiệu đã có (nút Bộ sưu tập). */
   collection: { stickers: number; badges: number };
+  /** Số đồ trong phòng bé đã có (nút Phòng của tớ). */
+  roomItems: number;
   /** Nhiệm vụ hôm nay: số đã xong / tổng. */
   missions: { done: number; total: number };
 };
@@ -141,6 +143,7 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
     levelProgress: { done: doneLessons, total: totalLessons },
     learnedWords,
     collection: await getCollectionCounts(learnerId),
+    roomItems: await db.learnerReward.count({ where: { learnerId, reward: { type: "room_item", status: "published" } } }),
     studyToday: { minutes: usedMinutes, goalMinutes: allowance.total ?? learner.settings.dailyGoalMinutes, remainingMinutes: allowance.remaining },
     missions,
   };

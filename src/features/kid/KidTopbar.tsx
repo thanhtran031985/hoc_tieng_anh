@@ -23,10 +23,12 @@ export type KidTopbarProps = {
   extra?: React.ReactNode;
   /** Chỉ hiện chip xu (Phòng của tớ), bỏ sao và chuỗi ngày. */
   coinsOnly?: boolean;
+  /** Thay chip chuỗi ngày (trang chủ: nút mở thẻ Chuỗi ngày). */
+  streakSlot?: React.ReactNode;
 };
 
 /** Thanh trên cùng dùng chung cho các màn của bé: ảnh, tên, nhãn cấp bên trái; Sao · Xu · Chuỗi ngày bên phải. */
-export function KidTopbar({ learner, stars, coins, streak, backHref, backLabel, title, settings, extra, coinsOnly }: KidTopbarProps) {
+export function KidTopbar({ learner, stars, coins, streak, backHref, backLabel, title, settings, extra, coinsOnly, streakSlot }: KidTopbarProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -38,6 +40,7 @@ export function KidTopbar({ learner, stars, coins, streak, backHref, backLabel, 
         stars={coinsOnly ? undefined : stars}
         coins={coins}
         streak={coinsOnly ? undefined : streak}
+        streakSlot={coinsOnly ? undefined : streakSlot}
         onBack={backHref ? () => router.push(backHref) : undefined}
         backLabel={backLabel}
         right={

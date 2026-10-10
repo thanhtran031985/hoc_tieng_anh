@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bubble, Mascot, type Expr } from "@/components/ui";
 import { HomeHotkeys } from "@/features/home/HomeHotkeys";
+import { StreakButton } from "@/features/home/StreakButton";
 import { LevelCard } from "@/features/home/LevelCard";
 import { MissionCard } from "@/features/home/MissionCard";
 import { NavTiles } from "@/features/home/NavTiles";
@@ -11,6 +12,8 @@ import { toMascotColor, topbarProps } from "@/features/kid/learner-art";
 import { requireActiveLearner } from "@/server/active-learner";
 import { getHomeData, type HomeData } from "@/server/home";
 import { requireUser } from "@/server/session";
+import { getEquippedOutfit } from "@/server/shop";
+import { getStreakCard, type StreakCardData } from "@/server/streak-card";
 
 export const metadata: Metadata = { title: "Trang chủ — Học cùng Bông" };
 
@@ -45,6 +48,12 @@ export default async function HomePage() {
     data = null;
   }
 
+  // Đồ Bông đang mặc và thẻ chuỗi ngày: lỗi ở đây không chặn trang chủ (Bông mặc bộ mặc định, nút chuỗi hiện số đã lưu).
+  const [outfit, streakCard] = await Promise.all([
+    getEquippedOutfit(learner.id).catch(() => ({})),
+    getStreakCard(user.id, learner.id).catch((): StreakCardData | null => null),
+  ]);
+
   const levelNumber = data?.levelNumber ?? learner.currentLevel?.number ?? 1;
   const levelName = data?.levelName ?? learner.currentLevel?.name ?? "";
   const { expr, text } = greeting(learner.name, data);
@@ -52,7 +61,7 @@ export default async function HomePage() {
 
   return (
     <div className={kid.screen}>
-      <KidTopbar settings {...topbarProps(learner, { number: levelNumber, name: levelName })} />
+      <KidTopbar settings {...topbarProps(learner, { number: levelNumber, name: levelName })} streakSlot={streakCard ? <StreakButton card={streakCard} /> : undefined} />
       <main className={kid.body}>
         <h1 className="sr-only">Trang chủ của {learner.name}</h1>
         <div className={styles.hm}>
@@ -61,11 +70,11 @@ export default async function HomePage() {
             <Bubble tail="left" className={styles.greeting}>
               {text}
             </Bubble>
-            <Mascot expr={expr} color={toMascotColor(learner.mascot)} className={styles.mascot} />
+            <Mascot expr={expr} color={toMascotColor(learner.mascot)} outfit={outfit} className={styles.mascot} />
           </div>
           <LevelCard data={data} />
         </div>
-        <NavTiles levelNumber={levelNumber} levelName={levelName} learnedWords={data?.learnedWords ?? 0} collection={data?.collection ?? { stickers: 0, badges: 0 }} />
+        <NavTiles levelNumber={levelNumber} levelName={levelName} learnedWords={data?.learnedWords ?? 0} collection={data?.collection ?? { stickers: 0, badges: 0 }} roomItems={data?.roomItems ?? 0} />
       </main>
       <HomeHotkeys href={enterHref} />
     </div>

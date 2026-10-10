@@ -29,6 +29,8 @@ export type TopbarProps = Omit<ComponentProps<"header">, "title"> & {
   streak?: number;
   /** Nội dung thêm đặt trước các chip (vd nút cài đặt). */
   right?: React.ReactNode;
+  /** Thay chip chuỗi ngày bằng nội dung này (vd nút mở thẻ Chuỗi ngày ở trang chủ). */
+  streakSlot?: React.ReactNode;
 };
 
 /** Thanh trên cùng (cao `size-topbar`): trái là quay lại, ảnh và tên bé; phải là Sao · Xu · Chuỗi ngày. */
@@ -42,6 +44,7 @@ export function Topbar({
   coins,
   streak,
   right,
+  streakSlot,
   className,
   ...rest
 }: TopbarProps) {
@@ -66,7 +69,7 @@ export function Topbar({
         {right}
         {stars != null && <StatChip kind="stars" value={stars} label="sao" />}
         {coins != null && <StatChip kind="coins" value={coins} label="xu" />}
-        {streak != null && <StatChip kind="streak" value={streak} label="ngày học liên tiếp" />}
+        {streakSlot ?? (streak != null && <StatChip kind="streak" value={streak} label="ngày học liên tiếp" />)}
       </div>
     </header>
   );
