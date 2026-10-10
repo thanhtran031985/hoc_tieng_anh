@@ -15,3 +15,12 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 10/10/2026 | Giữ 3 bản gần nhất mỗi (bé, câu) — xóa cả dòng và tệp khi lưu bản thứ 4 | Đúng task.md |
 | 10/10/2026 | `learnerSettings.speechScoring` mặc định bật, công tắc ở tab “Giao diện & âm thanh” của Adult07 kèm giải thích gửi âm thanh tới Google/Microsoft | Đúng task.md |
 | 10/10/2026 | Edge mới có cả `SpeechRecognition` không tiền tố; `speechRecognitionCtor` ưu tiên bản không tiền tố rồi mới `webkit` | Tránh bỏ sót trình duyệt đã bỏ tiền tố |
+| 10/10/2026 | Adult05 chỉ làm phần ghi âm: `/parent/works` có danh sách theo ngày, lọc “Cần luyện thêm”, trình phát và xóa; phần bài viết/chấm điểm/nhận xét hiện thẻ “Sắp có” (GĐ3) | Đúng phạm vi task.md; chấm tiêu chí và gửi nhận xét thuộc GĐ3 |
+| 10/10/2026 | Thời lượng trình phát lấy theo `duration_ms` đã lưu, không theo metadata của tệp; tua ←/→ 2 giây (bản ghi ≤ 10 giây) | Tệp webm ghi bằng MediaRecorder không có sẵn độ dài; bản ghi ngắn nên bước 5 giây của thiết kế quá lớn |
+| 10/10/2026 | Menu bố mẹ “Bài viết & ghi âm” bật (`ready: true`); test `11-khu-bo-me` sửa còn 3 liên kết và 3 nhãn “Sắp có” | Trang đã có thật |
+| 10/10/2026 | Chưa chụp so sánh với `designs/` cho Screen25/Adult05 trong `thiet-ke.spec.ts` | Cần dữ liệu bản ghi cố định trong DB test; làm khi chạy Playwright tổng. Đã đối chiếu bằng mắt qua ảnh chụp Edge |
+
+## Tổng kết khác với task.md gốc
+- Ngưỡng sao có thêm mức “chặt”; từ khớp gần đúng (sai 1 ký tự với từ ≥ 4 chữ).
+- Không làm lại cuối bài khi bé nói chưa tốt (luôn được ≥ 1 sao); `firstTryCorrect = stars ≥ 2`.
+- Chưa làm: so sánh ảnh với thiết kế trong Playwright; AI nhận xét phát âm (GĐ3–4).

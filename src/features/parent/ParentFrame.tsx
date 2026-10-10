@@ -22,13 +22,14 @@ export function ParentFrame({ user, kids, onLock, logout, children }: Props) {
   const selectedId = pickKidId(kids, params.get("kid"));
   const kid = kids.find((k) => k.id === selectedId);
   const settings = pathname.startsWith("/parent/settings");
+  const works = pathname.startsWith("/parent/works");
   const crumb = kid ? `${kid.name}${kid.grade ? ` · Lớp ${kid.grade}` : ""}` : "Tài khoản gia đình";
 
   return (
     <AdultShell
       area="parent"
-      active={settings ? "settings" : "overview"}
-      title={settings ? "Cài đặt" : kid ? `Tổng quan · ${kid.name}` : "Tổng quan"}
+      active={settings ? "settings" : works ? "works" : "overview"}
+      title={settings ? "Cài đặt" : works ? (kid ? `Bài viết & ghi âm · ${kid.name}` : "Bài viết & ghi âm") : kid ? `Tổng quan · ${kid.name}` : "Tổng quan"}
       crumb={settings ? "Tài khoản gia đình" : crumb}
       kids={kid ? { list: kids, selectedId: kid.id } : undefined}
       user={user}

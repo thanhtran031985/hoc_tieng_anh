@@ -6,7 +6,7 @@ import { spoken } from "./fixtures";
 /** Giống pictureSlug của ứng dụng: "ice cream" → "ice-cream". */
 export const slug = (word: string) => word.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
-export type StepKind = "card-front" | "card-back" | "listen" | "match" | "memory" | "pick" | "phonics" | "order" | "dictation" | "fill" | "story" | "reading" | "end" | "unknown";
+export type StepKind = "card-front" | "card-back" | "listen" | "match" | "memory" | "pick" | "phonics" | "order" | "dictation" | "fill" | "story" | "reading" | "speak" | "end" | "unknown";
 
 /** Dạng bước đang hiện (đọc từ tiêu đề h1 hoặc màn kết thúc). */
 export async function stepKind(page: Page): Promise<StepKind> {
@@ -26,6 +26,8 @@ export async function stepKind(page: Page): Promise<StepKind> {
   // Task 16: truyện tranh (tiêu đề ẩn “Truyện …” hoặc “Câu hỏi giữa truyện”) và đọc hiểu ngắn.
   if (h1.startsWith("Truyện ") || h1.startsWith("Câu hỏi giữa truyện")) return "story";
   if (h1.startsWith("Đọc rồi trả lời")) return "reading";
+  // Task 17: luyện nói (chơi riêng trong 17-luyen-noi.spec.ts).
+  if (h1.startsWith("Nói to")) return "speak";
   return "unknown";
 }
 

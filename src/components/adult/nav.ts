@@ -8,7 +8,7 @@ export const PARENT_NAV: readonly AdultNavItem[] = [
   { key: "overview", label: "Tổng quan", icon: "grid", href: "/parent", ready: true },
   { key: "skills", label: "Kỹ năng", icon: "chart", href: "/parent/skills", ready: false },
   { key: "exams", label: "Kết quả thi", icon: "exam", href: "/parent/exams", ready: false },
-  { key: "works", label: "Bài viết & ghi âm", icon: "pen", href: "/parent/works", ready: false },
+  { key: "works", label: "Bài viết & ghi âm", icon: "pen", href: "/parent/works", ready: true },
   { key: "calendar", label: "Lịch kiểm tra", icon: "calendar", href: "/parent/calendar", ready: false },
   { key: "settings", label: "Cài đặt", icon: "sliders", href: "/parent/settings", ready: true },
 ];

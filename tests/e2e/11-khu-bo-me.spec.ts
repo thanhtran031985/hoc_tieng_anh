@@ -222,12 +222,12 @@ test.describe("Bước 2 — Tổng quan (Adult02), bé Bảo", () => {
     await expect(page.getByRole("heading", { name: "Tổng quan · Bảo" })).toBeVisible();
   });
 
-  test("menu: các mục giai đoạn sau hiện mờ 'Sắp có', không bấm vào được", async ({ page }) => {
+  test("menu: các mục giai đoạn sau hiện mờ 'Sắp có', không bấm vào được (Bài viết & ghi âm đã bật ở task 17)", async ({ page }) => {
     await page.goto("/parent");
     const nav = page.getByRole("navigation", { name: "Khu bố mẹ" });
-    await expect(nav.getByRole("link")).toHaveCount(2);
+    await expect(nav.getByRole("link")).toHaveCount(3);
     for (const name of ["Kỹ năng", "Kết quả thi", "Bài viết & ghi âm", "Lịch kiểm tra"]) await expect(nav.getByText(name)).toBeVisible();
-    await expect(nav.getByText("Sắp có")).toHaveCount(4);
+    await expect(nav.getByText("Sắp có")).toHaveCount(3);
   });
 });
 

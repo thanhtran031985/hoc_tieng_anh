@@ -1,4 +1,6 @@
 // Ghi âm giọng bé (task 17): chọn định dạng, phân loại lỗi micro, kiểm tệp tải lên và giữ 3 bản gần nhất. Hàm thuần.
+import { APP_TIME_ZONE, dateOnly, diffDays } from "./dates.ts";
+import { dayLabel } from "./report.ts";
 
 /** Ghi âm tối đa 10 giây (token `duration-rec-max`); hết thì tự dừng. */
 export const REC_MAX_MS = 10_000;
@@ -59,4 +61,32 @@ export const isRecordingFileName = (name: string): boolean => /^rec-[0-9]{1,10}-
 export function formatClock(ms: number): string {
   const total = Math.max(0, Math.round(ms / 1000));
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+}
+
+export type DayGroup<T> = { key: string; label: string; items: T[] };
+
+/**
+ * Nhóm bản ghi theo ngày lịch (múi giờ ứng dụng) cho trang của bố mẹ: "Hôm nay", "Hôm qua", còn lại "T4 30/9".
+ * Giữ nguyên thứ tự đầu vào (đã sắp mới nhất trước).
+ */
+export function groupRecordingsByDay<T extends { createdAt: string }>(rows: readonly T[], now: Date): DayGroup<T>[] {
+  const today = dateOnly(now);
+  const groups: DayGroup<T>[] = [];
+  for (const row of rows) {
+    const day = dateOnly(new Date(row.createdAt));
+    const key = day.toISOString().slice(0, 10);
+    let group = groups.find((g) => g.key === key);
+    if (!group) {
+      const ago = diffDays(today, day);
+      group = { key, label: ago <= 0 ? "Hôm nay" : ago === 1 ? "Hôm qua" : dayLabel(day), items: [] };
+      groups.push(group);
+    }
+    group.items.push(row);
+  }
+  return groups;
+}
+
+/** Giờ trong ngày "20:40" ở múi giờ ứng dụng. */
+export function clockOfDay(at: Date): string {
+  return new Intl.DateTimeFormat("vi-VN", { timeZone: APP_TIME_ZONE, hourCycle: "h23", hour: "2-digit", minute: "2-digit" }).format(at);
 }

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { formatClock, isRecordingFileName, micProblem, pickRecorderMime, recordingExt, recordingsToDrop, sniffRecording } from "./recording.ts";
+import { clockOfDay, formatClock, groupRecordingsByDay, isRecordingFileName, micProblem, pickRecorderMime, recordingExt, recordingsToDrop, sniffRecording } from "./recording.ts";
 
 describe("pickRecorderMime / recordingExt", () => {
   it("chọn định dạng đầu tiên được hỗ trợ; không có thì null", () => {
@@ -63,5 +63,29 @@ describe("tên tệp và thời lượng", () => {
     assert.equal(formatClock(6000), "0:06");
     assert.equal(formatClock(72_000), "1:12");
     assert.equal(formatClock(-5), "0:00");
+  });
+});
+
+describe("groupRecordingsByDay / clockOfDay", () => {
+  const now = new Date("2026-10-10T05:00:00Z"); // 12:00 ngày 10/10 ở Việt Nam
+  const row = (id: number, iso: string) => ({ id, createdAt: iso });
+
+  it("nhóm theo ngày lịch ở múi giờ ứng dụng, giữ thứ tự", () => {
+    const groups = groupRecordingsByDay([row(5, "2026-10-10T03:00:00Z"), row(4, "2026-10-09T16:30:00Z"), row(3, "2026-10-09T05:00:00Z"), row(2, "2026-10-07T01:00:00Z")], now);
+    // 16:30Z ngày 9 là 23:30 ngày 9 ở Việt Nam → vẫn “Hôm qua”; 03:00Z ngày 10 là 10:00 → “Hôm nay”
+    assert.deepEqual(groups.map((g) => [g.label, g.items.map((i) => i.id)]), [["Hôm nay", [5]], ["Hôm qua", [4, 3]], ["T4 7/10", [2]]]);
+  });
+
+  it("bản lúc nửa đêm giờ Việt Nam thuộc ngày mới", () => {
+    const groups = groupRecordingsByDay([row(1, "2026-10-09T17:30:00Z")], now); // 00:30 ngày 10/10
+    assert.equal(groups[0].label, "Hôm nay");
+  });
+
+  it("không có bản nào thì không có nhóm", () => {
+    assert.deepEqual(groupRecordingsByDay([], now), []);
+  });
+
+  it("giờ trong ngày theo múi giờ Việt Nam", () => {
+    assert.equal(clockOfDay(new Date("2026-10-10T13:40:00Z")), "20:40");
   });
 });
