@@ -1,9 +1,10 @@
-import { computeLessonStates, findNextLesson, summarizeUnits, type MapLesson } from "@/lib/rules/unlock";
+import { computeLessonStates, findNextLesson, manualLessonIds, summarizeUnits, type MapLesson } from "@/lib/rules/unlock";
 import { dayStartInstant, today } from "@/lib/rules/dates";
 import { studyAllowance } from "@/lib/rules/study-time";
 import { db } from "./db";
 import { getCollectionCounts } from "./collection";
 import { requireLearner } from "./learners";
+import { getManualUnlocks } from "./manual-unlock";
 import { dueCardWhere } from "./review";
 
 // Dữ liệu cho trang chủ của bé. Đi qua `requireLearner` nên chỉ đọc được hồ sơ thuộc tài khoản đang đăng nhập.
@@ -94,7 +95,7 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
   // Chuỗi bài của cấp: theo thứ tự chủ đề rồi thứ tự bài. Các quy tắc mở khóa nằm ở src/lib/rules/unlock.ts.
   const mapLessons: MapLesson[] = units.flatMap((unit) => unit.lessons.map((lesson) => ({ id: lesson.id, unitId: unit.id, kind: lesson.kind })));
   const bestStars = new Map(progress.map((p) => [p.lessonId, p.bestStars]));
-  const nodes = computeLessonStates(mapLessons, bestStars);
+  const nodes = computeLessonStates(mapLessons, bestStars, manualLessonIds(mapLessons, level.id, await getManualUnlocks(learnerId)));
   const summaries = summarizeUnits(nodes);
   const nextNode = findNextLesson(nodes);
 

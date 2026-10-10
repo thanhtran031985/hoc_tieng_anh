@@ -6,6 +6,7 @@ import { bossFor } from "@/lib/rules/bosses";
 import { buildAudioMap } from "@/lib/rules/tts";
 import { extraQuestionTexts } from "@/lib/rules/play-texts";
 import { levelStatus } from "@/lib/rules/unlock";
+import { getManualUnlocks } from "./manual-unlock";
 import { getVoiceMp3Enabled } from "./app-settings";
 import { clipMap } from "./audio/clips";
 import { splitSentence } from "@/lib/rules/sentence-words";
@@ -71,7 +72,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   if (!lesson || (lesson.kind !== "lesson" && lesson.kind !== "unit_test")) return null;
   const { unit } = lesson;
 
-  if (levelStatus(unit.level.number, learner.currentLevel?.number ?? 1) === "locked") throw new LessonLockedError();
+  if (levelStatus(unit.level.number, learner.currentLevel?.number ?? 1, (await getManualUnlocks(learnerId)).accessLevels.has(unit.level.id)) === "locked") throw new LessonLockedError();
 
   const [{ nodes }, unitCards] = await Promise.all([
     getLevelNodes(learnerId, unit.level.id),

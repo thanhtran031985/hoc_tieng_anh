@@ -4,6 +4,8 @@
 //   Bài đầu luôn mở; bài sau mở khi bài trước đạt từ 1 sao.
 // - Trận trùm (`unit_test`) của chủ đề mở khi xong mọi bài thường của chủ đề đó. Trùm KHÔNG chặn chủ đề kế.
 // - Các loại bài khác (`level_test`, `review`) không nằm trên bản đồ đảo.
+// - Bố mẹ có thể mở khóa thủ công một cấp, chủ đề hoặc bài (task 24, bảng `manual_unlocks`): bài khóa được mở thì vào chơi được ngay,
+//   không cần bài trước đạt sao; bài đã xong và tiến độ giữ nguyên.
 
 export type MapLessonKind = "lesson" | "unit_test" | "level_test" | "review";
 
@@ -12,7 +14,8 @@ export type MapLesson = { id: number; unitId: number; kind: MapLessonKind };
 
 export type LessonNodeState = "done" | "current" | "locked";
 export type BossNodeState = "locked" | "open" | "beaten";
-export type LevelStatus = "past" | "current" | "locked";
+/** `open`: cấp còn xa nhưng bố mẹ đã mở thủ công (vào được, không hiện cổng thi lên cấp). */
+export type LevelStatus = "past" | "current" | "locked" | "open";
 
 export type LessonNode = { id: number; unitId: number; kind: "lesson"; state: LessonNodeState; stars: number };
 export type BossNode = { id: number; unitId: number; kind: "unit_test"; state: BossNodeState; stars: number };
@@ -36,8 +39,39 @@ const MAX_STARS = 3;
 
 const clampStars = (value: number | undefined) => Math.max(0, Math.min(MAX_STARS, Math.trunc(value ?? 0)));
 
-/** Trạng thái của từng chặng và trùm trên bản đồ, theo đúng thứ tự đầu vào (bỏ qua bài không thuộc bản đồ). */
-export function computeLessonStates(lessons: readonly MapLesson[], bestStars: ReadonlyMap<number, number>): MapNode[] {
+/**
+ * Các mục bố mẹ đã mở khóa thủ công cho một bé (id trong bảng `levels`, `units`, `lessons`).
+ * `accessLevels`: các cấp vào được nhờ mở thủ công (mở cả cấp, hoặc mở một chủ đề / một bài nằm trong cấp đó).
+ */
+export type ManualUnlocks = { levels: ReadonlySet<number>; units: ReadonlySet<number>; lessons: ReadonlySet<number>; accessLevels: ReadonlySet<number> };
+
+export const NO_MANUAL_UNLOCKS: ManualUnlocks = { levels: new Set(), units: new Set(), lessons: new Set(), accessLevels: new Set() };
+
+/** Các bài được mở thủ công trong số `lessons` của cấp `levelId`: mở cả cấp, cả chủ đề hoặc đúng bài đó. */
+export function manualLessonIds(lessons: readonly { id: number; unitId: number }[], levelId: number, manual: ManualUnlocks): Set<number> {
+  const opened = new Set<number>();
+  const wholeLevel = manual.levels.has(levelId);
+  for (const lesson of lessons) if (wholeLevel || manual.units.has(lesson.unitId) || manual.lessons.has(lesson.id)) opened.add(lesson.id);
+  return opened;
+}
+
+/**
+ * Cấp còn khóa theo quy tắc thường nhưng bố mẹ chỉ mở một vài chủ đề hoặc bài trong đó: chỉ những bài được mở mới chơi được,
+ * các bài khác (kể cả bài đầu cấp, vốn là “đang học” theo chuỗi) vẫn khóa. Bài đã xong giữ nguyên.
+ */
+export function lockUnlessManual(nodes: readonly MapNode[], manualOpen: ReadonlySet<number>): MapNode[] {
+  return nodes.map((n) => {
+    if (manualOpen.has(n.id)) return n;
+    if (n.kind === "lesson") return n.state === "current" ? { ...n, state: "locked" as const } : n;
+    return n.state === "open" ? { ...n, state: "locked" as const } : n;
+  });
+}
+
+/**
+ * Trạng thái của từng chặng và trùm trên bản đồ, theo đúng thứ tự đầu vào (bỏ qua bài không thuộc bản đồ).
+ * `manualOpen`: các bài bố mẹ đã mở thủ công; bài khóa nằm trong tập này thành `current` (chặng) hoặc `open` (trùm).
+ */
+export function computeLessonStates(lessons: readonly MapLesson[], bestStars: ReadonlyMap<number, number>, manualOpen: ReadonlySet<number> = new Set()): MapNode[] {
   const perUnit = new Map<number, { total: number; done: number }>();
   for (const lesson of lessons) {
     if (lesson.kind !== "lesson") continue;
@@ -57,12 +91,12 @@ export function computeLessonStates(lessons: readonly MapLesson[], bestStars: Re
       else if (!currentTaken) {
         state = "current";
         currentTaken = true;
-      }
+      } else if (manualOpen.has(lesson.id)) state = "current";
       nodes.push({ id: lesson.id, unitId: lesson.unitId, kind: "lesson", state, stars });
     } else if (lesson.kind === "unit_test") {
       const count = perUnit.get(lesson.unitId);
       const unlocked = count !== undefined && count.total > 0 && count.done === count.total;
-      const state: BossNodeState = stars >= 1 ? "beaten" : unlocked ? "open" : "locked";
+      const state: BossNodeState = stars >= 1 ? "beaten" : unlocked || manualOpen.has(lesson.id) ? "open" : "locked";
       nodes.push({ id: lesson.id, unitId: lesson.unitId, kind: "unit_test", state, stars });
     }
   }
@@ -106,9 +140,9 @@ export function findNextLesson(nodes: readonly MapNode[]): MapNode | null {
  * Cấp trên bản tổng quan so với cấp hiện tại của bé: nhỏ hơn là đã qua, bằng là đang học, lớn hơn là còn khóa.
  * Chưa có cấp hiện tại (bé chưa khai báo lớp) thì bắt đầu ở cấp 1.
  */
-export function levelStatus(levelNumber: number, currentLevelNumber: number | null): LevelStatus {
+export function levelStatus(levelNumber: number, currentLevelNumber: number | null, manualOpen = false): LevelStatus {
   const current = currentLevelNumber ?? 1;
   if (levelNumber < current) return "past";
   if (levelNumber === current) return "current";
-  return "locked";
+  return manualOpen ? "open" : "locked";
 }

@@ -24,13 +24,14 @@ export function ParentFrame({ user, kids, onLock, logout, children }: Props) {
   const settings = pathname.startsWith("/parent/settings");
   const works = pathname.startsWith("/parent/works");
   const skills = pathname.startsWith("/parent/skills");
+  const progress = pathname.startsWith("/parent/progress");
   const crumb = kid ? `${kid.name}${kid.grade ? ` · Lớp ${kid.grade}` : ""}` : "Tài khoản gia đình";
 
   return (
     <AdultShell
       area="parent"
-      active={settings ? "settings" : works ? "works" : skills ? "skills" : "overview"}
-      title={settings ? "Cài đặt" : works ? (kid ? `Bài viết & ghi âm · ${kid.name}` : "Bài viết & ghi âm") : skills ? (kid ? `Kỹ năng · ${kid.name}` : "Kỹ năng") : kid ? `Tổng quan · ${kid.name}` : "Tổng quan"}
+      active={settings ? "settings" : works ? "works" : skills ? "skills" : progress ? "progress" : "overview"}
+      title={settings ? "Cài đặt" : works ? (kid ? `Bài viết & ghi âm · ${kid.name}` : "Bài viết & ghi âm") : skills ? (kid ? `Kỹ năng · ${kid.name}` : "Kỹ năng") : progress ? (kid ? `Tiến độ · ${kid.name}` : "Tiến độ") : kid ? `Tổng quan · ${kid.name}` : "Tổng quan"}
       crumb={settings ? "Tài khoản gia đình" : crumb}
       kids={kid ? { list: kids, selectedId: kid.id } : undefined}
       user={user}

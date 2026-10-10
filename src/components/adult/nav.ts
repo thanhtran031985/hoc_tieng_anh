@@ -7,6 +7,7 @@ export type AdultNavItem = { key: string; label: string; icon: IconName; href: s
 export const PARENT_NAV: readonly AdultNavItem[] = [
   { key: "overview", label: "Tổng quan", icon: "grid", href: "/parent", ready: true },
   { key: "skills", label: "Kỹ năng", icon: "chart", href: "/parent/skills", ready: true },
+  { key: "progress", label: "Tiến độ", icon: "route", href: "/parent/progress", ready: true, badge: "Mới" },
   { key: "exams", label: "Kết quả thi", icon: "exam", href: "/parent/exams", ready: false },
   { key: "works", label: "Bài viết & ghi âm", icon: "pen", href: "/parent/works", ready: true },
   { key: "calendar", label: "Lịch kiểm tra", icon: "calendar", href: "/parent/calendar", ready: false },

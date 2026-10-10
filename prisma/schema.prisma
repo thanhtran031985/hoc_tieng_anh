@@ -41,7 +41,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  learners Learner[]
+  learners      Learner[]
+  manualUnlocks ManualUnlock[]
 
   @@map("users")
 }
@@ -86,6 +87,7 @@ model Learner {
   recordings     Recording[]
   gameRecords    GameRecord[]
   rewards        LearnerReward[]
+  manualUnlocks  ManualUnlock[]
   examAttempts   ExamAttempt[]
   studySessions  StudySession[]
 
@@ -721,4 +723,31 @@ model ExamAttempt {
 
   @@index([learnerId, examId, startedAt])
   @@map("exam_attempts")
+}
+
+/// Đích bố mẹ mở khóa thủ công (task 24): cả cấp, cả chủ đề hoặc một bài.
+enum ManualUnlockTarget {
+  level
+  unit
+  lesson
+}
+
+/// Bố mẹ mở khóa thủ công một cấp, chủ đề hoặc bài cho một bé (Adult17). `target_id` là id của `levels`, `units` hoặc `lessons`
+/// tùy `target_type` (không có khóa ngoại vì trỏ tới nhiều bảng). Hàm mở khóa của PRD Phần F đọc thêm bảng này.
+model ManualUnlock {
+  id         Int                @id @default(autoincrement())
+  learnerId  Int                @map("learner_id")
+  targetType ManualUnlockTarget @map("target_type")
+  targetId   Int                @map("target_id")
+  /// Tài khoản bố mẹ đã mở khóa.
+  unlockedBy Int                @map("unlocked_by")
+  createdAt  DateTime           @default(now()) @map("created_at")
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [unlockedBy], references: [id], onDelete: Cascade)
+
+  @@unique([learnerId, targetType, targetId])
+  @@index([learnerId, createdAt])
+  @@index([unlockedBy])
+  @@map("manual_unlocks")
 }

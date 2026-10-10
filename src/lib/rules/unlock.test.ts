@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { computeLessonStates, findNextLesson, levelStatus, summarizeUnits, type MapLesson } from "./unlock.ts";
+import { NO_MANUAL_UNLOCKS, computeLessonStates, findNextLesson, levelStatus, lockUnlessManual, manualLessonIds, summarizeUnits, type ManualUnlocks, type MapLesson } from "./unlock.ts";
 
 // Hai chủ đề: chủ đề 1 có bài 1, 2, 3 và trùm 4; chủ đề 2 có bài 5, 6 và trùm 7.
 const lessons: MapLesson[] = [
@@ -114,5 +114,53 @@ describe("levelStatus", () => {
 
   it("chưa có cấp hiện tại thì bắt đầu ở cấp 1", () => {
     assert.deepEqual([1, 2].map((n) => levelStatus(n, null)), ["current", "locked"]);
+  });
+});
+
+describe("mở khóa thủ công của bố mẹ", () => {
+  const manual = (levels: number[], units: number[], ls: number[]): ManualUnlocks => ({ levels: new Set(levels), units: new Set(units), lessons: new Set(ls), accessLevels: new Set(levels) });
+  const withManual = (open: number[], entries: Record<number, number> = {}) => computeLessonStates(lessons, stars(entries), new Set(open)).map((n) => `${n.id}:${n.state}`);
+
+  it("bài khóa được mở thủ công thì vào chơi được ngay (chặng đang học), bài khác vẫn khóa", () => {
+    assert.deepEqual(withManual([3]), ["1:current", "2:locked", "3:current", "4:locked", "5:locked", "6:locked", "7:locked"]);
+  });
+
+  it("bài đã xong giữ nguyên trạng thái xong dù nằm trong tập mở thủ công", () => {
+    assert.equal(withManual([1], { 1: 3 })[0], "1:done");
+  });
+
+  it("trùm khóa được mở thủ công thì mở; trùm đã thắng vẫn là đã thắng", () => {
+    assert.equal(withManual([4])[3], "4:open");
+    assert.equal(withManual([4], { 4: 2 })[3], "4:beaten");
+  });
+
+  it("bài mở thủ công không đổi bài kế tiếp của bản đồ (vẫn là chặng đang học đầu tiên)", () => {
+    const nodes = computeLessonStates(lessons, stars({}), new Set([5, 6]));
+    assert.equal(findNextLesson(nodes)?.id, 1);
+  });
+
+  it("không có mở thủ công thì kết quả như cũ", () => {
+    assert.deepEqual(computeLessonStates(lessons, stars({ 1: 2 }), new Set()), computeLessonStates(lessons, stars({ 1: 2 })));
+  });
+
+  it("manualLessonIds: mở cả cấp, cả chủ đề hoặc đúng một bài", () => {
+    assert.deepEqual([...manualLessonIds(lessons, 1, NO_MANUAL_UNLOCKS)], []);
+    assert.deepEqual([...manualLessonIds(lessons, 1, manual([1], [], []))].sort(), [1, 2, 3, 4, 5, 6, 7]);
+    assert.deepEqual([...manualLessonIds(lessons, 1, manual([2], [], []))], []);
+    assert.deepEqual([...manualLessonIds(lessons, 1, manual([], [20], []))].sort(), [5, 6, 7]);
+    assert.deepEqual([...manualLessonIds(lessons, 1, manual([], [], [3, 99]))], [3]);
+  });
+
+  it("cấp xa mở thủ công thì ‘open’ (vào được), cấp đang học hoặc đã qua không đổi", () => {
+    assert.equal(levelStatus(7, 3, true), "open");
+    assert.equal(levelStatus(7, 3), "locked");
+    assert.equal(levelStatus(3, 3, true), "current");
+    assert.equal(levelStatus(2, 3, true), "past");
+  });
+
+  it("cấp còn khóa chỉ mở một bài: bài đầu cấp (đang học theo chuỗi) vẫn khóa, chỉ bài được mở chơi được", () => {
+    const opened = new Set([3]);
+    const nodes = lockUnlessManual(computeLessonStates(lessons, stars({}), opened), opened);
+    assert.deepEqual(nodes.map((n) => `${n.id}:${n.state}`), ["1:locked", "2:locked", "3:current", "4:locked", "5:locked", "6:locked", "7:locked"]);
   });
 });

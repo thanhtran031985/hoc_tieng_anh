@@ -20,7 +20,7 @@ export type LevelsMapProps = {
 const placeName = (level: LevelStop) => `${level.number <= 5 ? "Đảo " : ""}${level.name}`;
 
 function stopLabel(level: LevelStop): string {
-  const state = level.status === "past" ? "đã qua" : level.status === "current" ? "bé đang ở đây" : "còn khoá";
+  const state = level.status === "past" ? "đã qua" : level.status === "current" ? "bé đang ở đây" : level.status === "open" ? "bố mẹ đã mở" : "còn khoá";
   return `Cấp ${level.number} ${level.name}, ${state}`;
 }
 
@@ -32,7 +32,7 @@ export function LevelsMap({ levels, learner, showTip }: LevelsMapProps) {
 
   const go = (level: LevelStop) => router.push(`/map/${level.number}`);
   function choose(level: LevelStop) {
-    if (level.status === "current") return go(level);
+    if (level.status === "current" || level.status === "open") return go(level);
     setSelected(level);
     setOpen(true);
   }
@@ -49,7 +49,7 @@ export function LevelsMap({ levels, learner, showTip }: LevelsMapProps) {
           <button
             key={level.number}
             type="button"
-            className={cn(styles.stop, level.status === "past" && styles.done, level.status === "current" && styles.cur, level.status === "locked" && styles.locked)}
+            className={cn(styles.stop, level.status === "past" && styles.done, (level.status === "current" || level.status === "open") && styles.cur, level.status === "locked" && styles.locked)}
             data-level={level.number}
             style={stopPosition(level.number)}
             aria-label={stopLabel(level)}

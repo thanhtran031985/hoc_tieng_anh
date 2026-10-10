@@ -6,6 +6,7 @@ import { bossReward, dropsSticker } from "@/lib/rules/rewards";
 import { nextReview } from "@/lib/rules/review-box";
 import { recordStudyDay } from "@/lib/rules/streak";
 import { findNextLesson, levelStatus } from "@/lib/rules/unlock";
+import { getManualUnlocks } from "./manual-unlock";
 import { db } from "./db";
 import { getLevelNodes } from "./level-nodes";
 import { requireLearner } from "./learners";
@@ -35,7 +36,7 @@ export async function completeLesson(userId: number, learnerId: number, input: u
   const { levelId } = lesson.unit;
   const levelNumber = lesson.unit.level.number;
 
-  if (levelStatus(levelNumber, learner.currentLevel?.number ?? 1) === "locked") throw new LessonLockedError();
+  if (levelStatus(levelNumber, learner.currentLevel?.number ?? 1, (await getManualUnlocks(learnerId)).accessLevels.has(levelId)) === "locked") throw new LessonLockedError();
   const before = await getLevelNodes(learnerId, levelId);
   const node = before.nodes.find((n) => n.id === lesson.id);
   if (!node || node.state === "locked") throw new LessonLockedError();

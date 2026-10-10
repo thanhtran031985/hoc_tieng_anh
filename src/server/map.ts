@@ -3,6 +3,8 @@ import {
   computeLessonStates,
   findNextLesson,
   levelStatus,
+  lockUnlessManual,
+  manualLessonIds,
   summarizeUnits,
   type BossNodeState,
   type LessonNodeState,
@@ -12,6 +14,7 @@ import {
 } from "@/lib/rules/unlock";
 import { db } from "./db";
 import { requireLearner } from "./learners";
+import { getManualUnlocks } from "./manual-unlock";
 
 // Dữ liệu cho tổng quan 10 cấp và bản đồ đảo. Mọi hàm đi qua `requireLearner` nên chỉ đọc được hồ sơ thuộc tài khoản đang đăng nhập.
 
@@ -34,17 +37,18 @@ export type LevelsOverview = {
 export async function getLevelsOverview(userId: number, learnerId: number): Promise<LevelsOverview> {
   const learner = await requireLearner(userId, learnerId);
   const currentLevel = learner.currentLevel?.number ?? 1;
-  const [levels, startedCount] = await Promise.all([
+  const [levels, startedCount, manual] = await Promise.all([
     db.level.findMany({
       orderBy: { number: "asc" },
-      select: { number: true, name: true, _count: { select: { units: { where: { status: "published" } } } } },
+      select: { id: true, number: true, name: true, _count: { select: { units: { where: { status: "published" } } } } },
     }),
     db.lessonProgress.count({ where: { learnerId, bestStars: { gte: 1 } } }),
+    getManualUnlocks(learnerId),
   ]);
   return {
     currentLevel,
     hasStarted: startedCount > 0,
-    levels: levels.map((l) => ({ number: l.number, name: l.name, status: levelStatus(l.number, currentLevel), hasContent: l._count.units > 0 })),
+    levels: levels.map((l) => ({ number: l.number, name: l.name, status: levelStatus(l.number, currentLevel, manual.accessLevels.has(l.id)), hasContent: l._count.units > 0 })),
   };
 }
 
@@ -106,7 +110,8 @@ export async function getIslandMap(userId: number, learnerId: number, levelNumbe
   const learner = await requireLearner(userId, learnerId);
   const level = await db.level.findUnique({ where: { number: levelNumber }, select: { id: true, number: true, name: true } });
   if (!level) return null;
-  if (levelStatus(level.number, learner.currentLevel?.number ?? 1) === "locked") throw new LevelLockedError();
+  const manual = await getManualUnlocks(learnerId);
+  if (levelStatus(level.number, learner.currentLevel?.number ?? 1, manual.accessLevels.has(level.id)) === "locked") throw new LevelLockedError();
 
   const [units, progress] = await Promise.all([
     db.unit.findMany({
@@ -135,7 +140,10 @@ export async function getIslandMap(userId: number, learnerId: number, levelNumbe
   ]);
 
   const mapLessons: MapLesson[] = units.flatMap((u) => u.lessons.map((l) => ({ id: l.id, unitId: u.id, kind: l.kind })));
-  const nodes = computeLessonStates(mapLessons, new Map(progress.map((p) => [p.lessonId, p.bestStars])));
+  const opened = manualLessonIds(mapLessons, level.id, manual);
+  const computed = computeLessonStates(mapLessons, new Map(progress.map((p) => [p.lessonId, p.bestStars])), opened);
+  const partial = levelStatus(level.number, learner.currentLevel?.number ?? 1) === "locked" && !manual.levels.has(level.id);
+  const nodes = partial ? lockUnlessManual(computed, opened) : computed;
   const nodeById = new Map(nodes.map((n) => [n.id, n]));
   const summaries = new Map(summarizeUnits(nodes).map((s) => [s.unitId, s]));
 
