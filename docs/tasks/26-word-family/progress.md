@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 0 | Bảng và seed mẫu | ✅ | Migration word_family, Zod, quy tắc, seed -at và -ir |
 | 1 | Họ vần (Screen50) | ✅ | FamilyMap, FamilyPlayer, route /family/[id], dạng bài word_family, Soạn bài học |
 | 2 | Ghép chữ đầu (Screen51) | ✅ | BuildBoard, BuildPlayer, build-flow, route /family/[id]/build, dạng bài build_family |
-| 3 | Liên kết qua lại (WordLinks, Screen53) | ⬜ | |
+| 3 | Liên kết qua lại (WordLinks, Screen53) | ✅ | WordLabShell, WordLinks, getWordLabEntry; /explore, /family, /family/[id]/build dùng chung khung |
 | 4 | Tab Họ vần trong Sổ từ (Screen52) | ⬜ | |
 | 5 | Soạn Họ vần (Adult23) | ⬜ | |
 
@@ -43,6 +43,14 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-build.mjs`, 61 mục đạt): 7 ô chữ (5 thật + z, v); bấm, gõ, gõ cụm fl, kéo thả; từ thật vào Đã tìm được; zat ô cam nhẹ kèm lời Bông; chữ đã tìm báo lại; Backspace xóa; q nhắc nhẹ; tự khám phá không có bảng kết thúc; mở từ thẻ hat có khung “Từ cần ghép đầu tiên” và chữ h viền sáng; Về họ vần; họ Nháp 404; trong bài: Kiểm tra khóa khi ô trống, ? gợi ý, h là chữ (không phải gợi ý), f không bật học tập trung, bảng kết thúc “Cậu ghép đủ 5 từ rồi!”, không ghi `answer_logs`; không cuộn ở 1366×768, 1440×900, 1920×1080. `npm test` 682/682, `tsc` và `lint` sạch.
 - Việc thủ công: không có thêm.
 
+### Bước 3 — Liên kết qua lại (WordLinks, Screen53) (10/10/2026)
+- `components/wordlab/WordLinks` (+ `WordLinkButton`, `WordLinksTip`): dải liên kết (`links-bg`), nút Quay lại (⌫), đường dẫn bấm được tối đa 4 bậc (`crumb-*`), nút đi tiếp theo ngữ cảnh.
+- `features/word-family/WordLabShell`: giữ đường dẫn ở trình duyệt (`pushLink` / `popLink` / `cutTo` của bước 0). Mọi bậc vẫn nằm trong trang (bậc không ở đỉnh bị `hidden`) nên Quay lại về đúng bậc trước với nguyên trạng thái (nhánh đã mở, thẻ đã nghe, từ đã ghép). Đi tới đúng mục đã có thì cắt về mục đó (không chồng). Bậc mới nạp bằng server action `getWordLabEntryAction` → `server/word-lab.getWordLabEntry` (qua `requireLearner`, chỉ nội dung đã xuất bản, Zod `wordLabEntryInputSchema`). Backspace = Quay lại (ở Ghép chữ: xóa chữ trong ô, ô trống thì Quay lại), Esc / Đóng thoát cả lượt về Sổ từ.
+- Nút đi tiếp: Khám phá từ → “Họ vần của bird: -ir” (`familyOfWord`); Họ vần → nút “Ghép” và “Khám phá” trên thẻ; Ghép chữ → “Về họ vần -ir” và bấm từ trong “Đã tìm được” để mở Khám phá của từ. Hết 4 bậc: các nút dẫn tới mục mới bị khóa kèm dòng “Đã đủ 4 bậc. Bấm Quay lại để đi tiếp.”; nút dẫn tới mục đã ở trong đường dẫn vẫn dùng được (cắt về).
+- Ba route (`/explore/[wordId]`, `/family/[familyId]`, `/family/[familyId]/build`) đều dựng `WordLabShell` với bậc đầu; `ExploreView` được thay bằng khung này. `ExplorerPlayer` có thêm `embedded`; `FamilyPlayer` / `BuildPlayer` / `BuildBoard` có `isLocked` / `isFoundLocked`.
+- Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-journey.mjs`, 43 mục đạt): đi đúng lượt bird → họ -ir → Ghép chữ → shirt → Khám phá shirt (đường dẫn dài dần tới 4 bậc), Quay lại từng bậc bằng Backspace với trạng thái còn nguyên (nhánh 2 của bird vẫn mở, thẻ bird vẫn đã nghe, Đã tìm được vẫn 1/2), bấm đường dẫn về thẳng bậc 1, Khám phá bird khi bird đã ở bậc 1 thì cắt về, Esc về Sổ từ; bậc thứ 5 (Họ vần của bird: -at, bird tạm thêm vào họ -at) bị khóa kèm lời giải thích, bấm không đổi đường dẫn, Quay lại một bậc thì hết khóa; không cuộn ở 1366×768. Kiểm lại hồi quy: `check-26-family`, `check-26-build` (cập nhật cho khung mới), `check-25-explorer`, `check-25-notebook` đều đạt. `npm test` 682/682, `tsc` và `lint` sạch.
+- Việc thủ công: không có thêm.
+
 ## Bước tiếp theo
 
-Bước 3 — Liên kết qua lại (WordLinks, Screen53)
+Bước 4 — Tab Họ vần trong Sổ từ (Screen52)

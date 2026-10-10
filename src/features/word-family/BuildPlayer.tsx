@@ -35,6 +35,8 @@ export type BuildPlayerProps = {
   onBack?: () => void;
   /** Bấm một từ trong “Đã tìm được” (tự khám phá): mở Khám phá của từ đó. */
   onOpenFound?: (wordId: number) => void;
+  /** Chip của từ bị khóa khi đường dẫn đã đủ bậc. */
+  isFoundLocked?: (wordId: number) => boolean;
   /** Xem như học sinh ở trang soạn. */
   preview?: boolean;
   /** Nhúng trong khung khác (có đầu màn riêng): chỉ vẽ phần thân. */
@@ -50,7 +52,7 @@ const END_DELAY_MS = 900;
  * Ghép chữ đầu (Screen51): kéo, bấm hoặc gõ một chữ đầu vào ô trống trước vần rồi kiểm tra; từ thật bay vào “Đã tìm được”,
  * từ không có thật chỉ nhắc nhẹ (không trừ điểm). Phím: gõ chữ (s rồi h cho “sh”), Enter kiểm tra, Backspace xóa ô, ? gợi ý, Space nghe vần.
  */
-export function BuildPlayer({ mode, family, tiles, first = null, active = true, accent, onComplete, onClose, onBackToFamily, onBack, onOpenFound, preview = false, embedded = false }: BuildPlayerProps) {
+export function BuildPlayer({ mode, family, tiles, first = null, active = true, accent, onComplete, onClose, onBackToFamily, onBack, onOpenFound, isFoundLocked, preview = false, embedded = false }: BuildPlayerProps) {
   const lessonMode = mode === "lesson";
   const { build } = family;
   const rime = build.rime;
@@ -253,6 +255,7 @@ export function BuildPlayer({ mode, family, tiles, first = null, active = true, 
         onTilePointerDown={onTilePointerDown}
         onTile={place}
         onOpenFound={!lessonMode && onOpenFound ? (w) => onOpenFound(w.wordId) : undefined}
+        isFoundLocked={isFoundLocked ? (w) => isFoundLocked(w.wordId) : undefined}
       />
     </div>
   );

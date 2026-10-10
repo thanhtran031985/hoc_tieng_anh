@@ -36,6 +36,8 @@ export type ExplorerPlayerProps = {
   speechScoring?: boolean;
   /** Xem như học sinh ở trang soạn: không có khung bài học, không có Đóng. */
   preview?: boolean;
+  /** Nhúng trong khung khác (khung liên kết có đầu màn riêng): chỉ vẽ phần thân, không vẽ đầu màn tự khám phá. */
+  embedded?: boolean;
 };
 
 const OPEN_DELAY_MS = 1400;
@@ -44,7 +46,7 @@ const OPEN_DELAY_MS = 1400;
  * Khám phá từ (Screen48): thẻ từ + 4–6 nhánh câu hỏi quanh từ; mở đủ thì “Đọc cả đoạn”, “Nói theo”, “In”, “Xem lại sơ đồ”.
  * Phím: 1–6 chọn nhánh (hoặc hình), ↑ ↓ đi giữa các nhánh, Space nghe lại câu hỏi, H gợi ý, Enter kiểm tra, Esc thôi hỏi nhánh.
  */
-export function ExplorerPlayer({ mode, word, branches, reading, glossary, active = true, accent, onComplete, onClose, printHref, speechScoring = true, preview = false }: ExplorerPlayerProps) {
+export function ExplorerPlayer({ mode, word, branches, reading, glossary, active = true, accent, onComplete, onClose, printHref, speechScoring = true, preview = false, embedded = false }: ExplorerPlayerProps) {
   const { state, dispatch } = useExplorerFlow(branches.length);
   const rootRef = useRef<HTMLDivElement>(null);
   const pendingFocus = useRef<string | null>(null);
@@ -339,6 +341,14 @@ export function ExplorerPlayer({ mode, word, branches, reading, glossary, active
           }
         />
         {feedback}
+      </div>
+    );
+  }
+
+  if (embedded) {
+    return (
+      <div ref={rootRef} className={styles.stage}>
+        {body}
       </div>
     );
   }

@@ -2,3 +2,4 @@ export { ExplorerMap, type ExplorerMapProps, type ExplorerMapWord } from "./Expl
 export { ReadAloudParagraph, type ParagraphSentence, type ReadAloudParagraphProps } from "./ReadAloudParagraph";
 export { FamilyMap, type FamilyMapProps } from "./FamilyMap";
 export { BuildBoard, type BuildBoardProps, type BuildBoardWord } from "./BuildBoard";
+export { WordLinkButton, WordLinks, WordLinksTip, type WordLinkButtonProps, type WordLinksProps } from "./WordLinks";

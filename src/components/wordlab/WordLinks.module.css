@@ -1,0 +1,129 @@
+/* Dải liên kết và đường dẫn (WordLinks, Screen53). */
+.links {
+  flex: none;
+  height: var(--size-links-strip);
+  box-sizing: border-box;
+  width: calc(100% - 2 * var(--space-10));
+  max-width: calc(var(--size-content-max) - 2 * var(--space-10));
+  margin: 0 auto;
+  background: var(--links-bg);
+  border: var(--border-thin) solid var(--links-line);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-2);
+}
+.back {
+  height: var(--space-10);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  border: var(--border-thin) solid var(--links-line);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+  flex: none;
+}
+.back:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.crumbs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+.crumbs li {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.crumbs li + li::before {
+  content: "›";
+  font-family: var(--font-body);
+  font-size: var(--text-body-l);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--crumb-ink);
+  margin: 0 var(--space-1);
+}
+.crumb {
+  border: 0;
+  background: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 700;
+  color: var(--crumb-ink);
+  cursor: pointer;
+}
+button.crumb:hover {
+  background: var(--surface);
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+}
+.now {
+  color: var(--crumb-now);
+  background: var(--surface);
+  font-weight: 800;
+  cursor: default;
+}
+.go {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+}
+.linkBtn {
+  height: var(--space-10);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  border: var(--border-thin) solid var(--brand);
+  background: var(--surface);
+  color: var(--brand-shade);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+}
+.linkBtn:hover:not(:disabled) {
+  background: var(--brand-soft);
+}
+.linkBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.glow {
+  box-shadow: 0 0 0 var(--space-1) var(--read-highlight);
+}
+.tip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.tip b {
+  color: var(--ink);
+}

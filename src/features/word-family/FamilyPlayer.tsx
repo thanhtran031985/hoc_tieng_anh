@@ -24,8 +24,8 @@ export type FamilyPlayerProps = {
   /** Thẻ có nút “Ghép” và “Khám phá” (tự khám phá). */
   onBuild?: (wordId: number) => void;
   onExplore?: (wordId: number) => void;
-  /** Đã hết bậc liên kết: hai nút đi tiếp bị khóa. */
-  actionsLocked?: boolean;
+  /** Nút đi tiếp của thẻ bị khóa khi đường dẫn đã đủ bậc. */
+  isLocked?: (kind: "build" | "explore", wordId: number) => boolean;
   /** Từ được tô nổi (từ bé đang xem khi đi từ Khám phá sang). */
   highlight?: number | null;
   /** Xem như học sinh ở trang soạn: không có khung bài học, không có Đóng. */
@@ -43,7 +43,7 @@ const CARD_GAP_MS = 950;
  * Trong bài: nghe đủ các từ đã học rồi bấm Tiếp tục; Gợi ý (H) chỉ thẻ chưa nghe. Từ chưa học (“Sắp học”) vẫn nghe được nhưng không bắt buộc.
  * Phím: ← → đi giữa các thẻ, Space nghe cả họ, Enter nghe thẻ đang chọn.
  */
-export function FamilyPlayer({ mode, family, active = true, accent, onComplete, onClose, onBuild, onExplore, actionsLocked, highlight = null, preview = false, embedded = false }: FamilyPlayerProps) {
+export function FamilyPlayer({ mode, family, active = true, accent, onComplete, onClose, onBuild, onExplore, isLocked, highlight = null, preview = false, embedded = false }: FamilyPlayerProps) {
   const lessonMode = mode === "lesson";
   const [heard, setHeard] = useState<number[]>([]);
   const [playing, setPlaying] = useState<number | null>(null);
@@ -165,7 +165,7 @@ export function FamilyPlayer({ mode, family, active = true, accent, onComplete, 
         glow={glow}
         hl={highlight}
         showActions={!lessonMode}
-        actionsLocked={actionsLocked}
+        isLocked={isLocked}
         onSay={sayCard}
         onHub={playAll}
         onTrap={sayTrap}

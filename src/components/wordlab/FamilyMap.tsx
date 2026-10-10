@@ -24,8 +24,8 @@ export type FamilyMapProps = {
   hl?: number | null;
   /** Hiện nút “Ghép” và “Khám phá” ở thẻ (tự khám phá; trong bài thì ẩn). */
   showActions?: boolean;
-  /** Đã hết bậc liên kết: hai nút đi tiếp bị khóa. */
-  actionsLocked?: boolean;
+  /** Nút đi tiếp (“Ghép”, “Khám phá”) của thẻ bị khóa khi đường dẫn đã đủ bậc. */
+  isLocked?: (kind: "build" | "explore", wordId: number) => boolean;
   /** Thu gọn (Sổ từ): thẻ và vần nhỏ hơn. */
   compact?: boolean;
   /** Ẩn ô Bẫy chính tả (đặt riêng chỗ khác). */
@@ -66,7 +66,7 @@ export function FamilyMap({
   glow = null,
   hl = null,
   showActions = false,
-  actionsLocked = false,
+  isLocked,
   compact,
   noTrap,
   onSay,
@@ -157,13 +157,13 @@ export function FamilyMap({
         {showActions && ((m.buildable && onBuild) || (m.hasExplorer && onExplore)) && (
           <div className={styles.go}>
             {m.buildable && onBuild && (
-              <button type="button" className={styles.mini} disabled={actionsLocked} aria-label={`Ghép từ ${m.word} ở màn Ghép chữ đầu`} onClick={() => onBuild(m.wordId)}>
+              <button type="button" className={styles.mini} disabled={isLocked?.("build", m.wordId)} aria-label={`Ghép từ ${m.word} ở màn Ghép chữ đầu`} onClick={() => onBuild(m.wordId)}>
                 <Icon name="blocks" size={16} />
                 Ghép
               </button>
             )}
             {m.hasExplorer && onExplore && (
-              <button type="button" className={styles.mini} disabled={actionsLocked} aria-label={`Khám phá từ ${m.word}`} onClick={() => onExplore(m.wordId)}>
+              <button type="button" className={styles.mini} disabled={isLocked?.("explore", m.wordId)} aria-label={`Khám phá từ ${m.word}`} onClick={() => onExplore(m.wordId)}>
                 <Icon name="branch" size={16} />
                 Khám phá
               </button>

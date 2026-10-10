@@ -43,13 +43,15 @@ export type BuildBoardProps = {
   onTile?: (onset: string) => void;
   /** Bấm một từ trong “Đã tìm được” (tự khám phá: mở Khám phá của từ); bỏ trống thì chip không bấm được. */
   onOpenFound?: (word: BuildBoardWord) => void;
+  /** Chip của từ bị khóa khi đường dẫn đã đủ bậc. */
+  isFoundLocked?: (word: BuildBoardWord) => boolean;
 };
 
 /**
  * Ghép chữ đầu (Screen51): hàng ô chữ đầu bên trái, ô trống + vần cố định ở giữa, ô kết quả bên phải, thanh “Đã tìm được” bên dưới.
  * Chỉ vẽ; luồng và phím do `BuildPlayer` lo.
  */
-export function BuildBoard({ rime, tiles, slot, phase, slotWord, hint, target, found, goal, message, fresh = null, dragging = null, over = false, accent, ghost = null, slotRef, onTilePointerDown, onTile, onOpenFound }: BuildBoardProps) {
+export function BuildBoard({ rime, tiles, slot, phase, slotWord, hint, target, found, goal, message, fresh = null, dragging = null, over = false, accent, ghost = null, slotRef, onTilePointerDown, onTile, onOpenFound, isFoundLocked }: BuildBoardProps) {
   const done = found.length >= goal && goal > 0;
   const slotsCount = Math.max(goal, found.length);
   const shown = slotWord && (phase === "ok" || phase === "again") ? slotWord : null;
@@ -169,7 +171,7 @@ export function BuildBoard({ rime, tiles, slot, phase, slotWord, hint, target, f
             return (
               <li key={w.word}>
                 {onOpenFound && w.hasExplorer ? (
-                  <button type="button" className={cn(styles.chip, styles.link, fresh === w.onset && styles.fresh)} aria-label={`${w.word}: mở Khám phá từ ${w.word}`} onClick={() => onOpenFound(w)}>
+                  <button type="button" className={cn(styles.chip, styles.link, fresh === w.onset && styles.fresh)} disabled={isFoundLocked?.(w)} aria-label={`${w.word}: mở Khám phá từ ${w.word}`} onClick={() => onOpenFound(w)}>
                     {content}
                     <Icon name="branch" size={16} />
                   </button>
