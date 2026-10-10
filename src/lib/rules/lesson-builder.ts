@@ -1,7 +1,37 @@
 // Tạo bài học tự động từ danh sách từ của một chủ đề (hàm thuần, không đụng database). Dùng ở seed (task 05) và nhập Excel (task 12).
 // Import tương đối có đuôi .ts để Node chạy thẳng được (seed, test).
 import { lessonStepConfigSchemas, type ActivityType } from "../schemas/lesson-step-config.ts";
+import { BUBBLE_LANES, MIN_GAME_ROUNDS, isRainLevel, type GameActivity } from "./games.ts";
 import { seededRandom, shuffled } from "./random.ts";
+
+// Bản 2 (task 19): ngoài 5 dạng bài GĐ1, mỗi bài thường còn có các dạng bài mới (ghép âm, sắp xếp câu, điền từ, nghe-gõ, luyện nói, đọc hiểu)
+// lấy từ câu hỏi của chủ đề và một mini game ở cuối bài. Chỉ chạy khi truyền `levelNumber`; không truyền thì giữ nguyên bản 1 (nhập Excel).
+
+/** Các dạng bài lấy nội dung từ câu hỏi của chủ đề, theo thứ tự đứng trong bài. */
+export const EXTRA_KINDS = ["phonics", "sentence_order", "fill_blank", "dictation", "speaking", "short_reading"] as const;
+export type ExtraKind = (typeof EXTRA_KINDS)[number];
+
+/** Cấp được dùng từng dạng (task.md): ghép âm cấp 1–3; nghe-gõ từ cấp 2 (nghe-gõ câu từ cấp 3); đọc hiểu từ cấp 3. */
+export const EXTRA_LEVELS: Record<ExtraKind, readonly [min: number, max: number]> = {
+  phonics: [1, 3],
+  sentence_order: [1, 4],
+  fill_blank: [1, 4],
+  dictation: [2, 4],
+  speaking: [1, 4],
+  short_reading: [3, 4],
+};
+
+/** Khóa các câu hỏi của chủ đề theo dạng (đúng thứ tự trong tệp nội dung). */
+export type UnitExtras = Partial<Record<ExtraKind, readonly string[]>>;
+
+/** Trò chơi xoay vòng giữa các bài của một chủ đề: cấp 1–2 thiên về bong bóng, đập chuột, đua xe; từ cấp 3 thêm mưa từ vựng. */
+export const GAME_ROTATION = {
+  low: ["word_bubbles", "whack_letters", "race"],
+  high: ["word_rain", "word_bubbles", "whack_letters", "race"],
+} as const satisfies Record<string, readonly GameActivity[]>;
+
+/** Mọi dạng bài mới của bản 2: bước thuộc các dạng này mới được thêm vào bài đã có tiến độ học. */
+export const NEW_ACTIVITY_TYPES: readonly string[] = [...EXTRA_KINDS, "word_rain", "word_bubbles", "whack_letters", "race"];
 
 export type BuilderWord = {
   /** Từ tiếng Anh, dùng để khớp với bản ghi `words` khi ghi vào DB. */
@@ -15,6 +45,8 @@ export type BuiltStep = {
   /** Từ của bước; null với `match_pairs` (nối các từ có hình của chính bài đó, số cặp ở config). */
   word: string | null;
   config: Record<string, unknown>;
+  /** Khóa của câu hỏi gắn vào bước (dạng bài mới); null với các bước còn lại. */
+  questionKey?: string | null;
 };
 
 export type BuiltLesson = {
@@ -30,6 +62,10 @@ export type BuildOptions = {
   seed?: string;
   /** Số từ của từng bài thường (nhập chủ đề bằng Excel, task 12); phải cộng đúng bằng số từ, nếu không thì chia theo `splitLessonSizes`. */
   lessonSizes?: readonly number[];
+  /** Cấp của chủ đề (1–10). Có thì dùng bản 2: trộn dạng bài mới và trò chơi vào các bài thường. */
+  levelNumber?: number;
+  /** Khóa các câu hỏi của chủ đề theo dạng (chỉ dùng ở bản 2). */
+  extras?: UnitExtras;
 };
 
 /** Mỗi bài tối đa 8 từ (5–8 từ; vài trường hợp lẻ như 9 từ chia 5 + 4). */
@@ -52,9 +88,58 @@ export function splitLessonSizes(wordCount: number): number[] {
   return Array.from({ length: lessonCount }, (_, i) => base + (i < extra ? 1 : 0));
 }
 
-function makeStep(activityType: ActivityType, word: string | null, config: Record<string, unknown>): BuiltStep {
+function makeStep(activityType: ActivityType, word: string | null, config: Record<string, unknown>, questionKey: string | null = null): BuiltStep {
   // Qua Zod để cấu hình luôn đúng schema và có đủ giá trị mặc định.
-  return { activityType, word, config: lessonStepConfigSchemas[activityType].parse(config) };
+  return { activityType, word, config: lessonStepConfigSchemas[activityType].parse(config), questionKey };
+}
+
+/** Chia `items` cho `count` bài theo vòng: bài `index` nhận các mục có vị trí chia dư `index` (mỗi mục dùng đúng một lần). */
+export function distribute<T>(items: readonly T[], count: number, index: number): T[] {
+  return count > 0 ? items.filter((_, i) => i % count === index) : [];
+}
+
+/** Dạng câu hỏi nào dùng được ở cấp này. */
+export const extraAllowed = (kind: ExtraKind, levelNumber: number): boolean => levelNumber >= EXTRA_LEVELS[kind][0] && levelNumber <= EXTRA_LEVELS[kind][1];
+
+/**
+ * Trò chơi cuối bài `lessonIndex` (từ 0) của chủ đề, hoặc null nếu chủ đề chưa đủ từ cho trò nào.
+ * Xoay vòng theo thứ tự bài; trò không đủ điều kiện (ít từ có hình, Mưa từ vựng ngoài cấp 3–5) thì nhường trò kế tiếp.
+ */
+export function planGame(levelNumber: number, lessonIndex: number, words: readonly BuilderWord[]): GameActivity | null {
+  const rotation = levelNumber >= 3 ? GAME_ROTATION.high : GAME_ROTATION.low;
+  const pictured = words.filter((w) => w.hasPicture).length;
+  const typable = words.filter((w) => /^[a-z]+$/i.test(w.word)).length;
+  const can = (game: GameActivity): boolean =>
+    game === "word_rain" ? isRainLevel(levelNumber) && typable >= MIN_GAME_ROUNDS : game === "word_bubbles" ? pictured >= BUBBLE_LANES : pictured >= MIN_GAME_ROUNDS;
+  for (let i = 0; i < rotation.length; i++) {
+    const game = rotation[(lessonIndex + i) % rotation.length];
+    if (can(game)) return game;
+  }
+  return null;
+}
+
+/** Các bước dạng mới và trò chơi của bài thường `index` trong `count` bài thường (bản 2). */
+function versionTwoSteps(options: BuildOptions, words: readonly BuilderWord[], index: number, count: number): BuiltStep[] {
+  const levelNumber = options.levelNumber ?? 0;
+  const steps: BuiltStep[] = [];
+  for (const kind of EXTRA_KINDS) {
+    if (!extraAllowed(kind, levelNumber)) continue;
+    for (const key of distribute(options.extras?.[kind] ?? [], count, index)) steps.push(makeStep(kind, null, {}, key));
+  }
+  const game = planGame(levelNumber, index, words);
+  if (game) steps.push(makeStep(game, null, {}));
+  return steps;
+}
+
+const identityOf = (step: { activityType: string; questionKey?: string | null }) => `${step.activityType}|${step.questionKey ?? ""}`;
+
+/**
+ * Bài đã có tiến độ học thì không dựng lại: chỉ thêm các bước dạng mới / trò chơi chưa có ở cuối bài, không xóa hay đổi bước cũ
+ * (nhờ vậy sao và kết quả đã có vẫn nguyên). Trả về các bước cần thêm theo thứ tự.
+ */
+export function planAppend(existing: readonly { activityType: string; questionKey?: string | null }[], built: readonly BuiltStep[]): BuiltStep[] {
+  const have = new Set(existing.map(identityOf));
+  return built.filter((step) => NEW_ACTIVITY_TYPES.includes(step.activityType) && !have.has(identityOf(step)));
 }
 
 /**
@@ -80,7 +165,8 @@ export function buildLessons(words: readonly BuilderWord[], options: BuildOption
   const lessons: BuiltLesson[] = [];
   let offset = 0;
   const customSizes = options.lessonSizes && options.lessonSizes.every((n) => n > 0) && options.lessonSizes.reduce((a, b) => a + b, 0) === words.length ? options.lessonSizes : null;
-  for (const [index, size] of (customSizes ?? splitLessonSizes(words.length)).entries()) {
+  const sizeList = customSizes ?? splitLessonSizes(words.length);
+  for (const [index, size] of sizeList.entries()) {
     const group = words.slice(offset, offset + size);
     offset += size;
     const withPicture = group.filter((w) => w.hasPicture);
@@ -95,6 +181,7 @@ export function buildLessons(words: readonly BuilderWord[], options: BuildOption
       steps.push(makeStep("memory_game", null, { pairCount: Math.min(pictureCount, MAX_PAIRS) }));
     }
     if (canChoose) steps.push(...withPicture.map((w) => chooseStep(w.word)));
+    if (options.levelNumber !== undefined) steps.push(...versionTwoSteps(options, words, index, sizeList.length));
 
     lessons.push({ title: `Bài ${index + 1}`, kind: "lesson", steps });
   }

@@ -1,12 +1,16 @@
 // Nạp nội dung chi tiết từ prisma/seed/content/level-NN/<slug-chủ-đề>.json: từ vựng, chủ đề từ, bài học và các bước.
 // Mỗi chủ đề được ghi trong một giao dịch rồi đổi sang `published`. Chạy lại không trùng:
 // - từ khớp theo (từ, cấp); chủ đề từ khớp theo tên; liên kết từ–chủ đề dùng khóa chính;
-// - bài học của chủ đề được xóa rồi tạo lại bằng buildLessons, TRỪ khi bé nào đã học một bài của chủ đề (tránh mất kết quả học).
+// - bài học của chủ đề được xóa rồi tạo lại bằng buildLessons (bản 2: có dạng bài mới và trò chơi, task 19) khi chưa bé nào học;
+//   chủ đề đã có bé học thì GIỮ NGUYÊN các bước cũ và chỉ thêm bước dạng mới / trò chơi chưa có ở cuối từng bài (không mất sao, tiến độ);
+// - câu hỏi dạng mới của chủ đề (content-extra) được nạp trước, khớp theo (cấp, dạng, chữ chính).
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import type { PrismaClient } from "../../src/generated/prisma/client.ts";
-import { buildLessons } from "../../src/lib/rules/lesson-builder.ts";
+import { extraKeyOf, extrasOf } from "../../src/lib/rules/content-extra.ts";
+import { buildLessons, planAppend } from "../../src/lib/rules/lesson-builder.ts";
 import { pictureSlug, pictureUrl } from "../../src/lib/picture-path.ts";
 import { contentTopicSchema } from "../../src/lib/schemas/content.ts";
+import { buildUnitExtras, loadExtraFile, upsertExtraQuestions } from "./content-extra.ts";
 
 const CONTENT_DIR = new URL("./content/", import.meta.url);
 const PICTURE_DIR = new URL("../../public/media/pictures/", import.meta.url);
@@ -19,6 +23,8 @@ export async function seedContent(db: PrismaClient) {
   let units = 0;
   let words = 0;
   let lessons = 0;
+  let extraQuestions = 0;
+  let addedSteps = 0;
   const kept: string[] = [];
 
   for (const level of levels) {
@@ -31,6 +37,7 @@ export async function seedContent(db: PrismaClient) {
       if (!unit) throw new Error(`Cấp ${level.number}: có nội dung "${slug}" nhưng chưa có chủ đề trong khung chương trình`);
       const entries = contentTopicSchema.parse(JSON.parse(readFileSync(new URL(file, dir), "utf8")));
 
+      const extraFile = loadExtraFile(level.number, slug);
       await db.$transaction(async (tx) => {
         const topic = await tx.topic.upsert({ where: { name: unit.title }, create: { name: unit.title, nameVi: unit.titleVi }, update: { nameVi: unit.titleVi } });
 
@@ -53,16 +60,42 @@ export async function seedContent(db: PrismaClient) {
         }
         words += entries.length;
 
+        // Câu hỏi dạng mới của chủ đề (gắn hình từ ngân hàng từ của chính chủ đề).
+        const bank = new Map<string, { id: number; word: string; image: string | null }>();
+        for (const [word, id] of wordIds) bank.set(word.toLowerCase(), { id, word, image: hasPictureFile(word) ? pictureUrl(word) : null });
+        const extraItems = extraFile ? buildUnitExtras(extraFile, level.number, bank, `cấp ${level.number}/${slug}`) : [];
+        const questionIds = await upsertExtraQuestions(tx, level.id, extraItems);
+        extraQuestions += extraItems.length;
+
+        const built = buildLessons(
+          entries.map((e) => ({ word: e.word, hasPicture: hasPictureFile(e.word) })),
+          { unitTitle: unit.title, seed: unit.slug, levelNumber: level.number, extras: extrasOf(extraItems) },
+        );
         const studied = await tx.lessonAttempt.count({ where: { lesson: { unitId: unit.id } } });
         const progressed = await tx.lessonProgress.count({ where: { lesson: { unitId: unit.id } } });
         if (studied + progressed > 0) {
+          // Đã có bé học: không xóa bước nào, chỉ thêm bước dạng mới / trò chơi còn thiếu ở cuối từng bài thường.
+          const current = await tx.lesson.findMany({
+            where: { unitId: unit.id, kind: "lesson" },
+            orderBy: { sortOrder: "asc" },
+            select: { id: true, steps: { orderBy: { sortOrder: "asc" }, select: { sortOrder: true, activityType: true, question: { select: { type: true, prompt: true } } } } },
+          });
+          const regular = built.filter((l) => l.kind === "lesson");
+          for (const [i, lesson] of current.entries()) {
+            const plan = regular[i];
+            if (!plan) continue;
+            const have = lesson.steps.map((st) => ({ activityType: st.activityType, questionKey: st.question ? extraKeyOf(st.question.type, st.question.prompt) : null }));
+            let order = lesson.steps.reduce((m, st) => Math.max(m, st.sortOrder), 0);
+            for (const step of planAppend(have, plan.steps)) {
+              const questionId = step.questionKey ? questionIds.get(step.questionKey) : null;
+              if (step.questionKey && questionId === undefined) continue;
+              await tx.lessonStep.create({ data: { lessonId: lesson.id, sortOrder: ++order, activityType: step.activityType, wordId: null, questionId: questionId ?? null, config: step.config as object } });
+              addedSteps += 1;
+            }
+          }
           kept.push(`cấp ${level.number}/${slug}`);
         } else {
           await tx.lesson.deleteMany({ where: { unitId: unit.id } });
-          const built = buildLessons(
-            entries.map((e) => ({ word: e.word, hasPicture: hasPictureFile(e.word) })),
-            { unitTitle: unit.title, seed: unit.slug },
-          );
           for (const [index, lesson] of built.entries()) {
             await tx.lesson.create({
               data: {
@@ -76,6 +109,7 @@ export async function seedContent(db: PrismaClient) {
                     sortOrder: i + 1,
                     activityType: step.activityType,
                     wordId: step.word === null ? null : wordIds.get(step.word)!,
+                    questionId: step.questionKey ? (questionIds.get(step.questionKey) ?? null) : null,
                     config: step.config as object,
                   })),
                 },
@@ -91,6 +125,6 @@ export async function seedContent(db: PrismaClient) {
     }
   }
 
-  console.log(`Nội dung: ${units} chủ đề, ${words} từ, ${lessons} bài học tạo mới.`);
-  if (kept.length) console.log(`Giữ nguyên bài học (bé đã học) của: ${kept.join(", ")}.`);
+  console.log(`Nội dung: ${units} chủ đề, ${words} từ, ${extraQuestions} câu hỏi dạng mới, ${lessons} bài học tạo mới.`);
+  if (kept.length) console.log(`Giữ nguyên bài học (bé đã học) của: ${kept.join(", ")}; thêm ${addedSteps} bước dạng mới / trò chơi vào các bài đó.`);
 }

@@ -9,6 +9,8 @@ export type AudioCliOptions = {
   limit: number | null;
   /** Chỉ liệt kê việc sẽ làm, không tạo tệp. */
   dryRun: boolean;
+  /** Tạo giọng đọc cho nội dung dạng bài mới (câu hỏi, truyện) thay vì từ vựng. */
+  content: boolean;
   help: boolean;
 };
 
@@ -24,6 +26,7 @@ Tùy chọn:
   --force      tạo lại cả chỗ đã có tệp (không đi cùng --missing)
   --limit N    chỉ làm tối đa N từ
   --dry-run    chỉ liệt kê việc sẽ làm
+  --content    tạo giọng đọc cho câu của các dạng bài mới (sắp xếp câu, nghe-gõ, điền từ, đọc hiểu, luyện nói) và trang truyện
   --help       xem hướng dẫn
 
 Chạy lại bao nhiêu lần cũng được: chỗ đã có tệp thì bỏ qua, không gọi giọng đọc.`;
@@ -35,13 +38,14 @@ function positiveInt(raw: string | undefined, name: string, max: number): number
 }
 
 export function parseAudioArgs(argv: readonly string[]): AudioCliParse {
-  const options: AudioCliOptions = { level: null, force: false, limit: null, dryRun: false, help: false };
+  const options: AudioCliOptions = { level: null, force: false, limit: null, dryRun: false, content: false, help: false };
   let missing = false;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--missing") missing = true;
     else if (arg === "--force") options.force = true;
     else if (arg === "--dry-run") options.dryRun = true;
+    else if (arg === "--content") options.content = true;
     else if (arg === "--help" || arg === "-h") options.help = true;
     else if (arg === "--level" || arg === "--limit") {
       const value = positiveInt(argv[++i], arg, arg === "--level" ? 10 : 100000);

@@ -569,3 +569,17 @@ model GameRecord {
   @@index([learnerId, game, lessonId, playedAt])
   @@map("game_records")
 }
+
+/// Giọng đọc mp3 theo từng câu/đoạn chữ (task 19): câu của các dạng bài mới (sắp xếp câu, nghe-gõ, điền từ, đọc hiểu…) không nằm trong bảng từ vựng.
+/// Tra cứu theo `text_key` (chữ đã chuẩn hóa như `audioKey`); `file` rỗng nghĩa là chưa tạo. Tệp ở storage/uploads/audio/ (kind `question`).
+model AudioClip {
+  id        Int      @id @default(autoincrement())
+  textKey   String   @unique @map("text_key") @db.VarChar(500)
+  /// Chữ gốc để đọc (đã gọn khoảng trắng).
+  text      String   @db.VarChar(500)
+  file      String?  @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("audio_clips")
+}

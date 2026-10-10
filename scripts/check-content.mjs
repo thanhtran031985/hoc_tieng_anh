@@ -9,59 +9,7 @@ const level2 = (n) => String(n).padStart(2, "0");
 const PARTS = new Set(["noun", "verb", "adjective", "adverb", "preposition", "determiner", "pronoun", "conjunction", "interjection", "phrase"]);
 const MAX_EXAMPLE_WORDS = 12;
 
-// Từ chức năng, đại từ, động từ và từ thông dụng mà mọi câu ví dụ được phép dùng ở mọi cấp (không tính là từ mới).
-const COMMON = new Set(`
-a an the this that these those there here i you he she it we they me him her us them my your his its our their mine yours
-am is are was were be been being do does did done don't doesn't didn't can can't cannot could will would shall should must may might
-have has had having and or but because so if when while then than as of in on at for with from by about into over after before up down out off to
-not no yes very too also just only really what where who whom whose how why which some any many much more most all every each other another
-one two three four five six seven eight nine ten first next last good well please thank thanks sorry hello
-like want need love hate help ask say tell know think see look watch go goes went come get give take make put let use try wait stay live start work could visit
-play eat drink sleep read write draw sing run walk swim open close sit stand wash cook buy
-day time year week thing things people man woman boy girl child children friend mum dad name
-big small little new old long short high low hot cold fast slow early late again always never often sometimes now today
-today's with without under behind between near next to past half quarter o'clock
-`.split(/\s+/).filter(Boolean));
-// Tên riêng dùng trong câu ví dụ.
-const NAMES = new Set(["tom", "anna", "ben", "lily", "mai", "nam", "lan", "minh"]);
-const IRREGULAR = { had: "have", has: "have", sent: "send", bought: "buy", brought: "bring", built: "build", chose: "choose", did: "do", drove: "drive", fell: "fall", felt: "feel", found: "find", gave: "give", heard: "hear", kept: "keep", knew: "know", left: "leave", met: "meet", paid: "pay", rode: "ride", rang: "ring", said: "say", sold: "sell", spoke: "speak", spent: "spend", taught: "teach", told: "tell", thought: "think", understood: "understand", wore: "wear", forgot: "forget", woke: "wake", began: "begin", fought: "fight", won: "win", flew: "fly", drew: "draw", drank: "drink", sat: "sit", better: "good", best: "good", worse: "bad", worst: "bad", teeth: "tooth", feet: "foot", mice: "mouse", leaves: "leaf", knives: "knife", men: "man", women: "woman", children: "child", people: "person", bought: "buy", went: "go", ate: "eat", saw: "see", took: "take", made: "make", came: "come", got: "get", gave: "give", ran: "run", sang: "sing", wrote: "write", read: "read", slept: "sleep", swam: "swim" };
-
-function stems(token) {
-  const out = new Set([token]);
-  if (IRREGULAR[token]) out.add(IRREGULAR[token]);
-  if (token.endsWith("ies")) out.add(token.slice(0, -3) + "y");
-  if (token.endsWith("ves")) out.add(token.slice(0, -3) + "f").add(token.slice(0, -3) + "fe");
-  if (token.endsWith("es")) out.add(token.slice(0, -2));
-  if (token.endsWith("s")) out.add(token.slice(0, -1));
-  if (token.endsWith("ing")) {
-    const base = token.slice(0, -3);
-    out.add(base).add(base + "e");
-    if (base.length > 2 && base.at(-1) === base.at(-2)) out.add(base.slice(0, -1));
-  }
-  if (token.endsWith("ed")) {
-    const base = token.slice(0, -2);
-    out.add(base).add(base + "e").add(token.slice(0, -1));
-    if (base.length > 2 && base.at(-1) === base.at(-2)) out.add(base.slice(0, -1));
-    if (token.endsWith("ied")) out.add(token.slice(0, -3) + "y");
-  }
-  if (token.endsWith("ly")) out.add(token.slice(0, -2));
-  if (token.endsWith("ier")) out.add(token.slice(0, -3) + "y");
-  if (token.endsWith("iest")) out.add(token.slice(0, -4) + "y");
-  if (token.endsWith("er")) {
-    const base = token.slice(0, -2);
-    out.add(base).add(token.slice(0, -1));
-    if (base.length > 2 && base.at(-1) === base.at(-2)) out.add(base.slice(0, -1));
-  }
-  if (token.endsWith("est")) {
-    const base = token.slice(0, -3);
-    out.add(base).add(token.slice(0, -2));
-    if (base.length > 2 && base.at(-1) === base.at(-2)) out.add(base.slice(0, -1));
-  }
-  if (token.endsWith("'s")) for (const s of stems(token.slice(0, -2))) out.add(s);
-  return out;
-}
-
-const tokenize = (text) => text.toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g) ?? [];
+import { COMMON, NAMES, stems, tokenize } from "../src/lib/rules/vocab-check.ts";
 
 const readJson = (url) => JSON.parse(readFileSync(url, "utf8"));
 const curriculum = (n) => {

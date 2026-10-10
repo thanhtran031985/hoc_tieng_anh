@@ -3,8 +3,10 @@ import { buildPlaySteps, type PhonicsSoundInfo, type PlayExtras, type PlayStep, 
 import { isExtraQuestionType, parseExtraQuestion } from "@/lib/schemas";
 import { today } from "@/lib/rules/dates";
 import { buildAudioMap } from "@/lib/rules/tts";
+import { extraQuestionTexts } from "@/lib/rules/play-texts";
 import { levelStatus } from "@/lib/rules/unlock";
 import { getVoiceMp3Enabled } from "./app-settings";
+import { clipMap } from "./audio/clips";
 import { splitSentence } from "@/lib/rules/sentence-words";
 import { lastRaceSequence } from "./game-records";
 import { getStoriesPlay } from "./story-play";
@@ -101,7 +103,11 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   const seen = new Set<number>();
   const words = lesson.steps.flatMap((s) => (s.word && !seen.has(s.word.id) && seen.add(s.word.id) ? [s.word] : []));
 
-  const audio = (await getVoiceMp3Enabled()) ? await getAudioMap([...lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])), ...unitWords.map((w) => w.id)]) : {};
+  // Giọng mp3: từ và câu ví dụ (bảng từ vựng) cộng các câu của dạng bài mới (bảng `audio_clips`).
+  const clipTexts = lesson.steps.flatMap((s) => (s.question && s.question.status === "published" && isExtraQuestionType(s.question.type) ? extraQuestionTexts(s.question.type, s.question.prompt, s.question.options, s.question.answer) : []));
+  const audio = (await getVoiceMp3Enabled())
+    ? { ...(await getAudioMap([...lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])), ...unitWords.map((w) => w.id)])), ...(await clipMap(clipTexts)) }
+    : {};
 
   return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, steps, words, audio };
 }
