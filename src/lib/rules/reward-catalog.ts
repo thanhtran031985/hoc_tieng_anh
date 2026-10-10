@@ -83,7 +83,7 @@ export type BadgeKindInfo = {
 export const BADGE_KIND_INFO: Record<BadgeKind, BadgeKindInfo> = {
   streak: { label: "Số ngày học liên tiếp", unit: "ngày", icon: "flame", color: 6, min: 2, max: 365 },
   words_mastered: { label: "Số từ đã thuộc (Nhớ tốt trở lên)", unit: "từ", icon: "book", color: 4, min: 5, max: 5000 },
-  level_test: { label: "Qua cấp (đạt bài thi lên cấp)", unit: "", icon: "island", color: 0, min: 1, max: 4 },
+  level_test: { label: "Qua cấp (đạt bài thi lên cấp)", unit: "", icon: "island", color: 0, min: 1, max: 5 },
   boss_wins: { label: "Số trận trùm đã thắng", unit: "trận", icon: "crown", color: 5, min: 1, max: 32 },
   stars3_lessons: { label: "Số bài học được 3 sao", unit: "bài", icon: "star", color: 3, min: 1, max: 500 },
   speaking: { label: "Số câu luyện nói được 1 sao trở lên", unit: "câu", icon: "mic", color: 7, min: 1, max: 500 },
@@ -106,7 +106,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
 ];
 
 /** Tên tiếng Anh của huy hiệu “Qua đảo …” theo cấp (cấp 1–4). */
-export const LEVEL_BADGE_EN: Record<number, string> = { 1: "Seed Island", 2: "Sprout Island", 3: "Leaf Island", 4: "Branch Island" };
+export const LEVEL_BADGE_EN: Record<number, string> = { 1: "Seed Island", 2: "Sprout Island", 3: "Leaf Island", 4: "Branch Island", 5: "Big Tree Island" };
 
 /** Điều kiện hiển thị cho bé, sinh từ loại + mức (nên đổi mức ở trang quản trị thì chữ đổi theo). */
 export function conditionText(kind: BadgeKind, goal: number): string {

@@ -2,10 +2,10 @@
 //
 // - Cổng mở khi MỌI chủ đề (vùng) của cấp đã xong các bài thường (mỗi bài ≥ 1 sao). Trận trùm không bắt buộc (khớp `unlock.ts`: trùm không chặn chủ đề kế).
 // - Cấp chưa có chủ đề nào thì cổng vẫn khóa.
-// - Bài thi lên cấp chỉ có ở cấp 1–4; cấp trên không có cổng.
+// - Bài thi lên cấp có ở cấp 1–5 (cấp 5 → 6 chỉ mở màn chúc mừng, cấp 6 ghi “Sắp có”); cấp trên không có cổng.
 
 /** Cấp cuối cùng có bài thi lên cấp (các cấp sau thuộc giai đoạn sau). */
-export const EXAM_LAST_LEVEL = 4;
+export const EXAM_LAST_LEVEL = 5;
 
 export type GateUnitInput = { id: number; titleVi: string; lessonCount: number; doneCount: number };
 

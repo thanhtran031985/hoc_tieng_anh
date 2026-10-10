@@ -35,10 +35,10 @@ describe("levelGateState", () => {
 });
 
 describe("hasLevelExam", () => {
-  it("chỉ cấp 1–4 có bài thi lên cấp", () => {
-    assert.equal(EXAM_LAST_LEVEL, 4);
-    for (const n of [1, 2, 3, 4]) assert.equal(hasLevelExam(n), true);
-    for (const n of [0, 5, 6, 10]) assert.equal(hasLevelExam(n), false);
+  it("chỉ cấp 1–5 có bài thi lên cấp", () => {
+    assert.equal(EXAM_LAST_LEVEL, 5);
+    for (const n of [1, 2, 3, 4, 5]) assert.equal(hasLevelExam(n), true);
+    for (const n of [0, 6, 7, 10]) assert.equal(hasLevelExam(n), false);
   });
 });
 

@@ -40,7 +40,7 @@ export async function seedRewards(db: PrismaClient): Promise<number> {
 
   // Huy hiệu hệ thống (trùm, qua đảo): điều kiện do mã nguồn quy định nên luôn ghi lại; thưởng xu nằm trong gói của trận trùm / bài thi lên cấp.
   for (const boss of BOSSES) await ensure(bossBadgeCode(boss), { type: "badge", name: bossBadgeName(boss), coins: 0, condition: { kind: "boss", level: boss.levelNumber, unit: boss.slug }, forStage: boss.levelNumber, sortOrder: 0 }, { condition: { kind: "boss", level: boss.levelNumber, unit: boss.slug } });
-  for (const level of levels.filter((l) => l.number <= 4)) {
+  for (const level of levels.filter((l) => l.number <= 5)) {
     await ensure(levelBadgeCode(level.number), { type: "badge", name: levelBadgeName(level.name), nameEn: LEVEL_BADGE_EN[level.number] ?? null, coins: 0, condition: { kind: "level_test", goal: level.number }, forStage: level.number, sortOrder: 0 }, { condition: { kind: "level_test", goal: level.number } });
   }
   for (const a of ACHIEVEMENTS) await ensure(a.code, { type: "badge", name: a.vi, nameEn: a.en, coins: a.coins, condition: { kind: a.kind, goal: a.goal }, sortOrder: 0 });

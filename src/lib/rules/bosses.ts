@@ -1,4 +1,4 @@
-// Trùm cuối vùng (task 20, Screen33): mỗi chủ đề cấp 1–4 có một trùm. Mọi trùm dùng chung hình Vua Khỉ Lém của thiết kế,
+// Trùm cuối vùng (task 20, Screen33): mỗi chủ đề cấp 1–5 có một trùm. Mọi trùm dùng chung hình Vua Khỉ Lém của thiết kế,
 // khác nhau ở màu lông (6 bảng màu, token `boss-fur-N`) và phụ kiện trên đầu (14 kiểu) — không vẽ nhân vật mới. Hàm thuần.
 
 export type BossAccessory = "crown" | "chef" | "cap" | "glasses" | "headphones" | "bow" | "helmet" | "beret" | "tophat" | "flower" | "party" | "pirate" | "gradcap" | "headband";
@@ -53,11 +53,20 @@ export const BOSSES: readonly Boss[] = [
   b(4, "shopping-money", "Khỉ Thương Gia", "crown", 3),
   b(4, "stories-adventure", "Khỉ Hải Tặc", "pirate", 4),
   b(4, "school-technology", "Khỉ Công Nghệ", "headphones", 1),
+  // Cấp 5
+  b(5, "travel", "Khỉ Du Hành", "cap", 4),
+  b(5, "nature-environment", "Khỉ Kiểm Lâm", "helmet", 5),
+  b(5, "feelings-personality", "Khỉ Tâm Lý", "flower", 1),
+  b(5, "science-study", "Khỉ Thí Nghiệm", "glasses", 3),
+  b(5, "entertainment-media", "Khỉ Sân Khấu", "party", 6),
+  b(5, "home-household", "Khỉ Thợ Mộc", "headband", 4),
+  b(5, "future-plans", "Khỉ Hoạch Định", "gradcap", 5),
+  b(5, "community-places", "Khỉ Phố Xóm", "tophat", 2),
 ];
 
 const BY_SLUG = new Map(BOSSES.map((x) => [`${x.levelNumber}/${x.slug}`, x]));
 
-/** Trùm của một chủ đề; chủ đề chưa có trùm riêng (cấp 5+) thì dùng Vua Khỉ Lém. */
+/** Trùm của một chủ đề; chủ đề chưa có trùm riêng (cấp 6+) thì dùng Vua Khỉ Lém. */
 export function bossFor(levelNumber: number, unitSlug: string): Boss {
   return BY_SLUG.get(`${levelNumber}/${unitSlug}`) ?? BOSSES.find((x) => x.slug === "animals")!;
 }

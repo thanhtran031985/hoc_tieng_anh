@@ -1,4 +1,4 @@
-// Nạp đề thi lên cấp (task 20): mỗi cấp 1–4 một đề `level_test`, 20 câu, đạt từ 80%. Chạy lại không trùng (khớp theo loại đề + cấp).
+// Nạp đề thi lên cấp (task 20): mỗi cấp 1–5 một đề `level_test`, 20 câu, đạt từ 80%. Chạy lại không trùng (khớp theo loại đề + cấp).
 // Bộ câu của từng lượt thi tự dựng khi bé bắt đầu (xem src/server/exam.ts), nên đề này chỉ giữ cấu hình.
 import type { PrismaClient } from "../../src/generated/prisma/client.ts";
 import { EXAM_PASS_PERCENT, EXAM_QUESTION_COUNT } from "../../src/lib/rules/level-test.ts";

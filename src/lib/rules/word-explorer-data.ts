@@ -7,6 +7,7 @@ import { EXPLORER_LEVEL_1 } from "./wordlab-data/explorer-level-01.ts";
 import { EXPLORER_LEVEL_2 } from "./wordlab-data/explorer-level-02.ts";
 import { EXPLORER_LEVEL_3 } from "./wordlab-data/explorer-level-03.ts";
 import { EXPLORER_LEVEL_4 } from "./wordlab-data/explorer-level-04.ts";
+import { EXPLORER_LEVEL_5 } from "./wordlab-data/explorer-level-05.ts";
 
 export type { ExplorerSeedBranch, ExplorerSeedWord };
 
@@ -98,4 +99,4 @@ const DESIGN_SAMPLES: ExplorerSeedWord[] = [
 ];
 
 /** Mọi từ có Khám phá, theo thứ tự cấp (hai mẫu của thiết kế ở đầu). */
-export const EXPLORER_SEED: ExplorerSeedWord[] = [...DESIGN_SAMPLES, ...EXPLORER_LEVEL_1, ...EXPLORER_LEVEL_2, ...EXPLORER_LEVEL_3, ...EXPLORER_LEVEL_4];
+export const EXPLORER_SEED: ExplorerSeedWord[] = [...DESIGN_SAMPLES, ...EXPLORER_LEVEL_1, ...EXPLORER_LEVEL_2, ...EXPLORER_LEVEL_3, ...EXPLORER_LEVEL_4, ...EXPLORER_LEVEL_5];

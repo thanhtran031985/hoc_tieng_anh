@@ -2,6 +2,7 @@
 // Mọi họ ở trạng thái Nháp cho tới khi đoạn văn vui có giọng đọc và người dùng xuất bản.
 import type { FamilySeedEntry } from "../word-family-data.ts";
 import { FAMILIES_WORDLAB_MORE } from "./families-more.ts";
+import { FAMILIES_LEVEL_5 } from "./families-l5.ts";
 
 const SAMPLES: FamilySeedEntry[] = [
   {
@@ -34,4 +35,4 @@ const SAMPLES: FamilySeedEntry[] = [
   },
 ];
 
-export const FAMILIES_WORDLAB: FamilySeedEntry[] = [...SAMPLES, ...FAMILIES_WORDLAB_MORE];
+export const FAMILIES_WORDLAB: FamilySeedEntry[] = [...SAMPLES, ...FAMILIES_WORDLAB_MORE, ...FAMILIES_LEVEL_5];

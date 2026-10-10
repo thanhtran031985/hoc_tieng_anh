@@ -37,9 +37,9 @@ describe("danh mục huy hiệu thành tích", () => {
     }
   });
 
-  it("mọi loại điều kiện có thông tin hiển thị; có tên tiếng Anh cho 4 huy hiệu qua đảo", () => {
+  it("mọi loại điều kiện có thông tin hiển thị; có tên tiếng Anh cho 5 huy hiệu qua đảo", () => {
     for (const kind of BADGE_KINDS) assert.ok(BADGE_KIND_INFO[kind].label.length > 0);
-    assert.deepEqual(Object.keys(LEVEL_BADGE_EN), ["1", "2", "3", "4"]);
+    assert.deepEqual(Object.keys(LEVEL_BADGE_EN), ["1", "2", "3", "4", "5"]);
   });
 
   it("chữ điều kiện sinh từ loại + mức", () => {

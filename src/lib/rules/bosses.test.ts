@@ -6,9 +6,9 @@ import { BOSSES, BOSS_LINES, BOSS_QUESTIONS, bossBadgeCode, bossBadgeName, bossE
 const curriculum = (n: number): { slug: string }[] => JSON.parse(readFileSync(new URL(`../../../prisma/seed/curriculum/level-0${n}.json`, import.meta.url), "utf8"));
 
 describe("trùm cuối vùng", () => {
-  it("mỗi chủ đề cấp 1–4 có đúng một trùm (32 trùm)", () => {
-    assert.equal(BOSSES.length, 32);
-    for (const level of [1, 2, 3, 4]) {
+  it("mỗi chủ đề cấp 1–5 có đúng một trùm (40 trùm)", () => {
+    assert.equal(BOSSES.length, 40);
+    for (const level of [1, 2, 3, 4, 5]) {
       const units = curriculum(level).map((u) => u.slug).sort();
       assert.deepEqual(BOSSES.filter((x) => x.levelNumber === level).map((x) => x.slug).sort(), units, `cấp ${level}`);
     }
