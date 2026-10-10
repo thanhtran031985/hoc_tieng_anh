@@ -1,0 +1,19 @@
+{
+  "_ghiChu": "Từ thêm vào kho chỉ để làm đủ Họ vần (task 27): chưa thuộc chủ đề hay bài học nào nên bé thấy là “Sắp học”. Không có hình để các từ này không lọt vào lựa chọn nhiễu của bài ôn. Nạp bởi prisma/seed/wordlab.ts, chạy lại không nhân đôi; từ đã có trong kho (ở bất kỳ cấp nào) thì bỏ qua.",
+  "words": [
+    { "level": 1, "word": "mat", "ipa": "/mæt/", "part_of_speech": "noun", "meaning_vi": "tấm thảm nhỏ", "example_en": "The cat sits on the mat.", "example_vi": "Con mèo ngồi trên tấm thảm." },
+    { "level": 1, "word": "rat", "ipa": "/ræt/", "part_of_speech": "noun", "meaning_vi": "con chuột cống", "example_en": "The rat is under the bed.", "example_vi": "Con chuột ở dưới giường." },
+    { "level": 1, "word": "sat", "ipa": "/sæt/", "part_of_speech": "verb", "meaning_vi": "đã ngồi (quá khứ của sit)", "example_en": "The cat sat on the mat.", "example_vi": "Con mèo đã ngồi trên tấm thảm." },
+    { "level": 1, "word": "that", "ipa": "/ðæt/", "part_of_speech": "determiner", "meaning_vi": "kia, đó", "example_en": "That is my hat.", "example_vi": "Đó là cái mũ của tôi." },
+    { "level": 2, "word": "chat", "ipa": "/tʃæt/", "part_of_speech": "verb", "meaning_vi": "trò chuyện", "example_en": "We chat after school.", "example_vi": "Chúng tôi trò chuyện sau giờ học." },
+    { "level": 2, "word": "bake", "ipa": "/beɪk/", "part_of_speech": "verb", "meaning_vi": "nướng (bánh)", "example_en": "Mum bakes a cake.", "example_vi": "Mẹ nướng một chiếc bánh." },
+    { "level": 2, "word": "wake", "ipa": "/weɪk/", "part_of_speech": "verb", "meaning_vi": "thức giấc", "example_en": "I wake at six o'clock.", "example_vi": "Tôi thức giấc lúc sáu giờ." },
+    { "level": 2, "word": "first", "ipa": "/fɜːst/", "part_of_speech": "adjective", "meaning_vi": "đầu tiên, thứ nhất", "example_en": "This is my first book.", "example_vi": "Đây là quyển sách đầu tiên của tôi." },
+    { "level": 2, "word": "third", "ipa": "/θɜːd/", "part_of_speech": "adjective", "meaning_vi": "thứ ba", "example_en": "Tom is the third boy.", "example_vi": "Tom là cậu bé thứ ba." },
+    { "level": 3, "word": "dirt", "ipa": "/dɜːt/", "part_of_speech": "noun", "meaning_vi": "đất bẩn, bụi bẩn", "example_en": "There is dirt on my shoes.", "example_vi": "Có bụi bẩn trên giày của tôi." },
+    { "level": 2, "word": "fire", "ipa": "/ˈfaɪə/", "part_of_speech": "noun", "meaning_vi": "lửa, đám cháy", "example_en": "The fire is hot.", "example_vi": "Ngọn lửa nóng." },
+    { "level": 3, "word": "tight", "ipa": "/taɪt/", "part_of_speech": "adjective", "meaning_vi": "chật, bó sát", "example_en": "These shoes are too tight.", "example_vi": "Đôi giày này chật quá." },
+    { "level": 3, "word": "might", "ipa": "/maɪt/", "part_of_speech": "verb", "meaning_vi": "có thể (khả năng thấp)", "example_en": "It might rain today.", "example_vi": "Hôm nay trời có thể mưa." },
+    { "level": 3, "word": "sight", "ipa": "/saɪt/", "part_of_speech": "noun", "meaning_vi": "thị lực, cảnh tượng", "example_en": "My sight is good.", "example_vi": "Thị lực của tôi tốt." }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "_ghiChu": "Từ ngoài khung chương trình mà câu hỏi và đoạn văn của Khám phá từ / Họ vần được phép dùng, theo cấp bắt đầu dùng được. Mỗi từ ghi lý do; scripts/check-wordlab.mjs in danh sách này.",
+  "words": {
+    "color": { "level": 1, "reason": "Cách viết Mỹ của “colour”; câu hỏi “What color is …?” của thiết kế (bird, cat) dùng cách viết này" }
+  }
+}

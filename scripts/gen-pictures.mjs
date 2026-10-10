@@ -9,7 +9,8 @@ mkdirSync(OUT, { recursive: true });
 // Tệp SVG là sản phẩm sinh ra: xóa hết rồi ghi lại để không sót hình của từ đã bỏ (trừ hình của Khám phá từ, do gen-explorer-art.mjs sinh).
 for (const f of readdirSync(OUT).filter((x) => x.endsWith(".svg") && !EXPLORER_PICTURES.includes(x.slice(0, -4)))) rmSync(new URL(f, OUT));
 
-const files = readdirSync(new URL("./pictures/", import.meta.url)).filter((f) => /^level-\d+\.mjs$/.test(f)).sort();
+// level-NN.mjs: hình của từ vựng cấp NN; wordlab-NN.mjs: hình đáp án của Khám phá từ (task 27) mà từ cấp NN dùng, không phải từ vựng riêng.
+const files = readdirSync(new URL("./pictures/", import.meta.url)).filter((f) => /^(level|wordlab)-\d+\.mjs$/.test(f)).sort();
 const all = new Map(); // từ → { level, svg }
 for (const file of files) {
   const level = Number(file.match(/\d+/)[0]);

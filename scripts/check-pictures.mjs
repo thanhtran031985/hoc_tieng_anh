@@ -26,6 +26,29 @@ for (let n = 1; n <= 10; n++) {
   }
 }
 
+// Hình đáp án của Khám phá từ (task 27): scripts/pictures/wordlab-NN.mjs, không thuộc từ vựng nào nhưng phải đạt cùng yêu cầu như hình từ.
+const wordlabFiles = readdirSync(new URL("./pictures/", import.meta.url)).filter((f) => /^wordlab-\d+\.mjs$/.test(f)).sort();
+let wordlabCount = 0;
+for (const file of wordlabFiles) {
+  const { pictures } = await import(`./pictures/${file}`);
+  for (const key of Object.keys(pictures)) {
+    known.add(pictureSlug(key));
+    wordlabCount++;
+    const tagged = `"${key}" (${file})`;
+    const target = new URL(`${pictureSlug(key)}.svg`, PICS);
+    if (!existsSync(target)) {
+      errors.push(`${tagged}: chưa sinh tệp hình (chạy node scripts/gen-pictures.mjs)`);
+      continue;
+    }
+    const svg = readFileSync(target, "utf8");
+    if (!/<svg [^>]*viewBox="0 0 120 120"/.test(svg)) errors.push(`${tagged}: khung phải là viewBox 0 0 120 120`);
+    if (/<text[\s>]/i.test(svg)) errors.push(`${tagged}: hình có chữ (<text>)`);
+    if (/<(script|image|foreignObject)[\s>]/i.test(svg) || /\son\w+=/i.test(svg)) errors.push(`${tagged}: có thành phần không được phép`);
+    if (!svg.includes(LINE)) errors.push(`${tagged}: không dùng màu viền dragon-line ${LINE}`);
+  }
+}
+if (wordlabCount) console.log(`Hình đáp án Khám phá từ (wordlab-NN): ${wordlabCount} hình.`);
+
 for (const level of levels) {
   const dir = new URL(`level-${level2(level)}/`, ROOT);
   let withPic = 0;

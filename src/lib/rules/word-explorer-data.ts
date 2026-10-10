@@ -1,28 +1,16 @@
-// Khám phá từ mẫu (task 25): “bird” và “cat”, chuyển từ dữ liệu mẫu `Bong.W.wx` của thiết kế (designs/components/bundle.js).
-// Là dữ liệu cho seed (prisma/seed/word-explorer.ts); hình lấy từ public/media/pictures (17 hình riêng do scripts/gen-explorer-art.mjs sinh).
-// Nội dung thật của các từ khác do task 27 soạn. Mẫu ở trạng thái Nháp cho tới khi các đáp án có âm thanh và đoạn văn có giọng đọc.
-import type { ExplorerAnswer, ExplorerDistractor, ExplorerSentence, WordQuestionKind } from "../schemas/word-explorer.ts";
+// Khám phá từ (task 25, 27). “bird” và “cat” là hai từ mẫu chuyển từ dữ liệu mẫu `Bong.W.wx` của thiết kế (designs/components/bundle.js);
+// nội dung các cấp 1–4 do task 27 soạn ở src/lib/rules/wordlab-data/explorer-level-0N.ts và gộp ở cuối tệp này.
+// Là dữ liệu cho seed (prisma/seed/word-explorer.ts); hình lấy từ public/media/pictures (17 hình riêng do scripts/gen-explorer-art.mjs sinh, hình khác do scripts/gen-pictures.mjs).
+// Mọi từ ở trạng thái Nháp cho tới khi các đáp án có âm thanh và đoạn văn có giọng đọc (npm run audio:generate -- --wordlab) và người dùng xuất bản.
+import { ans, dis, sent, type ExplorerSeedBranch, type ExplorerSeedWord } from "./wordlab-data/helpers.ts";
+import { EXPLORER_LEVEL_1 } from "./wordlab-data/explorer-level-01.ts";
+import { EXPLORER_LEVEL_2 } from "./wordlab-data/explorer-level-02.ts";
+import { EXPLORER_LEVEL_3 } from "./wordlab-data/explorer-level-03.ts";
+import { EXPLORER_LEVEL_4 } from "./wordlab-data/explorer-level-04.ts";
 
-export type ExplorerSeedBranch = {
-  kind: WordQuestionKind;
-  questionEn: string;
-  questionVi: string;
-  answers: ExplorerAnswer[];
-  distractors: ExplorerDistractor[];
-  /** Câu của nhánh trong đoạn văn “Đọc cả đoạn”. */
-  sentence: ExplorerSentence;
-};
+export type { ExplorerSeedBranch, ExplorerSeedWord };
 
-export type ExplorerSeedWord = { word: string; branches: ExplorerSeedBranch[] };
-
-const pic = (key: string) => `/media/pictures/${key}.svg`;
-/** Đáp án: [khóa hình, chữ Anh, nghĩa Việt]; `guess` đánh dấu đáp án bé đoán bằng hình. */
-const ans = (key: string, text: string, textVi: string, guess = false): ExplorerAnswer => ({ text, textVi, image: pic(key), ...(guess ? { guess } : {}) });
-/** Hình nhiễu: [khóa hình, nhãn tiếng Anh Bông đọc khi bé chọn]. */
-const dis = (key: string, text: string): ExplorerDistractor => ({ text, image: pic(key) });
-const sent = (en: string, vi: string): ExplorerSentence => ({ en, vi });
-
-export const EXPLORER_SEED: ExplorerSeedWord[] = [
+const DESIGN_SAMPLES: ExplorerSeedWord[] = [
   {
     word: "bird",
     branches: [
@@ -108,3 +96,6 @@ export const EXPLORER_SEED: ExplorerSeedWord[] = [
     ],
   },
 ];
+
+/** Mọi từ có Khám phá, theo thứ tự cấp (hai mẫu của thiết kế ở đầu). */
+export const EXPLORER_SEED: ExplorerSeedWord[] = [...DESIGN_SAMPLES, ...EXPLORER_LEVEL_1, ...EXPLORER_LEVEL_2, ...EXPLORER_LEVEL_3, ...EXPLORER_LEVEL_4];
