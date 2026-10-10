@@ -46,6 +46,8 @@ export function WordLabShell({ initial, closeHref, accent, speechScoring }: Word
   const router = useRouter();
   const [items, setItems] = useState<Item[]>([{ id: 1, ...initial }]);
   const [busy, setBusy] = useState(false);
+  // Đang nạp một bậc: bấm thêm lần nữa (Enter lặp, bấm đúp) thì bỏ qua, không nạp hai lần.
+  const loading = useRef(false);
   const [note, setNote] = useState("");
   const nextId = useRef(2);
   const holders = useRef(new Map<number, HTMLDivElement | null>());
@@ -71,7 +73,7 @@ export function WordLabShell({ initial, closeHref, accent, speechScoring }: Word
 
   const go = useCallback(
     async (entry: LabEntry) => {
-      if (busy) return;
+      if (loading.current) return;
       setNote("");
       const next = pushLink(entries, entry);
       if (next === null) {
@@ -79,13 +81,15 @@ export function WordLabShell({ initial, closeHref, accent, speechScoring }: Word
         return;
       }
       if (next.length <= items.length) return show(items.slice(0, next.length));
+      loading.current = true;
       setBusy(true);
       const result = await getWordLabEntryAction(toInput(entry)).catch(() => ({ ok: false as const, message: "Chưa mở được. Mình thử lại nhé!", missing: false }));
+      loading.current = false;
       setBusy(false);
       if (!result.ok) return setNote(result.missing ? "Mục này chưa có nên chưa mở được." : result.message);
       show([...items, { id: nextId.current++, entry, data: result.data }]);
     },
-    [busy, entries, items, show],
+    [entries, items, show],
   );
 
   const back = useCallback(() => {

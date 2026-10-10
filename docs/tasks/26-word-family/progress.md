@@ -1,6 +1,6 @@
 # Tiến độ — 26-word-family — Họ vần, Ghép chữ đầu và liên kết qua lại
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -64,6 +64,14 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - Kiểm tra bằng Edge không đầu: `check-26-editor.mjs` (50 mục đạt: bảng, tìm, 7 từ/2 Bẫy, báo lỗi vần có ký tự lạ, IPA thiếu /…/, chữ đầu nhiễu trùng từ thật và 4 chữ cái, chặn xuất bản kèm lý do, bấm cảnh báo nhảy tới ô, còn 2 từ cùng âm báo thiếu, gợi ý từ kèm “khác âm?” tự thành Bẫy, tạo họ mới -ake, lưu Nháp, tạo giọng đọc thật ra mp3, Xem như học sinh, xuất bản, bé mở được họ đã xuất bản và Nháp thì 404, họ mẫu -at không bị đổi); `check-26-builder.mjs` (11 mục đạt: tab Họ vần chỉ có họ đã xuất bản, thêm hai bước, lưu đúng `config.familyId`, xem trước, xuất bản bài bị chặn khi họ còn Nháp). `npm test` 682/682, `tsc` và `lint` sạch.
 - Việc thủ công: vào Quản trị › Họ vần xuất bản “-at” và “-ir” (bổ sung từ còn thiếu như mat, chat, that ở task 27 và bấm Tạo giọng đọc).
 
+### Đóng task (10/10/2026)
+- `npx tsc --noEmit`, `npm run lint`, `npm test` (682/682) và `npm run build` đều sạch. Dashboard: 0 cảnh báo.
+- Spec Playwright `tests/e2e/26-ho-van.spec.ts` đã viết (bước 0–5, kèm kiểm Tab/axe), CHƯA chạy (đợi chạy một lượt sau khi xong mọi task).
+- Lượt Screen53 bằng bàn phím ở 1366×768 đã đi bằng Edge không đầu (`.tmp-verify/check-26-keyboard.mjs`, 16 mục đạt): Tab tới nút, Enter, gõ s rồi h, Tab tới “shirt”, Backspace về từng bậc, Esc.
+- Sửa nhỏ khi đóng: `WordLabShell` chặn nạp hai lần một bậc khi Enter lặp hoặc bấm đúp.
+- Token và icon: không thiếu token nào (mọi `rime-*`, `trap-*`, `soon-*`, `links-*`, `crumb-*`, `build-slot-bg`, `letter-tile`, `found-chip`, `fake-word-bg`, `size-*` đã có sẵn trong `globals.css`); thêm hai icon `family` và `blocks` (chép từ `bundle.js`) vào `icon-paths.ts`.
+- Việc thủ công cho người dùng: (1) `npx prisma migrate deploy` rồi `npx prisma db seed` trên database thật (tạo bảng và nạp họ -at, -ir mẫu ở trạng thái Nháp); (2) vào Quản trị › Họ vần: bổ sung từ còn thiếu (mat, chat, that, sat, rat, first, third, dirt — task 27 thêm), bấm Tạo giọng đọc rồi Xuất bản “-at” và “-ir”; (3) mở Sổ từ thử tab Họ vần và đi lượt bird → họ -ir → Ghép chữ → shirt bằng bàn phím.
+
 ## Bước tiếp theo
 
-Đóng task: spec Playwright, tsc/lint/test/build, README ✅.
+Không còn. Task 26 đã xong; sang task 27 (nội dung Khám phá từ và Họ vần).
