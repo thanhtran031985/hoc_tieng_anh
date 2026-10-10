@@ -156,6 +156,7 @@ const KID_SCREENS: Screen[] = [
   { name: "Tổng quan 10 cấp", path: "/levels" },
   { name: "Bản đồ", path: "/map/3" },
   { name: "Sổ từ", path: "/notebook" },
+  { name: "In danh sách từ", path: "/notebook/print" },
   { name: "Ôn tập (bắt đầu)", path: "/review" },
   { name: "Bộ sưu tập", path: "/collection" },
   { name: "Phòng của tớ", path: "/room" },

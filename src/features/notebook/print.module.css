@@ -1,0 +1,263 @@
+/* Bản in danh sách từ (Screen45): trang A4 dọc, chỉ trắng đen. Trên màn hình thu nhỏ vừa khung; khi in đúng khổ A4.
+   Mọi kích thước bên trong theo em (1em = 1/80 chiều cao trang) nên bản thu nhỏ và bản in có cùng bố cục. */
+.pv {
+  --H: calc(100dvh - var(--space-16) - var(--space-8));
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6) var(--space-4);
+  background: var(--surface-sunk);
+}
+.screen {
+  height: 100dvh;
+  overflow: hidden;
+}
+.pages {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-1) 0 var(--space-3);
+}
+.tool {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: calc(var(--space-16) * 17);
+}
+.toolText {
+  flex: 1;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 700;
+}
+
+.page {
+  flex: none;
+  height: var(--H);
+  aspect-ratio: 210 / 297;
+  font-size: calc(var(--H) / 80);
+  background: var(--print-paper);
+  color: var(--print-ink);
+  box-shadow: var(--shadow-raised);
+  padding: 3.8em 3.8em 2.6em;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+.head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1em;
+  align-items: end;
+  border-bottom: 0.3em solid var(--print-ink);
+  padding-bottom: 0.9em;
+}
+.head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.6em;
+  line-height: 1.1;
+  font-weight: 800;
+}
+.meta {
+  font-size: 1.3em;
+  line-height: 1.5;
+}
+.meta b {
+  font-weight: 800;
+}
+.who {
+  text-align: right;
+  font-size: 1.2em;
+  line-height: 1.5;
+}
+.sign {
+  display: inline-block;
+  width: 9em;
+  border-bottom: 0.1em solid var(--print-ink);
+}
+.tip {
+  margin: 0.8em 0;
+  font-size: 1.2em;
+  color: var(--print-muted);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.cPic {
+  width: 6.4em;
+}
+.cWord {
+  width: 9.6em;
+}
+.cMean {
+  width: 8.4em;
+}
+.cWrite {
+  width: 12em;
+}
+.table th {
+  font-size: 1.15em;
+  line-height: 1.2;
+  font-weight: 800;
+  text-align: left;
+  padding: 0.5em 0.6em;
+  border-bottom: 0.15em solid var(--print-ink);
+}
+.table td {
+  border-bottom: 0.08em solid var(--print-ink);
+  padding: 0.4em 0.6em;
+  vertical-align: middle;
+}
+.table tbody tr {
+  height: 6.4em;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.pic svg,
+.pic img {
+  display: block;
+  width: 5.4em;
+  height: 5.4em;
+  filter: grayscale(1) contrast(1.15);
+}
+.word {
+  font-family: var(--font-display);
+  font-size: 1.5em;
+  line-height: 1.1;
+  font-weight: 800;
+  overflow-wrap: break-word;
+}
+.word small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.55em;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--print-muted);
+}
+.mean {
+  font-size: 1.3em;
+  font-weight: 700;
+}
+.example {
+  font-size: 1.15em;
+  line-height: 1.3;
+}
+.example span {
+  display: block;
+  color: var(--print-muted);
+  font-size: 0.9em;
+}
+/* Ô tập viết: khung + 2 dòng kẻ liền + 1 dòng kẻ đứt giữa. Dùng đường viền thật (không dùng nền) để in ra không phụ thuộc “in hình nền”. */
+.lines {
+  position: relative;
+  height: 4.6em;
+  border: 0.1em solid var(--print-ink);
+  border-radius: 0.4em;
+}
+.lines i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 0.06em solid var(--print-rule);
+}
+.lines i:nth-child(1) {
+  top: 33%;
+}
+.lines i:nth-child(2) {
+  top: 66%;
+}
+.lines i:nth-child(3) {
+  top: 50%;
+  border-top-style: dashed;
+  border-top-width: 0.08em;
+}
+.foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1em;
+  color: var(--print-muted);
+  padding-top: 0.8em;
+  border-top: 0.08em solid var(--print-ink);
+}
+.foot b {
+  color: var(--print-ink);
+}
+.empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 1.6em;
+}
+.empty span {
+  color: var(--print-muted);
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  :global(html),
+  :global(body) {
+    background: var(--print-paper) !important;
+  }
+  .screen {
+    height: auto;
+    overflow: visible;
+    background: var(--print-paper);
+  }
+  .tool {
+    display: none !important;
+  }
+  .pv,
+  .pages {
+    display: block;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    background: var(--print-paper);
+  }
+  .page {
+    width: var(--size-print-page-w);
+    height: var(--size-print-page-h);
+    aspect-ratio: auto;
+    font-size: calc(var(--size-print-page-h) / 80);
+    box-shadow: none;
+    padding: var(--size-print-margin);
+    break-after: page;
+    page-break-after: always;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  .pic svg,
+  .pic img {
+    width: var(--size-print-pic);
+    height: var(--size-print-pic);
+  }
+  .cWrite {
+    width: var(--size-print-write);
+  }
+}

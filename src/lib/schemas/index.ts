@@ -25,3 +25,4 @@ export * from "./game-record";
 export * from "./reward";
 export * from "./admin-rewards";
 export * from "./room";
+export * from "./notebook";
