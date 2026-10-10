@@ -1,0 +1,177 @@
+/* Đập chuột chữ cái (Screen31): lưới 3×3 hang theo bàn phím số, chuột chui lên cầm biển chữ hoặc hình. */
+.yard {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12) min(var(--space-4), 2vh);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lawn {
+  --c: min(var(--size-mole-hole), 17vh);
+  background: var(--mole-ground);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    inset 0 calc(-1 * var(--space-2)) 0 var(--mole-ground-shade),
+    0 0 0 var(--space-1) var(--mole-ground-shade);
+  padding: calc(var(--c) * 0.08) calc(var(--c) * 0.3) calc(var(--c) * 0.14);
+  display: grid;
+  grid-template-columns: repeat(3, calc(var(--c) * 1.45));
+  grid-auto-rows: calc(var(--c) * 1.04);
+  column-gap: calc(var(--c) * 0.2);
+}
+.hole {
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+}
+.hole:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.hole:disabled {
+  cursor: default;
+}
+.key {
+  position: absolute;
+  left: var(--space-1);
+  bottom: var(--space-1);
+  z-index: 4;
+}
+.pit {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: var(--c);
+  height: calc(var(--c) * 0.34);
+  transform: translateX(-50%);
+  border-radius: var(--radius-round);
+  background: var(--mole-hole);
+  box-shadow: 0 0 0 var(--space-1) var(--mole-hole-rim);
+}
+.clip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(10% + var(--c) * 0.17);
+  width: calc(var(--c) * 1.1);
+  height: calc(var(--c) * 0.95);
+  transform: translateX(-50%);
+  overflow: hidden;
+  z-index: 2;
+}
+.mole {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  transform: translateY(105%);
+  transition: transform 0.22s ease;
+}
+.mole > svg {
+  position: absolute;
+  left: 50%;
+  bottom: -4%;
+  width: 82%;
+  height: auto;
+  transform: translateX(-50%);
+}
+.hole[data-up] .mole {
+  transform: translateY(0);
+}
+.sign {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  transform: translateX(-50%);
+  min-width: calc(var(--c) * 0.44);
+  height: calc(var(--c) * 0.34);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: var(--border-thick) solid var(--dragon-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: calc(var(--c) * 0.26);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+  box-sizing: border-box;
+}
+.sign > svg,
+.sign > img {
+  width: calc(var(--c) * 0.3);
+  height: auto;
+}
+.lip {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: var(--c);
+  height: calc(var(--c) * 0.17);
+  transform: translateX(-50%);
+  border-radius: 0 0 var(--radius-pill) var(--radius-pill);
+  background: var(--mole-hole-rim);
+  z-index: 3;
+  pointer-events: none;
+}
+.hole[data-tongue] .mole {
+  animation: shake 0.45s ease;
+}
+.hole[data-hint] .sign {
+  box-shadow:
+    0 0 0 var(--space-1) var(--star),
+    0 0 var(--space-5) var(--space-1) var(--star);
+}
+.hole:hover:not(:disabled) .sign {
+  border-color: var(--brand);
+}
+@keyframes shake {
+  20% {
+    translate: calc(-1 * var(--space-2)) 0;
+  }
+  40% {
+    translate: var(--space-2) 0;
+  }
+  60% {
+    translate: calc(-1 * var(--space-1)) 0;
+  }
+  80% {
+    translate: var(--space-1) 0;
+  }
+}
+.demo {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+.demoSign {
+  min-width: calc(var(--space-16) + var(--space-4));
+  height: var(--space-16);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: var(--border-thick) solid var(--dragon-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  font-weight: 800;
+  color: var(--ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mole {
+    transition-duration: 0.01s;
+  }
+  .hole[data-tongue] .mole {
+    animation: none;
+  }
+}

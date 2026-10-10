@@ -13,6 +13,7 @@ import { SentenceOrderStep } from "./SentenceOrderStep";
 import { SpeakStep } from "./SpeakStep";
 import { BubblesStep } from "./games/BubblesStep";
 import { RainStep } from "./games/RainStep";
+import { WhackStep } from "./games/WhackStep";
 import { StoryStep } from "./StoryStep";
 import { StubStep } from "./StubStep";
 import type { StepProps } from "./types";
@@ -49,6 +50,8 @@ export function StepView({ step, ...rest }: StepProps & { step: PlayStep }) {
       return <RainStep step={step} {...rest} />;
     case "word_bubbles":
       return <BubblesStep step={step} {...rest} />;
+    case "whack_letters":
+      return <WhackStep step={step} {...rest} />;
     default:
       return <StubStep step={step} {...rest} />;
   }
