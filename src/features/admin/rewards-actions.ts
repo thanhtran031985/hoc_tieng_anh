@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/server/admin-gate";
-import { saveBadge, saveSticker } from "@/server/admin/rewards";
+import { saveBadge, saveRoomItem, saveSticker } from "@/server/admin/rewards";
 import type { AdminResult } from "@/server/admin/result";
 
 // Server action của Danh mục phần thưởng (Adult21): gọi `requireAdmin()` ở dòng đầu (không dựa vào layout), rồi hàm lưu (kiểm Zod).
@@ -15,6 +15,9 @@ async function run(save: (input: unknown) => Promise<AdminResult>, input: unknow
       revalidatePath("/admin/rewards");
       // Bộ sưu tập của bé đọc danh mục (bản nháp không hiện): làm mới để thay đổi có hiệu lực ngay.
       revalidatePath("/collection");
+      // Cửa hàng và Phòng của tớ cũng đọc danh mục này (Nháp không hiện, không mua được).
+      revalidatePath("/room");
+      revalidatePath("/room/shop");
     }
     return result;
   } catch (error) {
@@ -29,4 +32,8 @@ export async function saveStickerAction(input: unknown): Promise<AdminResult> {
 
 export async function saveBadgeAction(input: unknown): Promise<AdminResult> {
   return run(saveBadge, input, "badge");
+}
+
+export async function saveRoomItemAction(input: unknown): Promise<AdminResult> {
+  return run(saveRoomItem, input, "room item");
 }

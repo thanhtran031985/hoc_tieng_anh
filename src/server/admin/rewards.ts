@@ -2,7 +2,8 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { COINS } from "@/lib/rules/constants";
 import { ALBUMS, BADGE_KIND_INFO, STICKERS_PER_ALBUM, conditionText, type BadgeKind } from "@/lib/rules/reward-catalog";
-import { saveBadgeSchema, saveStickerSchema } from "@/lib/schemas/admin-rewards";
+import { ROOM_GROUPS, isWearable, roomKeyOf, type RoomGroup } from "@/lib/rules/room";
+import { saveBadgeSchema, saveRoomItemSchema, saveStickerSchema } from "@/lib/schemas/admin-rewards";
 import { parseBadgeCondition } from "@/lib/schemas/reward";
 import { db } from "../db";
 import { fail, firstIssue, type AdminResult } from "./result";
@@ -31,33 +32,54 @@ export type AdminBadge = {
   status: "draft" | "published";
 };
 
-export type RewardsData = { stickers: AdminSticker[]; badges: AdminBadge[]; pictures: string[] };
+export type AdminRoomItem = {
+  id: number;
+  code: string;
+  key: string;
+  /** Hình rời của nội thất; áo và mũ vẽ trên Bông nên null. */
+  image: string | null;
+  en: string;
+  vi: string;
+  group: RoomGroup;
+  groupVi: string;
+  price: number;
+  status: "draft" | "published";
+};
+
+export type RewardsData = { stickers: AdminSticker[]; badges: AdminBadge[]; pictures: string[]; roomItems: AdminRoomItem[]; roomPictures: string[] };
 
 const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
 /** Hình chọn được cho sticker: mọi SVG trong thư mục hình mẫu (từ vựng + sticker khủng long). */
-async function listPictures(): Promise<string[]> {
+async function listPictures(dirs: readonly string[] = ["pictures", "stickers"]): Promise<string[]> {
   const root = path.join(process.cwd(), "public", "media");
   const out: string[] = [];
-  for (const dir of ["pictures", "stickers"]) {
+  for (const dir of dirs) {
     try {
       for (const file of await readdir(path.join(root, dir))) if (/^[a-z0-9-]+\.svg$/.test(file)) out.push(`/media/${dir}/${file}`);
     } catch {
       // Thư mục chưa có thì bỏ qua.
     }
   }
-  return out.sort((a, b) => a.localeCompare(b));
+  // Giữ thứ tự thư mục như truyền vào (hình đồ trong phòng đứng trước hình mẫu), mỗi thư mục xếp theo tên.
+  return out.sort((a, b) => dirs.findIndex((d) => a.startsWith(`/media/${d}/`)) - dirs.findIndex((d) => b.startsWith(`/media/${d}/`)) || a.localeCompare(b));
 }
 
 export async function getRewards(): Promise<RewardsData> {
-  const [rows, pictures] = await Promise.all([
-    db.reward.findMany({ where: { type: { in: ["sticker", "badge"] } }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }] }),
+  const [rows, pictures, roomPictures] = await Promise.all([
+    db.reward.findMany({ where: { type: { in: ["sticker", "badge", "room_item"] } }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }] }),
     listPictures(),
+    listPictures(["room", "pictures"]),
   ]);
   const stickers: AdminSticker[] = [];
   const badges: AdminBadge[] = [];
+  const roomItems: AdminRoomItem[] = [];
   for (const r of rows) {
-    if (r.type === "sticker") {
+    if (r.type === "room_item") {
+      const group = ROOM_GROUPS.find((g) => g.id === r.album);
+      if (!group || r.price === null) continue;
+      roomItems.push({ id: r.id, code: r.code, key: roomKeyOf(r.code), image: isWearable(group.id) ? null : r.image, en: r.nameEn ?? r.name, vi: r.name, group: group.id, groupVi: group.vi, price: r.price, status: r.status });
+    } else if (r.type === "sticker") {
       const album = ALBUMS.find((a) => a.id === r.album);
       if (!album || !r.image) continue;
       stickers.push({ id: r.id, code: r.code, key: r.code.replace(/^sticker:/, ""), image: r.image, en: r.nameEn ?? r.name, vi: r.name, album: album.id, albumVi: album.vi, from: album.from, status: r.status });
@@ -83,7 +105,7 @@ export async function getRewards(): Promise<RewardsData> {
       });
     }
   }
-  return { stickers, badges, pictures };
+  return { stickers, badges, pictures, roomItems, roomPictures };
 }
 
 export async function saveSticker(input: unknown): Promise<AdminResult> {
@@ -134,5 +156,35 @@ export async function saveBadge(input: unknown): Promise<AdminResult> {
   if (await db.reward.findUnique({ where: { code }, select: { id: true } })) return fail("Đã có huy hiệu cùng điều kiện và mức cần đạt này.", "goal");
   const last = await db.reward.aggregate({ _max: { sortOrder: true } });
   const created = await db.reward.create({ data: { type: "badge", code, name: data.vi, nameEn: data.en, coins: data.coins, status: data.status, condition, sortOrder: (last._max.sortOrder ?? 0) + 1 } });
+  return { ok: true, id: created.id };
+}
+
+/**
+ * Lưu một món đồ trong phòng (thêm mới hoặc sửa). Thêm mới chỉ cho nội thất (áo và mũ mới cần thêm hình vẽ trên Bông).
+ * Khi sửa, nhóm không đổi; áo và mũ không có hình rời. Bản Nháp không hiện ở Cửa hàng và không mua được; đồ bé đã mua vẫn giữ nguyên.
+ */
+export async function saveRoomItem(input: unknown): Promise<AdminResult> {
+  const parsed = saveRoomItemSchema.safeParse(input);
+  if (!parsed.success) return firstIssue(parsed.error);
+  const data = parsed.data;
+  const existing = data.id ? await db.reward.findFirst({ where: { id: data.id, type: "room_item" } }) : null;
+  if (data.id && !existing) return fail("Không tìm thấy món đồ này.");
+
+  const group = (existing?.album ?? data.group) as RoomGroup;
+  if (!existing && group !== "furniture") return fail("Quần áo và mũ mới cần thêm hình vẽ trên Bông nên chưa thêm ở đây được. Hãy thêm một món nội thất.", "group");
+  const image = group === "furniture" ? data.image : null;
+  if (image && !(await listPictures(["room", "pictures"])).includes(image)) return fail("Hình này không có trong thư mục hình. Chọn hình từ danh sách.", "image");
+
+  const clash = await db.reward.findFirst({ where: { type: "room_item", nameEn: data.en, ...(existing ? { id: { not: existing.id } } : {}) }, select: { id: true } });
+  const code = existing?.code ?? `room:${slug(data.en)}`;
+  if (clash || (!existing && (await db.reward.findUnique({ where: { code }, select: { id: true } })))) return fail("Đã có món đồ tên tiếng Anh này.", "en");
+
+  const fields = { name: data.vi, nameEn: data.en, price: data.price, status: data.status, ...(group === "furniture" ? { image } : {}) };
+  if (existing) {
+    await db.reward.update({ where: { id: existing.id }, data: fields });
+    return { ok: true, id: existing.id };
+  }
+  const last = await db.reward.aggregate({ _max: { sortOrder: true } });
+  const created = await db.reward.create({ data: { ...fields, type: "room_item", code, album: group, condition: { kind: "room", group }, sortOrder: (last._max.sortOrder ?? 0) + 1 } });
   return { ok: true, id: created.id };
 }

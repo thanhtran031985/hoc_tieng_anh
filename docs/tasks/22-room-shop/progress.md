@@ -1,6 +1,6 @@
 # Tiến độ — 22-room-shop — Phòng của tớ, cửa hàng và thẻ nghỉ phép
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 1 | Phòng của tớ (Screen41) | ✅ | Tự duyệt; Edge 34/34 đạt |
 | 2 | Trang chủ có Bông mặc đồ (Screen43) | ✅ | Tự duyệt; Edge 25/25 đạt |
 | 3 | Thẻ nghỉ phép | ✅ | Tự duyệt; 8 test mới, Edge đạt cùng Bước 2 |
-| 4 | Đồ trong phòng ở Adult21 | ⬜ | |
+| 4 | Đồ trong phòng ở Adult21 | ✅ | Tự duyệt; Edge 28/28 đạt |
 
 ## Nhật ký
 
@@ -25,6 +25,21 @@ Việc thủ công: không có.
 **10/10/2026 — Bước 3.** Quy tắc thẻ nghỉ phép đã có từ task 04 (`recordStudyDay`, `freezesAvailable`, `streakForDisplay`); bổ sung hàm thuần trong `src/lib/rules/streak.ts`: `freezeDayOfWeek` (database không lưu ngày dùng thẻ nên suy ra: thẻ đã hết trong tuần và có một ngày bỏ nằm giữa hai ngày học liền nhau mà chuỗi còn phủ tới ngày trước đó), `weekCells` (7 ô done/today/freeze/missed/future), `WEEK_LABELS`, `WEEKDAY_NAMES`. 8 test mới trong `streak.test.ts`: học liên tiếp; hôm nay chưa học; bỏ 1 ngày có thẻ thì chuỗi giữ và ô thứ Tư là bông tuyết; bỏ 2 ngày trong tuần thì chuỗi về 0 và không có bông tuyết; bỏ 2 ngày rồi học lại (chuỗi về 1, không bông tuyết); hết thẻ rồi bỏ 1 ngày (chuỗi về 1, không bông tuyết); sang tuần mới có lại thẻ; thẻ dùng vào thứ Hai khi Chủ nhật tuần trước có học. Edge: dựng ngày học trong DB verify, thẻ chuỗi hiện bông tuyết đúng ô thứ Tư (kịch bản ở `check-22-home.mjs`). `npm test` 540 đạt.
 Việc thủ công: không có.
 
+**10/10/2026 — Bước 4.** Thẻ thứ ba “Đồ trong phòng” (19) của `/admin/rewards` thay “Sắp có”: bảng hình / tên Anh + nghĩa / nhóm / giá (chip xu) / trạng thái, có tìm, lọc nhóm và trạng thái, sắp xếp, phân trang; ngăn kéo `RoomItemDrawer` (xem trước: nội thất là hình rời, áo và mũ là Bông mặc thử; giá gợi ý theo token `price-*` bằng các nút bấm điền nhanh; ô Hình chỉ có với nội thất; Nháp / Xuất bản; lỗi hiện dưới ô khi rời ô và khi lưu). Zod dùng chung `saveRoomItemSchema` (giá nguyên trong 1–2000, hình bắt buộc với nội thất và phải nằm trong thư mục hình, tên Anh đúng dạng) + 5 test; `saveRoomItem` ở server (`requireAdmin` ở server action, kiểm hình có trong `public/media/room|pictures`, tên Anh không trùng, thêm mới chỉ cho nội thất, sửa không đổi nhóm); lưu xong làm mới `/room`, `/room/shop`, `/collection`. Nháp không hiện ở Cửa hàng và `buyItem` từ chối mua món Nháp ngay cả khi hộp mua đang mở. Kiểm (Edge, DB verify, `.tmp-verify/check-22-admin.mjs`, 28/28): 19 món, tìm “hat”, lọc Quần áo, sửa áo (Bông mặc thử, giá gợi ý, không có ô Hình), giá −5/0/2,5/5000 báo lỗi dưới ô và không lưu, giá 70 lưu, thêm nội thất thiếu hình bị chặn, tên trùng báo lỗi, thêm table (Nháp) không hiện ở cửa hàng, xuất bản thì hiện, chuyển Nháp giữa chừng thì server không cho mua và không trừ xu, không lỗi console. tsc, lint, `npm test` (545 đạt) sạch.
+Việc thủ công: không có.
+
+## Kiểm tra cuối task
+
+`npx tsc --noEmit`, `npm run lint`, `npm test` (545 đạt), `npm run build` đều sạch. Kịch bản Edge của task 22 (DB verify, hồ sơ 1): cửa hàng 22/22, Phòng của tớ 34/34, trang chủ 25/25, Adult21 28/28; cả bốn chạy ở 1366×768 (màn bé thêm 1920×1080), không cuộn, không lỗi console. Spec Playwright `tests/e2e/22-phong-cua-hang.spec.ts` đã viết (cửa hàng, Phòng của tớ, trang chủ, Adult21), màn `/collection`, `/room`, `/room/shop` đã đổi trong danh sách của `chung.spec.ts`; CHƯA chạy Playwright (đợi chạy một lượt sau khi xong mọi task).
+
+### Việc thủ công (checklist)
+- [ ] `npx prisma db seed` để nạp 19 món (không có migration mới). Hình 13 nội thất đã commit ở `public/media/room/` (sinh lại bằng `node scripts/gen-room-art.mjs` nếu thiết kế đổi).
+- [ ] Đặt cho hồ sơ thử 500 xu: `UPDATE learners SET coins = 500 WHERE id = <id>;`. Vào Cửa hàng mua 3 món (một nội thất, một áo, một mũ), thử bấm “Mua” hai lần nhanh, thử món chưa đủ xu.
+- [ ] Vào Phòng của tớ: Trang trí (kéo thả, Tab chọn, mũi tên, R, Delete, Kho đồ), tải lại trang kiểm tra vị trí còn nguyên; sang Tủ đồ mặc áo và mũ vừa mua rồi về Trang chủ xem Bông mặc đồ.
+- [ ] Trang chủ: bấm số chuỗi ngày xem thẻ 7 ngày, bấm Esc để đóng. Muốn thấy ô bông tuyết: `UPDATE learners SET streak_freezes = 0 WHERE id = <id>;` và có ngày học liền hai bên một ngày nghỉ trong tuần.
+- [ ] Quản trị → Phần thưởng → Đồ trong phòng: sửa giá, thử giá âm và thêm món thiếu hình, đưa một món về Nháp rồi kiểm cửa hàng.
+- [ ] Chạy Playwright một lượt sau khi xong mọi task (cần `prisma migrate reset`, bạn đồng ý riêng).
+
 ## Bước tiếp theo
 
-Bước 4 — Đồ trong phòng ở Adult21
+Hoàn thành

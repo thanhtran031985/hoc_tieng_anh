@@ -157,8 +157,9 @@ const KID_SCREENS: Screen[] = [
   { name: "Bản đồ", path: "/map/3" },
   { name: "Sổ từ", path: "/notebook" },
   { name: "Ôn tập (bắt đầu)", path: "/review" },
-  { name: "Bộ sưu tập (sắp có)", path: "/collection" },
-  { name: "Phòng của tớ (sắp có)", path: "/room" },
+  { name: "Bộ sưu tập", path: "/collection" },
+  { name: "Phòng của tớ", path: "/room" },
+  { name: "Cửa hàng", path: "/room/shop" },
 ];
 const PARENT_SCREENS: Screen[] = [
   { name: "Tổng quan bố mẹ", path: "/parent" },

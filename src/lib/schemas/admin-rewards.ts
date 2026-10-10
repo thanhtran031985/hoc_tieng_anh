@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ALBUMS } from "../rules/reward-catalog.ts";
+import { MAX_PRICE, MIN_PRICE } from "../rules/room.ts";
 import { badgeConditionSchema } from "./reward.ts";
 
 // Dữ liệu ghi của Danh mục phần thưởng quản trị (task 21, Adult21). Dùng chung giữa biểu mẫu ở client và server action.
@@ -47,3 +48,31 @@ export const saveBadgeSchema = z
     if (!parsed.success) for (const issue of parsed.error.issues) ctx.addIssue({ code: "custom", path: [typeof issue.path[0] === "string" ? issue.path[0] : "goal"], message: issue.message });
   });
 export type SaveBadgeInput = z.infer<typeof saveBadgeSchema>;
+
+// ---- Đồ trong phòng (task 22): nội thất, quần áo, mũ ----
+
+/** Hình của nội thất: tệp SVG trong thư mục hình đồ trong phòng hoặc hình mẫu đi kèm mã nguồn. */
+export const roomImageSchema = z.string().trim().regex(/^\/media\/(room|pictures)\/[a-z0-9-]+\.svg$/, "Chọn hình từ danh sách.");
+
+export const saveRoomItemSchema = z
+  .object({
+    id: z.number().int().positive().optional(),
+    en: nameEn,
+    vi: nameVi,
+    group: z.enum(["furniture", "clothes", "hats"], { error: "Chọn nhóm." }),
+    price: z
+      .number({ error: "Nhập giá xu." })
+      .int("Giá phải là số nguyên.")
+      .min(MIN_PRICE, "Giá phải lớn hơn 0 xu.")
+      .max(MAX_PRICE, `Giá tối đa ${MAX_PRICE} xu.`),
+    /** Nội thất bắt buộc có hình; áo và mũ vẽ trên Bông nên không có hình rời. */
+    image: z.string().trim().nullable().optional(),
+    status: z.enum(STATUSES, { error: "Chọn trạng thái." }),
+  })
+  .superRefine((value, ctx) => {
+    if (value.group !== "furniture") return;
+    if (!value.image) return ctx.addIssue({ code: "custom", path: ["image"], message: "Chọn hình cho món đồ." });
+    const parsed = roomImageSchema.safeParse(value.image);
+    if (!parsed.success) ctx.addIssue({ code: "custom", path: ["image"], message: parsed.error.issues[0]?.message ?? "Chọn hình từ danh sách." });
+  });
+export type SaveRoomItemInput = z.infer<typeof saveRoomItemSchema>;
