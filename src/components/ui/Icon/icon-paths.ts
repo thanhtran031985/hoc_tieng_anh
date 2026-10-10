@@ -85,6 +85,7 @@ export const ICON_PATHS = {
   translate: "<path d=\"M3.5 5.5h9M8 3.5v2M5.5 5.5c.8 3 3 5.4 6 6.6M10.5 5.5c-.8 3.2-3 5.8-6.5 7\"/><path d=\"M12.5 20.5l4-10 4 10M14 17h5\"/>",
   snail: "<path d=\"M3 18.5h14.5c2 0 3.5-1.6 3.5-3.5V9\"/><circle cx=\"11\" cy=\"12\" r=\"5.5\"/><path d=\"M11 12a2 2 0 1 0 2-2\"/><path d=\"M19.5 9l-1.5-3M21.5 9l1-3\"/>",
   branch: "<circle cx=\"5\" cy=\"12\" r=\"2.5\"/><circle cx=\"19\" cy=\"5\" r=\"2\"/><circle cx=\"19\" cy=\"12\" r=\"2\"/><circle cx=\"19\" cy=\"19\" r=\"2\"/><path d=\"M7.5 12h9.5M7 11c4-5 6-6 10-6M7 13c4 5 6 6 10 6\"/>",
+  compass: "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M15.5 8.5l-2 5-5 2 2-5z\" fill=\"currentColor\"/>",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

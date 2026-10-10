@@ -10,11 +10,15 @@ import {
   explorerIssues,
   fillQuestionSet,
   guessAnswer,
+  isPlayable,
+  viewBranches,
   nextClosedBranch,
   printSides,
   withArticle,
   type ExplorerBranch,
+  type ExplorerContent,
 } from "./word-explorer.ts";
+import { buildPlaySteps, type PlayWord } from "./lesson-play.ts";
 import { EXPLORER_SEED } from "./word-explorer-data.ts";
 
 const bird = EXPLORER_SEED.find((w) => w.word === "bird")!;
@@ -94,8 +98,9 @@ describe("dimWrongChoice", () => {
     assert.notEqual(id, null);
     assert.equal(dimWrongChoice(three, 5, id, false), id);
   });
-  it("chỉ có 2 hình thì không mờ (còn hình để chọn)", () => {
-    assert.equal(dimWrongChoice(two, 3, null, true), null);
+  it("chỉ có 2 hình thì mờ hình sai, còn lại hình đúng", () => {
+    const id = dimWrongChoice(two, 3, null, true);
+    assert.equal(two.find((c) => c.id === id)?.correct, false);
   });
 });
 
@@ -184,5 +189,48 @@ describe("bộ câu hỏi mẫu", () => {
       assert.equal(set[0].kind, "identify");
       assert.ok(set.every((q) => !q.questionEn.includes("{") && !q.questionVi.includes("{")), key);
     }
+  });
+});
+
+const content = (w: typeof bird, drop = 0): ExplorerContent => ({
+  branches: w.branches.slice(0, w.branches.length - drop).map((b, i) => ({ id: i + 1, kind: b.kind, questionEn: b.questionEn, questionVi: b.questionVi, answers: b.answers, distractors: b.distractors, sentence: b.sentence })),
+  reading: { sentences: w.branches.slice(0, w.branches.length - drop).map((b) => b.sentence), audio: null },
+  glossary: {},
+});
+const birdWord: PlayWord = { id: 7, word: "bird", ipa: "/bɜːd/", meaningVi: "con chim", exampleEn: "I see a bird.", exampleVi: null, image: "/media/pictures/bird.svg" };
+
+describe("Khám phá từ trong bài học", () => {
+  it("isPlayable: 4–6 nhánh và đoạn văn đủ câu", () => {
+    assert.equal(isPlayable(content(bird)), true);
+    assert.equal(isPlayable(content(cat)), true);
+    assert.equal(isPlayable(content(bird, 3)), false);
+    assert.equal(isPlayable({ ...content(bird), reading: { sentences: [], audio: null } }), false);
+  });
+
+  it("viewBranches: mỗi nhánh 2–3 hình, cùng hạt giống thì cùng thứ tự, khác hạt thì độc lập", () => {
+    const a = viewBranches(content(bird), "seed");
+    assert.equal(a.length, 6);
+    assert.deepEqual(a, viewBranches(content(bird), "seed"));
+    assert.ok(a.every((b) => b.choices.length >= 2 && b.choices.length <= 3 && b.choices.filter((c) => c.correct).length === 1));
+  });
+
+  it("buildPlaySteps: bước word_explorer dựng đủ nhánh, đoạn văn và nghĩa", () => {
+    const steps = buildPlaySteps([{ id: 5, activityType: "word_explorer", config: {}, word: birdWord }], [birdWord], "s", { explorers: new Map([[7, content(bird)]]) });
+    assert.equal(steps.length, 1);
+    const step = steps[0];
+    assert.equal(step.kind, "word_explorer");
+    if (step.kind !== "word_explorer") return;
+    assert.equal(step.word.id, 7);
+    assert.equal(step.branches.length, 6);
+    assert.equal(step.reading.sentences.length, 6);
+  });
+
+  it("buildPlaySteps: từ chưa có Khám phá đã xuất bản, hoặc chưa đủ nhánh, thì bỏ qua bước", () => {
+    const none = buildPlaySteps([{ id: 5, activityType: "word_explorer", config: {}, word: birdWord }], [birdWord], "s", { explorers: new Map() });
+    assert.equal(none.length, 0);
+    const few = buildPlaySteps([{ id: 5, activityType: "word_explorer", config: {}, word: birdWord }], [birdWord], "s", { explorers: new Map([[7, content(bird, 3)]]) });
+    assert.equal(few.length, 0);
+    const noWord = buildPlaySteps([{ id: 5, activityType: "word_explorer", config: {}, word: null }], [], "s", { explorers: new Map([[7, content(bird)]]) });
+    assert.equal(noWord.length, 0);
   });
 });

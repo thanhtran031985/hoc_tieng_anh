@@ -1,0 +1,77 @@
+/* “Nói theo” (Screen48, sau khi mở đủ nhánh): nghe câu mẫu rồi bấm micro tím để nói lại. */
+.along {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.label {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-body-l);
+  line-height: 1.2;
+  font-weight: 800;
+}
+.mic {
+  width: calc(var(--space-16) + var(--space-3));
+  height: calc(var(--space-16) + var(--space-3));
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: var(--rec);
+  color: var(--ink-on-dark);
+  cursor: pointer;
+  box-shadow: 0 var(--space-1) 0 var(--line-strong);
+}
+.mic:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.mic:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.rec {
+  animation: pulse 1s infinite;
+}
+.okMic {
+  background: var(--success);
+}
+.msg {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  color: var(--ink);
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--rec-soft);
+  }
+  100% {
+    box-shadow: 0 0 0 var(--space-4) transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rec {
+    animation: none;
+  }
+}

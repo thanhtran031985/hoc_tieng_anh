@@ -40,8 +40,7 @@ export const WORDLAB = {
   readRate: 0.82,
   /** Đọc cả đoạn: tốc độ khi bật "Đọc chậm". */
   readRateSlow: 0.6,
-  /** Đọc cả đoạn: thời gian mỗi chữ sáng khi chưa có tệp mp3 (khớp --duration-read-word). */
-  readWordMs: 420,
-  /** Đọc cả đoạn: thời gian mỗi chữ sáng khi bật "Đọc chậm" (khớp --duration-read-word-slow). */
-  readWordSlowMs: 640,
 } as const;
+
+/** Đọc cả đoạn: thời gian mỗi chữ sáng khi chưa có tệp mp3 (khớp --duration-read-word và --duration-read-word-slow). Không thuộc họ `wordlab` của tokens.json. */
+export const READ_WORD_MS = { normal: 420, slow: 640 } as const;

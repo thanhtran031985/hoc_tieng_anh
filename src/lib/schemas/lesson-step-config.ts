@@ -21,6 +21,7 @@ export const ACTIVITY_TYPES = [
   "word_bubbles",
   "whack_letters",
   "race",
+  "word_explorer",
 ] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
@@ -54,6 +55,8 @@ export const lessonStepConfigSchemas = {
   word_bubbles: z.object({}),
   whack_letters: z.object({}),
   race: z.object({}),
+  /** 8.27 Khám phá từ (task 25): từ của bước có 4–6 nhánh câu hỏi đã xuất bản trong `word_questions`, nên không có cấu hình riêng. */
+  word_explorer: z.object({}),
 } satisfies Record<ActivityType, z.ZodType>;
 
 export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;

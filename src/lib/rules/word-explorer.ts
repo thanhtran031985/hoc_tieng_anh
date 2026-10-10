@@ -20,6 +20,46 @@ export type ExplorerReading = {
 /** Một hình để bé chọn khi đoán nhánh. `id` là vị trí trong danh sách đã xáo, dùng cho phím 1–3. */
 export type ExplorerChoice = { id: number; text: string; image: string | null; correct: boolean };
 
+/** Một nhánh đã nạp từ database: có mã dòng và câu của nhánh trong đoạn văn. */
+export type ExplorerContentBranch = ExplorerBranch & { id: number; sentence: ExplorerSentence };
+
+/** Nội dung Khám phá của một từ đã xuất bản. `glossary`: nghĩa ngắn theo chữ thường cho bong bóng khi bấm chữ trong đoạn văn. */
+export type ExplorerContent = {
+  branches: ExplorerContentBranch[];
+  reading: { sentences: ExplorerSentence[]; audio: string | null };
+  glossary: Record<string, string>;
+};
+
+/** Nhánh khi chơi: câu hỏi, 2–3 hình để đoán đã xáo, các đáp án hiện khi mở và câu của nhánh trong đoạn văn. */
+export type ExplorerViewBranch = {
+  id: number;
+  kind: WordQuestionKind;
+  questionEn: string;
+  questionVi: string;
+  choices: ExplorerChoice[];
+  answers: ExplorerAnswer[];
+  sentence: ExplorerSentence;
+};
+
+/** Từ có Khám phá chơi được: 4–6 nhánh, mỗi nhánh có đáp án, và đoạn văn có đúng một câu cho mỗi nhánh. */
+export function isPlayable(content: Pick<ExplorerContent, "branches" | "reading">): boolean {
+  const n = content.branches.length;
+  return n >= WORDLAB.branchMin && n <= WORDLAB.branchMax && content.branches.every((b) => b.answers.length > 0) && content.reading.sentences.length === n;
+}
+
+/** Dựng các nhánh để chơi: hình đoán xáo theo hạt giống (mỗi nhánh một hạt riêng, nên tải lại trang vẫn ra đúng bộ cũ). */
+export function viewBranches(content: Pick<ExplorerContent, "branches">, seed: string): ExplorerViewBranch[] {
+  return content.branches.map((b, i) => ({
+    id: b.id,
+    kind: b.kind,
+    questionEn: b.questionEn,
+    questionVi: b.questionVi,
+    choices: buildChoices(b, `${seed}:${i}`),
+    answers: [...b.answers],
+    sentence: b.sentence,
+  }));
+}
+
 /** Đáp án mà bé đoán bằng hình: đáp án đánh dấu `guess`, không có thì đáp án đầu. */
 export function guessAnswer(branch: Pick<ExplorerBranch, "answers">): ExplorerAnswer | null {
   return branch.answers.find((a) => a.guess) ?? branch.answers[0] ?? null;
@@ -40,12 +80,11 @@ export function buildChoices(branch: Pick<ExplorerBranch, "answers" | "distracto
 
 /**
  * Hình sai nào mờ đi: sai 2 lần (hoặc bấm Gợi ý) thì làm mờ một hình sai và giữ nguyên hình đã mờ. Chưa cần mờ thì trả null.
- * Chỉ mờ khi có 3 hình, để luôn còn hình đúng và một hình khác để chọn.
+ * Chỉ có 2 hình thì hình sai mờ đi là còn đúng hình đáp án (theo thiết kế); không làm mất hình đúng bao giờ.
  */
 export function dimWrongChoice(choices: readonly ExplorerChoice[], tries: number, current: number | null, hint = false): number | null {
   if (current !== null) return current;
   if (tries < 2 && !hint) return null;
-  if (choices.length < 3) return null;
   return choices.find((c) => !c.correct)?.id ?? null;
 }
 

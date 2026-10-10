@@ -1,0 +1,353 @@
+/* Sơ đồ Khám phá từ (Screen48): thẻ từ bên trái, 4–6 nhánh câu hỏi bên phải, đường cong SVG nối thẻ tới từng nhánh. */
+.wx {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--size-word-card) minmax(0, 1fr);
+  column-gap: clamp(calc(var(--space-12) + var(--space-2)), 7vw, calc(var(--space-16) * 2));
+  align-items: center;
+  width: 100%;
+}
+.lines {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+}
+.lines path {
+  fill: none;
+  stroke: var(--branch-line);
+  stroke-width: var(--size-branch-line);
+  stroke-linecap: round;
+}
+.lines circle {
+  fill: var(--branch-line);
+}
+.lines .isOpen {
+  stroke: var(--branch-line-open);
+}
+.lines circle.isOpen {
+  fill: var(--branch-line-open);
+}
+.lines .isAsk {
+  stroke: var(--branch-line-active);
+  stroke-width: calc(var(--size-branch-line) * 1.5);
+}
+.lines circle.isAsk {
+  fill: var(--branch-line-active);
+}
+.lines .hub {
+  fill: var(--surface);
+  stroke: var(--branch-line);
+  stroke-width: var(--size-branch-line);
+}
+
+/* Thẻ từ */
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(var(--space-2), 1dvh);
+  padding: min(var(--space-5), 2.6dvh) var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.pic {
+  width: min(calc(var(--space-16) * 2.5), 21dvh);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+.pic img,
+.pic svg {
+  width: 88%;
+  height: auto;
+}
+.w {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.word {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: min(calc(var(--space-12) + var(--space-2)), 6.4dvh);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+}
+.ipa {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.ex {
+  margin: var(--space-1) 0 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+  background: var(--surface-soft);
+  border-radius: var(--radius-md);
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: min(var(--text-body), 2.6dvh);
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Các nhánh */
+.br {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: min(var(--space-3), 1.3dvh);
+  position: relative;
+  z-index: 1;
+}
+.node {
+  position: relative;
+  margin-left: var(--ind, 0);
+  min-height: clamp(var(--size-branch-node), calc((100dvh - var(--space-16) * 5 - var(--space-3)) / var(--n) - var(--space-3)), calc(var(--space-16) * 2 - var(--space-3)));
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, calc(var(--space-16) * 4)) var(--space-10) minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-3);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+  background: var(--branch-node);
+  border: var(--border-thick) solid var(--line);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color var(--duration-base),
+    background-color var(--duration-base),
+    box-shadow var(--duration-base);
+}
+.open {
+  background: var(--branch-node-open);
+  border-color: var(--branch-line-open);
+}
+.ask {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 var(--space-1) var(--brand-soft);
+}
+.glow {
+  box-shadow: 0 0 0 var(--space-1) var(--read-highlight);
+}
+.q {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-1);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.q:hover {
+  background: var(--surface-soft);
+}
+.q:focus-visible,
+.a:focus-visible,
+.opt:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.num {
+  flex: none;
+  width: calc(var(--space-8) + var(--space-1));
+  height: calc(var(--space-8) + var(--space-1));
+  border-radius: var(--radius-round);
+  display: grid;
+  place-items: center;
+  background: var(--branch-num);
+  color: var(--brand);
+  font-family: var(--font-body);
+  font-size: var(--text-button);
+  line-height: 1;
+  font-weight: 800;
+}
+.ask .num {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+.open .num {
+  background: var(--success);
+  color: var(--ink-on-dark);
+}
+.qt {
+  font-family: var(--font-display);
+  font-size: min(var(--text-button), 2.75dvh);
+  line-height: 1.18;
+  font-weight: 800;
+}
+.qm {
+  justify-self: start;
+  min-width: calc(var(--space-16) * 2);
+  height: min(calc(var(--space-12) + var(--space-1)), 6.8dvh);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--q-mark-bg);
+  color: var(--q-mark-ink);
+  border: var(--border-thick) dashed var(--q-mark-ink);
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: 1;
+  font-weight: 800;
+}
+
+/* Đáp án của nhánh đã mở */
+.ans {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  animation: open var(--duration-branch-open) ease-out;
+}
+.a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: min(calc(var(--space-12) + var(--space-1)), 6.8dvh);
+  padding: 0 var(--space-3) 0 var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: var(--border-thick) solid var(--branch-line-open);
+  font-family: var(--font-display);
+  font-size: min(var(--text-button), 2.5dvh);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.a:hover {
+  border-color: var(--success);
+}
+.a img,
+.a svg {
+  width: min(var(--space-10), 5.2dvh);
+  height: auto;
+}
+
+/* Hình để bé đoán */
+.opts {
+  display: flex;
+  gap: var(--space-3);
+}
+.opt {
+  position: relative;
+  width: calc(var(--space-16) + var(--space-8) + var(--space-1));
+  height: min(calc(var(--space-16) - var(--space-2)), 8dvh);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: var(--border-thick) solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 var(--space-1) 0 var(--line);
+  cursor: pointer;
+}
+.opt img,
+.opt svg {
+  width: min(calc(var(--space-12) + var(--space-1)), 6.6dvh);
+  height: auto;
+}
+.opt:hover:not(:disabled) {
+  border-color: var(--brand-soft-shade);
+  transform: translateY(calc(var(--space-1) * -0.5));
+}
+.selected {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  box-shadow: 0 var(--space-1) 0 var(--brand);
+}
+.retry {
+  border-color: var(--retry);
+  background: var(--retry-soft);
+  box-shadow: 0 var(--space-1) 0 var(--retry);
+  animation: shake 0.4s;
+}
+.dim {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Thu gọn (Sổ từ) */
+.compact {
+  grid-template-columns: calc(var(--space-16) * 3.5) minmax(0, 1fr);
+  column-gap: var(--space-12);
+}
+.compact .pic {
+  width: calc(var(--space-16) * 1.75);
+}
+.compact .word {
+  font-size: calc(var(--space-8) + var(--space-2));
+}
+.compact .ex {
+  font-size: var(--text-label);
+}
+.compact .node {
+  min-height: calc(var(--space-12) + var(--space-2));
+  grid-template-columns: minmax(0, calc(var(--space-16) * 3.6)) calc(var(--space-8) + var(--space-1)) minmax(0, 1fr);
+}
+.compact .qt {
+  font-size: var(--text-label);
+}
+.compact .num {
+  width: var(--space-8);
+  height: var(--space-8);
+  font-size: var(--text-label);
+}
+.compact .a {
+  height: calc(var(--space-10) + var(--space-1));
+  font-size: var(--text-label);
+}
+.compact .a img,
+.compact .a svg {
+  width: var(--space-8);
+}
+.compact .qm {
+  height: calc(var(--space-10) + var(--space-1));
+  min-width: calc(var(--space-16) * 1.4);
+  font-size: var(--text-title);
+}
+.compact .br {
+  gap: var(--space-2);
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--space-4) * -1));
+  }
+}
+@keyframes shake {
+  25% {
+    transform: translateX(calc(var(--space-1) * -1.5));
+  }
+  75% {
+    transform: translateX(calc(var(--space-1) * 1.5));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ans,
+  .retry {
+    animation: none;
+  }
+}

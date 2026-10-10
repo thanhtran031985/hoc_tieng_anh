@@ -9,6 +9,7 @@ import { splitSentence } from "./sentence-words.ts";
 import { isShortWord } from "./grading/dictation.ts";
 import { buildBubbleGame, buildRaceQuestions, buildRainWords, buildWhackRounds, gameWords, isRainLevel, type BubbleGame, type RaceQuestion, type WhackRound } from "./games.ts";
 import { seededRandom, shuffled } from "./random.ts";
+import { isPlayable, viewBranches, type ExplorerContent, type ExplorerViewBranch } from "./word-explorer.ts";
 
 export type PlayWord = {
   id: number;
@@ -62,6 +63,8 @@ export type PlayStep =
   | { id: string; kind: "match_pairs"; pairs: PlayWord[] }
   | { id: string; kind: "memory_game"; pairs: PlayWord[] }
   | ({ id: string; kind: "story" } & StoryPlay)
+  /** 8.27 Khám phá từ: `word` ở giữa, 4–6 nhánh câu hỏi, rồi đoạn văn “Đọc cả đoạn”. */
+  | { id: string; kind: "word_explorer"; word: PlayWord; branches: ExplorerViewBranch[]; reading: ExplorerContent["reading"]; glossary: Record<string, string> }
   | { id: string; kind: "word_rain"; words: PlayWord[] }
   | ({ id: string; kind: "word_bubbles" } & BubbleGame<PlayWord>)
   | { id: string; kind: "whack_letters"; rounds: WhackRound<PlayWord>[] }
@@ -124,7 +127,7 @@ export type PlayStep =
 export type PlayStepKind = PlayStep["kind"];
 
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_explorer" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
 
 const DEFAULT_OPTIONS = 3;
 /** Số từ nhiễu dự phòng của câu chọn (độ khó thích ứng cần tối đa 1, dư một từ phòng trùng). */
@@ -159,6 +162,8 @@ export type PlayExtras = {
   levelNumber?: number;
   /** Lần đua xe trước cùng bài của bé (mảng 0/1 theo từng lượt trả lời) cho xe ma; null/bỏ trống là lần đầu. */
   raceGhost?: readonly number[] | null;
+  /** Khám phá từ đã xuất bản, theo mã từ (bước `word_explorer`). */
+  explorers?: ReadonlyMap<number, ExplorerContent>;
 };
 
 /**
@@ -231,6 +236,13 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
       case "fill_blank": {
         const built = buildQuestionStep(step, id, random, extras, pictureWords);
         if (built) play.push(built);
+        break;
+      }
+      case "word_explorer": {
+        // Từ chưa có Khám phá đã xuất bản (hoặc chưa đủ 4–6 nhánh) thì bỏ qua bước, như câu hỏi nháp.
+        const content = step.word ? extras.explorers?.get(step.word.id) : undefined;
+        if (!step.word || !content || !isPlayable(content)) break;
+        play.push({ id, kind: "word_explorer", word: step.word, branches: viewBranches(content, `${seed}:${id}`), reading: content.reading, glossary: content.glossary });
         break;
       }
       case "story": {

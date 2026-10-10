@@ -3,11 +3,13 @@ import { extraQuestionSummary } from "@/lib/rules/admin-question-types";
 import { questionSummary } from "@/lib/rules/admin-questions";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
 import type { PlayWord, StoryPlay } from "@/lib/rules/lesson-play";
+import type { ExplorerContent } from "@/lib/rules/word-explorer";
 import { lessonIdSchema, saveLessonSchema, unitWordsSchema } from "@/lib/schemas/admin-builder";
 import { lessonStepConfigSchemas } from "@/lib/schemas/lesson-step-config";
 import { EXTRA_QUESTION_TYPES, isExtraQuestionType } from "@/lib/schemas/question-extra";
 import { db } from "../db";
 import { getStoriesPlay } from "../story-play";
+import { loadExplorerContents } from "../word-explorer";
 import { fail, firstIssue, type AdminResult } from "./result";
 
 // Soạn bài học (Adult12): danh sách bài, đọc một bài kèm gợi ý từ và câu hỏi, và lưu bài (tên, trạng thái, danh sách bước).
@@ -41,6 +43,10 @@ export type BuilderData = {
   questions: BuilderQuestion[];
   /** Truyện tranh đã xuất bản của cấp, để thêm thành một bước `story`. */
   stories: StoryPlay[];
+  /** Mã các từ đã có Khám phá (nháp hoặc đã xuất bản): từ có trong đây mới thêm được bước “Khám phá từ”. */
+  explorerWordIds: number[];
+  /** Nội dung Khám phá (kể cả bản nháp) của các từ đang có bước “Khám phá từ”, để Xem như học sinh dựng được bước. */
+  explorers: { wordId: number; content: ExplorerContent }[];
 };
 
 /** Từ của một chủ đề (theo bảng `topics` trùng tên chủ đề). */
@@ -80,6 +86,8 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
     db.story.findMany({ where: { levelId: unit.level.id, status: "published" }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true } }),
   ]);
   const stories = [...(await getStoriesPlay(storyRows.map((r) => r.id))).values()];
+  const explorerWordIds = (await db.wordQuestion.findMany({ distinct: ["wordId"], select: { wordId: true } })).map((r) => r.wordId);
+  const explorers = [...(await loadExplorerContents(lesson.steps.flatMap((s) => (s.activityType === "word_explorer" && s.wordId !== null ? [s.wordId] : [])), "any")).entries()].map(([wordId, content]) => ({ wordId, content }));
 
   const seen = new Set<number>();
   const fromSteps = lesson.steps.flatMap((s) => (s.word && !seen.has(s.word.id) && seen.add(s.word.id) ? [s.word] : []));
@@ -113,6 +121,8 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
       ...(isExtraQuestionType(q.type) ? { data: { prompt: q.prompt, options: q.options, answer: q.answer } } : {}),
     })),
     stories,
+    explorerWordIds,
+    explorers,
   };
 }
 
@@ -143,6 +153,17 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
     const types = await db.question.findMany({ where: { id: { in: needQuestion.map((s) => s.questionId!) } }, select: { id: true, type: true } });
     const typeOf = new Map(types.map((q) => [q.id, q.type]));
     if (needQuestion.some((s) => typeOf.get(s.questionId!) !== s.activityType)) return fail("Có bước gắn câu hỏi khác dạng. Hãy tải lại trang rồi soạn lại.", "steps");
+  }
+
+  // Xuất bản bài thì các từ có bước “Khám phá từ” phải đã xuất bản Khám phá (bản nháp không tới bé nên bước sẽ bị bỏ qua).
+  const explorerWordIds = [...new Set(steps.flatMap((s) => (s.activityType === "word_explorer" && s.wordId !== null ? [s.wordId] : [])))];
+  if (status === "published" && explorerWordIds.length) {
+    const ready = await loadExplorerContents(explorerWordIds);
+    const missing = explorerWordIds.filter((wordId) => !ready.has(wordId));
+    if (missing.length) {
+      const names = (await db.word.findMany({ where: { id: { in: missing } }, select: { word: true } })).map((w) => w.word).join(", ");
+      return fail(`Từ “${names}” chưa xuất bản Khám phá nên bước “Khám phá từ” chưa dùng được. Xuất bản Khám phá ở Ngân hàng từ vựng hoặc lưu bài ở dạng nháp.`, "steps");
+    }
   }
 
   // Bước truyện cần `config.storyId` trỏ tới một truyện có thật.

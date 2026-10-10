@@ -12,6 +12,7 @@ import { clipMap } from "./audio/clips";
 import { splitSentence } from "@/lib/rules/sentence-words";
 import { lastRaceSequence } from "./game-records";
 import { getStoriesPlay } from "./story-play";
+import { loadExplorerContents } from "./word-explorer";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { getLevelNodes } from "./level-nodes";
@@ -105,6 +106,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
         learner.settings.speechScoring,
       )),
       levelNumber: unit.level.number,
+      explorers: await loadExplorerContents(lesson.steps.flatMap((s) => (s.activityType === "word_explorer" && s.word ? [s.word.id] : []))),
       raceGhost: lesson.steps.some((s) => s.activityType === "race") ? await lastRaceSequence(learnerId, lesson.id) : null,
     },
   );

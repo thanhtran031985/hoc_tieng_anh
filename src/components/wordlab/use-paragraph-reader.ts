@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { WORDLAB } from "@/lib/rules/constants";
+import { READ_WORD_MS, WORDLAB } from "@/lib/rules/constants";
 import { litIndexAt, wordWeights } from "@/lib/rules/lesson-story";
 import { splitSentence } from "@/lib/rules/sentence-words";
 import { playPronunciation, stopPronunciation, type SpeechAccent } from "@/lib/speech";
@@ -108,7 +108,7 @@ export function useParagraphReader({ sentences, audioUrl = null, accent, onDone 
           setLit(i);
           setSentence(sentenceOf(i));
         },
-        slow ? WORDLAB.readWordSlowMs : WORDLAB.readWordMs,
+        slow ? READ_WORD_MS.slow : READ_WORD_MS.normal,
       );
     },
     [accent, halt, idle, model.tokens, model.total, sentenceOf],

@@ -60,6 +60,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
 
   const stats = lessonStats(steps);
   const minutes = estimateMinutes(steps);
+  const explorerIds = new Set(data.explorerWordIds);
   const hasCard = (wordId: number) => steps.some((s) => s.activityType === "word_card" && s.wordId === wordId);
   const hasQuestion = (id: number) => steps.some((s) => s.questionId === id);
   const storyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => (s.activityType === "story" && typeof s.config?.storyId === "number" ? s.config.storyId : null);
@@ -134,7 +135,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
     });
     const unitWords = stored.flatMap((s) => (s.activityType === "word_card" && s.word ? [s.word] : []));
     const pool = [...new Map([...unitWords, ...suggestions].map((w) => [w.id, w])).values()];
-    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known, levelNumber: lesson.levelNumber });
+    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known, levelNumber: lesson.levelNumber, explorers: new Map(data.explorers.map((e) => [e.wordId, e.content])) });
     if (play.length === 0) {
       toast(steps.length === 0 ? "Bài chưa có bước nào để xem trước." : "Chưa có bước nào xem trước được (các bước cần từ có hình và đủ từ trong bài).");
       return;
@@ -184,6 +185,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
                     ) : (
                       <AdultButton label="Thêm" icon="plus" variant="secondary" size="s" aria-label={`Thêm thẻ từ ${w.word} vào bài`} onClick={() => addWordStep(w, "word_card")} />
                     )}
+                    {explorerIds.has(w.id) && <AdultIconButton icon="branch" label={`Thêm bước Khám phá từ cho ${w.word}`} onClick={() => addWordStep(w, "word_explorer")} />}
                     {w.image && (
                       <>
                         <AdultIconButton icon="speaker" label={`Thêm bước nghe và chọn hình cho ${w.word}`} onClick={() => addWordStep(w, "listen_choose_picture")} />
