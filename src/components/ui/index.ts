@@ -23,3 +23,4 @@ export { Skeleton, type SkeletonProps, type SkeletonRadius } from "./Skeleton/Sk
 export { Bubble, type BubbleProps } from "./Bubble/Bubble";
 export { TextField, type TextFieldProps } from "./TextField/TextField";
 export { ButtonLink, type ButtonLinkProps } from "./Button/ButtonLink";
+export { LevelGate, type LevelGateProps } from "./LevelGate/LevelGate";

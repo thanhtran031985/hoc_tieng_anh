@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { MAP_HEIGHT, MAP_WIDTH, ZONE_SLOTS, zoneNodePositions } from "./island-layout.ts";
+import { MAP_HEIGHT, MAP_WIDTH, ZONE_SLOTS, gatePoint, zoneNodePositions } from "./island-layout.ts";
 
 describe("zoneNodePositions", () => {
   it("5 chặng thì đúng 5 điểm của thiết kế", () => {
@@ -30,5 +30,20 @@ describe("zoneNodePositions", () => {
   it("không có chặng thì trả về rỗng; một chặng đặt ở điểm đầu", () => {
     assert.deepEqual(zoneNodePositions(ZONE_SLOTS[0], 0), []);
     assert.deepEqual(zoneNodePositions(ZONE_SLOTS[0], 1), [[...ZONE_SLOTS[0].points[0]]]);
+  });
+});
+
+describe("gatePoint", () => {
+  it("đủ 4 vùng: đúng điểm của thiết kế", () => {
+    assert.deepEqual(gatePoint(4), [140, 400]);
+  });
+
+  it("trang cuối ít vùng hơn: cổng nằm trong khung, không đè lên trùm của vùng cuối", () => {
+    for (const n of [1, 2, 3]) {
+      const [x, y] = gatePoint(n);
+      assert.ok(x >= 0 && x <= MAP_WIDTH && y >= 0 && y <= MAP_HEIGHT);
+      const boss = ZONE_SLOTS[n - 1].boss;
+      assert.ok(Math.hypot(x - boss[0], y - boss[1]) > 100);
+    }
   });
 });

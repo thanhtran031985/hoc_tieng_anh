@@ -61,5 +61,16 @@ export function islandRoad(points: readonly Point[]): string {
   return points.length === 0 ? "" : "M" + points.map((p) => `${p[0]} ${p[1]}`).join(" L");
 }
 
+/**
+ * Vị trí cổng thi lên cấp, ở cuối đường đảo của trang cuối. Đủ 4 vùng thì đúng điểm của thiết kế (bờ trái, giữa hai hàng vùng);
+ * trang cuối ít vùng hơn thì đặt ngay sau trùm của vùng cuối, trong khung.
+ */
+export function gatePoint(zoneCount: number): Point {
+  if (zoneCount >= ZONE_SLOTS.length) return [140, 400];
+  if (zoneCount === 3) return [640, 520];
+  const boss = ZONE_SLOTS[Math.max(1, zoneCount) - 1].boss;
+  return [Math.min(MAP_WIDTH - 140, boss[0] + 90), Math.min(MAP_HEIGHT - 150, boss[1] + 110)];
+}
+
 /** Vị trí phần trăm trong khung bản đồ. */
 export const toPercent = (p: Point) => ({ left: `${(p[0] / MAP_WIDTH) * 100}%`, top: `${(p[1] / MAP_HEIGHT) * 100}%` });

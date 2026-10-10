@@ -1,0 +1,56 @@
+/* Cổng bài thi lên cấp (LevelGate): rộng bằng khung chứa, đá cổng `gate-stone`, lòng cổng tối khi khóa và sáng khi mở. */
+.gate {
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  transition: transform var(--duration-fast);
+}
+.art {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 var(--lip-m) 0 var(--gate-stone-shade));
+}
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+  white-space: nowrap;
+}
+.locked .label {
+  color: var(--ink-soft);
+}
+.open:hover {
+  transform: translateY(calc(-1 * var(--space-1)));
+}
+.open .art {
+  animation: glow 1.8s ease-in-out infinite;
+}
+@keyframes glow {
+  50% {
+    filter: drop-shadow(0 var(--lip-m) 0 var(--gate-stone-shade)) drop-shadow(0 0 var(--space-5) var(--gate-glow));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .open .art {
+    animation: none;
+  }
+  .gate {
+    transition-duration: 1ms;
+  }
+}

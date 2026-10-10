@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui";
 import { TopbarSkeleton } from "@/features/home/HomeSkeleton";
 import { IslandArt } from "@/features/island-map/IslandArt";
-import { ZONE_SLOTS, toPercent, zoneNodePositions } from "@/features/island-map/island-layout";
+import { ZONE_SLOTS, gatePoint, toPercent, zoneNodePositions } from "@/features/island-map/island-layout";
 import styles from "@/features/island-map/island-map.module.css";
 import kid from "@/features/kid/kid.module.css";
 
@@ -17,6 +17,7 @@ export default function IslandMapLoading() {
             {ZONE_SLOTS.flatMap((slot, z) => [...zoneNodePositions(slot, 5), slot.boss].map((p, i) => (
               <Skeleton key={`${z}-${i}`} className={styles.skNode} width="4.6%" height="auto" radius="round" style={toPercent(p)} />
             )))}
+            <Skeleton className={styles.skGate} width="8%" height="auto" radius="md" style={toPercent(gatePoint(4))} />
           </div>
         </div>
       </main>

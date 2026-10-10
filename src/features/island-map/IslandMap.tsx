@@ -2,15 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import { ButtonLink, Card, Icon, Mascot, SpeakerButton, WordPicture, type MascotColor } from "@/components/ui";
+import { ButtonLink, Card, Icon, LevelGate, Mascot, SpeakerButton, WordPicture, type MascotColor } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import type { IslandMap as IslandMapData, IslandUnit } from "@/server/map";
 import { IslandArt } from "./IslandArt";
-import { ZONES_PER_PAGE, ZONE_SLOTS, toPercent, zoneNodePositions } from "./island-layout";
+import { ZONES_PER_PAGE, ZONE_SLOTS, gatePoint, toPercent, zoneNodePositions } from "./island-layout";
 import styles from "./island-map.module.css";
 
-type Selection = { kind: "lesson" | "boss"; unitIndex: number; id: number };
+type Selection = { kind: "lesson" | "boss"; unitIndex: number; id: number } | { kind: "gate" };
 type Point = readonly [number, number];
 
 export type IslandMapProps = {
@@ -62,7 +62,10 @@ export function IslandMap({ data, mascot }: IslandMapProps) {
       }),
     [pageUnits, first],
   );
-  const road = useMemo(() => layout.flatMap((z) => [...z.nodes, z.slot.boss] as Point[]), [layout]);
+  // Cổng thi lên cấp nằm ở cuối đường đảo, tức trang cuối của cấp.
+  const gate = data.gate && page === pageCount - 1 ? data.gate : null;
+  const gateAt = useMemo(() => gatePoint(layout.length), [layout.length]);
+  const road = useMemo(() => [...layout.flatMap((z) => [...z.nodes, z.slot.boss] as Point[]), ...(gate ? [gateAt] : [])], [layout, gate, gateAt]);
 
   // Mở thẻ của chặng thì đưa focus vào nút Bắt đầu / Học lại để Enter dùng được ngay.
   useEffect(() => {
@@ -71,6 +74,7 @@ export function IslandMap({ data, mascot }: IslandMapProps) {
 
   const startHref = (() => {
     if (!selected) return null;
+    if (selected.kind === "gate") return !gate ? null : gate.status === "open" ? gate.examHref : gate.nextLessonId !== null ? `/lesson/${gate.nextLessonId}` : null;
     const unit = units[selected.unitIndex];
     if (selected.kind === "boss") return unit.boss && unit.boss.state !== "locked" ? `/lesson/${unit.boss.id}` : null;
     const lesson = unit.lessons.find((l) => l.id === selected.id);
@@ -87,7 +91,63 @@ export function IslandMap({ data, mascot }: IslandMapProps) {
     setSelected(null);
   }
 
+  function renderGatePop() {
+    if (!gate) return null;
+    const open = gate.status === "open";
+    const place = gate.next ? `${gate.next.place} ${gate.next.name}` : "cấp mới";
+    const pos = toPercent(gateAt);
+    return (
+      <Card className={cn(styles.pop, styles.gatePop)} role="dialog" aria-label="Thông tin cổng thi lên cấp" style={{ "--x": pos.left, "--y": pos.top } as CSSProperties} onClick={(e) => e.stopPropagation()}>
+        {open ? (
+          <>
+            <div className={styles.popTitle}>Bài thi lên {place}</div>
+            <p className={styles.popText}>Bé đã xong cả {gate.units.length} vùng của cấp này!</p>
+            <div className={styles.facts}>
+              <span>
+                <Icon name="star" size={18} />
+                20 câu
+              </span>
+              <span>
+                <Icon name="clock" size={18} />
+                Không đếm giờ
+              </span>
+              <span>
+                <Icon name="check" size={18} />
+                Cần đúng 80%
+              </span>
+              <span>
+                <Icon name="replay" size={18} />
+                Thi lại được
+              </span>
+            </div>
+            <ButtonLink ref={startRef} href={gate.examHref} size="l" block icon="next" label="Vào bài thi" shortcut="Enter" />
+          </>
+        ) : (
+          <>
+            <div className={styles.popTitle}>Cổng lên {place}</div>
+            <p className={styles.popText}>
+              Còn <b>{gate.left} vùng</b> nữa là cổng mở. Cố lên nhé!
+            </p>
+            <ul className={styles.gateList}>
+              {gate.units.map((u) => (
+                <li key={u.id} className={cn(!u.done && styles.todo)}>
+                  <Icon name={u.done ? "check" : "lock"} size={20} />
+                  <span>
+                    {u.titleVi}
+                    {!u.done && <small>còn {u.remaining} chặng</small>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {gate.nextLessonId !== null && <ButtonLink ref={startRef} href={`/lesson/${gate.nextLessonId}`} size="l" block icon="next" label="Học tiếp" shortcut="Enter" />}
+          </>
+        )}
+      </Card>
+    );
+  }
+
   function renderPop() {
+    if (selected?.kind === "gate") return renderGatePop();
     if (!selected || units[selected.unitIndex] === undefined) return null;
     const zone = layout.find((z) => z.unitIndex === selected.unitIndex);
     if (!zone) return null;
@@ -221,7 +281,7 @@ export function IslandMap({ data, mascot }: IslandMapProps) {
                       className={cn(styles.nd, stateClass)}
                       style={at}
                       aria-label={lessonLabel(unit, lesson.ordinal, lesson.state, lesson.stars)}
-                      aria-expanded={selected?.id === lesson.id}
+                      aria-expanded={selected !== null && "id" in selected && selected.id === lesson.id}
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelected({ kind: "lesson", unitIndex, id: lesson.id });
@@ -260,6 +320,21 @@ export function IslandMap({ data, mascot }: IslandMapProps) {
             </div>
           );
         })}
+
+        {gate && (
+          <div className={styles.gateWrap} style={toPercent(gateAt)}>
+            <LevelGate
+              locked={gate.status === "locked"}
+              left={gate.left}
+              next={gate.next ? `${gate.next.place} ${gate.next.name}` : undefined}
+              aria-expanded={selected?.kind === "gate"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelected({ kind: "gate" });
+              }}
+            />
+          </div>
+        )}
 
         {renderPop()}
       </div>

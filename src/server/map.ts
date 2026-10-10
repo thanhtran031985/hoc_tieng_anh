@@ -1,5 +1,7 @@
+import { hasLevelExam, levelGateState, placeWord, type LevelGateState } from "@/lib/rules/level-gate";
 import {
   computeLessonStates,
+  findNextLesson,
   levelStatus,
   summarizeUnits,
   type BossNodeState,
@@ -75,9 +77,19 @@ export type IslandUnit = {
   boss: IslandBoss | null;
 };
 
+/** Cổng thi lên cấp ở cuối đường đảo; null khi cấp không có bài thi hoặc bé đã qua cấp này. */
+export type IslandGate = LevelGateState & {
+  /** Tên cấp kế (vd “Cành cây”) và cách gọi (“đảo” / “thành phố”) cho nhãn cổng. */
+  next: { name: string; place: string } | null;
+  /** Bài “Học tiếp” khi cổng còn khóa. */
+  nextLessonId: number | null;
+  examHref: string;
+};
+
 export type IslandMap = {
   level: { number: number; name: string };
   units: IslandUnit[];
+  gate: IslandGate | null;
   /** Số thứ tự (từ 0) của chủ đề có chặng đang học; null nếu xong hết cấp hoặc chưa có bài. */
   currentUnitIndex: number | null;
 };
@@ -160,6 +172,36 @@ export async function getIslandMap(userId: number, learnerId: number, levelNumbe
     };
   });
 
+  // Cổng chỉ ở cấp bé đang học (cấp đã qua thì không thi lại) và chỉ cấp có bài thi.
+  let gate: IslandGate | null = null;
+  if (hasLevelExam(level.number) && levelStatus(level.number, learner.currentLevel?.number ?? 1) === "current") {
+    const nextLevel = await db.level.findUnique({ where: { number: level.number + 1 }, select: { name: true } });
+    gate = {
+      ...levelGateState(islandUnits.map((u) => ({ id: u.id, titleVi: u.titleVi, lessonCount: u.lessonCount, doneCount: u.doneCount }))),
+      next: nextLevel ? { name: nextLevel.name, place: placeWord(level.number + 1) } : null,
+      nextLessonId: findNextLesson(nodes)?.id ?? null,
+      examHref: `/exam/${level.number}`,
+    };
+  }
+
   const currentIndex = islandUnits.findIndex((u) => u.lessons.some((l) => l.state === "current"));
-  return { level: { number: level.number, name: level.name }, units: islandUnits, currentUnitIndex: currentIndex >= 0 ? currentIndex : null };
+  return { level: { number: level.number, name: level.name }, units: islandUnits, gate, currentUnitIndex: currentIndex >= 0 ? currentIndex : null };
+}
+
+/** Cổng thi lên cấp chưa mở (còn vùng chưa xong, cấp không có bài thi hoặc bé đã qua cấp này). */
+export class ExamGateClosedError extends Error {
+  constructor() {
+    super("Cổng thi lên cấp chưa mở");
+    this.name = "ExamGateClosedError";
+  }
+}
+
+/**
+ * Kiểm ở server rằng bé được vào bài thi lên cấp `levelNumber`: hồ sơ thuộc tài khoản (qua `getIslandMap`), cấp là cấp bé đang học và cổng đã mở.
+ * Mọi cửa vào bài thi (trang, bắt đầu, nộp bài) đều đi qua hàm này, nên gõ thẳng URL khi cổng khóa vẫn bị chặn.
+ */
+export async function requireOpenExamGate(userId: number, learnerId: number, levelNumber: number): Promise<{ level: { number: number; name: string }; next: { name: string; place: string } | null }> {
+  const map = await getIslandMap(userId, learnerId, levelNumber);
+  if (!map?.gate || map.gate.status !== "open") throw new ExamGateClosedError();
+  return { level: map.level, next: map.gate.next };
 }
