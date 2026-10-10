@@ -1,6 +1,6 @@
 # Tiến độ — 23-notebook-plus — Sổ từ bổ sung và in danh sách từ
 
-Trạng thái chung: ⬜ · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|

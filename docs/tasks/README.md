@@ -26,7 +26,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 20 | [20-boss-level-test](20-boss-level-test/task.md) — Trận trùm, bài thi lên cấp và rồng Bông lớn lên | ✅ | 18, 19 | `feat/20-boss-level-test` |
 | 21 | [21-rewards-collection](21-rewards-collection/task.md) — Bộ sưu tập sticker và huy hiệu | ✅ | 13, 20 | `feat/21-rewards-collection` |
 | 22 | [22-room-shop](22-room-shop/task.md) — Phòng của tớ, cửa hàng và thẻ nghỉ phép | ✅ | 21 | `feat/22-room-shop` |
-| 23 | [23-notebook-plus](23-notebook-plus/task.md) — Sổ từ bổ sung và in danh sách từ | ⬜ | 08, 13 | `feat/23-notebook-plus` |
+| 23 | [23-notebook-plus](23-notebook-plus/task.md) — Sổ từ bổ sung và in danh sách từ | 🔄 | 08, 13 | `feat/23-notebook-plus` |
 | 24 | [24-parent-gd2](24-parent-gd2/task.md) — Khu bố mẹ GĐ2: kỹ năng, mở khóa thủ công, khung giờ học | ⬜ | 11, 17, 20 | `feat/24-parent-gd2` |
 | 25 | [25-word-explorer](25-word-explorer/task.md) — Khám phá từ | ⬜ | 14, 15, 23 | `feat/25-word-explorer` |
 | 26 | [26-word-family](26-word-family/task.md) — Họ vần, Ghép chữ đầu và liên kết qua lại | ⬜ | 25 | `feat/26-word-family` |
