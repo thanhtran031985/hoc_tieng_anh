@@ -7,7 +7,7 @@ import { splitPassage } from "./grading/reading.ts";
 import type { Leniency } from "./speaking.ts";
 import { splitSentence } from "./sentence-words.ts";
 import { isShortWord } from "./grading/dictation.ts";
-import { buildBubbleRounds, buildRaceQuestions, buildRainWords, buildWhackRounds, gameWords, isRainLevel, type BubbleRound, type RaceQuestion, type WhackRound } from "./games.ts";
+import { buildBubbleGame, buildRaceQuestions, buildRainWords, buildWhackRounds, gameWords, isRainLevel, type BubbleGame, type RaceQuestion, type WhackRound } from "./games.ts";
 import { seededRandom, shuffled } from "./random.ts";
 
 export type PlayWord = {
@@ -62,7 +62,7 @@ export type PlayStep =
   | { id: string; kind: "memory_game"; pairs: PlayWord[] }
   | ({ id: string; kind: "story" } & StoryPlay)
   | { id: string; kind: "word_rain"; words: PlayWord[] }
-  | { id: string; kind: "word_bubbles"; rounds: BubbleRound<PlayWord>[] }
+  | ({ id: string; kind: "word_bubbles" } & BubbleGame<PlayWord>)
   | { id: string; kind: "whack_letters"; rounds: WhackRound<PlayWord>[] }
   /** `ghost`: các lượt trả lời đúng/sai (0/1) của lần chơi trước cùng bài; null ở lần đầu. */
   | { id: string; kind: "race"; questions: RaceQuestion<PlayWord>[]; ghost: number[] | null }
@@ -250,8 +250,8 @@ function buildGameStep(type: string, id: string, lessonWords: readonly PlayWord[
       return picked.length > 0 ? { id, kind: "word_rain", words: picked } : null;
     }
     case "word_bubbles": {
-      const rounds = buildBubbleRounds(words, random);
-      return rounds.length > 0 ? { id, kind: "word_bubbles", rounds } : null;
+      const game = buildBubbleGame(words, random);
+      return game ? { id, kind: "word_bubbles", ...game } : null;
     }
     case "whack_letters": {
       const rounds = buildWhackRounds(words, random);

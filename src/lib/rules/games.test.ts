@@ -5,7 +5,9 @@ import {
   MOLE_MAX_UP,
   WHACK_HOLES,
   blankSentence,
-  buildBubbleRounds,
+  buildBubbleGame,
+  initialBubbleLanes,
+  refillBubbleLane,
   buildRaceQuestions,
   buildRainWords,
   buildWhackRounds,
@@ -77,21 +79,39 @@ describe("Mưa từ vựng", () => {
 });
 
 describe("Bong bóng từ vựng", () => {
-  it("8 lượt, mỗi lượt 5 bóng khác nhau và có từ đúng", () => {
-    const rounds = buildBubbleRounds(ALL, rnd());
-    assert.equal(rounds.length, 8);
-    for (const r of rounds) {
-      assert.equal(r.options.length, 5);
-      assert.equal(new Set(r.options.map((o) => o.id)).size, 5);
-      assert.ok(r.options.some((o) => o.id === r.target.id));
-    }
+  it("8 từ cần tìm không trùng, kho hình đủ 5 làn", () => {
+    const game = buildBubbleGame(ALL, rnd());
+    assert.ok(game);
+    assert.equal(game.targets.length, 8);
+    assert.equal(new Set(game.targets.map((t) => t.id)).size, 8);
+    assert.ok(game.pool.length >= 5);
   });
   it("thiếu hình thì không dựng; chưa đủ 5 từ có hình thì không dựng", () => {
-    assert.deepEqual(buildBubbleRounds(ALL.slice(0, 4), rnd()), []);
-    assert.deepEqual(buildBubbleRounds(ALL.map((w) => ({ ...w, image: null })), rnd()), []);
+    assert.equal(buildBubbleGame(ALL.slice(0, 4), rnd()), null);
+    assert.equal(buildBubbleGame(ALL.map((w) => ({ ...w, image: null })), rnd()), null);
   });
-  it("cùng hạt giống ra cùng bộ lượt", () => {
-    assert.deepEqual(buildBubbleRounds(ALL, rnd("x")).map((r) => r.target.id), buildBubbleRounds(ALL, rnd("x")).map((r) => r.target.id));
+  it("5 bóng đầu khác nhau và có từ cần tìm đầu tiên", () => {
+    const game = buildBubbleGame(ALL, rnd())!;
+    const lanes = initialBubbleLanes(game, rnd("l"));
+    assert.equal(lanes.length, 5);
+    assert.equal(new Set(lanes.map((w) => w.id)).size, 5);
+    assert.ok(lanes.some((w) => w.id === game.targets[0].id));
+  });
+  it("sau khi bóng nổ: làn đó nhận từ kế tiếp nếu chưa có trên màn, luôn có từ cần tìm, không trùng", () => {
+    const game = buildBubbleGame(ALL, rnd())!;
+    const random = rnd("walk");
+    let lanes = initialBubbleLanes(game, random);
+    for (let i = 1; i < game.targets.length; i++) {
+      const popped = lanes.findIndex((w) => w.id === game.targets[i - 1].id);
+      assert.ok(popped >= 0, "từ vừa tìm đang ở trên màn");
+      lanes = refillBubbleLane(lanes, popped, game.targets[i], game.pool, random);
+      assert.equal(lanes.length, 5);
+      assert.equal(new Set(lanes.map((w) => w.id)).size, 5, "không hai bóng cùng từ");
+      assert.ok(lanes.some((w) => w.id === game.targets[i].id), `từ cần tìm ${i} có mặt`);
+    }
+  });
+  it("cùng hạt giống ra cùng bộ từ", () => {
+    assert.deepEqual(buildBubbleGame(ALL, rnd("x"))!.targets.map((t) => t.id), buildBubbleGame(ALL, rnd("x"))!.targets.map((t) => t.id));
   });
 });
 

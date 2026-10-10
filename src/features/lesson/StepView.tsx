@@ -11,6 +11,7 @@ import { PhonicsStep } from "./PhonicsStep";
 import { ReadingStep } from "./ReadingStep";
 import { SentenceOrderStep } from "./SentenceOrderStep";
 import { SpeakStep } from "./SpeakStep";
+import { BubblesStep } from "./games/BubblesStep";
 import { RainStep } from "./games/RainStep";
 import { StoryStep } from "./StoryStep";
 import { StubStep } from "./StubStep";
@@ -46,6 +47,8 @@ export function StepView({ step, ...rest }: StepProps & { step: PlayStep }) {
       return <StoryStep step={step} {...rest} />;
     case "word_rain":
       return <RainStep step={step} {...rest} />;
+    case "word_bubbles":
+      return <BubblesStep step={step} {...rest} />;
     default:
       return <StubStep step={step} {...rest} />;
   }

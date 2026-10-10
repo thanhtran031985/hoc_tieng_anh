@@ -76,15 +76,34 @@ export const requeue = (pending: readonly number[], id: number): number[] => [..
 // ---------------------------------------------------------------------------------------------------------------------
 // Bong bóng từ vựng
 
-export type BubbleRound<W> = { target: W; options: W[] };
+/** Vị trí ngang (%) của 5 làn bong bóng. */
+export const BUBBLE_X = [11, 30, 50, 70, 89] as const;
+/** Giảm chuyển động: độ cao cố định (0 = đáy, 1 = đỉnh) của mỗi làn. */
+export const BUBBLE_STILL_Y = [0.3, 0.52, 0.4, 0.6, 0.34] as const;
 
-/** 8 lượt (hoặc ít hơn nếu thiếu từ): mỗi lượt có 5 bóng, một bóng là từ Bông đọc, 4 bóng còn lại là từ khác có hình. */
-export function buildBubbleRounds<W extends GameWord>(words: readonly W[], random: () => number): BubbleRound<W>[] {
+export type BubbleGame<W> = { /** Các từ Bông lần lượt đọc (8, không trùng). */ targets: W[]; /** Mọi từ có hình có thể hiện trong bóng. */ pool: W[] };
+
+/** 8 từ cần tìm (ít hơn nếu thiếu từ, tối thiểu 4) và kho hình cho các bóng; cần ít nhất 5 từ có hình để đủ 5 làn. */
+export function buildBubbleGame<W extends GameWord>(words: readonly W[], random: () => number): BubbleGame<W> | null {
   const pool = uniqueById(words.filter(hasPicture));
-  if (pool.length < BUBBLE_LANES) return [];
+  if (pool.length < BUBBLE_LANES) return null;
   const targets = shuffled(pool, random).slice(0, BUBBLE_ROUNDS);
-  if (targets.length < MIN_GAME_ROUNDS) return [];
-  return targets.map((target) => ({ target, options: shuffled([target, ...shuffled(pool.filter((w) => w.id !== target.id), random).slice(0, BUBBLE_LANES - 1)], random) }));
+  return targets.length >= MIN_GAME_ROUNDS ? { targets, pool } : null;
+}
+
+/** 5 bóng đầu tiên: từ cần tìm đầu tiên cùng 4 từ khác, xáo vị trí. */
+export function initialBubbleLanes<W extends GameWord>(game: BubbleGame<W>, random: () => number): W[] {
+  const first = game.targets[0];
+  const others = shuffled(game.pool.filter((w) => w.id !== first.id), random).slice(0, BUBBLE_LANES - 1);
+  return shuffled([first, ...others], random);
+}
+
+/** Sau khi bóng ở làn `lane` nổ: làn đó nhận từ cần tìm kế tiếp (nếu chưa có trên màn) hoặc một từ mới chưa có trên màn. Từ cần tìm luôn có mặt trên màn. */
+export function refillBubbleLane<W extends GameWord>(lanes: readonly W[], lane: number, next: W | null, pool: readonly W[], random: () => number): W[] {
+  const rest = lanes.filter((_, i) => i !== lane);
+  const showing = new Set(rest.map((w) => w.id));
+  const fresh = next && !showing.has(next.id) ? next : (shuffled(pool.filter((w) => !showing.has(w.id)), random)[0] ?? lanes[lane]);
+  return lanes.map((w, i) => (i === lane ? fresh : w));
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
