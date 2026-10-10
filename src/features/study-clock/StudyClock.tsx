@@ -14,7 +14,7 @@ const IDLE_MS = 60 * 1000;
 const SECONDS_PER_MINUTE = 60;
 const PERSIST_EVERY_SECONDS = 5;
 const FLOW_PREFIXES = ["/lesson", "/review", "/placement"];
-const NO_CLOCK_PREFIXES = ["/profiles", "/time-up"];
+const NO_CLOCK_PREFIXES = ["/profiles", "/time-up", "/outside-hours"];
 
 const startsWith = (path: string, prefixes: readonly string[]) => prefixes.some((p) => path === p || path.startsWith(`${p}/`));
 const storageKey = (learnerId: number) => `edu:clock:${learnerId}`;
@@ -37,13 +37,15 @@ function writeSeconds(learnerId: number, seconds: number): void {
 }
 
 type ClockValue = {
+  /** Đã hết giờ học hôm nay hoặc đang ngoài khung giờ bố mẹ cho phép: bé phải chuyển sang màn khóa (`lockHref`). */
   exhausted: boolean;
+  lockHref: string;
   /** Phút đã học hôm nay và giới hạn bố mẹ đặt (null là không giới hạn); chưa tải xong thì cả hai null. */
   usedMinutes: number | null;
   limitMinutes: number | null;
 };
 
-const ClockContext = createContext<ClockValue>({ exhausted: false, usedMinutes: null, limitMinutes: null });
+const ClockContext = createContext<ClockValue>({ exhausted: false, lockHref: "/time-up", usedMinutes: null, limitMinutes: null });
 
 /** Giờ học hôm nay của bé: đã hết giờ chưa (trình chơi dùng để chuyển sang /time-up sau khi xong câu hiện tại) và số phút đã học. */
 export const useStudyClock = () => useContext(ClockContext);
@@ -54,17 +56,17 @@ export const useStudyClock = () => useContext(ClockContext);
  * `enabled` tắt ở màn kết thúc để kết quả bài kịp được lưu.
  */
 export function useTimeUpRedirect(step: unknown, enabled: boolean): void {
-  const { exhausted } = useStudyClock();
+  const { exhausted, lockHref } = useStudyClock();
   const router = useRouter();
-  const latest = useRef({ exhausted, enabled });
+  const latest = useRef({ exhausted, enabled, lockHref });
   useEffect(() => {
-    latest.current = { exhausted, enabled };
+    latest.current = { exhausted, enabled, lockHref };
   });
   const previous = useRef(step);
   useEffect(() => {
     if (previous.current === step) return;
     previous.current = step;
-    if (latest.current.exhausted && latest.current.enabled) router.replace("/time-up");
+    if (latest.current.exhausted && latest.current.enabled) router.replace(latest.current.lockHref);
   }, [step, router]);
 }
 
@@ -94,7 +96,7 @@ export function StudyClock({ children }: { children: React.ReactNode }) {
         learnerRef.current = next.learnerId;
         seconds.current = readSeconds(next.learnerId);
       }
-      if (next.exhausted && !startsWith(pathRef.current, FLOW_PREFIXES) && !startsWith(pathRef.current, NO_CLOCK_PREFIXES)) router.replace("/time-up");
+      if ((next.exhausted || next.outsideHours) && !startsWith(pathRef.current, FLOW_PREFIXES) && !startsWith(pathRef.current, NO_CLOCK_PREFIXES)) router.replace(next.outsideHours ? "/outside-hours" : "/time-up");
     },
     [router],
   );
@@ -147,9 +149,11 @@ export function StudyClock({ children }: { children: React.ReactNode }) {
     };
   }, [stopped, apply]);
 
-  const exhausted = status?.exhausted ?? false;
+  const outsideHours = status?.outsideHours ?? false;
+  const exhausted = (status?.exhausted ?? false) || outsideHours;
+  const lockHref = outsideHours ? "/outside-hours" : "/time-up";
   const usedMinutes = status?.usedMinutes ?? null;
   const limitMinutes = status?.limitMinutes ?? null;
-  const value = useMemo(() => ({ exhausted, usedMinutes, limitMinutes }), [exhausted, usedMinutes, limitMinutes]);
+  const value = useMemo(() => ({ exhausted, lockHref, usedMinutes, limitMinutes }), [exhausted, lockHref, usedMinutes, limitMinutes]);
   return <ClockContext.Provider value={value}>{children}</ClockContext.Provider>;
 }

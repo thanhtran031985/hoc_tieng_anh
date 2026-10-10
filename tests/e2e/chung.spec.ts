@@ -166,6 +166,8 @@ const PARENT_SCREENS: Screen[] = [
   { name: "Tổng quan bố mẹ", path: "/parent" },
   { name: "Cài đặt bố mẹ", path: "/parent/settings" },
   { name: "Bài viết & ghi âm", path: "/parent/works" },
+  { name: "Kỹ năng của con", path: "/parent/skills" },
+  { name: "Tiến độ & mở khóa", path: "/parent/progress" },
 ];
 const ADMIN_SCREENS: Screen[] = [
   { name: "Bảng điều khiển", path: "/admin" },

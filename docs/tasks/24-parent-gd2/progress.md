@@ -1,13 +1,13 @@
 # Tiến độ — 24-parent-gd2 — Khu bố mẹ GĐ2: kỹ năng, mở khóa thủ công, khung giờ học
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 09/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Kỹ năng (Adult03) | ✅ | Tự duyệt; Edge 24/24, 7 test |
 | 1 | Mở khóa thủ công (Adult17) | ✅ | Tự duyệt; Edge 36/36, 8 test luật |
 | 2 | Khung giờ học (Adult07) | ✅ | Tự duyệt; Edge 17/17, 11 test |
-| 3 | Chưa đến giờ học (Screen47) | ⬜ | |
+| 3 | Chưa đến giờ học (Screen47) | ✅ | Tự duyệt; Edge 33/33 |
 
 ## Nhật ký
 
@@ -22,6 +22,20 @@ Việc thủ công: `npx prisma migrate deploy` (migration `manual_unlocks`).
 **10/10/2026 — Bước 2.** Không có migration (khung giờ nằm trong cột JSON `learners.settings`). `studyWindowSchema` thêm `days` (các thứ 1–7, thiếu thì cả tuần nên đọc được cài đặt cũ chỉ có giờ); `learnerSettingsSchema` thêm `tempOpenUntil` (chỉ server ghi, dùng ở Bước 3). Hàm thuần `lib/rules/study-window.ts` (+ 11 test): `vnClock` (thứ và giờ theo múi giờ Việt Nam), `windowReason` (mở / ngày nghỉ / chưa tới giờ / đã quá giờ), `nextOpening`, `tempOpenActive`, `isStudyAllowed`, `tempOpenDeadline` (30 phút), `describeWindow`, `validateStudyDays`. `studyTimeInputSchema` thêm `days` (Zod: ít nhất một ngày, mỗi ngày 1–7, không trùng); `saveStudyTime` lưu khung `{from, to, days}`: chỉ chọn ngày mà để trống giờ thì lưu 00:00–23:59, cả tuần và không đặt giờ thì không có khung (null), và giữ nguyên `tempOpenUntil` cùng phút thêm. `TimePanel`: nhóm nút chọn ngày T2–CN (`aria-pressed`, đọc được “thứ Tư, được học/nghỉ”), giờ bắt đầu/kết thúc kiểm ≥ 30 phút như cũ, câu tóm tắt “Con sẽ học được: 17:00–20:30, T2…T6”, bỏ lời “chưa khóa theo giờ”. Kiểm (Edge, DB verify, `.tmp-verify/check-24-window.mjs`, 17/17): đặt T2–T6 17:00–20:30 → database đúng và tải lại thấy giá trị mới, lưu không làm mất `tempOpenUntil` và phút thêm, giờ kết thúc trước giờ bắt đầu / khung < 30 phút / không chọn ngày nào đều báo lỗi và không lưu, chỉ chọn ngày không đặt giờ lưu khung cả ngày, cả tuần không đặt giờ lưu null, không cuộn, không lỗi console. Việc khóa thật theo khung giờ làm ở Bước 3. tsc, lint, `npm test` sạch.
 Việc thủ công: không có.
 
+**10/10/2026 — Bước 3.** Không có migration. Server: `study-time.ts` thêm `isOutsideHours(learner)` (hồ sơ ngoài khung giờ và chưa được mở tạm), `StudyStatus.outsideHours`, `getOutsideHours` (lịch 7 ngày kèm giờ, lý do khóa, giờ học kế tiếp, số phút còn lại) và `openOutsideHours` (kiểm PIN bằng `checkParentSecret(…, "pin")` nên dùng chung bộ đếm khóa 5 lần; đúng thì ghi `settings.tempOpenUntil` = giờ server + 30 phút). `requireActiveLearner` chuyển bé sang `/outside-hours` khi ngoài khung giờ (trước khi kiểm hết giờ học), mọi trang của bé và server action không mang `allowTimeUp` đều đi qua đó nên gõ thẳng URL bài học cũng bị chặn ở server; hai màn khóa và các action ghi kết quả vẫn truyền `allowTimeUp` để không mất kết quả bé vừa làm. `StudyClock` chuyển bé sang `/outside-hours` ở nhịp kế (bài đang làm vẫn làm nốt câu, `useTimeUpRedirect` dùng `lockHref`). Màn `/outside-hours` (+ loading, error): khu vườn ban ngày (trời `garden-sky`, cỏ `garden-grass`, hoa `garden-flower`), Bông đội mũ rơm chơi diều và bóng; “Chưa đến giờ học!”, “Giờ học của {tên} bắt đầu lúc 17:00 nhé!”, chip “Còn N phút nữa · hôm nay …”; ngày nghỉ thành trạng thái Trống “Hôm nay là ngày nghỉ!” hẹn ngày được học kế tiếp; quá giờ thì “Hôm nay hết giờ học rồi!”; lịch 7 ngày `day-allowed` (hôm nay viền đậm); không có nút vào học; “Bố mẹ mở” → hộp PIN (báo lỗi dưới ô); lịch lỗi vẫn có Thử lại và Bố mẹ mở; đang trong khung giờ hoặc đang mở tạm thì về trang chủ. Kiểm (Edge, DB verify, `.tmp-verify/check-24-outside.mjs`, 33/33): bắt đầu sau 5 phút → gõ thẳng URL bài học, /home, /map, /notebook, /review, /room, /collection, /levels đều bị chuyển về /outside-hours; màn đúng lời Bông, 7 ngày, hôm nay viền đậm, không có nút vào học, không cuộn; PIN sai báo “Mã PIN chưa đúng”; PIN đúng → trang chủ, `tempOpenUntil` = giờ server + 30 phút, vào được bài học, /outside-hours đưa về trang chủ; đặt hết hạn thì tự khóa lại; quá giờ hôm nay hiện lời hẹn ngày mai; trong khung giờ vào bình thường; ngày nghỉ hiện trạng thái Trống và vẫn chặn URL bài học; không đặt khung hoặc cài đặt hỏng thì không khóa nhầm; không lỗi console. tsc, lint, `npm test` (582 đạt), build sạch.
+Việc thủ công: đặt khung giờ bắt đầu sau giờ hiện tại 5 phút, kiểm tra con không vào được, mở bằng PIN.
+
+## Kiểm tra cuối task (10/10/2026)
+
+`npx tsc --noEmit`, `npm run lint`, `npm test` (582 đạt), `npm run build` đều sạch. Kịch bản Edge của task 24 (DB verify): kỹ năng 24/24, mở khóa thủ công 36/36, khung giờ 17/17, chưa đến giờ học 33/33; không lỗi console. Spec Playwright `tests/e2e/24-bo-me-gd2.spec.ts` đã viết (kỹ năng, mở khóa, khung giờ, màn Chưa đến giờ học), `/parent/skills` và `/parent/progress` đã thêm vào danh sách của `chung.spec.ts`; CHƯA chạy Playwright (đợi chạy một lượt sau khi xong mọi task).
+
+### Việc thủ công (checklist)
+- [ ] `npx prisma migrate deploy` (migration `manual_unlocks`).
+- [ ] Khu bố mẹ → Kỹ năng: xem 7 thanh và danh sách từ hay sai của con (sau vài bài học).
+- [ ] Khu bố mẹ → Tiến độ: mở khóa một bài khóa, thử chọn nhiều mục; vào tài khoản của con kiểm tra bé vào được bài ngay.
+- [ ] Cài đặt → Thời gian học: chọn ngày và giờ; đặt giờ bắt đầu sau giờ hiện tại 5 phút, kiểm tra con không vào được (màn Chưa đến giờ học), bấm “Bố mẹ mở” nhập PIN để con học 30 phút.
+- [ ] Chạy Playwright một lượt sau khi xong mọi task (cần `prisma migrate reset`, bạn đồng ý riêng).
+
 ## Bước tiếp theo
 
-Bước 3 — Chưa đến giờ học (Screen47)
+Hoàn thành
