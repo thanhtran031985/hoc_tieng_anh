@@ -1,7 +1,10 @@
+"use client";
+
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 import type { Expr } from "./dragon-parts";
 import { dragonMarkup, type Stage } from "./dragon-stages";
+import { useMascotStage } from "./MascotStage";
 import styles from "./Mascot.module.css";
 
 export type { Expr, Stage };
@@ -25,12 +28,14 @@ export type MascotProps = Omit<ComponentProps<"svg">, "children" | "role"> & {
   size?: number;
   /** Màu rồng. Bỏ trống thì theo `data-dragon` của vùng chứa, rồi tới màu ngọc mặc định. */
   color?: MascotColor;
-  /** Dáng lớn lên theo cấp 1–5 (1 Hạt giống … 5 Cây lớn). Bỏ trống hoặc 3 thì là dáng gốc. */
+  /** Dáng lớn lên theo cấp 1–5 (1 Hạt giống … 5 Cây lớn). Bỏ trống thì theo cấp của hồ sơ đang chọn (MascotStageProvider), không có thì là dáng gốc (3). */
   stage?: Stage;
 };
 
 /** Rồng Bông, linh vật đồng hành. Không bao giờ buồn bã hay chê: khi sai luôn dùng `dongvien`. Chuyển động tắt khi bật giảm chuyển động. */
-export function Mascot({ expr, size = 200, color, stage, className, ...rest }: MascotProps) {
+export function Mascot({ expr, size = 200, color, stage: stageProp, className, ...rest }: MascotProps) {
+  const inherited = useMascotStage();
+  const stage = stageProp ?? inherited;
   return (
     <svg
       className={cn(styles.dragon, styles[expr], className)}

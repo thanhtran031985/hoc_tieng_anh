@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TestDots } from "@/components/lesson";
-import { Button, Icon, LevelChip, Mascot, type MascotColor } from "@/components/ui";
+import { Button, Icon, LevelChip, Mascot, useSetMascotStage, type MascotColor } from "@/components/ui";
 import { LessonFoot, LessonFrame, LessonMain } from "@/features/lesson/LessonFrame";
 import endStyles from "@/features/lesson/lesson-end.module.css";
 import { stageForLevel } from "@/lib/rules/mascot-stage";
@@ -29,6 +30,9 @@ export function ExamLevelUp({ result, learnerName, mascot, islands }: Props) {
   const { level, next, levelUp } = result;
   const target = next ?? level;
   const goHref = `/map/${target.number}`;
+  // Layout của bé chưa vẽ lại: đổi dáng rồng ngay để các màn sau (bản đồ đảo mới, trang chủ) đã là dáng cấp mới.
+  const setStage = useSetMascotStage();
+  useEffect(() => setStage(stageForLevel(target.number)), [setStage, target.number]);
   useHotkeys({ Enter: () => router.push(goHref), Space: () => playPronunciation("Level up! Welcome to the next island!") });
 
   const toClass = styles[`to${Math.min(5, Math.max(2, target.number))}` as "to2"];

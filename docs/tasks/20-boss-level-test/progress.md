@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 1 | Trận trùm (Screen33) | ✅ | Tự duyệt; Edge 17/17 đạt |
 | 2 | Bản đồ có cổng (Screen34) | ✅ | Tự duyệt; Edge 17/17 đạt |
 | 3 | Bài thi lên cấp (Screen35–37) | ✅ | Tự duyệt; Edge 47/47 đạt |
-| 4 | Rồng Bông theo cấp | ⬜ | |
+| 4 | Rồng Bông theo cấp | ✅ | Tự duyệt; Edge 18/18 đạt |
 | 5 | Điều chỉnh độ khó trong bài | ⬜ | |
 
 ## Nhật ký
@@ -25,6 +25,8 @@ Việc thủ công: `npx prisma migrate deploy` rồi `npx prisma db seed` (nạ
 **10/10/2026 — Bước 3.** Bài thi lên cấp (Screen35–37): migration `20261010053545_exams` (bảng `exams`, `exam_questions` để dành, `exam_attempts`) + `prisma/seed/exams.ts` (4 đề cấp 1–4, 20 câu, 80%); `src/lib/rules/level-test.ts` (hàm thuần + test: chọn 20 câu cân bằng chủ đề, không trùng từ/câu hỏi, trộn dạng bài; `passScore` 16/20; `gradeExam` 16 đạt – 15 chưa đạt; `weakTopics` tối đa 3 chủ đề sai nhiều nhất + từ hay sai; `retakeState`); `src/lib/schemas/exam.ts` (Zod cho nộp bài và các cột JSON); `src/server/exam.ts` (`getExamPage`, `startExam`, `submitExam`: mọi cửa vào qua `requireOpenExamGate`, chỉ nhận kết quả từng câu, một lần nộp thắng, nộp lại trả kết quả đã lưu; đạt thì cùng giao dịch: `current_level_id` lên cấp kế, +50 sao, +100 xu, huy hiệu `level:N`, ghi `answer_logs` source exam; thi lại chỉ khi có `lesson_attempts.finished_at` sau lần thi cho bài thường của một chủ đề gợi ý); `src/features/exam/` (`ExamFlow`, `ExamIntro` Screen35, `ExamPlayer` dùng lại `StepView` của bài học + lưu dở trên máy, `ExamLevelUp` Screen36, `ExamRetry` Screen37, server actions) và `TestDots` (thanh 20 chấm, `components/lesson`); trang `/exam/[level]` + `loading.tsx` + `error.tsx`. Kiểm (Edge, DB verify, `.tmp-verify/check-20-exam.mjs`, 47/47): cổng khóa bị chặn ở server; giới thiệu đúng thiết kế, không cuộn; bộ 20 câu 8 chủ đề mỗi chủ đề 2–3 câu, 6 dạng bài; thanh 20 chấm + đếm n/20; 16/20 → lên cấp (database: `current_level_id` cấp 4, sao +50, xu +100, huy hiệu `level:3`, `exam_attempts` passed) và `/exam/3` sau đó về bản đồ; 15/20 → màn chưa đạt (không chữ “trượt”, không màu đỏ, 3 chủ đề + từ hay sai, phím 1 mở bài ôn), không lên cấp; thi lại bị chặn tới khi hoàn thành một bài của chủ đề gợi ý (bài của chủ đề khác không đủ); 1366×768 và 1920×1080 không cuộn; không lỗi console. tsc, lint, `npm test` (478 đạt), build sạch. Token mới không thêm.
 Việc thủ công: `npx prisma migrate deploy` rồi `npx prisma db seed` (đề thi); Playwright sau khi xong hết task (cần `prisma migrate reset`).
 
+**10/10/2026 — Bước 4.** Rồng Bông theo cấp: `MascotStageProvider` + `useMascotStage`/`useSetMascotStage` (`src/components/ui/Mascot/MascotStage.tsx`); `Mascot` (nay là client component) lấy `stage` từ context khi không truyền, không có provider thì giữ dáng gốc (parent/admin/đăng nhập không đổi); `(kid)/layout.tsx` nạp dáng theo `current_level` của hồ sơ đang chọn (`stageForLevel`); khi cấp đổi ngay trên máy mà layout chưa vẽ lại, `ExamLevelUp` và `PlacementFlow` gọi `setStage` để các màn sau đã là dáng mới (không dùng `revalidatePath` vì làm trang bài thi tải lại và đá bé ra khỏi màn lên cấp); trang chọn hồ sơ giữ dáng gốc vì chưa chọn bé nào (thẻ hồ sơ trong thiết kế chỉ có ảnh bé, không có rồng). Kiểm (Edge, DB verify, `.tmp-verify/check-20-stage.mjs`, 18/18): đổi `current_level_id` ở database sang cấp 4, 1, 2, 5, 3 thì rồng ở trang chủ, tổng quan 10 cấp và bài học đều đổi đúng dáng (nhãn “dáng cấp N”), bản đồ cấp 4 dáng 4, trang chọn hồ sơ dáng gốc, ảnh chụp cấp 4 thấy khăn quàng; không lỗi console. tsc, lint, `npm test` (478 đạt), build sạch.
+
 ## Bước tiếp theo
 
-Bước 4 — Rồng Bông theo cấp
+Bước 5 — Điều chỉnh độ khó trong bài

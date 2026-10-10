@@ -39,7 +39,7 @@ export default async function ProfilesPage() {
         ) : (
           <>
             <div className={styles.head}>
-              <Mascot expr="chao" className={styles.headMascot} />
+              <Mascot expr="chao" stage={3} className={styles.headMascot} />
               <h1 className={styles.title}>Ai đang học hôm nay?</h1>
             </div>
             <div className={styles.grid}>

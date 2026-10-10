@@ -5,6 +5,7 @@ export { IconButton, type IconButtonProps } from "./IconButton/IconButton";
 export { KeyHint, type KeyHintProps } from "./KeyHint/KeyHint";
 export { Mascot, type Expr, type MascotColor, type MascotProps, type Stage } from "./Mascot/Mascot";
 export { MascotGrowth, type MascotGrowthProps } from "./Mascot/MascotGrowth";
+export { MascotStageProvider, useMascotStage, useSetMascotStage } from "./Mascot/MascotStage";
 export { STAGES } from "./Mascot/dragon-stages";
 export { WordPicture, type WordPictureProps } from "./WordPicture/WordPicture";
 export { PICTURE_NAMES, type PictureName } from "./WordPicture/pictures";

@@ -6,7 +6,7 @@ export function ProfilesTop({ children }: { children?: React.ReactNode }) {
   return (
     <div className={styles.top}>
       <div className={styles.brand}>
-        <Mascot expr="vui" size={44} />
+        <Mascot expr="vui" size={44} stage={3} />
         Học cùng Bông
       </div>
       <div className={styles.actions}>{children}</div>

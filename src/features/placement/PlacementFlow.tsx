@@ -2,7 +2,8 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { MascotColor, TopbarLearner } from "@/components/ui";
+import { useSetMascotStage, type MascotColor, type TopbarLearner } from "@/components/ui";
+import { stageForLevel } from "@/lib/rules/mascot-stage";
 import { answerPlacement, createPlacement, isPlacementDone, pickQuestion, suggestLevel, type PlacementState } from "@/lib/rules/placement";
 import type { PlacementSetup } from "@/server/placement";
 import { useTimeUpRedirect } from "@/features/study-clock/StudyClock";
@@ -23,6 +24,7 @@ type Answer = { wordId: number; level: number; correct: boolean };
 /** Bài xếp lớp: giới thiệu → câu hỏi thích ứng → kết quả. Giữ trạng thái chọn câu, gửi kết quả lên server khi xong. */
 export function PlacementFlow({ setup, mascot, learner }: Props) {
   const router = useRouter();
+  const setStage = useSetMascotStage();
   const { pools, maxLevel, gradeLevel } = setup;
   const [phase, setPhase] = useState<Phase>("intro");
   const [state, setState] = useState<PlacementState>(() => createPlacement(setup.grade, maxLevel));
@@ -92,6 +94,7 @@ export function PlacementFlow({ setup, mascot, learner }: Props) {
     try {
       const result = await applyStartLevelAction({ level });
       if (result.ok) {
+        setStage(stageForLevel(level));
         router.push("/home");
         return;
       }
