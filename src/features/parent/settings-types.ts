@@ -15,7 +15,7 @@ export type SettingsKid = {
 /** Cài đặt chi tiết của con đang chọn (cho hai nhóm Thời gian học và Giao diện & âm thanh). */
 export type SettingsSelected = SettingsKid & {
   limitMinutes: number | null;
-  window: { from: string; to: string } | null;
+  window: { from: string; to: string; days: number[] } | null;
   accent: "en-US" | "en-GB";
   speed: "normal" | "slow";
   soundOn: boolean;

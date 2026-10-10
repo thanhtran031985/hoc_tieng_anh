@@ -2,6 +2,7 @@ import { z } from "zod";
 import { MAX_PASSWORD_LENGTH } from "./auth";
 import { UI_THEMES } from "./learner";
 import { validateName, validateNewPassword, validateNewPin, validateStudyWindow } from "../rules/parent-settings";
+import { ALL_DAYS, validateStudyDays } from "../rules/study-window";
 
 // Dữ liệu bố mẹ gửi khi lưu Cài đặt. Luật kiểm nằm ở src/lib/rules/parent-settings.ts (dùng chung với biểu mẫu trên trình duyệt).
 
@@ -16,8 +17,12 @@ export const studyTimeInputSchema = z
     /** Khung giờ được học (dạng giờ:phút); để trống cả hai là mọi giờ. */
     from: z.string().max(5),
     to: z.string().max(5),
+    /** Các thứ được học (1 = thứ Hai … 7 = Chủ nhật). */
+    days: z.array(z.number().int()).default([...ALL_DAYS]),
   })
   .superRefine((value, ctx) => {
+    const dayError = validateStudyDays(value.days);
+    if (dayError) ctx.addIssue({ code: "custom", path: ["days"], message: dayError });
     const errors = validateStudyWindow(value.from, value.to);
     if (errors.from) ctx.addIssue({ code: "custom", path: ["from"], message: errors.from });
     if (errors.to) ctx.addIssue({ code: "custom", path: ["to"], message: errors.to });

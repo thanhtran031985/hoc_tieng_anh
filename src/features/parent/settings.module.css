@@ -186,3 +186,39 @@
   margin-top: var(--lip-m);
   color: var(--field-error);
 }
+
+/* Chọn các ngày được học trong tuần (T2–CN). */
+.daysSet {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.days {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.dayBtn {
+  min-width: var(--space-12);
+  height: var(--space-10);
+  border-radius: var(--radius-pill);
+  border: var(--border-thin) solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-family: var(--font-thcs);
+  font-size: var(--text-adm-body);
+  font-weight: 600;
+  cursor: pointer;
+}
+.dayOn {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--surface);
+}
+.dayBtn:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--space-1);
+}

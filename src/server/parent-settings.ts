@@ -12,6 +12,7 @@ import {
   studyTimeInputSchema,
 } from "@/lib/schemas";
 import { normalizeClock } from "@/lib/rules/parent-settings";
+import { FULL_DAY, isEveryDay } from "@/lib/rules/study-window";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { checkParentSecret } from "./parent-secret";
@@ -26,20 +27,30 @@ const fail = (message: string, field?: string): SettingsResult => ({ ok: false, 
 
 export type SettingsLevel = { number: number; name: string };
 
+function studyWindowOf(from: string, to: string, days: number[]) {
+  const noHours = from.trim() === "" && to.trim() === "";
+  const sorted = [...days].sort((a, b) => a - b);
+  if (noHours && isEveryDay(sorted)) return null;
+  return noHours ? { ...FULL_DAY, days: sorted } : { from: normalizeClock(from), to: normalizeClock(to), days: sorted };
+}
+
 export async function listLevels(): Promise<SettingsLevel[]> {
   return db.level.findMany({ orderBy: { number: "asc" }, select: { number: true, name: true } });
 }
 
-/** Thời gian học: giới hạn mỗi ngày và khung giờ (khung giờ mới chỉ lưu, chưa khóa theo giờ — GĐ2). */
+/**
+ * Thời gian học: giới hạn mỗi ngày, khung giờ và ngày được học. Ngoài khung giờ bé bị chuyển sang màn Chưa đến giờ học (khóa ở server).
+ * Chỉ chọn ngày mà để trống giờ thì lưu khung cả ngày 00:00–23:59; cả tuần và không đặt giờ thì không có khung.
+ */
 export async function saveStudyTime(userId: number, input: unknown): Promise<SettingsResult> {
   const parsed = studyTimeInputSchema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Thông tin chưa hợp lệ.", String(parsed.error.issues[0]?.path[0] ?? ""));
-  const { learnerId, limit, from, to } = parsed.data;
+  const { learnerId, limit, from, to, days } = parsed.data;
   const learner = await requireLearner(userId, learnerId);
   const settings = learnerSettingsSchema.parse({
     ...learner.settings,
     dailyLimitMinutes: limit === "none" ? null : Number(limit),
-    studyWindow: from.trim() === "" && to.trim() === "" ? null : { from: normalizeClock(from), to: normalizeClock(to) },
+    studyWindow: studyWindowOf(from, to, days),
   });
   await db.learner.update({ where: { id: learnerId }, data: { settings } });
   return { ok: true };

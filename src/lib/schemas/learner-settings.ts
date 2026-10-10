@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ALL_DAYS } from "../rules/study-window.ts";
 
 // Cài đặt của hồ sơ học sinh, lưu ở cột JSON `learners.settings` (PRD D7).
 // Dùng chung giữa server và client; thiếu trường nào thì lấy giá trị mặc định.
@@ -8,6 +9,11 @@ const clockTime = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Giờ dạng HH
 export const studyWindowSchema = z.object({
   from: clockTime,
   to: clockTime,
+  /** Các thứ được học: 1 = thứ Hai … 7 = Chủ nhật (thiếu thì cả tuần, để đọc được cài đặt cũ chỉ có giờ). */
+  days: z
+    .array(z.number().int().min(1).max(7))
+    .min(1)
+    .default([...ALL_DAYS]),
 });
 
 export const voiceSettingsSchema = z.object({
@@ -24,8 +30,10 @@ export const studyBonusSchema = z.object({
 export const learnerSettingsSchema = z.object({
   /** Giới hạn phút học mỗi ngày; null là không giới hạn. */
   dailyLimitMinutes: z.number().int().min(5).max(240).nullable().default(null),
-  /** Khung giờ được học trong ngày; null là mọi giờ. */
+  /** Khung giờ và ngày được học; null là mọi giờ, mọi ngày. */
   studyWindow: studyWindowSchema.nullable().default(null),
+  /** Mốc (ms kể từ 1970) bố mẹ mở tạm cho bé học ngoài khung giờ bằng PIN; chỉ server ghi, hết hạn thì tự khóa lại. */
+  tempOpenUntil: z.number().int().nullable().default(null),
   voice: voiceSettingsSchema.prefault({}),
   /** Phút thêm sau khi bố mẹ nhập PIN ở màn Hết giờ học. */
   bonus: studyBonusSchema.nullable().default(null),
