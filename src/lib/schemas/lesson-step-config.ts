@@ -23,6 +23,7 @@ export const ACTIVITY_TYPES = [
   "race",
   "word_explorer",
   "word_family",
+  "build_family",
 ] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
@@ -60,6 +61,8 @@ export const lessonStepConfigSchemas = {
   word_explorer: z.object({}),
   /** 8.28 Họ vần (task 26): họ vần nào lấy từ `word_families`. */
   word_family: z.object({ familyId: z.number().int().positive() }),
+  /** 8.28 Ghép chữ đầu (task 26): ghép chữ đầu với vần của họ vần nào. */
+  build_family: z.object({ familyId: z.number().int().positive() }),
 } satisfies Record<ActivityType, z.ZodType>;
 
 export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;

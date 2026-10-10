@@ -1,0 +1,313 @@
+/* Ghép chữ đầu (Screen51): ô chữ, ô trống + vần, ô kết quả, “Đã tìm được”. Vừa 1366×768, không cuộn. */
+.bd {
+  display: flex;
+  flex-direction: column;
+  gap: min(var(--space-4), 2dvh);
+  width: 100%;
+  align-items: center;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: min(var(--space-6), 2vw);
+}
+
+/* Hàng chữ đầu */
+.letters {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, var(--size-letter-tile));
+  gap: var(--space-3);
+}
+.tile {
+  width: var(--size-letter-tile);
+  height: var(--size-letter-tile);
+  border-radius: var(--radius-md);
+  background: var(--letter-tile);
+  border: var(--border-thick) solid var(--line-strong);
+  box-shadow: 0 var(--space-1) 0 var(--line-strong);
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: grab;
+  touch-action: none;
+  padding: 0;
+  position: relative;
+  transition: transform var(--duration-fast);
+}
+.tile:hover {
+  transform: translateY(calc(var(--space-1) * -0.5));
+}
+.used {
+  opacity: 0.4;
+}
+.target {
+  border-color: var(--brand);
+  box-shadow:
+    0 0 0 var(--space-1) var(--brand-soft),
+    0 var(--space-1) 0 var(--brand);
+}
+.glow {
+  box-shadow:
+    0 0 0 var(--space-1) var(--read-highlight),
+    0 var(--space-1) 0 var(--line-strong);
+  animation: pulse 1s 2;
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.08);
+  }
+}
+.ghost {
+  position: fixed;
+  z-index: var(--z-burst);
+  width: var(--size-letter-tile);
+  height: var(--size-letter-tile);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--letter-tile);
+  border: var(--border-thick) solid var(--brand);
+  box-shadow: var(--shadow-tile);
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+.arrow {
+  color: var(--line-strong);
+  display: grid;
+}
+
+/* Ô trống và vần */
+.eq {
+  display: flex;
+  gap: var(--space-2);
+}
+.slot {
+  width: calc(var(--size-letter-tile) * 1.5);
+  height: calc(var(--size-letter-tile) * 1.5);
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  border: var(--border-thick) dashed var(--brand);
+  background: var(--build-slot-bg);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: calc(var(--size-letter-tile) * 0.8);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+  transition:
+    transform var(--duration-fast),
+    background-color var(--duration-fast);
+}
+.filled {
+  border-style: solid;
+}
+.over {
+  background: var(--brand-soft);
+  transform: scale(1.06);
+}
+.ok {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.fake {
+  border-color: var(--retry);
+  background: var(--fake-word-bg);
+  animation: shake 0.4s;
+}
+@keyframes shake {
+  25% {
+    transform: translateX(calc(var(--space-1) * -1));
+  }
+  75% {
+    transform: translateX(var(--space-1));
+  }
+}
+.rime {
+  min-width: calc(var(--size-letter-tile) * 1.9);
+  height: calc(var(--size-letter-tile) * 1.5);
+  box-sizing: border-box;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--rime-bg);
+  color: var(--rime-ink);
+  border: var(--border-thick) solid var(--rime-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: calc(var(--size-letter-tile) * 0.8);
+  line-height: 1;
+  font-weight: 800;
+}
+
+/* Ô kết quả */
+.res {
+  width: calc(var(--size-letter-tile) * 3.5);
+  min-height: calc(var(--size-letter-tile) * 2.1);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  text-align: center;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-2) var(--space-3);
+}
+.res svg[role="img"],
+.res img {
+  width: min(calc(var(--space-16) + var(--space-8)), 11dvh);
+  height: auto;
+}
+.res b {
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--ink);
+}
+.res > span {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.resOk {
+  border: var(--border-thin) solid var(--success);
+  animation: pop 0.5s;
+}
+@keyframes pop {
+  50% {
+    transform: scale(1.06);
+  }
+}
+.resFake,
+.resIdle {
+  flex-direction: row;
+  text-align: left;
+  gap: var(--space-2);
+}
+.resFake {
+  background: var(--fake-word-bg);
+}
+.resFake svg,
+.resIdle svg {
+  width: min(calc(var(--space-12) + var(--space-4)), 8dvh);
+  height: auto;
+  flex: none;
+}
+.res p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  color: var(--ink);
+}
+.resTarget {
+  border: var(--border-thin) dashed var(--brand);
+}
+.targetLabel {
+  color: var(--brand-shade) !important;
+}
+.mark {
+  color: var(--rime-ink);
+}
+
+/* Đã tìm được */
+.found {
+  width: 100%;
+  max-width: calc(var(--space-16) * 15);
+  box-sizing: border-box;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-2) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.found h3 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.found h3 b {
+  color: var(--success-shade);
+}
+.found ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.chip {
+  height: var(--space-12);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3) 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--found-chip);
+  border: var(--border-thin) solid var(--branch-line-open);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-body-l);
+  line-height: 1;
+  font-weight: 800;
+}
+.chip svg[role="img"],
+.chip img {
+  width: var(--space-8);
+  height: var(--space-8);
+}
+.link {
+  cursor: pointer;
+}
+.link:hover {
+  border-color: var(--success);
+}
+.link svg {
+  color: var(--brand);
+}
+.fresh {
+  animation: pop 0.5s;
+}
+.empty {
+  display: block;
+  width: calc(var(--space-16) * 1.75);
+  height: var(--space-12);
+  box-sizing: border-box;
+  border-radius: var(--radius-pill);
+  border: var(--border-thin) dashed var(--line-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow,
+  .fake,
+  .resOk,
+  .fresh {
+    animation: none;
+  }
+}

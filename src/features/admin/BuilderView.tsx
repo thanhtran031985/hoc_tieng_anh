@@ -19,6 +19,7 @@ import { cn } from "@/lib/cn";
 import { GAME_ACTIVITIES, isGameActivity, isRainLevel } from "@/lib/rules/games";
 import { ACTIVITY_INFO, estimateMinutes, gameStepProblem, insertIndex, isActivityStep, isBuilderActivity, lessonStats, type BuilderActivity, type BuilderStep } from "@/lib/rules/admin-builder";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
+import { canBuild } from "@/lib/rules/word-family";
 import { buildPlaySteps, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
 import { saveLessonSchema } from "@/lib/schemas/admin-builder";
 import { parseLessonStepConfig } from "@/lib/schemas/lesson-step-config";
@@ -65,8 +66,8 @@ export function BuilderView({ data }: { data: BuilderData }) {
   const hasQuestion = (id: number) => steps.some((s) => s.questionId === id);
   const storyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => (s.activityType === "story" && typeof s.config?.storyId === "number" ? s.config.storyId : null);
   const hasStory = (id: number) => steps.some((s) => storyIdOf(s) === id);
-  const familyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => (s.activityType === "word_family" && typeof s.config?.familyId === "number" ? s.config.familyId : null);
-  const hasFamily = (id: number) => steps.some((s) => familyIdOf(s) === id);
+  const familyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => ((s.activityType === "word_family" || s.activityType === "build_family") && typeof s.config?.familyId === "number" ? s.config.familyId : null);
+  const hasFamily = (id: number, type: "word_family" | "build_family") => steps.some((s) => s.activityType === type && familyIdOf(s) === id);
 
   function add(step: Omit<BuilderStep, "key">) {
     setErrors((e) => ({ ...e, steps: "" }));
@@ -96,7 +97,8 @@ export function BuilderView({ data }: { data: BuilderData }) {
     const familyId = familyIdOf(s);
     if (familyId !== null) {
       const family = data.families.find((f) => f.id === familyId);
-      return family ? `Họ vần -${family.pattern} ${family.soundIpa}` : `Họ vần #${familyId}`;
+      const label = s.activityType === "build_family" ? "Ghép chữ đầu" : "Họ vần";
+      return family ? `${label} -${family.pattern} ${family.soundIpa}` : `${label} #${familyId}`;
     }
     if (s.questionId !== null) return data.questions.find((q) => q.id === s.questionId)?.summary ?? `Câu hỏi #${s.questionId}`;
     if (s.wordId !== null) return known.get(s.wordId)?.word ?? `Từ #${s.wordId}`;
@@ -222,24 +224,30 @@ export function BuilderView({ data }: { data: BuilderData }) {
                     <br />
                     <span className={cn(adultStyles.small, adultStyles.muted)}>{f.members.length} từ cùng âm</span>
                   </span>
-                  {hasFamily(f.id) ? (
-                    <span className={styles.in}>
-                      <Icon name="check" size={14} />
-                      Đã có
-                    </span>
-                  ) : (
-                    <AdultButton
-                      label="Thêm"
-                      icon="plus"
-                      variant="secondary"
-                      size="s"
-                      aria-label={`Thêm bước Họ vần -${f.pattern} vào bài`}
-                      onClick={() => {
-                        add({ activityType: "word_family", wordId: null, questionId: null, config: { familyId: f.id } });
-                        toast("Đã thêm bước Họ vần vào bài.");
-                      }}
-                    />
-                  )}
+                  <span className={styles.sugActs}>
+                    {(["word_family", "build_family"] as const).map((type) =>
+                      hasFamily(f.id, type) ? (
+                        <span key={type} className={styles.in}>
+                          <Icon name="check" size={14} />
+                          {ACTIVITY_INFO[type].label}
+                        </span>
+                      ) : (
+                        <AdultButton
+                          key={type}
+                          label={ACTIVITY_INFO[type].label}
+                          icon="plus"
+                          variant="secondary"
+                          size="s"
+                          disabled={type === "build_family" && !canBuild(f.build)}
+                          aria-label={`Thêm bước ${ACTIVITY_INFO[type].label} -${f.pattern} vào bài`}
+                          onClick={() => {
+                            add({ activityType: type, wordId: null, questionId: null, config: { familyId: f.id } });
+                            toast(`Đã thêm bước ${ACTIVITY_INFO[type].label} vào bài.`);
+                          }}
+                        />
+                      ),
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>

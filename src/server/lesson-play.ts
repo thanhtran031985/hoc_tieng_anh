@@ -90,7 +90,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   if (!node || node.state === "locked") throw new LessonLockedError();
 
   const unitWords = unitCards.flatMap((c) => (c.word ? [c.word] : []));
-  const families = await loadLessonFamilies(learnerId, lesson.steps.flatMap((s) => (s.activityType === "word_family" ? [parseLessonStepConfig("word_family", s.config)] : [])).flatMap((c) => (c && "familyId" in c ? [c.familyId] : [])), lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])));
+  const families = await loadLessonFamilies(learnerId, lesson.steps.flatMap((s) => (s.activityType === "word_family" || s.activityType === "build_family" ? [parseLessonStepConfig(s.activityType, s.config)] : [])).flatMap((c) => (c && "familyId" in c ? [c.familyId] : [])), lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])));
   const seed = `${learnerId}:${lesson.id}:${today().toISOString().slice(0, 10)}`;
   const steps = buildPlaySteps(
     lesson.steps.map((s) => ({

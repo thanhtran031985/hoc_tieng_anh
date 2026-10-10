@@ -174,14 +174,14 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
   }
 
   // Bước Họ vần cần `config.familyId` trỏ tới một họ có thật; xuất bản bài thì họ đó phải đã xuất bản (bản Nháp không tới bé nên bước sẽ bị bỏ qua).
-  const familySteps = steps.filter((s) => s.activityType === "word_family");
+  const familySteps = steps.filter((s) => s.activityType === "word_family" || s.activityType === "build_family");
   const familyIds = [...new Set(familySteps.map((s) => (s.config as { familyId?: unknown } | null)?.familyId))];
-  if (familyIds.some((fid) => typeof fid !== "number" || !Number.isInteger(fid) || fid < 1)) return fail("Bước Họ vần chưa chọn họ. Hãy thêm lại từ danh sách Họ vần.", "steps");
+  if (familyIds.some((fid) => typeof fid !== "number" || !Number.isInteger(fid) || fid < 1)) return fail("Bước Họ vần / Ghép chữ đầu chưa chọn họ. Hãy thêm lại từ danh sách Họ vần.", "steps");
   if (familyIds.length) {
     const rows = await db.wordFamily.findMany({ where: { id: { in: familyIds as number[] } }, select: { pattern: true, status: true } });
     if (rows.length !== familyIds.length) return fail("Có họ vần không còn nữa. Hãy tải lại trang.", "steps");
     const draft = rows.filter((r) => r.status !== "published");
-    if (status === "published" && draft.length) return fail(`Họ vần “-${draft.map((r) => r.pattern).join(", -")}” chưa xuất bản nên bước Họ vần chưa dùng được. Xuất bản ở Quản trị › Họ vần hoặc lưu bài ở dạng nháp.`, "steps");
+    if (status === "published" && draft.length) return fail(`Họ vần “-${draft.map((r) => r.pattern).join(", -")}” chưa xuất bản nên bước Họ vần hoặc Ghép chữ đầu chưa dùng được. Xuất bản ở Quản trị › Họ vần hoặc lưu bài ở dạng nháp.`, "steps");
   }
 
   // Bước truyện cần `config.storyId` trỏ tới một truyện có thật.

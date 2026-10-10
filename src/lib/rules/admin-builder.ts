@@ -21,13 +21,14 @@ export type BuilderActivity =
   | "whack_letters"
   | "race"
   | "word_explorer"
-  | "word_family";
+  | "word_family"
+  | "build_family";
 
 /** Dạng bài lấy toàn bộ nội dung từ câu hỏi gắn vào bước (task 15): bước phải có `questionId`. */
 export const QUESTION_ACTIVITIES: readonly BuilderActivity[] = ["phonics", "sentence_order", "dictation", "fill_blank", "short_reading", "speaking"];
 export const isQuestionActivity = (type: string): boolean => (QUESTION_ACTIVITIES as readonly string[]).includes(type);
 
-export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "cards" | "speaker" | "image" | "plusbox" | "gem" | "music" | "grammar" | "keyboard" | "pen" | "book" | "notebook" | "mic" | "snow" | "wand" | "target" | "flag" | "branch" | "family"; seconds: number; needsWord: boolean }> = {
+export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "cards" | "speaker" | "image" | "plusbox" | "gem" | "music" | "grammar" | "keyboard" | "pen" | "book" | "notebook" | "mic" | "snow" | "wand" | "target" | "flag" | "branch" | "family" | "blocks"; seconds: number; needsWord: boolean }> = {
   word_card: { label: "Giới thiệu từ", icon: "cards", seconds: 20, needsWord: true },
   listen_choose_picture: { label: "Nghe và chọn hình", icon: "speaker", seconds: 25, needsWord: true },
   choose_word_for_picture: { label: "Chọn từ đúng cho hình", icon: "image", seconds: 25, needsWord: true },
@@ -46,6 +47,7 @@ export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "card
   race: { label: "Đua xe trả lời", icon: "flag", seconds: 120, needsWord: false },
   word_explorer: { label: "Khám phá từ", icon: "branch", seconds: 180, needsWord: true },
   word_family: { label: "Họ vần", icon: "family", seconds: 90, needsWord: false },
+  build_family: { label: "Ghép chữ đầu", icon: "blocks", seconds: 120, needsWord: false },
 };
 
 export const MAX_STEPS = 60;

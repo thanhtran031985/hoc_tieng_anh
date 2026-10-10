@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 |---|---|---|---|
 | 0 | Bảng và seed mẫu | ✅ | Migration word_family, Zod, quy tắc, seed -at và -ir |
 | 1 | Họ vần (Screen50) | ✅ | FamilyMap, FamilyPlayer, route /family/[id], dạng bài word_family, Soạn bài học |
-| 2 | Ghép chữ đầu (Screen51) | ⬜ | |
+| 2 | Ghép chữ đầu (Screen51) | ✅ | BuildBoard, BuildPlayer, build-flow, route /family/[id]/build, dạng bài build_family |
 | 3 | Liên kết qua lại (WordLinks, Screen53) | ⬜ | |
 | 4 | Tab Họ vần trong Sổ từ (Screen52) | ⬜ | |
 | 5 | Soạn Họ vần (Adult23) | ⬜ | |
@@ -34,6 +34,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-family.mjs`, 37 mục đạt): họ Nháp là 404; 5 thẻ, 2 thẻ “Sắp học”, vần tô màu, bẫy eat/what gạch lượn sóng kèm lời giải thích, 5 đường nối; không cuộn ở 1366×768, 1440×900, 1920×1080; ← → không vòng quanh; Space nghe cả họ (5 thẻ có dấu nghe); Esc về Sổ từ; trong bài: Tiếp tục khóa tới khi nghe đủ 3 từ đã học, H gợi ý thẻ chưa nghe, Enter khi đủ thì sang bước kế, không ghi `answer_logs`; đoạn văn không bị chân bài che. `npm test` 662/662 (39 test họ vần), `tsc` và `lint` sạch.
 - Việc thủ công: không có thêm (xuất bản họ ở bước 5).
 
+### Bước 2 — Ghép chữ đầu (Screen51) (10/10/2026)
+- Luồng thuần `lib/rules/build-flow.ts` (+ 20 test): đặt chữ, kiểm (từ thật / đã tìm / không có thật), trả ô về trống, gợi ý, gõ cụm “sh” (`typeOnset`, `flushPending`), từ cần ghép đầu tiên.
+- `components/wordlab/BuildBoard`: hàng ô chữ (`letter-tile`), ô trống nét đứt + vần cố định (`rime-bg`), ô kết quả (xanh khi đúng, cam nhẹ `fake-word-bg` khi không có thật, khung “Từ cần ghép đầu tiên”), thanh “Đã tìm được” (`found-chip`).
+- `features/word-family/BuildPlayer` (+ `BuildView`): bấm hoặc kéo chữ vào ô trống (kéo theo con trỏ, thả ngoài ô thì không đặt), gõ chữ (f rồi l thành “fl”), Enter kiểm tra (tự khám phá thì tự kiểm sau 0,45 giây), Backspace/Delete xóa ô, ? gợi ý, Space nghe vần. Từ không có thật chỉ nhắc nhẹ, không trừ điểm.
+- Route `/family/[familyId]/build?first=<mã từ>` (+ loading, error) mở từ nút “Ghép” trên thẻ ở Họ vần; “Về họ vần” và Esc. Họ Nháp hoặc ít hơn 2 từ ghép được là 404.
+- Dạng bài `build_family` (config `{familyId}`): schema, `PlayStep` (kèm hàng chữ đã xáo theo hạt giống bài), `StepView`/`BuildStep`. Tìm đủ mục tiêu thì có bảng kết thúc 3 sao (không xu: xem decisions.md). Soạn bài học: tab Họ vần có hai nút “Họ vần” và “Ghép chữ đầu” cho mỗi họ.
+- Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-build.mjs`, 61 mục đạt): 7 ô chữ (5 thật + z, v); bấm, gõ, gõ cụm fl, kéo thả; từ thật vào Đã tìm được; zat ô cam nhẹ kèm lời Bông; chữ đã tìm báo lại; Backspace xóa; q nhắc nhẹ; tự khám phá không có bảng kết thúc; mở từ thẻ hat có khung “Từ cần ghép đầu tiên” và chữ h viền sáng; Về họ vần; họ Nháp 404; trong bài: Kiểm tra khóa khi ô trống, ? gợi ý, h là chữ (không phải gợi ý), f không bật học tập trung, bảng kết thúc “Cậu ghép đủ 5 từ rồi!”, không ghi `answer_logs`; không cuộn ở 1366×768, 1440×900, 1920×1080. `npm test` 682/682, `tsc` và `lint` sạch.
+- Việc thủ công: không có thêm.
+
 ## Bước tiếp theo
 
-Bước 2 — Ghép chữ đầu (Screen51)
+Bước 3 — Liên kết qua lại (WordLinks, Screen53)

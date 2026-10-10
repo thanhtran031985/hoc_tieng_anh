@@ -9,7 +9,7 @@ import { splitSentence } from "./sentence-words.ts";
 import { isShortWord } from "./grading/dictation.ts";
 import { buildBubbleGame, buildRaceQuestions, buildRainWords, buildWhackRounds, gameWords, isRainLevel, type BubbleGame, type RaceQuestion, type WhackRound } from "./games.ts";
 import { seededRandom, shuffled } from "./random.ts";
-import { isFamilyLessonPlayable, type FamilyView } from "./word-family.ts";
+import { buildTiles, canBuild, isFamilyLessonPlayable, type FamilyView } from "./word-family.ts";
 import { isPlayable, viewBranches, type ExplorerContent, type ExplorerViewBranch } from "./word-explorer.ts";
 
 export type PlayWord = {
@@ -67,6 +67,8 @@ export type PlayStep =
   /** 8.27 Khám phá từ: `word` ở giữa, 4–6 nhánh câu hỏi, rồi đoạn văn “Đọc cả đoạn”. */
   /** 8.28 Họ vần: các từ cùng vần, từ Bẫy chính tả và đoạn văn vui. */
   | { id: string; kind: "word_family"; family: FamilyView }
+  /** 8.28 Ghép chữ đầu: hàng chữ đầu đã xáo theo hạt giống của bước. */
+  | { id: string; kind: "build_family"; family: FamilyView; tiles: string[] }
   | { id: string; kind: "word_explorer"; word: PlayWord; branches: ExplorerViewBranch[]; reading: ExplorerContent["reading"]; glossary: Record<string, string> }
   /** Ôn tập: một câu hỏi nhánh của Khám phá từ (bé chọn 1 trong 2–3 hình). Chỉ dựng ở phiên ôn, không có trong bài học. */
   | { id: string; kind: "explorer_branch"; word: PlayWord; branch: ExplorerViewBranch }
@@ -135,7 +137,7 @@ export type PlayStepKind = PlayStep["kind"];
 export type ExplorerBranchStep = Extract<PlayStep, { kind: "explorer_branch" }>;
 
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_explorer" | "word_family" | "explorer_branch" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_explorer" | "word_family" | "build_family" | "explorer_branch" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
 
 const DEFAULT_OPTIONS = 3;
 /** Số từ nhiễu dự phòng của câu chọn (độ khó thích ứng cần tối đa 1, dư một từ phòng trùng). */
@@ -259,6 +261,12 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
         // Họ chưa xuất bản (hoặc chưa có từ cùng âm nào bé đã học để nghe) thì bỏ qua bước.
         const family = config.familyId !== undefined ? extras.families?.get(config.familyId) : undefined;
         if (family && isFamilyLessonPlayable(family)) play.push({ id, kind: "word_family", family });
+        break;
+      }
+      case "build_family": {
+        // Họ chưa xuất bản hoặc chưa đủ từ thật để ghép thì bỏ qua bước.
+        const family = config.familyId !== undefined ? extras.families?.get(config.familyId) : undefined;
+        if (family && canBuild(family.build)) play.push({ id, kind: "build_family", family, tiles: buildTiles(family.build, `${seed}:${id}`) });
         break;
       }
       case "story": {

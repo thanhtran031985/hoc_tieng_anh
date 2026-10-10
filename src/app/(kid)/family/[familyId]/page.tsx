@@ -35,6 +35,7 @@ export default async function FamilyPage({ params, searchParams }: { params: Pro
         audio={(await getVoiceMp3Enabled()) ? screen.audio : {}}
         accent={learner.settings.voice.accent}
         highlight={word}
+        buildHref={`/family/${familyId}/build${query.from === "notebook" ? `?from=notebook${word ? `&word=${word}` : ""}` : ""}`}
         closeHref={query.from === "notebook" ? `/notebook${word ? `?word=${word}&tab=family` : ""}` : "/notebook"}
       />
     </SoundProvider>

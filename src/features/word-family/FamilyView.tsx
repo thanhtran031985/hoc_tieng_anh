@@ -15,15 +15,17 @@ type Props = {
   highlight: number | null;
   /** Nơi quay về khi bé đóng (Sổ từ). */
   closeHref: string;
+  /** Đường dẫn Ghép chữ đầu của họ, thêm `?first=<mã từ>` khi mở từ một thẻ. */
+  buildHref: string;
 };
 
 /** Tự khám phá một họ vần (mở từ Sổ từ): bấm thẻ là nghe, không tính sao hay xu, Esc hoặc nút Đóng để về Sổ từ. */
-export function FamilyView({ family, audio, accent, highlight, closeHref }: Props) {
+export function FamilyView({ family, audio, accent, highlight, closeHref, buildHref }: Props) {
   const router = useRouter();
   return (
     <>
       <SpeechConfig accent={accent} audio={audio} />
-      <FamilyPlayer mode="explore" family={family} accent={accent} highlight={highlight} onClose={() => router.push(closeHref)} />
+      <FamilyPlayer mode="explore" family={family} accent={accent} highlight={highlight} onClose={() => router.push(closeHref)} onBuild={(wordId) => router.push(`${buildHref}${buildHref.includes("?") ? "&" : "?"}first=${wordId}`)} />
     </>
   );
 }
