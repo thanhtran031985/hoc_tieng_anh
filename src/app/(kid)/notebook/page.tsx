@@ -16,6 +16,6 @@ export default async function NotebookPage({ searchParams }: { searchParams: Pro
   const learner = await requireActiveLearner();
   const notebook = await getNotebook(user.id, learner.id);
   // ?word=ID&tab=explore: quay về thẻ phóng to của từ (sau khi đóng màn Khám phá đầy đủ).
-  const initialZoom = Number.isInteger(wordId) && wordId > 0 ? { wordId, tab: pick(query.tab) === "explore" ? ("explore" as const) : ("card" as const) } : undefined;
+  const initialZoom = Number.isInteger(wordId) && wordId > 0 ? { wordId, tab: pick(query.tab) === "explore" ? ("explore" as const) : pick(query.tab) === "family" ? ("family" as const) : ("card" as const) } : undefined;
   return <NotebookView topbar={topbarProps(learner)} learnerName={learner.name} mascot={toMascotColor(learner.mascot)} notebook={notebook} initialZoom={initialZoom} />;
 }

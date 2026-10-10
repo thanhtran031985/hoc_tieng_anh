@@ -32,6 +32,8 @@ export type FamilyPlayerProps = {
   preview?: boolean;
   /** Nhúng trong khung khác (có đầu màn riêng): chỉ vẽ phần thân, không vẽ đầu màn tự khám phá. */
   embedded?: boolean;
+  /** Thu gọn (tab Họ vần của thẻ từ trong Sổ từ): thẻ nhỏ hơn, không có “Đọc cả đoạn”. */
+  compact?: boolean;
 };
 
 /** Nghỉ sau khi đọc vần rồi mới đọc từ đầu tiên, và giữa hai thẻ khi nghe cả họ. */
@@ -43,7 +45,7 @@ const CARD_GAP_MS = 950;
  * Trong bài: nghe đủ các từ đã học rồi bấm Tiếp tục; Gợi ý (H) chỉ thẻ chưa nghe. Từ chưa học (“Sắp học”) vẫn nghe được nhưng không bắt buộc.
  * Phím: ← → đi giữa các thẻ, Space nghe cả họ, Enter nghe thẻ đang chọn.
  */
-export function FamilyPlayer({ mode, family, active = true, accent, onComplete, onClose, onBuild, onExplore, isLocked, highlight = null, preview = false, embedded = false }: FamilyPlayerProps) {
+export function FamilyPlayer({ mode, family, active = true, accent, onComplete, onClose, onBuild, onExplore, isLocked, highlight = null, preview = false, embedded = false, compact = false }: FamilyPlayerProps) {
   const lessonMode = mode === "lesson";
   const [heard, setHeard] = useState<number[]>([]);
   const [playing, setPlaying] = useState<number | null>(null);
@@ -164,6 +166,7 @@ export function FamilyPlayer({ mode, family, active = true, accent, onComplete, 
         hubPlaying={hubPlaying}
         glow={glow}
         hl={highlight}
+        compact={compact}
         showActions={!lessonMode}
         isLocked={isLocked}
         onSay={sayCard}
@@ -172,7 +175,7 @@ export function FamilyPlayer({ mode, family, active = true, accent, onComplete, 
         onBuild={onBuild}
         onExplore={onExplore}
       />
-      {family.reading && (
+      {family.reading && !compact && (
         <ReadAloudParagraph
           sentences={family.reading.sentences}
           audioUrl={family.reading.audio}

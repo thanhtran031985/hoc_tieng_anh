@@ -2,6 +2,7 @@ import { sortWords } from "@/lib/rules/notebook";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { wordsWithExplorer } from "./word-explorer";
+import { familiesOfWords } from "./word-lab";
 
 // Dữ liệu cho Sổ từ của bé: các từ đã học (có thẻ ôn tập) kèm mức thuộc (= số hộp), cấp và chủ đề.
 // Đi qua `requireLearner` nên chỉ đọc được hồ sơ thuộc tài khoản đang đăng nhập.
@@ -23,6 +24,8 @@ export type NotebookWord = {
   levelNumbers: number[];
   /** Từ có Khám phá đã xuất bản: thẻ phóng to hiện tab Khám phá. */
   hasExplorer: boolean;
+  /** Họ vần đã xuất bản mà từ thuộc về (cùng âm): thẻ phóng to hiện tab Họ vần. Null nếu không có. */
+  familyId: number | null;
 };
 
 export type NotebookTopic = { id: number; title: string; titleVi: string; levelNumber: number; count: number };
@@ -72,12 +75,12 @@ export async function getNotebook(userId: number, learnerId: number): Promise<No
     levelNames.set(unit.level.number, unit.level.name);
   }
 
-  const withExplorer = await wordsWithExplorer(wordIds);
+  const [withExplorer, familyOf] = await Promise.all([wordsWithExplorer(wordIds), familiesOfWords(wordIds)]);
   const words: NotebookWord[] = sortWords(
     learned.map((w) => {
       const unitIds = [...(unitsOfWord.get(w.id) ?? [])];
       const levelNumbers = [...new Set(unitIds.map((id) => units.get(id)!.levelNumber))].sort((a, b) => a - b);
-      return { ...w, unitIds, levelNumbers, levelNumber: levelNumbers[0] ?? null, hasExplorer: withExplorer.has(w.id) };
+      return { ...w, unitIds, levelNumbers, levelNumber: levelNumbers[0] ?? null, hasExplorer: withExplorer.has(w.id), familyId: familyOf.get(w.id)?.id ?? null };
     }),
   );
   const topics: NotebookTopic[] = [...units.values()]

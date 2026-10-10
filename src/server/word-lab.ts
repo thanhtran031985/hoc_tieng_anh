@@ -22,6 +22,16 @@ export type LabData =
   | { v: "fam"; family: FamilyView; audio: Record<string, string> }
   | { v: "build"; family: FamilyView; tiles: string[]; first: number | null; audio: Record<string, string> };
 
+/** Họ vần đã xuất bản của nhiều từ cùng lúc (cho Sổ từ): mỗi từ một họ, nhỏ mã nhất nếu có nhiều. */
+export async function familiesOfWords(wordIds: readonly number[]): Promise<Map<number, WordFamilyLink>> {
+  const ids = [...new Set(wordIds)];
+  const result = new Map<number, WordFamilyLink>();
+  if (ids.length === 0) return result;
+  const rows = await db.wordFamilyMember.findMany({ where: { wordId: { in: ids }, sameSound: true, family: { status: "published" } }, orderBy: { familyId: "asc" }, select: { wordId: true, family: { select: { id: true, pattern: true } } } });
+  for (const row of rows) if (!result.has(row.wordId)) result.set(row.wordId, row.family);
+  return result;
+}
+
 /** Họ vần đã xuất bản của một từ (nhỏ mã nhất nếu có nhiều), null nếu từ không thuộc họ nào. */
 export async function familyOfWord(wordId: number): Promise<WordFamilyLink | null> {
   const row = await db.wordFamilyMember.findFirst({ where: { wordId, sameSound: true, family: { status: "published" } }, orderBy: { familyId: "asc" }, select: { family: { select: { id: true, pattern: true } } } });

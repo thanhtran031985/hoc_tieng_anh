@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 1 | Họ vần (Screen50) | ✅ | FamilyMap, FamilyPlayer, route /family/[id], dạng bài word_family, Soạn bài học |
 | 2 | Ghép chữ đầu (Screen51) | ✅ | BuildBoard, BuildPlayer, build-flow, route /family/[id]/build, dạng bài build_family |
 | 3 | Liên kết qua lại (WordLinks, Screen53) | ✅ | WordLabShell, WordLinks, getWordLabEntry; /explore, /family, /family/[id]/build dùng chung khung |
-| 4 | Tab Họ vần trong Sổ từ (Screen52) | ⬜ | |
+| 4 | Tab Họ vần trong Sổ từ (Screen52) | ✅ | WordZoom 3 tab, familiesOfWords, getFamilyCompactAction |
 | 5 | Soạn Họ vần (Adult23) | ⬜ | |
 
 ## Nhật ký
@@ -51,6 +51,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-journey.mjs`, 43 mục đạt): đi đúng lượt bird → họ -ir → Ghép chữ → shirt → Khám phá shirt (đường dẫn dài dần tới 4 bậc), Quay lại từng bậc bằng Backspace với trạng thái còn nguyên (nhánh 2 của bird vẫn mở, thẻ bird vẫn đã nghe, Đã tìm được vẫn 1/2), bấm đường dẫn về thẳng bậc 1, Khám phá bird khi bird đã ở bậc 1 thì cắt về, Esc về Sổ từ; bậc thứ 5 (Họ vần của bird: -at, bird tạm thêm vào họ -at) bị khóa kèm lời giải thích, bấm không đổi đường dẫn, Quay lại một bậc thì hết khóa; không cuộn ở 1366×768. Kiểm lại hồi quy: `check-26-family`, `check-26-build` (cập nhật cho khung mới), `check-25-explorer`, `check-25-notebook` đều đạt. `npm test` 682/682, `tsc` và `lint` sạch.
 - Việc thủ công: không có thêm.
 
+### Bước 4 — Tab Họ vần trong Sổ từ (Screen52) (10/10/2026)
+- `NotebookWord.familyId` (họ đã xuất bản mà từ thuộc về, `familiesOfWords` tra một lần cho cả sổ). `WordZoom` có 3 tab Thẻ từ · Khám phá · Họ vần (`role=tablist`, ← → đổi tab và vòng quanh); tab chưa có dữ liệu thì ẩn kèm một dòng giải thích gộp (“chưa có Khám phá”, “chưa có Họ vần” hoặc “chưa có Khám phá và Họ vần nên chỉ có Thẻ từ”). `?word=ID&tab=family` mở sẵn tab Họ vần.
+- Tab Họ vần nạp họ thu gọn bằng `getFamilyCompactAction` (qua `getFamilyView`, Zod `familyIdInputSchema`; các từ cùng họ dùng chung một lần nạp): `FamilyPlayer compact` (thẻ nhỏ, từ đang xem tô sáng, ô Bẫy, không có Đọc cả đoạn), nút “Ghép” mở `/family/[id]/build?first=…&from=notebook&word=…`, “Khám phá” mở `/explore/[wordId]?from=notebook`, “Mở Họ vần đầy đủ” mở `/family/[id]?from=notebook&word=…`; Đóng / Esc ở các màn đó về đúng thẻ ở tab Họ vần.
+- Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-notebook.mjs`, 35 mục đạt): bird đủ 3 tab, họ -ir 4 thẻ, bird được tô sáng, hộp thoại nằm gọn ở 1366×768 và trang không cuộn; ← → vòng quanh 3 tab; Tab 30 lần không ra khỏi hộp thoại; Ghép → màn Ghép chữ đầy đủ với “Từ cần ghép đầu tiên”, Esc về đúng thẻ bird ở tab Họ vần; Mở Họ vần đầy đủ → Esc về thẻ; cat chỉ có Thẻ từ + Họ vần kèm dòng giải thích, ← → ngoài dải tab sang từ khác và về tab Thẻ từ; “time” chỉ có Thẻ từ; họ -ir Nháp thì bird mất tab Họ vần. `npm test` 682/682, `tsc` và `lint` sạch.
+- Việc thủ công: không có thêm.
+
 ## Bước tiếp theo
 
-Bước 4 — Tab Họ vần trong Sổ từ (Screen52)
+Bước 5 — Soạn Họ vần (Adult23)
