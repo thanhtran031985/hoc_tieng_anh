@@ -12,6 +12,7 @@ import { seedRewards } from "./seed/rewards.ts";
 import { seedRoomItems } from "./seed/room.ts";
 import { seedStories } from "./seed/stories.ts";
 import { seedWordExplorer } from "./seed/word-explorer.ts";
+import { seedWordFamilies } from "./seed/word-family.ts";
 
 try {
   process.loadEnvFile(".env");
@@ -159,6 +160,7 @@ async function main() {
   await seedExams(db);
   await seedRoomItems(db);
   await seedWordExplorer(db);
+  await seedWordFamilies(db);
 
   const [stages, levels, units] = await Promise.all([db.stage.count(), db.level.count(), db.unit.count()]);
   await seedAdmin();

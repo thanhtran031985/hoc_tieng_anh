@@ -147,6 +147,7 @@ model Level {
   words     Word[]
   questions Question[]
   stories   Story[]
+  families  WordFamily[]
   exams     Exam[]
   learners  Learner[]  @relation("LearnerCurrentLevel")
 
@@ -247,6 +248,7 @@ model Word {
   answerLogs  AnswerLog[]
   reviewCards ReviewCard[]
   questions   WordQuestion[]
+  familyLinks WordFamilyMember[]
 
   @@index([word])
   @@index([levelId])
@@ -799,4 +801,49 @@ model WordReading {
 
   @@unique([ownerType, ownerId])
   @@map("word_readings")
+}
+
+enum WordFamilyKind {
+  rime
+  root
+}
+
+/// Họ vần (task 26): các từ cùng vần và cùng âm (“-at” /æt/, “-ir” /ɜː/). `root` (họ từ gốc) để dành cho GĐ3.
+/// `build_rime`: vần dùng để Ghép chữ đầu (null = `pattern`; họ “-ir” ghép bằng “irt”). `decoys` (["z", "v"]): chữ đầu không thành từ, làm nhiễu.
+/// `trap_note`: lời Bông giải thích ô “Bẫy chính tả”. Đoạn văn vui ở `word_readings` (owner_type family). Schema: src/lib/schemas/word-family.ts.
+model WordFamily {
+  id        Int            @id @default(autoincrement())
+  pattern   String         @db.VarChar(10)
+  kind      WordFamilyKind @default(rime)
+  soundIpa  String         @map("sound_ipa") @db.VarChar(40)
+  levelId   Int            @map("level_id")
+  buildRime String?        @map("build_rime") @db.VarChar(10)
+  decoys    Json
+  trapNote  String         @default("") @map("trap_note") @db.VarChar(500)
+  status    ContentStatus  @default(draft)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  level   Level              @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  members WordFamilyMember[]
+
+  @@unique([pattern, soundIpa])
+  @@index([levelId])
+  @@map("word_families")
+}
+
+/// Một từ của họ vần. `same_sound` false là “Bẫy chính tả”: cùng chữ nhưng đọc khác (eat, what).
+model WordFamilyMember {
+  id        Int     @id @default(autoincrement())
+  familyId  Int     @map("family_id")
+  wordId    Int     @map("word_id")
+  sameSound Boolean @default(true) @map("same_sound")
+  sortOrder Int     @map("sort_order")
+
+  family WordFamily @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  word   Word       @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([familyId, wordId])
+  @@index([wordId])
+  @@map("word_family_members")
 }

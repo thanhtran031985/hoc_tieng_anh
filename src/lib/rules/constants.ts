@@ -44,3 +44,6 @@ export const WORDLAB = {
 
 /** Đọc cả đoạn: thời gian mỗi chữ sáng khi chưa có tệp mp3 (khớp --duration-read-word và --duration-read-word-slow). Không thuộc họ `wordlab` của tokens.json. */
 export const READ_WORD_MS = { normal: 420, slow: 640 } as const;
+
+/** Ghép chữ đầu: họ vần chỉ có Ghép khi có ít nhất chừng này từ thật (task 26). Không thuộc họ `wordlab` của tokens.json. */
+export const BUILD_MIN_REAL = 2;
