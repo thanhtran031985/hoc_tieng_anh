@@ -1,6 +1,6 @@
 # Tiến độ — 26-word-family — Họ vần, Ghép chữ đầu và liên kết qua lại
 
-Trạng thái chung: ⬜ · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
