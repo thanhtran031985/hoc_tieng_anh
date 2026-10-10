@@ -2,6 +2,7 @@ import { parseLessonStepConfig } from "@/lib/schemas";
 import { buildPlaySteps, type PhonicsSoundInfo, type PlayExtras, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
 import { isExtraQuestionType, parseExtraQuestion } from "@/lib/schemas";
 import { today } from "@/lib/rules/dates";
+import { bossFor } from "@/lib/rules/bosses";
 import { buildAudioMap } from "@/lib/rules/tts";
 import { extraQuestionTexts } from "@/lib/rules/play-texts";
 import { levelStatus } from "@/lib/rules/unlock";
@@ -38,9 +39,16 @@ export type LessonPlay = {
   steps: PlayStep[];
   /** Các từ của bài theo thứ tự xuất hiện, cho danh sách "Từ vừa học". */
   words: PlayWord[];
+  /** Trùm của chủ đề khi bài là trận trùm (`unit_test`); null với bài thường. */
+  boss: { name: string; accessory: string; fur: number } | null;
   /** Bảng "chữ → đường dẫn mp3" của các từ và câu ví dụ trong bài; rỗng khi công tắc "Giọng mp3" tắt (dùng giọng trình duyệt). */
   audio: Record<string, string>;
 };
+
+function bossOf(levelNumber: number, slug: string): LessonPlay["boss"] {
+  const boss = bossFor(levelNumber, slug);
+  return { name: boss.name, accessory: boss.accessory, fur: boss.fur };
+}
 
 const wordSelect = { id: true, word: true, ipa: true, meaningVi: true, exampleEn: true, exampleVi: true, image: true } as const;
 
@@ -53,7 +61,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
       id: true,
       title: true,
       kind: true,
-      unit: { select: { id: true, title: true, titleVi: true, level: { select: { id: true, number: true, name: true } } } },
+      unit: { select: { id: true, slug: true, title: true, titleVi: true, level: { select: { id: true, number: true, name: true } } } },
       steps: {
         orderBy: { sortOrder: "asc" },
         select: { id: true, activityType: true, config: true, word: { select: wordSelect }, question: { select: { id: true, type: true, prompt: true, options: true, answer: true, status: true } } },
@@ -109,7 +117,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
     ? { ...(await getAudioMap([...lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])), ...unitWords.map((w) => w.id)])), ...(await clipMap(clipTexts)) }
     : {};
 
-  return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, steps, words, audio };
+  return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, boss: lesson.kind === "unit_test" ? bossOf(unit.level.number, unit.slug) : null, steps, words, audio };
 }
 
 /** Bảng mp3 của các từ (theo id): tra thêm cột `audio`/`example_audio` vì `wordSelect` không lấy chúng. */

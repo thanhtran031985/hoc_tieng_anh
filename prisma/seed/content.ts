@@ -98,6 +98,25 @@ export async function seedContent(db: PrismaClient) {
               addedSteps += 1;
             }
           }
+          // Trận trùm chưa có lượt đấu nào thì dựng lại theo bản 2 (6 câu trộn); đã có lượt đấu thì giữ nguyên.
+          const bossPlan = built.find((l) => l.kind === "unit_test");
+          const boss = await tx.lesson.findFirst({ where: { unitId: unit.id, kind: "unit_test" }, select: { id: true } });
+          if (bossPlan && boss) {
+            const fought = (await tx.lessonAttempt.count({ where: { lessonId: boss.id } })) + (await tx.lessonProgress.count({ where: { lessonId: boss.id } }));
+            if (fought === 0) {
+              await tx.lessonStep.deleteMany({ where: { lessonId: boss.id } });
+              await tx.lessonStep.createMany({
+                data: bossPlan.steps.map((step, i) => ({
+                  lessonId: boss.id,
+                  sortOrder: i + 1,
+                  activityType: step.activityType,
+                  wordId: step.word === null ? null : wordIds.get(step.word)!,
+                  questionId: step.questionKey ? (questionIds.get(step.questionKey) ?? null) : null,
+                  config: step.config as object,
+                })),
+              });
+            }
+          }
           kept.push(`cấp ${level.number}/${slug}`);
         } else {
           await tx.lesson.deleteMany({ where: { unitId: unit.id } });

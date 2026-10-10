@@ -75,10 +75,12 @@ export type BuildOptions = {
 
 /** Mỗi bài tối đa 8 từ (5–8 từ; vài trường hợp lẻ như 9 từ chia 5 + 4). */
 export const MAX_WORDS_PER_LESSON = 8;
-/** Trận trùm có tối đa chừng này bước để không quá dài. */
+/** Trận trùm bản 1 có tối đa chừng này bước để không quá dài. */
 export const MAX_BOSS_STEPS = 12;
 /** Số lựa chọn tối đa mỗi câu (cùng giới hạn với schema bước). */
 const MAX_OPTIONS = 3;
+/** Trận trùm bản 2 (task 20): đúng 6 câu trộn dạng bài, không đếm giờ. */
+export const BOSS_STEP_COUNT = 6;
 const MIN_PAIRS = 3;
 const MAX_PAIRS = 6;
 /** Bài có ít nhất chừng này từ có hình mới có trò chơi lật thẻ. */
@@ -121,6 +123,30 @@ export function planGame(levelNumber: number, lessonIndex: number, words: readon
     if (can(game)) return game;
   }
   return null;
+}
+
+/**
+ * Trận trùm bản 2: 6 câu trộn theo đúng thiết kế (nghe chọn hình, điền từ, chọn từ, sắp xếp câu, ghép âm / nghe-gõ, nghe chọn hình).
+ * Câu hỏi dạng mới lấy từ chủ đề (mỗi dạng một câu, chọn lệch với các bài thường); thiếu thì thay bằng nghe/chọn từ để vẫn đủ 6 câu.
+ */
+function bossStepsV2(bossWords: readonly BuilderWord[], options: BuildOptions, listenStep: (w: string) => BuiltStep, chooseStep: (w: string) => BuiltStep, canListen: boolean, canChoose: boolean): BuiltStep[] {
+  const level = options.levelNumber ?? 0;
+  const lastOf = (kind: ExtraKind): string | null => (extraAllowed(kind, level) ? ((options.extras?.[kind] ?? []).at(-1) ?? null) : null);
+  const slots: ("listen" | "choose" | ExtraKind)[] = ["listen", "fill_blank", "choose", "sentence_order", level <= 3 ? "phonics" : "dictation", "listen"];
+  const steps: BuiltStep[] = [];
+  let next = 0;
+  const word = () => bossWords[next++ % bossWords.length].word;
+  for (const slot of slots) {
+    if (slot === "listen" || slot === "choose") {
+      const useListen = slot === "listen" ? canListen || !canChoose : !canChoose && canListen;
+      steps.push(useListen ? listenStep(word()) : chooseStep(word()));
+      continue;
+    }
+    const key = lastOf(slot);
+    if (key) steps.push(makeStep(slot, null, {}, key));
+    else steps.push(canChoose && (steps.length % 2 === 1 || !canListen) ? chooseStep(word()) : listenStep(word()));
+  }
+  return steps.slice(0, BOSS_STEP_COUNT);
 }
 
 /** Các bước dạng mới và trò chơi của bài thường `index` trong `count` bài thường (bản 2). */
@@ -210,7 +236,7 @@ export function buildLessons(words: readonly BuilderWord[], options: BuildOption
     lessons.push({
       title: options.unitTitle ? `Trận trùm: ${options.unitTitle}` : "Trận trùm",
       kind: "unit_test",
-      steps: bossSteps.slice(0, MAX_BOSS_STEPS),
+      steps: options.levelNumber !== undefined ? bossStepsV2(bossWords, options, listenStep, chooseStep, canListen, canChoose) : bossSteps.slice(0, MAX_BOSS_STEPS),
     });
   }
 

@@ -85,6 +85,7 @@ model Learner {
   reviewCards    ReviewCard[]
   recordings     Recording[]
   gameRecords    GameRecord[]
+  rewards        LearnerReward[]
   studySessions  StudySession[]
 
   @@index([userId])
@@ -582,4 +583,53 @@ model AudioClip {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("audio_clips")
+}
+
+enum RewardType {
+  sticker
+  badge
+  room_item
+  avatar_frame
+  theme
+  title
+}
+
+/// Danh mục phần thưởng (PRD G). Task 20 nạp huy hiệu trùm cuối vùng (`boss:<cấp>:<chủ đề>`) và huy hiệu qua đảo (`level:<cấp>`); task 21 làm giao diện bộ sưu tập.
+model Reward {
+  id        Int        @id @default(autoincrement())
+  type      RewardType
+  /// Mã ổn định để nạp lại không trùng và để mã nguồn tham chiếu.
+  code      String     @unique @db.VarChar(80)
+  name      String     @db.VarChar(150)
+  image     String?    @db.VarChar(255)
+  /// Giá bằng xu (đồ trong cửa hàng); null nếu không bán.
+  price     Int?
+  /// Điều kiện nhận (JSON), vd `{"kind":"boss","level":2,"unit":"food-drink"}`.
+  condition Json?
+  /// Dáng rồng/cấp mà phần thưởng thuộc về (1–5), nếu có.
+  forStage  Int?       @map("for_stage") @db.TinyInt
+  sortOrder Int        @default(0) @map("sort_order")
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  learnerRewards LearnerReward[]
+
+  @@index([type, sortOrder])
+  @@map("rewards")
+}
+
+/// Phần thưởng bé đã có.
+model LearnerReward {
+  id         Int      @id @default(autoincrement())
+  learnerId  Int      @map("learner_id")
+  rewardId   Int      @map("reward_id")
+  acquiredAt DateTime @default(now()) @map("acquired_at")
+  equipped   Boolean  @default(false)
+  /// Vị trí đồ trong phòng (JSON), dùng ở task 22.
+  position   Json?
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  reward  Reward  @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+
+  @@unique([learnerId, rewardId])
+  @@map("learner_rewards")
 }

@@ -50,4 +50,6 @@ export type LessonCompletion = {
   minutes: number;
   /** Chặng kế tiếp trên bản đồ (bài tiếp theo hoặc trùm đã mở); null nếu xong hết cấp. */
   nextLessonId: number | null;
+  /** Huy hiệu nhận được ở bài này (trận trùm); `isNew` là lần đầu. */
+  badge?: { name: string; isNew: boolean } | null;
 };

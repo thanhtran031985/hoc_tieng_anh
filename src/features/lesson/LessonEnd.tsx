@@ -1,7 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { BossArt } from "@/components/lesson";
 import { Button, ButtonLink, Icon, Mascot, Skeleton, SpeakerButton, WordPicture } from "@/components/ui";
+import type { Boss } from "@/lib/rules/bosses";
+import boss from "./boss/boss.module.css";
 import { cn } from "@/lib/cn";
 import type { PlayWord } from "@/lib/rules/lesson-play";
 import { useHotkeys } from "@/lib/use-hotkeys";
@@ -15,6 +18,8 @@ type Props = {
   unitTitleVi: string;
   lessonTitle: string;
   bossLesson: boolean;
+  /** Trùm của trận vừa đấu (khi `bossLesson`): hiện trùm làm bạn với bé. */
+  bossInfo?: Pick<Boss, "name" | "accessory" | "fur"> | null;
   /** Số liệu tính ngay trên máy (cùng hàm với server) để hiện sao khi chưa lưu xong hoặc lưu lỗi. */
   preview: LessonCompletion;
   words: PlayWord[];
@@ -32,7 +37,7 @@ function title(stars: number, name: string, boss: boolean): string {
 }
 
 /** Màn kết thúc bài (Screen12): sao hiện lần lượt, xu/XP, số câu đúng, thời gian, danh sách từ vừa học, nút đi tiếp. */
-export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, preview, words, mapHref, save, onRetry, onReplay }: Props) {
+export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, bossInfo = null, preview, words, mapHref, save, onRetry, onReplay }: Props) {
   const saving = save.status === "idle";
   const failed = save.status === "error";
   const result = save.status === "ok" ? save.completion : preview;
@@ -53,7 +58,14 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, p
       </div>
 
       <div className={styles.hero}>
-        <Mascot expr={failed ? "dongvien" : saving ? "suynghi" : "chucmung"} size={280} />
+        {bossLesson && bossInfo ? (
+          <div className={boss.pair}>
+            <BossArt boss={bossInfo} mood="friend" size={220} />
+            <Mascot expr={failed ? "dongvien" : saving ? "suynghi" : "chucmung"} size={190} />
+          </div>
+        ) : (
+          <Mascot expr={failed ? "dongvien" : saving ? "suynghi" : "chucmung"} size={280} />
+        )}
         <div className={styles.bigStars} role="img" aria-label={`${result.stars} trên 3 sao`}>
           {[1, 2, 3].map((n) => (
             <span key={n} className={cn(styles.bigStar, n === 2 && styles.bigStarMid)} style={{ "--n": n - 1 } as React.CSSProperties}>
@@ -67,7 +79,15 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, p
             "Bông đang ghi lại kết quả…"
           ) : bossLesson ? (
             <>
-              Bé đã đấu xong trận trùm <b>{unitTitleVi}</b>
+              {bossInfo ? (
+                <>
+                  <b>{bossInfo.name}</b> cười toe: “Cậu thắng rồi! Từ nay mình là bạn nhé!”
+                </>
+              ) : (
+                <>
+                  Bé đã đấu xong trận trùm <b>{unitTitleVi}</b>
+                </>
+              )}
             </>
           ) : (
             <>
@@ -116,6 +136,16 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, p
             </>
           )}
         </div>
+
+        {!saving && result.badge && (
+          <div className={boss.badge} role="status">
+            <Icon name="medal" size={32} />
+            <span>
+              {result.badge.isNew ? "Huy hiệu mới: " : "Huy hiệu của bé: "}
+              <b>{result.badge.name}</b>
+            </span>
+          </div>
+        )}
 
         {words.length > 0 && (
           <div className={styles.wordsBox}>

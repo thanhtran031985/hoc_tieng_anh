@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { EXTRA_KINDS, NEW_ACTIVITY_TYPES, buildLessons, distribute, extraAllowed, planAppend, planGame, storyKey, type BuilderWord, type UnitExtras } from "./lesson-builder.ts";
+import { BOSS_STEP_COUNT, EXTRA_KINDS, NEW_ACTIVITY_TYPES, buildLessons, distribute, extraAllowed, planAppend, planGame, storyKey, type BuilderWord, type UnitExtras } from "./lesson-builder.ts";
 
 const NAMES = ["cat", "dog", "pig", "hen", "cow", "duck", "fish", "bird", "frog", "goat", "lamb", "bear", "lion", "fox", "mouse", "horse", "sheep", "zebra"];
 const words = (n: number, picture = true): BuilderWord[] => NAMES.slice(0, n).map((word) => ({ word, hasPicture: picture }));
@@ -37,13 +37,13 @@ describe("lesson-builder bản 2", () => {
     assert.ok(lessons4.includes("word_rain") || regular(buildLessons(words(18), { levelNumber: 3, extras })).flatMap((l) => types(l.steps)).includes("word_rain"));
   });
 
-  it("mỗi bài thường có ít nhất một trò chơi hoặc dạng bài mới; trận trùm không đổi", () => {
+  it("mỗi bài thường có ít nhất một trò chơi hoặc dạng bài mới; trận trùm là 6 câu trộn", () => {
     for (const level of [1, 2, 3, 4]) {
       const lessons = buildLessons(words(18), { levelNumber: level, extras, unitTitle: "T" });
       for (const lesson of regular(lessons)) assert.ok(lesson.steps.some((s) => NEW_ACTIVITY_TYPES.includes(s.activityType)), `cấp ${level} ${lesson.title}`);
       const boss = lessons.at(-1)!;
       assert.equal(boss.kind, "unit_test");
-      assert.deepEqual(types(boss.steps), types(buildLessons(words(18), { unitTitle: "T" }).at(-1)!.steps));
+      assert.equal(boss.steps.length, BOSS_STEP_COUNT);
     }
   });
 
@@ -71,6 +71,29 @@ describe("lesson-builder bản 2", () => {
 
   it("cùng đầu vào cho cùng kết quả", () => {
     assert.deepEqual(buildLessons(words(16), { levelNumber: 3, extras }), buildLessons(words(16), { levelNumber: 3, extras }));
+  });
+});
+
+describe("trận trùm bản 2", () => {
+  const boss = (level: number, e: UnitExtras | undefined = extras) => buildLessons(words(16), { levelNumber: level, extras: e, unitTitle: "T" }).at(-1)!;
+  it("đúng 6 câu trộn dạng bài (nghe, điền, chọn, sắp xếp, ghép âm hoặc nghe-gõ, nghe)", () => {
+    for (const level of [1, 2, 3, 4]) {
+      const b = boss(level);
+      assert.equal(b.kind, "unit_test");
+      assert.equal(b.steps.length, BOSS_STEP_COUNT, `cấp ${level}`);
+    }
+    assert.deepEqual(types(boss(1).steps), ["listen_choose_picture", "fill_blank", "choose_word_for_picture", "sentence_order", "phonics", "listen_choose_picture"]);
+    assert.deepEqual(types(boss(4).steps), ["listen_choose_picture", "fill_blank", "choose_word_for_picture", "sentence_order", "dictation", "listen_choose_picture"]);
+  });
+  it("cấp 1 không có nghe-gõ; chủ đề chưa có câu hỏi vẫn đủ 6 câu (thay bằng nghe/chọn từ)", () => {
+    assert.ok(!types(boss(1, { ...extras, phonics: [] }).steps).includes("dictation"));
+    const bare = boss(2, {});
+    assert.equal(bare.steps.length, BOSS_STEP_COUNT);
+    assert.ok(types(bare.steps).every((t) => t === "listen_choose_picture" || t === "choose_word_for_picture"));
+  });
+  it("không có trò chơi hay truyện; không truyền cấp thì giữ bản 1", () => {
+    assert.ok(boss(3).steps.every((s) => !["word_rain", "word_bubbles", "whack_letters", "race", "story"].includes(s.activityType)));
+    assert.ok(buildLessons(words(16), { unitTitle: "T" }).at(-1)!.steps.length > BOSS_STEP_COUNT);
   });
 });
 

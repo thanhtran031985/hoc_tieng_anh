@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { FocusBadge, LessonCrumb, LessonTools, useFocusMode } from "@/components/lesson";
+import { BossArt, FocusBadge, GameStartDialog, LessonCrumb, LessonTools, useFocusMode } from "@/components/lesson";
 import { ButtonLink, Mascot, type AvatarHair, type MascotColor } from "@/components/ui";
+import { BOSS_LINES, bossEnergy, pickLine, type Boss } from "@/lib/rules/bosses";
+import { bossReward } from "@/lib/rules/rewards";
 import type { LessonPlay } from "@/server/lesson-play";
 import { isGameActivity } from "@/lib/rules/games";
 import type { PlayStep } from "@/lib/rules/lesson-play";
-import { rewardFor, starsFor } from "@/lib/rules/lesson-score";
+import { isPrimaryLevel, rewardFor, starsFor } from "@/lib/rules/lesson-score";
 import {
   baseId,
   completeStep,
@@ -28,6 +30,7 @@ import { completeLessonAction } from "./actions";
 import { ExitDialog } from "./ExitDialog";
 import { LessonEnd, type SaveState } from "./LessonEnd";
 import { LessonFoot, LessonFrame, LessonMain } from "./LessonFrame";
+import { BossStrip, type BossBeat } from "./boss/BossStrip";
 import { StepView } from "./StepView";
 import styles from "./lesson.module.css";
 import { clearProgress, parseSaved, readSavedRaw, saveProgress } from "./resume";
@@ -72,6 +75,10 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
 
   const [local, setLocal] = useState<Progress | null>(null);
   const [exitOpen, setExitOpen] = useState(false);
+  // Trận trùm (unit_test): lớp phủ thách đấu trước khi bắt đầu, dải trùm + năng lượng, trùm phản ứng sau mỗi câu.
+  const boss = plan.boss as Pick<Boss, "name" | "accessory" | "fur"> | null;
+  const [introSeen, setIntroSeen] = useState(false);
+  const [beat, setBeat] = useState<BossBeat>({ mood: "tease", line: "Hô hô! Cậu làm được thì làm đi!", n: 0 });
   const [stopped, setStopped] = useState(false);
   const [save, setSave] = useState<SaveState>({ status: "idle" });
   const saveStarted = useRef(false);
@@ -132,6 +139,12 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
     const activeMs = state.activeMs + Math.min(now - lastTick.current, MAX_STEP_MS);
     lastTick.current = now;
     const next: Progress = { session: completeStep(session, { stepId, items }), activeMs, startedAt: state.startedAt || now - activeMs };
+    if (boss) {
+      const missed = items.some((i) => !i.firstTryCorrect);
+      const n = beat.n + 1;
+      setBeat({ mood: missed ? "tease" : "hit", line: pickLine(missed ? BOSS_LINES.tease : BOSS_LINES.hit, n), n });
+      window.setTimeout(() => setBeat((b) => (b.n === n ? { ...b, mood: "tease" } : b)), 1400);
+    }
     setLocal(next);
     saveProgress(learnerId, plan.lessonId, next);
     if (isFinished(next.session)) void runSave(next);
@@ -203,7 +216,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   if (finished && session && state) {
     const scored = scoredItems(session);
     const stars = starsFor(scored);
-    const reward = rewardFor(stars, plan.levelNumber);
+    const reward = boss ? bossReward(isPrimaryLevel(plan.levelNumber)) : rewardFor(stars, plan.levelNumber);
     const preview: LessonCompletion = {
       stars,
       coins: reward.coins,
@@ -220,6 +233,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
           unitTitleVi={plan.unitTitleVi}
           lessonTitle={plan.title}
           bossLesson={plan.kind === "unit_test"}
+          bossInfo={boss as Pick<Boss, "name" | "accessory" | "fur"> | null}
           preview={preview}
           words={plan.words}
           mapHref={mapHref}
@@ -263,9 +277,28 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   }
 
   return (
-    <LessonFrame level={plan.levelNumber} mascot={mascot} value={value} max={max} onExit={() => setExitOpen(true)} focus={tools.focus} crumb={crumb} extra={extra}>
+    <LessonFrame
+      level={plan.levelNumber}
+      mascot={mascot}
+      value={value}
+      max={max}
+      onExit={() => setExitOpen(true)}
+      focus={tools.focus}
+      crumb={crumb}
+      extra={extra}
+      head={boss ? <BossStrip boss={boss} energy={bossEnergy(value, max)} total={max} beat={beat} /> : undefined}
+    >
       {step && stepId && (
-        <StepView key={stepId} step={step} active={!exitOpen} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
+        <StepView key={stepId} step={step} active={!exitOpen && (!boss || introSeen || value > 0)} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
+      )}
+      {boss && (
+        <GameStartDialog
+          open={!introSeen && value === 0 && !exitOpen}
+          title={`Trận trùm: ${boss.name}`}
+          art={<BossArt boss={boss} mood="tease" size={150} />}
+          how={`${BOSS_LINES.intro(boss.name, plan.unitTitleVi)} ${max} câu trộn dạng bài, không đếm giờ, sai thì làm lại. Thắng được 30 xu và huy hiệu!`}
+          onStart={() => setIntroSeen(true)}
+        />
       )}
       <ExitDialog open={exitOpen} onClose={closeExit} onStop={stop} left={Math.max(0, max - value)} unitTitle={plan.unitTitle} />
     </LessonFrame>

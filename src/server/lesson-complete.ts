@@ -1,6 +1,8 @@
 import { completeLessonInputSchema, parseLessonStepConfig, type LessonCompletion } from "@/lib/schemas";
 import { today } from "@/lib/rules/dates";
-import { newStars, rewardFor, starsFor } from "@/lib/rules/lesson-score";
+import { bossBadgeCode, bossFor } from "@/lib/rules/bosses";
+import { isPrimaryLevel, newStars, rewardFor, starsFor } from "@/lib/rules/lesson-score";
+import { bossReward } from "@/lib/rules/rewards";
 import { nextReview } from "@/lib/rules/review-box";
 import { recordStudyDay } from "@/lib/rules/streak";
 import { findNextLesson, levelStatus } from "@/lib/rules/unlock";
@@ -8,6 +10,7 @@ import { db } from "./db";
 import { getLevelNodes } from "./level-nodes";
 import { requireLearner } from "./learners";
 import { LessonLockedError } from "./lesson-play";
+import { awardReward, type AwardedBadge } from "./rewards";
 
 // Ghi kết quả một lượt học bài. Sao, xu và XP do server tính từ kết quả từng mục (client không gửi số này).
 // Một lượt học chỉ ghi một lần: gửi lại cùng `startedAtMs` (vd bấm Thử lại sau khi mất mạng) trả về kết quả đã lưu.
@@ -26,7 +29,7 @@ export async function completeLesson(userId: number, learnerId: number, input: u
 
   const lesson = await db.lesson.findFirst({
     where: { id: data.lessonId, status: "published", kind: { in: ["lesson", "unit_test"] }, unit: { status: "published" } },
-    select: { id: true, unit: { select: { levelId: true, level: { select: { number: true } } } }, steps: { select: { wordId: true, questionId: true, activityType: true, config: true } } },
+    select: { id: true, kind: true, unit: { select: { slug: true, levelId: true, level: { select: { number: true } } } }, steps: { select: { wordId: true, questionId: true, activityType: true, config: true } } },
   });
   if (!lesson) throw new Error("Không tìm thấy bài học");
   const { levelId } = lesson.unit;
@@ -67,7 +70,10 @@ export async function completeLesson(userId: number, learnerId: number, input: u
   const items = data.items.filter((i) => (i.questionId !== undefined ? lessonQuestionIds.has(i.questionId) : i.wordId !== null && lessonWordIds.has(i.wordId)));
   const scored = items.filter((i) => i.scored);
   const stars = starsFor(scored);
-  const reward = rewardFor(stars, levelNumber);
+  // Trận trùm: thưởng cố định 30 xu (Tiểu học) mỗi lần thắng; các bài thường thưởng theo sao.
+  const isBoss = lesson.kind === "unit_test";
+  const reward = isBoss ? bossReward(isPrimaryLevel(levelNumber)) : rewardFor(stars, levelNumber);
+  let badge: AwardedBadge | null = null;
   const correct = scored.filter((i) => i.firstTryCorrect).length;
   const wrong = scored.length - correct;
   const minutes = Math.max(1, Math.ceil(data.durationMs / 60000));
@@ -97,6 +103,7 @@ export async function completeLesson(userId: number, learnerId: number, input: u
         })),
       });
     }
+    if (isBoss) badge = await awardReward(tx, learnerId, bossBadgeCode(bossFor(levelNumber, lesson.unit.slug)));
     await tx.lessonProgress.upsert({
       where: { learnerId_lessonId: { learnerId, lessonId: lesson.id } },
       create: { learnerId, lessonId: lesson.id, bestStars: stars, attempts: 1, completedAt: now },
@@ -127,5 +134,5 @@ export async function completeLesson(userId: number, learnerId: number, input: u
     }
   });
 
-  return { stars, coins: reward.coins, xp: reward.xp, correct, total: scored.length, minutes, nextLessonId: await nextLessonIdFor(learnerId, levelId) };
+  return { stars, coins: reward.coins, xp: reward.xp, correct, total: scored.length, minutes, nextLessonId: await nextLessonIdFor(learnerId, levelId), badge };
 }
