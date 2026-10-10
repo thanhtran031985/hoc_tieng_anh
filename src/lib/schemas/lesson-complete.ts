@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { EarnedBadge, StickerGift } from "./reward";
 
 // Dữ liệu client gửi khi bé xong một bài. Chỉ gồm kết quả từng mục; sao, xu và XP do server tính (không tin số từ client).
 
@@ -52,4 +53,8 @@ export type LessonCompletion = {
   nextLessonId: number | null;
   /** Huy hiệu nhận được ở bài này (trận trùm); `isNew` là lần đầu. */
   badge?: { name: string; isNew: boolean } | null;
+  /** Sticker bất ngờ rơi ở bài này (lần đầu hoàn thành); chưa mở, xu cộng khi mở. Bài ôn tập và bài đã làm rồi không có. */
+  gift?: StickerGift | null;
+  /** Huy hiệu thành tích vừa đạt ở lượt học này (xu đã cộng). */
+  badges?: EarnedBadge[];
 };

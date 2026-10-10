@@ -1,4 +1,4 @@
-import { completeReviewInputSchema, type ReviewCompletion, type ReviewMove } from "@/lib/schemas";
+import { completeReviewInputSchema, type EarnedBadge, type ReviewCompletion, type ReviewMove } from "@/lib/schemas";
 import { diffDays, today } from "@/lib/rules/dates";
 import type { PlayStep, PlayWord } from "@/lib/rules/lesson-play";
 import { MAX_BOX, nextReview } from "@/lib/rules/review-box";
@@ -6,6 +6,7 @@ import { buildReviewSteps, maxReviewItems, rewardForReview, wordResults, type Du
 import { recordStudyDay } from "@/lib/rules/streak";
 import { db } from "./db";
 import { requireLearner } from "./learners";
+import { grantAchievements } from "./rewards";
 
 // Ôn tập hôm nay. Đi qua `requireLearner` nên chỉ đọc/ghi được hồ sơ thuộc tài khoản đang đăng nhập.
 // Chỉ từ có hình và đến hạn (hộp nào cũng vậy) vào phiên ôn; đúng thì lên hộp, sai về hộp 1 (src/lib/rules/review-box.ts).
@@ -145,6 +146,7 @@ export async function completeReview(userId: number, learnerId: number, input: u
 
   const streak = recordStudyDay({ streakDays: learner.streakDays, streakFreezes: learner.streakFreezes, lastStudyDate: learner.lastStudyDate }, day);
   const moves: ReviewMove[] = [];
+  let badges: EarnedBadge[] = [];
 
   await db.$transaction(async (tx) => {
     for (const r of results) {
@@ -179,7 +181,9 @@ export async function completeReview(userId: number, learnerId: number, input: u
     });
     // Dòng đánh dấu phiên ôn (chống ghi đôi theo `startedAt`); phút học do StudyClock ghi từng phút nên ở đây là 0.
     await tx.studySession.create({ data: { learnerId, startedAt, endedAt: now, minutes: 0 } });
+    // Huy hiệu thành tích (vd 100 từ đầu tiên); bài ôn tập không rơi sticker.
+    badges = await grantAchievements(tx, learnerId);
   });
 
-  return { ...reward, total: results.length, minutes, up: moves.filter((m) => m.to > m.from), back: moves.filter((m) => m.to <= m.from).length };
+  return { ...reward, total: results.length, minutes, up: moves.filter((m) => m.to > m.from), back: moves.filter((m) => m.to <= m.from).length, badges };
 }

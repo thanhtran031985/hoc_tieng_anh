@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { EarnedBadge } from "./reward";
 import { reviewItemSchema } from "./lesson-complete";
 
 // Dữ liệu client gửi khi bé ôn xong một phiên. Chỉ gồm kết quả từng mục; sao, xu, XP và hộp mới do server tính.
@@ -37,4 +38,6 @@ export type ReviewCompletion = {
   up: ReviewMove[];
   /** Số từ về hộp 1 (chưa nhớ). */
   back: number;
+  /** Huy hiệu thành tích vừa đạt ở phiên ôn (vd 100 từ đầu tiên); bài ôn không rơi sticker. */
+  badges?: EarnedBadge[];
 };

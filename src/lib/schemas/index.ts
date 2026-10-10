@@ -22,3 +22,4 @@ export * from "./review-complete";
 export * from "./story";
 export * from "./word-extra";
 export * from "./game-record";
+export * from "./reward";

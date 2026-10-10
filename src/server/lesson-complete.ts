@@ -1,8 +1,8 @@
-import { completeLessonInputSchema, parseLessonStepConfig, type LessonCompletion } from "@/lib/schemas";
+import { completeLessonInputSchema, parseLessonStepConfig, type EarnedBadge, type LessonCompletion, type StickerGift } from "@/lib/schemas";
 import { today } from "@/lib/rules/dates";
 import { bossBadgeCode, bossFor } from "@/lib/rules/bosses";
 import { isPrimaryLevel, newStars, rewardFor, starsFor } from "@/lib/rules/lesson-score";
-import { bossReward } from "@/lib/rules/rewards";
+import { bossReward, dropsSticker } from "@/lib/rules/rewards";
 import { nextReview } from "@/lib/rules/review-box";
 import { recordStudyDay } from "@/lib/rules/streak";
 import { findNextLesson, levelStatus } from "@/lib/rules/unlock";
@@ -10,7 +10,7 @@ import { db } from "./db";
 import { getLevelNodes } from "./level-nodes";
 import { requireLearner } from "./learners";
 import { LessonLockedError } from "./lesson-play";
-import { awardReward, type AwardedBadge } from "./rewards";
+import { awardReward, dropSticker, giftOfAttempt, grantAchievements, type AwardedBadge } from "./rewards";
 
 // Ghi kết quả một lượt học bài. Sao, xu và XP do server tính từ kết quả từng mục (client không gửi số này).
 // Một lượt học chỉ ghi một lần: gửi lại cùng `startedAtMs` (vd bấm Thử lại sau khi mất mạng) trả về kết quả đã lưu.
@@ -55,6 +55,8 @@ export async function completeLesson(userId: number, learnerId: number, input: u
       total: existing.correct + existing.wrong,
       minutes: Math.max(1, Math.ceil(((existing.finishedAt ?? now).getTime() - existing.startedAt.getTime()) / 60000)),
       nextLessonId: await nextLessonIdFor(learnerId, levelId),
+      // Gửi lại sau lỗi mạng: quà đã rơi ở lượt này (chưa mở) được trả lại, không rơi thêm.
+      gift: await giftOfAttempt(learnerId, existing.id),
     };
   }
 
@@ -74,6 +76,8 @@ export async function completeLesson(userId: number, learnerId: number, input: u
   const isBoss = lesson.kind === "unit_test";
   const reward = isBoss ? bossReward(isPrimaryLevel(levelNumber)) : rewardFor(stars, levelNumber);
   let badge: AwardedBadge | null = null;
+  let gift: StickerGift | null = null;
+  let badges: EarnedBadge[] = [];
   const correct = scored.filter((i) => i.firstTryCorrect).length;
   const wrong = scored.length - correct;
   const minutes = Math.max(1, Math.ceil(data.durationMs / 60000));
@@ -104,6 +108,8 @@ export async function completeLesson(userId: number, learnerId: number, input: u
       });
     }
     if (isBoss) badge = await awardReward(tx, learnerId, bossBadgeCode(bossFor(levelNumber, lesson.unit.slug)));
+    // Sticker bất ngờ: chỉ lần đầu hoàn thành bài (chưa có tiến độ); xu cộng khi bé mở quà.
+    if (dropsSticker(isBoss ? "unit_test" : "lesson", previous === null)) gift = await dropSticker(tx, learnerId, { unitSlug: lesson.unit.slug, isBoss, seed: `${learnerId}:${lesson.id}:${attempt.id}`, attemptId: attempt.id });
     await tx.lessonProgress.upsert({
       where: { learnerId_lessonId: { learnerId, lessonId: lesson.id } },
       create: { learnerId, lessonId: lesson.id, bestStars: stars, attempts: 1, completedAt: now },
@@ -132,7 +138,9 @@ export async function completeLesson(userId: number, learnerId: number, input: u
         update: fields,
       });
     }
+    // Huy hiệu thành tích: tính sau khi tiến độ bài, chuỗi ngày và thẻ ôn đã ghi.
+    badges = await grantAchievements(tx, learnerId);
   });
 
-  return { stars, coins: reward.coins, xp: reward.xp, correct, total: scored.length, minutes, nextLessonId: await nextLessonIdFor(learnerId, levelId), badge };
+  return { stars, coins: reward.coins, xp: reward.xp, correct, total: scored.length, minutes, nextLessonId: await nextLessonIdFor(learnerId, levelId), badge, gift, badges };
 }

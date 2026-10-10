@@ -5,7 +5,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Bảng phần thưởng và seed | ✅ | Tự duyệt |
-| 1 | Quy tắc rơi sticker và đạt huy hiệu | ⬜ | |
+| 1 | Quy tắc rơi sticker và đạt huy hiệu | ✅ | Tự duyệt; 14 test quy tắc |
 | 2 | Kết thúc bài có quà (Screen40) | ⬜ | |
 | 3 | Bộ sưu tập (Screen38, Screen39) | ⬜ | |
 | 4 | Danh mục phần thưởng (Adult21: Sticker, Huy hiệu) | ⬜ | |
@@ -17,6 +17,8 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 **10/10/2026 — Bước 0.** Không tạo bảng mới (task 20 đã có `rewards`/`learner_rewards`): migration `20261010062933_reward_catalog` thêm `rewards.name_en`, `album`, `status` (`draft|published`), `coins` và `learner_rewards.opened_at` (điền = `acquired_at` cho dòng cũ), `source_attempt_id`. Danh mục hằng `src/lib/rules/reward-catalog.ts` (24 sticker / 4 album, `ACHIEVEMENTS` 6 huy hiệu `ach:*`, thông tin 6 loại điều kiện, `conditionText`); `scripts/gen-sticker-art.mjs` sinh 6 hình khủng long vào `public/media/stickers/` từ `designs/components/bundle.js` (chỉ đọc, chạy bằng `vm`); `prisma/seed/rewards.ts` nạp 24 sticker + 6 huy hiệu thành tích, bổ sung `name_en`/`coins` cho huy hiệu trùm và qua đảo mà không ghi đè phần quản trị đã sửa. Kiểm: seed chạy 2 lần trên DB verify vẫn 24 sticker + 42 huy hiệu (32 trùm + 4 qua đảo + 6 thành tích); test danh mục (6 test: đủ 24 mã khác nhau, mỗi album 6, hình tồn tại, mức cần đạt trong khoảng, chữ điều kiện); tsc, lint, `npm test` (503 đạt) sạch.
 Việc thủ công: `npx prisma migrate deploy` rồi `npx prisma db seed`.
 
+**10/10/2026 — Bước 1.** Hàm thuần trong `src/lib/rules/rewards.ts`: `dropsSticker` (lần đầu hoàn thành bài thường/trận trùm; học lại và bài ôn tập không rơi), `preferredAlbum` + `pickSticker` (ưu tiên album hợp chủ đề, trùm → khủng long, không trùng sticker đã có, hết thì null, có hạt giống), `badgeProgress`/`earnedBadges` cho 6 loại điều kiện (qua đảo và trùm do nơi khác cấp nên bỏ qua), `isNewReward` (3 ngày), `WORDS_MASTERED_BOX = 4`. Zod `src/lib/schemas/reward.ts` (`badgeConditionSchema` kèm khoảng hợp lệ từng loại, `openRewardInputSchema`, kiểu `StickerGift`/`EarnedBadge`/`OpenedReward`). Server `src/server/rewards.ts`: `collectBadgeStats` (chuỗi ngày, thẻ hộp ≥ 4, trùm thắng, bài 3 sao, câu nói khác nhau ≥ 1 sao), `grantAchievements` (cấp trong giao dịch, +`coins` hoặc 50 xu, bỏ qua bản nháp), `dropSticker` (lưu `source_attempt_id`, chưa mở), `giftOfAttempt`, `pendingGifts`, `openReward` (kiểm hồ sơ, đánh dấu mở và cộng xu đúng một lần), server action `openRewardAction`. Nối vào `completeLesson` (sticker + thành tích sau khi thẻ ôn đã ghi; kết quả có `gift`, `badges`; gửi lại cùng lượt trả đúng quà chưa mở) và `completeReview` (chỉ thành tích). Kiểm: 14 test mới (từng loại huy hiệu thiếu 1/đúng mốc/không vượt mức, nhặt đủ 24 sticker không trùng rồi hết, album hợp chủ đề, cùng hạt giống cùng quà, xu 10/50/30); tsc, lint, `npm test` (517 đạt) sạch. Kiểm bằng giao diện ở Bước 2.
+
 ## Bước tiếp theo
 
-Bước 1 — Quy tắc rơi sticker và đạt huy hiệu
+Bước 2 — Kết thúc bài có quà (Screen40)
