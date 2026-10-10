@@ -1,0 +1,278 @@
+/* Đua xe trả lời (Screen32): câu hỏi ở trên, đường đua ngang 8 đoạn với xe của bé và xe ma (lần trước của chính bé). */
+.rc {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: min(var(--space-5), 2.4vh);
+}
+.qc {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: min(var(--space-4), 2vh) var(--space-6);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+.pic {
+  width: min(150px, 18vh);
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+}
+.pic > svg,
+.pic > img {
+  width: 82%;
+  height: auto;
+}
+.pic .ear {
+  width: auto;
+}
+.r {
+  display: flex;
+  flex-direction: column;
+  gap: min(var(--space-3), 1.6vh);
+}
+.q {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: min(var(--text-title), 3.9vh);
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--ink);
+}
+.q small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.ans {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(var(--n), 1fr);
+}
+.an {
+  position: relative;
+}
+.opt {
+  position: relative;
+  width: 100%;
+  height: min(var(--size-btn-l), 8.2vh);
+  border-radius: var(--radius-md);
+  border: var(--border-thick) solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 var(--lip-s) 0 var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-12) 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: min(var(--text-word), 3.6vh);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+}
+.opt:hover:not(:disabled) {
+  border-color: var(--brand-soft-shade);
+  transform: translateY(calc(-1 * var(--space-1)));
+  box-shadow: 0 var(--lip-m) 0 var(--brand-soft-shade);
+}
+.opt:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.opt[data-ok] {
+  border-color: var(--success);
+  background: var(--success-soft);
+  color: var(--success-shade);
+  box-shadow: 0 var(--lip-s) 0 var(--success);
+}
+.opt[data-retry] {
+  border-color: var(--retry);
+  background: var(--retry-soft);
+  color: var(--retry-shade);
+  box-shadow: 0 var(--lip-s) 0 var(--retry);
+  animation: shake 0.45s ease;
+}
+.opt[data-dim] {
+  opacity: 0.35;
+}
+.an > .speak {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-58%);
+}
+/* đường đua */
+.track {
+  --st: var(--space-16);
+  --fin: var(--space-12);
+  position: relative;
+  background: var(--race-grass);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) 0;
+  box-shadow: inset 0 calc(-1 * var(--space-1)) 0 rgb(0 0 0 / 6%);
+}
+.road {
+  position: relative;
+  margin: 0 var(--space-5);
+  background: var(--race-track);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 var(--space-1) 0 var(--race-track-edge),
+    inset 0 calc(-1 * var(--space-1)) 0 var(--race-track-edge);
+}
+.lane {
+  --lane: min(var(--size-race-lane), 9.6vh);
+  position: relative;
+  height: var(--lane);
+}
+.lane + .lane {
+  background-image: linear-gradient(90deg, var(--race-track-edge) 50%, transparent 0);
+  background-size: var(--space-8) var(--border-thick);
+  background-repeat: repeat-x;
+  background-position: 0 0;
+}
+.tag {
+  position: absolute;
+  left: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--space-16);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+  color: var(--ink-on-dark);
+  opacity: 0.9;
+}
+.ticks {
+  position: absolute;
+  inset: 0 var(--fin) 0 var(--st);
+  pointer-events: none;
+}
+.ticks span {
+  position: absolute;
+  top: var(--space-1);
+  bottom: var(--space-1);
+  width: var(--border-thick);
+  background: rgb(255 255 255 / 22%);
+}
+.finish {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--space-6);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  background: repeating-conic-gradient(var(--race-finish-a) 0 25%, var(--race-finish-b) 0 50%) 0 0 / var(--space-3) var(--space-3);
+}
+.flag {
+  position: absolute;
+  right: calc(-1 * var(--space-1));
+  top: calc(-1 * var(--space-8));
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+}
+.car {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--lane) * 1.55);
+  transform: translate(-50%, -54%);
+  transition: left 0.7s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.car > svg:first-child {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.driver {
+  position: absolute;
+  left: 30%;
+  top: -48%;
+  width: 46%;
+  height: auto;
+}
+.label {
+  position: absolute;
+  left: 50%;
+  top: calc(-1 * var(--space-5));
+  transform: translateX(-50%);
+  background: var(--surface);
+  color: var(--rec);
+  border: var(--border-thick) dashed var(--rec);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.first {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+.demo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.demo svg {
+  width: calc(var(--space-16) * 2);
+  height: auto;
+}
+@keyframes shake {
+  20% {
+    translate: calc(-1 * var(--space-2)) 0;
+  }
+  40% {
+    translate: var(--space-2) 0;
+  }
+  60% {
+    translate: calc(-1 * var(--space-1)) 0;
+  }
+  80% {
+    translate: var(--space-1) 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .car {
+    transition: none;
+  }
+  .opt[data-retry] {
+    animation: none;
+  }
+}

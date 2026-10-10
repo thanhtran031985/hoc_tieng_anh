@@ -84,6 +84,7 @@ model Learner {
   answerLogs     AnswerLog[]
   reviewCards    ReviewCard[]
   recordings     Recording[]
+  gameRecords    GameRecord[]
   studySessions  StudySession[]
 
   @@index([userId])
@@ -182,10 +183,11 @@ model Lesson {
   minutes   Int           @default(10) @db.TinyInt
   status    ContentStatus @default(draft)
 
-  unit     Unit             @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  steps    LessonStep[]
-  progress LessonProgress[]
-  attempts LessonAttempt[]
+  unit        Unit             @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  steps       LessonStep[]
+  progress    LessonProgress[]
+  attempts    LessonAttempt[]
+  gameRecords GameRecord[]
 
   @@index([unitId, sortOrder])
   @@map("lessons")
@@ -544,4 +546,26 @@ model Recording {
   @@index([learnerId, questionId, createdAt])
   @@index([learnerId, createdAt])
   @@map("recordings")
+}
+
+/// Thành tích mini game (task 18). Xe ma của Đua xe đi theo `sequence` của lần chơi trước cùng bài, không chạy theo thời gian.
+model GameRecord {
+  id        Int      @id @default(autoincrement())
+  learnerId Int      @map("learner_id")
+  /// Tên trò: `rain`, `bubbles`, `whack`, `race`.
+  game      String   @db.VarChar(20)
+  lessonId  Int      @map("lesson_id")
+  /// Số lượt đúng ngay lần đầu.
+  correct   Int      @db.SmallInt
+  /// Số lượt của trò.
+  total     Int      @db.SmallInt
+  /// Từng lượt trả lời theo thứ tự: 1 đúng, 0 chưa đúng.
+  sequence  Json
+  playedAt  DateTime @default(now()) @map("played_at")
+
+  learner Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade)
+  lesson  Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([learnerId, game, lessonId, playedAt])
+  @@map("game_records")
 }

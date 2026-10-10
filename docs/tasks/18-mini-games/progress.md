@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 0 | Mưa từ vựng (Screen11) | ✅ | |
 | 1 | Bong bóng từ vựng (Screen30) | ✅ | |
 | 2 | Đập chuột chữ cái (Screen31) | ✅ | |
-| 3 | Đua xe trả lời (Screen32) và thành tích | ⬜ | |
+| 3 | Đua xe trả lời (Screen32) và thành tích | ✅ | |
 | 4 | Ghép trò chơi vào bài | ⬜ | |
 
 ## Nhật ký
@@ -18,6 +18,8 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 
 **10/10/2026 — Bước 2.** `WhackStep` (Screen31): lưới 3×3 hang với phím 7-8-9/4-5-6/1-2-3 in ở góc mỗi hang, chuột chui lên rồi thụt xuống theo `--duration-mole-up` (hàm thuần `stepMoles`, mỗi 200 ms, tối đa 4 con, luôn có con đúng), 5 lượt chuột cầm chữ rồi 3 lượt chuột cầm hình (con nào bắt đầu bằng âm đó); đập sai → chuột lè lưỡi + Bông đọc chữ (không trừ điểm), sai 2 lần tự sáng chuột đúng, Space “Nghe âm”, H gợi ý. Giảm chuyển động: 5 con đứng yên (`staticHoles`), vẫn đập được. Kiểm (Edge, DB verify): lưới và phím đúng bố trí, 6 giây liên tục luôn có con đúng, Space, đập sai lè lưỡi, gợi ý tự sáng, Esc tạm dừng (hang đứng yên), đập đúng bằng phím và chuột, hết 8 lượt (có lượt hình) → bảng kết thúc, giảm chuyển động, 1366×768 và 1920×1080 không cuộn, không lỗi console.
 
+**10/10/2026 — Bước 3.** Bảng `game_records` (migration `game_records`; model `GameRecord`), `src/server/game-records.ts` (`saveGameRecord` qua `requireLearner` + Zod dùng chung `saveGameRecordSchema`, giữ 20 lần gần nhất mỗi (bé, trò, bài); `lastRaceSequence`), `saveGameRecordAction`, `getLessonPlay` nạp xe ma cho bước `race`. `RaceStep` (Screen32): câu hỏi 3–4 đáp án chữ có phím 1–4 và loa (kiểu hình / nghe / điền câu), đường đua 8 đoạn, xe của bé có Bông lái và xe ma mờ viền nét đứt đi theo số câu đúng của lần trước sau cùng số lượt trả lời (hàm thuần `ghostAt`), chưa đúng thì xe đứng chờ và làm lại câu đó (sai 2 lần mờ một đáp án), lời kết 3 trường hợp (`raceOutcome`), lần đầu chơi không có xe ma. Kiểm (Edge, DB verify): lần 1 không xe ma (chọn nhầm → đáp án cam, xe đứng yên, điểm không đổi), thành tích lưu đúng (16 lượt, 8 đúng); lần 2 có xe ma, nhãn “Lần trước · N câu” khớp công thức ở từng lượt trả lời; ba lời kết (nhanh hơn 2 câu / bằng đúng / động viên) bằng cách đổi lần trước trong database; 1366×768 và 1920×1080 không cuộn; không lỗi console.
+
 ## Bước tiếp theo
 
-Bước 3 — Đua xe trả lời (Screen32) và thành tích
+Bước 4 — Ghép trò chơi vào bài

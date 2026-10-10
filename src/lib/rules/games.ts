@@ -22,6 +22,8 @@ export const WHACK_LETTER_ROUNDS = 5;
 export const WHACK_PICTURE_ROUNDS = 3;
 export const WHACK_HOLES = 9;
 export const RACE_LENGTH = 8;
+/** Lưu tối đa chừng này lượt trả lời của một lần đua (bé bấm nhầm liên tục cũng không làm bản ghi phình ra). */
+export const MAX_RACE_ATTEMPTS = 60;
 /** Ít nhất chừng này lượt thì trò mới đáng chơi; ít hơn thì bước bị bỏ qua. */
 export const MIN_GAME_ROUNDS = 4;
 

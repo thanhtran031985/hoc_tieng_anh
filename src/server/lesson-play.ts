@@ -6,6 +6,7 @@ import { buildAudioMap } from "@/lib/rules/tts";
 import { levelStatus } from "@/lib/rules/unlock";
 import { getVoiceMp3Enabled } from "./app-settings";
 import { splitSentence } from "@/lib/rules/sentence-words";
+import { lastRaceSequence } from "./game-records";
 import { getStoriesPlay } from "./story-play";
 import { db } from "./db";
 import { requireLearner } from "./learners";
@@ -93,6 +94,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
         learner.settings.speechScoring,
       )),
       levelNumber: unit.level.number,
+      raceGhost: lesson.steps.some((s) => s.activityType === "race") ? await lastRaceSequence(learnerId, lesson.id) : null,
     },
   );
 
