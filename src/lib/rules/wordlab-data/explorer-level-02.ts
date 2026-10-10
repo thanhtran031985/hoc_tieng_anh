@@ -1,7 +1,9 @@
 // Khám phá từ cấp 2 (Mầm non): cơ thể, quần áo, đồ ăn, nhà cửa, đồ dùng học tập, thú hoang. Câu hỏi chỉ dùng từ của cấp 1–2.
 import { ans, branch, dis, sent, type ExplorerSeedWord } from "./helpers.ts";
+import { EXPLORER_LEVEL_2_FOOD } from "./explorer-level-02-food.ts";
+import { EXPLORER_LEVEL_2_LIVING } from "./explorer-level-02-living.ts";
 
-export const EXPLORER_LEVEL_2: ExplorerSeedWord[] = [
+const SAMPLES: ExplorerSeedWord[] = [
   {
     word: "dolphin",
     branches: [
@@ -14,3 +16,5 @@ export const EXPLORER_LEVEL_2: ExplorerSeedWord[] = [
     ],
   },
 ];
+
+export const EXPLORER_LEVEL_2: ExplorerSeedWord[] = [...SAMPLES, ...EXPLORER_LEVEL_2_LIVING, ...EXPLORER_LEVEL_2_FOOD];

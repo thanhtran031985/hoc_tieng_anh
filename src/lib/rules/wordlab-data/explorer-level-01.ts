@@ -1,8 +1,10 @@
 // Khám phá từ cấp 1 (Hạt giống): con vật, trái cây, đồ chơi, đồ vật trong phòng. Câu hỏi chỉ dùng từ của cấp 1.
 // Hai từ mẫu của thiết kế (bird, cat) nằm ở word-explorer-data.ts.
 import { ans, branch, dis, sent, type ExplorerSeedWord } from "./helpers.ts";
+import { EXPLORER_LEVEL_1_ANIMALS } from "./explorer-level-01-animals.ts";
+import { EXPLORER_LEVEL_1_THINGS } from "./explorer-level-01-things.ts";
 
-export const EXPLORER_LEVEL_1: ExplorerSeedWord[] = [
+const SAMPLES: ExplorerSeedWord[] = [
   {
     word: "apple",
     branches: [
@@ -14,3 +16,5 @@ export const EXPLORER_LEVEL_1: ExplorerSeedWord[] = [
     ],
   },
 ];
+
+export const EXPLORER_LEVEL_1: ExplorerSeedWord[] = [...SAMPLES, ...EXPLORER_LEVEL_1_ANIMALS, ...EXPLORER_LEVEL_1_THINGS];
