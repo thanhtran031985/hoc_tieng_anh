@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "I am proud of my brother.",
+    "She is nervous before the test.",
+    "He is very kind and helpful.",
+    "My friend is surprised by the gift.",
+    "Do not be rude to your teacher."
+  ],
+  "fill_blank": [
+    "I feel ___ when I win a prize. | proud | bored | scared",
+    "She cries because she is ___. | sad | cheerful | proud",
+    "My friend gives me his toys. He is ___. | generous | selfish | grumpy",
+    "I am ___ of spiders. | afraid | proud | pleased",
+    "He is ___ because he has no friends here. | lonely | cheerful | glad"
+  ],
+  "dictation": [
+    "I am glad to see you.",
+    "She is nervous about the exam.",
+    "Be gentle with the baby."
+  ],
+  "speaking": [
+    "How do you feel today?",
+    "I am very happy.",
+    "My mum is proud of me."
+  ],
+  "short_reading": [
+    {
+      "title": "A Bad Day",
+      "text": "Tom is upset today. He loses his new pen at school. His friend Ben is helpful and looks for it. They find the pen, and Tom smiles again.",
+      "questions": [
+        {
+          "q": "Why is Tom upset?",
+          "a": [
+            "He loses his pen",
+            "He has a test",
+            "He is ill"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Who looks for the pen?",
+          "a": [
+            "Ben",
+            "Mum",
+            "The teacher"
+          ],
+          "evidence": 2
+        }
+      ]
+    },
+    {
+      "title": "My Little Brother",
+      "text": "My little brother is silly and funny. He makes us laugh every day. But he is sometimes stubborn, and he cries at night. I give him a hug, and he is calm.",
+      "questions": [
+        {
+          "q": "What does the brother make them do?",
+          "a": [
+            "Laugh",
+            "Cry",
+            "Sleep"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What does the writer give him?",
+          "a": [
+            "A hug",
+            "A toy",
+            "A book"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

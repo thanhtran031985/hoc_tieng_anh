@@ -154,3 +154,21 @@ describe("planAppend (bài đã có tiến độ học)", () => {
     assert.deepEqual(planAppend([...old, ...have], built), []);
   });
 });
+
+describe("cấp 5: chia câu liên tục để bài nào cũng có câu hỏi", () => {
+  const l5: UnitExtras = { sentence_order: keys("sentence_order", 5), fill_blank: keys("fill_blank", 5), dictation: keys("dictation", 3), speaking: keys("speaking", 3), short_reading: keys("short_reading", 2) };
+  it("7 bài, 18 câu: mỗi bài thường có ít nhất một câu hỏi dạng mới, mỗi câu đúng một lần", () => {
+    const lessons = regular(buildLessons(words(18), { levelNumber: 5, extras: l5 }));
+    const count = 7;
+    const wide = regular(buildLessons(Array.from({ length: 52 }, (_, i) => ({ word: `w${i}`, hasPicture: false })), { levelNumber: 5, extras: l5 }));
+    assert.equal(wide.length, count);
+    for (const lesson of wide) assert.ok(lesson.steps.some((s) => s.questionKey), lesson.title);
+    const used = wide.flatMap((l) => l.steps.flatMap((s) => (s.questionKey ? [s.questionKey] : [])));
+    assert.deepEqual([...used].sort(), EXTRA_KINDS.flatMap((k) => l5[k] ?? []).sort());
+    assert.ok(lessons.length > 0);
+  });
+  it("cấp 1–4 giữ cách chia cũ (distribute không lệch)", () => {
+    assert.deepEqual([0, 1, 2].map((i) => distribute([1, 2, 3, 4, 5], 3, i, 0)), [[1, 4], [2, 5], [3]]);
+    assert.deepEqual([0, 1, 2].map((i) => distribute([1, 2, 3, 4, 5], 3, i, 2)), [[2, 5], [3], [1, 4]]);
+  });
+});

@@ -101,9 +101,12 @@ function makeStep(activityType: ActivityType, word: string | null, config: Recor
 }
 
 /** Chia `items` cho `count` bài theo vòng: bài `index` nhận các mục có vị trí chia dư `index` (mỗi mục dùng đúng một lần). */
-export function distribute<T>(items: readonly T[], count: number, index: number): T[] {
-  return count > 0 ? items.filter((_, i) => i % count === index) : [];
+export function distribute<T>(items: readonly T[], count: number, index: number, offset = 0): T[] {
+  return count > 0 ? items.filter((_, i) => (i + offset) % count === index) : [];
 }
+
+/** Từ cấp này, câu hỏi của mọi dạng được chia liên tiếp (dạng sau tiếp nối vị trí dạng trước) để bài nào cũng có ít nhất một câu khi số câu ≥ số bài. */
+export const SPREAD_EXTRAS_FROM_LEVEL = 5;
 
 /** Dạng câu hỏi nào dùng được ở cấp này. */
 export const extraAllowed = (kind: ExtraKind, levelNumber: number): boolean => levelNumber >= EXTRA_LEVELS[kind][0] && levelNumber <= EXTRA_LEVELS[kind][1];
@@ -153,9 +156,13 @@ function bossStepsV2(bossWords: readonly BuilderWord[], options: BuildOptions, l
 function versionTwoSteps(options: BuildOptions, words: readonly BuilderWord[], index: number, count: number): BuiltStep[] {
   const levelNumber = options.levelNumber ?? 0;
   const steps: BuiltStep[] = [];
+  const spread = levelNumber >= SPREAD_EXTRAS_FROM_LEVEL;
+  let offset = 0;
   for (const kind of EXTRA_KINDS) {
     if (!extraAllowed(kind, levelNumber)) continue;
-    for (const key of distribute(options.extras?.[kind] ?? [], count, index)) steps.push(makeStep(kind, null, {}, key));
+    const keys = options.extras?.[kind] ?? [];
+    for (const key of distribute(keys, count, index, spread ? offset : 0)) steps.push(makeStep(kind, null, {}, key));
+    offset += keys.length;
   }
   // Truyện làm phần thưởng cuối chủ đề: truyện thứ k vào bài thường thứ (count-1-k) tính từ cuối, vòng lại nếu nhiều truyện hơn bài.
   (options.stories ?? []).forEach((slug, k) => {

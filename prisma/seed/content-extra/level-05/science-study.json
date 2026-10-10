@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "We do an experiment in science class.",
+    "She uses a calculator in maths.",
+    "My brother will graduate next year.",
+    "The rocket goes up to space.",
+    "I revise my English every night."
+  ],
+  "fill_blank": [
+    "We look at the moon with a ___. | telescope | calculator | magnet",
+    "An astronaut goes to ___ in a rocket. | space | college | lecture",
+    "I use a ___ to look at a very small insect. | microscope | machine | engine",
+    "The scientist works in a ___. | laboratory | university | harbour",
+    "I use a ___ to do maths. | calculator | telescope | satellite"
+  ],
+  "dictation": [
+    "The earth is round.",
+    "I take notes in class.",
+    "Education is important for children."
+  ],
+  "speaking": [
+    "I like science.",
+    "Can you solve this question?",
+    "I want to pass the exam."
+  ],
+  "short_reading": [
+    {
+      "title": "The Science Club",
+      "text": "Anna is in the science club at school. Every Friday, the pupils do an experiment. Today they use a microscope to look at a small insect. Anna writes a report about it.",
+      "questions": [
+        {
+          "q": "When do the pupils do an experiment?",
+          "a": [
+            "Every Friday",
+            "Every Monday",
+            "Every night"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What does Anna write?",
+          "a": [
+            "A report",
+            "A letter",
+            "A story"
+          ],
+          "evidence": 3
+        }
+      ]
+    },
+    {
+      "title": "My Big Sister",
+      "text": "My sister goes to university. She learns biology and chemistry. She has a good grade in every course. Next year, she will graduate.",
+      "questions": [
+        {
+          "q": "What does she learn?",
+          "a": [
+            "Biology and chemistry",
+            "Maths and art",
+            "Music and sport"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What will she do next year?",
+          "a": [
+            "Graduate",
+            "Fail the exam",
+            "Be a pupil"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

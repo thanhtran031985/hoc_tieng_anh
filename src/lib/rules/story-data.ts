@@ -156,6 +156,40 @@ export const STORY_SEED: readonly StorySeed[] = [
       { kind: "page", image: a(6), sentences: ["The king says, “Thank you!”", "Now the dragon is a hero."] },
     ] as const)(artOf("the-little-dragon")),
   },
+  {
+    slug: "the-lost-luggage",
+    title: "The Lost Luggage",
+    titleVi: "Hành lý bị lạc",
+    levelNumber: 5,
+    unitSlug: "travel",
+    newWords: ["luggage", "airport", "helpful", "glad", "passenger"],
+    pages: ((a) => [
+      { kind: "page", image: a(1), sentences: ["Anna and her dad are at the airport."] },
+      { kind: "page", image: a(2), sentences: ["They have a big blue suitcase."] },
+      { kind: "page", image: a(3), sentences: ["They go to the city by plane."] },
+      { kind: "question", text: "How do they go to the city?", choices: ["By plane", "By bus", "By boat"], correct: 0 },
+      { kind: "page", image: a(4), sentences: ["Oh no!", "Anna cannot find her luggage."] },
+      { kind: "page", image: a(5), sentences: ["A helpful man looks for it.", "He finds a blue suitcase!"] },
+      { kind: "page", image: a(6), sentences: ["“Thank you!” says Anna.", "Her dad is very glad."] },
+    ] as const)(artOf("the-lost-luggage")),
+  },
+  {
+    slug: "the-clean-pond",
+    title: "The Clean Pond",
+    titleVi: "Cái ao sạch sẽ",
+    levelNumber: 5,
+    unitSlug: "nature-environment",
+    newWords: ["pond", "rubbish", "bucket", "protect", "glad"],
+    pages: ((a) => [
+      { kind: "page", image: a(1), sentences: ["There is a small pond near the school."] },
+      { kind: "page", image: a(2), sentences: ["Many fish and birds live there."] },
+      { kind: "page", image: a(3), sentences: ["One day, rubbish is in the pond."] },
+      { kind: "question", text: "What is bad for the pond?", choices: ["Rubbish", "Rain", "Fish"], correct: 0 },
+      { kind: "page", image: a(4), sentences: ["The children come with buckets and bags."] },
+      { kind: "page", image: a(5), sentences: ["They put the rubbish in the dustbin."] },
+      { kind: "page", image: a(6), sentences: ["Now the pond is beautiful again.", "The fish are glad."] },
+    ] as const)(artOf("the-clean-pond")),
+  },
 ];
 
 /** Dữ liệu `questions` của trang câu hỏi giữa truyện (type `story_question`). */

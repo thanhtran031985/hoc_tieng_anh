@@ -94,4 +94,28 @@ export const SCENES = [
       { bg: "sky", items: [["pic", "fox", 170, 195, 130], ["pic", "apple", 290, 215, 75], ["sparkle", 90, 80, 1], ["sparkle", 320, 90, 0.8]] },
     ],
   },
+  {
+    slug: "the-lost-luggage",
+    title: "The Lost Luggage",
+    pages: [
+      { bg: "sky", items: [["pic", "airport", 270, 150, 190], ["person", "kid", 120, 205, 1.1, ANNA], ["pic", "dad", 200, 200, 95]] },
+      { bg: "indoor", items: [["person", "kid", 140, 205, 1.1, ANNA], ["pic", "suitcase", 270, 185, 120], ["pic", "dad", 340, 205, 85]] },
+      { bg: "sky", items: [["pic", "plane", 210, 105, 200], ["person", "kid", 110, 215, 1.0, ANNA], ["pic", "dad", 300, 210, 95]] },
+      { bg: "indoor", items: [["person", "kid", 150, 205, 1.1, { ...ANNA, mood: "oh", arm: "out" }], ["pic", "luggage", 290, 190, 100]] },
+      { bg: "indoor", items: [["person", "adult", 120, 190, 1.0, { shirt: "#2f7ff0" }], ["pic", "suitcase", 260, 190, 110], ["person", "kid", 340, 215, 0.8, { ...ANNA, mood: "oh" }]] },
+      { bg: "sky", items: [["person", "kid", 130, 205, 1.1, { ...ANNA, arm: "up" }], ["pic", "dad", 260, 195, 100], ["pic", "suitcase", 340, 225, 60], ["sparkle", 90, 90, 1], ["sparkle", 310, 90, 0.8]] },
+    ],
+  },
+  {
+    slug: "the-clean-pond",
+    title: "The Clean Pond",
+    pages: [
+      { bg: "sky", items: [["pic", "pond", 130, 195, 140], ["pic", "school", 300, 160, 150], ["tree", 50, 140, 0.6]] },
+      { bg: "sky", items: [["pic", "pond", 200, 180, 190], ["pic", "fish", 120, 215, 55], ["pic", "bird", 290, 80, 70]] },
+      { bg: "sky", items: [["pic", "pond", 130, 190, 150], ["pic", "rubbish", 290, 195, 100], ["pic", "plastic", 340, 120, 70]] },
+      { bg: "sky", items: [["person", "kid", 100, 205, 1.0, { ...BEN, arm: "up" }], ["person", "kid", 200, 210, 0.95, ANNA], ["pic", "bucket", 300, 200, 85], ["pic", "bag", 355, 190, 60]] },
+      { bg: "sky", items: [["person", "kid", 120, 205, 1.1, { ...BEN, arm: "out" }], ["pic", "dustbin", 250, 195, 95], ["pic", "rubbish", 340, 210, 70]] },
+      { bg: "sky", items: [["pic", "pond", 190, 185, 170], ["pic", "fish", 170, 205, 55], ["pic", "duck", 290, 150, 70], ["sparkle", 80, 80, 1], ["sparkle", 330, 90, 0.8]] },
+    ],
+  },
 ];

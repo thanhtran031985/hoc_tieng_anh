@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "I will be a doctor someday.",
+    "We are going to visit the zoo tomorrow.",
+    "She will apply for a new job.",
+    "I hope it will be sunny tonight.",
+    "He is going to marry soon."
+  ],
+  "fill_blank": [
+    "Tomorrow, I am going ___ play football. | to | at | in",
+    "It will ___ rainy tomorrow. | be | is | are",
+    "She is ___ to marry next month. | going | went | goes",
+    "Maybe we ___ see a film tonight. | will | did | saw",
+    "If it rains, we ___ stay at home. | will | did | are"
+  ],
+  "dictation": [
+    "We will see you soon.",
+    "She hopes to be a vet.",
+    "I will do my best."
+  ],
+  "speaking": [
+    "What will you do tomorrow?",
+    "I am going to visit my uncle.",
+    "I want to be a pilot."
+  ],
+  "short_reading": [
+    {
+      "title": "My Plan",
+      "text": "Next summer, I am going to visit my uncle. First, I will pack my bag. Then we will go to the beach. Maybe we will see a big ship.",
+      "questions": [
+        {
+          "q": "Who will the writer visit?",
+          "a": [
+            "An uncle",
+            "A teacher",
+            "A doctor"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "What will the writer do first?",
+          "a": [
+            "Pack a bag",
+            "Go to the beach",
+            "See a ship"
+          ],
+          "evidence": 1
+        }
+      ]
+    },
+    {
+      "title": "A Big Dream",
+      "text": "My brother has a big ambition. He wants to be an astronaut. He will revise every night and pass his exams. Someday, he hopes to fly in a rocket.",
+      "questions": [
+        {
+          "q": "What does the brother want to be?",
+          "a": [
+            "An astronaut",
+            "A pilot",
+            "A chef"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What will he do every night?",
+          "a": [
+            "Revise",
+            "Dance",
+            "Sing"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

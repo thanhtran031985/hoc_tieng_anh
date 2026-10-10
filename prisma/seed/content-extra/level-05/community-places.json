@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "The police catch the thief.",
+    "We sit on the bench in the park.",
+    "Our neighbour has a big dog.",
+    "The mayor works in the town hall.",
+    "A good citizen helps other people."
+  ],
+  "fill_blank": [
+    "I put a letter in the ___. | post box | statue | prison",
+    "We sit near the ___ in the square. | fountain | thief | mayor",
+    "I swim in the ___ on Saturday. | swimming pool | town hall | campsite",
+    "We sleep in a tent at the ___. | campsite | mall | prison",
+    "The ___ catches the thief. | police | guest | host"
+  ],
+  "dictation": [
+    "There is a meeting at ten o'clock.",
+    "We respect our teachers.",
+    "I am a member of the club."
+  ],
+  "speaking": [
+    "Where is the post box?",
+    "I live in the countryside.",
+    "Is there a swimming pool here?"
+  ],
+  "short_reading": [
+    {
+      "title": "Our Town",
+      "text": "My town has a big park and a library. There is a fountain near the town hall. On Saturday, many visitors come to the market. The mayor says hello to them.",
+      "questions": [
+        {
+          "q": "Where is the fountain?",
+          "a": [
+            "Near the town hall",
+            "Near the school",
+            "In the library"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Who says hello to the visitors?",
+          "a": [
+            "The mayor",
+            "The police",
+            "The teacher"
+          ],
+          "evidence": 3
+        }
+      ]
+    },
+    {
+      "title": "A Good Neighbour",
+      "text": "Lan is our neighbour. She is kind and helpful. When my mum is ill, she brings us soup. We respect her very much.",
+      "questions": [
+        {
+          "q": "What does the neighbour bring?",
+          "a": [
+            "Soup",
+            "A cake",
+            "Rice"
+          ],
+          "evidence": 2
+        },
+        {
+          "q": "Why does she bring soup?",
+          "a": [
+            "Mum is ill",
+            "It is cold",
+            "It is a party"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

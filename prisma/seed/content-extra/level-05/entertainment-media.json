@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "We watch the news after dinner.",
+    "My favourite character is a dragon.",
+    "The actress is in a new film.",
+    "I listen to music with headphones.",
+    "They are going to publish a new book."
+  ],
+  "fill_blank": [
+    "The singer has a ___ on the stage. | microphone | newspaper | remote control",
+    "I read the ___ at breakfast. | newspaper | trailer | album",
+    "I use the ___ to turn on the television. | remote control | headphones | microphone",
+    "The ___ makes the film and tells the actors what to do. | director | audience | fan",
+    "The ___ claps at the end of the show. | audience | stage | script"
+  ],
+  "dictation": [
+    "The show starts at seven.",
+    "I love animation films.",
+    "Please turn down the volume."
+  ],
+  "speaking": [
+    "What is your favourite programme?",
+    "I like comedy films.",
+    "Where is the remote control?"
+  ],
+  "short_reading": [
+    {
+      "title": "A Night at the Theatre",
+      "text": "Mai and her mum go to the theatre. They see a musical about a princess. The costumes are beautiful, and the songs are great. The audience claps at the end.",
+      "questions": [
+        {
+          "q": "What do they see?",
+          "a": [
+            "A musical",
+            "A comedy",
+            "A documentary"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What does the audience do at the end?",
+          "a": [
+            "Claps",
+            "Cries",
+            "Sleeps"
+          ],
+          "evidence": 3
+        }
+      ]
+    },
+    {
+      "title": "My Favourite Programme",
+      "text": "My favourite programme is a series about a dragon. I watch one episode every Saturday. My brother is a big fan too. After the show, we tell our mum the plot.",
+      "questions": [
+        {
+          "q": "What is the programme about?",
+          "a": [
+            "A dragon",
+            "A pirate",
+            "A doctor"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "When does he watch an episode?",
+          "a": [
+            "Every Saturday",
+            "Every Sunday",
+            "Every Monday"
+          ],
+          "evidence": 1
+        }
+      ]
+    }
+  ]
+}

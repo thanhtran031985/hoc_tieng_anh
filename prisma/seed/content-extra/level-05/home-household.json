@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "My clothes are in the wardrobe.",
+    "We cook the cake in the oven.",
+    "Dad puts the ladder next to the wall.",
+    "The cat sleeps on the armchair.",
+    "I turn on the light with the switch."
+  ],
+  "fill_blank": [
+    "I put my clothes in the ___. | wardrobe | bucket | fence",
+    "We make toast in the ___. | toaster | kettle | hammer",
+    "My mum puts our clothes in the ___. | washing machine | microwave | heater",
+    "Dad uses a ___ to put a nail in the wall. | hammer | broom | torch",
+    "The ___ is full of hot water for tea. | kettle | rug | cushion"
+  ],
+  "dictation": [
+    "The socket is on the wall.",
+    "I sit on a small stool.",
+    "We have a big yard."
+  ],
+  "speaking": [
+    "My room has a bunk bed.",
+    "Where is the torch?",
+    "Please close the gate."
+  ],
+  "short_reading": [
+    {
+      "title": "My New House",
+      "text": "We have a new house with a big yard. There is a lawn and a small fence. Our kitchen has an oven and a microwave. My room has a bunk bed, and I sleep on the high bed.",
+      "questions": [
+        {
+          "q": "What is in the yard?",
+          "a": [
+            "A lawn and a fence",
+            "A pond and a bridge",
+            "A farm"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Where does the writer sleep?",
+          "a": [
+            "On the high bed",
+            "In the attic",
+            "On the armchair"
+          ],
+          "evidence": 3
+        }
+      ]
+    },
+    {
+      "title": "Tidy Day",
+      "text": "On Sunday, we tidy our house. Dad uses the vacuum cleaner. Mum uses a broom. I put the rubbish in the dustbin.",
+      "questions": [
+        {
+          "q": "When do they tidy the house?",
+          "a": [
+            "On Sunday",
+            "On Monday",
+            "On Friday"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "What does Dad use?",
+          "a": [
+            "The vacuum cleaner",
+            "A broom",
+            "A bucket"
+          ],
+          "evidence": 1
+        }
+      ]
+    }
+  ]
+}

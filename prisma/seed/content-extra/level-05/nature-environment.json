@@ -1,0 +1,77 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "We must protect the environment.",
+    "Please put the rubbish in the dustbin.",
+    "The sun gives us solar energy.",
+    "Many birds live in the rainforest.",
+    "We are going to recycle the plastic."
+  ],
+  "fill_blank": [
+    "We see a big ___ with fire and smoke. | volcano | pond | stream",
+    "A camel lives in the ___. | desert | ocean | pond",
+    "We recycle paper and ___. | plastic | smoke | mud",
+    "A ___ is a small lake with fish. | pond | cliff | valley",
+    "After the rain, there is a ___. | flood | drought | volcano"
+  ],
+  "dictation": [
+    "The ocean is deep and wide.",
+    "Do not leave litter in the park.",
+    "We must protect wildlife."
+  ],
+  "speaking": [
+    "I love nature.",
+    "We must recycle plastic.",
+    "Please do not waste water."
+  ],
+  "short_reading": [
+    {
+      "title": "A Day at the Pond",
+      "text": "Lan and her dad go to the pond. They see fish and a small frog. A bird eats a worm near the pond. Lan puts her rubbish in the dustbin.",
+      "questions": [
+        {
+          "q": "Who goes to the pond with Lan?",
+          "a": [
+            "Her dad",
+            "Her mum",
+            "Her friend"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "What does Lan do with her rubbish?",
+          "a": [
+            "She puts it in the dustbin",
+            "She leaves it on the grass",
+            "She throws it in the pond"
+          ],
+          "evidence": 3
+        }
+      ]
+    },
+    {
+      "title": "Save the Earth",
+      "text": "The earth is our home. Pollution is bad for the air and the sea. We can recycle paper and plastic. We must protect nature.",
+      "questions": [
+        {
+          "q": "What is bad for the air and the sea?",
+          "a": [
+            "Pollution",
+            "Recycling",
+            "Nature"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What can we recycle?",
+          "a": [
+            "Paper and plastic",
+            "Mud and dust",
+            "Rock and stone"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}
