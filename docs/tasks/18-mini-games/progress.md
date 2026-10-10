@@ -1,6 +1,6 @@
 # Tiến độ — 18-mini-games — Mini game: mưa từ, bong bóng, đập chuột, đua xe
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 1 | Bong bóng từ vựng (Screen30) | ✅ | |
 | 2 | Đập chuột chữ cái (Screen31) | ✅ | |
 | 3 | Đua xe trả lời (Screen32) và thành tích | ✅ | |
-| 4 | Ghép trò chơi vào bài | ⬜ | |
+| 4 | Ghép trò chơi vào bài | ✅ | |
 
 ## Nhật ký
 
@@ -20,6 +20,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 
 **10/10/2026 — Bước 3.** Bảng `game_records` (migration `game_records`; model `GameRecord`), `src/server/game-records.ts` (`saveGameRecord` qua `requireLearner` + Zod dùng chung `saveGameRecordSchema`, giữ 20 lần gần nhất mỗi (bé, trò, bài); `lastRaceSequence`), `saveGameRecordAction`, `getLessonPlay` nạp xe ma cho bước `race`. `RaceStep` (Screen32): câu hỏi 3–4 đáp án chữ có phím 1–4 và loa (kiểu hình / nghe / điền câu), đường đua 8 đoạn, xe của bé có Bông lái và xe ma mờ viền nét đứt đi theo số câu đúng của lần trước sau cùng số lượt trả lời (hàm thuần `ghostAt`), chưa đúng thì xe đứng chờ và làm lại câu đó (sai 2 lần mờ một đáp án), lời kết 3 trường hợp (`raceOutcome`), lần đầu chơi không có xe ma. Kiểm (Edge, DB verify): lần 1 không xe ma (chọn nhầm → đáp án cam, xe đứng yên, điểm không đổi), thành tích lưu đúng (16 lượt, 8 đúng); lần 2 có xe ma, nhãn “Lần trước · N câu” khớp công thức ở từng lượt trả lời; ba lời kết (nhanh hơn 2 câu / bằng đúng / động viên) bằng cách đổi lần trước trong database; 1366×768 và 1920×1080 không cuộn; không lỗi console.
 
+**10/10/2026 — Bước 4.** Soạn bài học (Adult12): hàng “Mini game:” với 4 nút “Thêm Mưa từ vựng / Bong bóng từ vựng / Đập chuột chữ cái / Đua xe trả lời” (Mưa từ vựng khóa kèm lời giải thích ở bài ngoài cấp 3–5); trò chơi luôn được thêm vào cuối bài theo thứ tự thêm (`insertIndex(steps, adding)`); hàm thuần `gameStepProblem`/`rainLevelProblem` báo lỗi dưới danh sách bước khi thiếu từ có hình (Bong bóng ≥ 5, Đập chuột và Đua xe ≥ 4, Mưa từ vựng ≥ 4 từ một chữ) và server chặn Mưa từ vựng ở cấp ngoài 3–5. “Xem trước” dựng được cả 4 trò (`StepsPreview` vẽ trò chơi bằng khung riêng, Esc tạm dừng trò chứ không đóng bản xem thử, × mở “Dừng bài học?”). Kiểm (Edge, DB verify): thêm 4 trò, danh sách bước hiện đủ, xem trước chạy Mưa từ vựng (bắt đầu, Esc tạm dừng) rồi sang Bong bóng và Đua xe, “Dừng lại” đóng bản xem thử, lưu → 4 bước trong database đúng thứ tự và mở lại còn nguyên, bài cấp 2 khóa nút Mưa từ vựng. Cả task: tsc, lint, test, build sạch; spec `tests/e2e/18-mini-games.spec.ts` đã viết, chưa chạy (chờ xong hết task); cập nhật `helpers/lesson.ts`.
+
+## Việc cần làm thủ công
+- [ ] Chạy `npx prisma migrate deploy` để có bảng `game_records` (migration `game_records`).
+- [ ] Ở Soạn bài học (`/admin/builder/<id>`), thêm 4 trò vào một bài cấp 3–5, xuất bản và chơi thử bằng bàn phím ở 1366×768 và 1920×1080.
+- [ ] Chơi Đua xe 2 lượt cùng một bài để thấy xe ma “Lần trước”; thử chọn nhầm vài câu ở lượt đầu để lượt sau nhanh hơn / bằng / chậm hơn.
+- [ ] Thử bật “giảm chuyển động” của hệ điều hành: bóng, chuột, mưa từ đứng yên nhưng vẫn chơi được.
+- [ ] Chạy Playwright sau khi xong hết task: `npm run test:e2e:db` rồi `npx playwright test 18- 13- 12d`.
+
 ## Bước tiếp theo
 
-Bước 4 — Ghép trò chơi vào bài
+Hoàn thành

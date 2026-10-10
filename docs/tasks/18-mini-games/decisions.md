@@ -20,3 +20,12 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 10/10/2026 | `game_records`: `game` là chuỗi `rain|bubbles|whack|race`, `correct` = số lượt đúng ngay lần đầu, `sequence` = mảng 0/1 theo từng lượt trả lời, giữ 20 lần gần nhất mỗi (bé, trò, bài); chỉ Đua xe ghi thành tích ở bước này (các trò khác chưa cần), schema cho phép cả 4 trò | Đúng task.md và PRD G (bảng `game_records`); xe ma chỉ cần Đua xe |
 | 10/10/2026 | Lời kết Đua xe so số lượt trả lời (độ dài `sequence`) lần này với lần trước: ít hơn = nhanh hơn N câu, bằng = “Bằng đúng lần trước!”, nhiều hơn = động viên; lần đầu “Về đích rồi!” | Task.md: xe ma theo số câu đúng chứ không theo thời gian; “nhanh hơn N câu” hiểu là cần ít lượt hơn N lượt |
 | 10/10/2026 | Đua xe: câu “điền câu” chỉ dùng khi câu ví dụ của từ chứa đúng chính từ đó (không biến thể), không thì dùng kiểu hình; đáp án nhiễu lấy từ mọi từ của bài và chủ đề | Dữ liệu từ vựng chưa có chỗ trống sẵn; tránh tạo câu sai ngữ pháp |
+| 10/10/2026 | Mini game luôn được thêm vào cuối bài ở Adult12 (theo thứ tự thêm), các bước thường chèn trước cụm trò chơi cuối bài; “Xem trước” vẽ trò chơi bằng khung của chính nó | Task 12 chỉ có lật thẻ ở cuối bài; trò chơi là bước thưởng cuối bài theo PRD (“luyện tập → mini game → thử thách”) |
+| 10/10/2026 | Lỗi thiếu từ ở Adult12 tính trên từ của bài + từ gợi ý theo chủ đề; chạy thật vẫn tự bỏ bước nếu không đủ lượt (không lỗi) | Lúc soạn chưa biết chắc từ của cả chủ đề nên chỉ chặn khi chắc chắn thiếu; lúc chơi an toàn hơn là hiện bước hỏng |
+| 10/10/2026 | Chưa chụp so sánh với `designs/` cho Screen11/30/31/32 trong `thiet-ke.spec.ts` | Cần bài có sẵn trò chơi cố định trong DB test; làm khi chạy Playwright tổng. Đã đối chiếu bằng mắt qua ảnh chụp Edge ở 1366×768 và 1920×1080 |
+
+## Tổng kết khác với task.md gốc
+- Component từng trò đặt ở `src/features/lesson/games/` (phần trang trí dùng chung ở `src/components/lesson/games/`), không gom hết vào `src/components/lesson/games/`.
+- Bảng kết thúc hiện xu = 5 × sao (phần “mỗi sao” của thưởng bài), xu thật chỉ cộng một lần khi xong cả bài.
+- Chỉ Đua xe ghi `game_records` (đủ cho xe ma); bảng và schema sẵn sàng cho các trò khác.
+- Chưa làm: so sánh ảnh với thiết kế trong Playwright; ôn tập (5 hộp) từ kết quả mini game.

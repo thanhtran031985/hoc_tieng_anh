@@ -16,7 +16,8 @@ import {
 } from "@/components/adult";
 import { Icon, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { ACTIVITY_INFO, estimateMinutes, insertIndex, isActivityStep, isBuilderActivity, lessonStats, type BuilderActivity, type BuilderStep } from "@/lib/rules/admin-builder";
+import { GAME_ACTIVITIES, isGameActivity, isRainLevel } from "@/lib/rules/games";
+import { ACTIVITY_INFO, estimateMinutes, gameStepProblem, insertIndex, isActivityStep, isBuilderActivity, lessonStats, type BuilderActivity, type BuilderStep } from "@/lib/rules/admin-builder";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
 import { buildPlaySteps, type PlayStep, type PlayWord } from "@/lib/rules/lesson-play";
 import { saveLessonSchema } from "@/lib/schemas/admin-builder";
@@ -69,7 +70,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
     setCounter((c) => c + 1);
     setSteps((list) => {
       const next = [...list];
-      next.splice(insertIndex(list), 0, { ...step, key: `n${counter}-${list.length}` });
+      next.splice(insertIndex(list, step.activityType), 0, { ...step, key: `n${counter}-${list.length}` });
       return next;
     });
   }
@@ -91,6 +92,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
     if (storyId !== null) return data.stories.find((st) => st.storyId === storyId)?.title ?? `Truyện #${storyId}`;
     if (s.questionId !== null) return data.questions.find((q) => q.id === s.questionId)?.summary ?? `Câu hỏi #${s.questionId}`;
     if (s.wordId !== null) return known.get(s.wordId)?.word ?? `Từ #${s.wordId}`;
+    if (isGameActivity(s.activityType)) return "Dùng các từ có hình của bài";
     return s.activityType === "match_pairs" ? "Nối các từ có hình trong bài" : "Lật thẻ ghép các từ có hình";
   };
 
@@ -102,6 +104,11 @@ export function BuilderView({ data }: { data: BuilderData }) {
     if (status === "published" && !next.steps) {
       const block = lessonPublishBlock(steps.length, steps.filter(isActivityStep).length);
       if (block) next.steps = block;
+    }
+    if (!next.steps) {
+      const cardWords = steps.flatMap((s) => (s.activityType === "word_card" && s.wordId !== null && known.get(s.wordId) ? [known.get(s.wordId)!] : []));
+      const problem = gameStepProblem(steps, lesson.levelNumber, [...cardWords, ...suggestions]);
+      if (problem) next.steps = problem;
     }
     setErrors(next);
     return Object.keys(next).length === 0 && parsed.success ? parsed.data : null;
@@ -127,7 +134,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
     });
     const unitWords = stored.flatMap((s) => (s.activityType === "word_card" && s.word ? [s.word] : []));
     const pool = [...new Map([...unitWords, ...suggestions].map((w) => [w.id, w])).values()];
-    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known });
+    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known, levelNumber: lesson.levelNumber });
     if (play.length === 0) {
       toast(steps.length === 0 ? "Bài chưa có bước nào để xem trước." : "Chưa có bước nào xem trước được (các bước cần từ có hình và đủ từ trong bài).");
       return;
@@ -281,6 +288,24 @@ export function BuilderView({ data }: { data: BuilderData }) {
           </div>
           <AdultButton label="Thêm nối cặp" icon="plus" variant="ghost" size="s" onClick={() => add({ activityType: "match_pairs", wordId: null, questionId: null, config: null })} />
           <AdultButton label="Thêm lật thẻ" icon="plus" variant="ghost" size="s" onClick={() => add({ activityType: "memory_game", wordId: null, questionId: null, config: null })} />
+        </div>
+        <div className={styles.games} role="group" aria-label="Thêm trò chơi vào bài">
+          <span className={cn(adultStyles.small, adultStyles.muted)}>Mini game:</span>
+          {GAME_ACTIVITIES.map((type) => (
+            <AdultButton
+              key={type}
+              label={`Thêm ${ACTIVITY_INFO[type].label}`}
+              icon="plus"
+              variant="ghost"
+              size="s"
+              disabled={type === "word_rain" && !isRainLevel(lesson.levelNumber)}
+              onClick={() => {
+                add({ activityType: type, wordId: null, questionId: null, config: null });
+                toast(`Đã thêm trò chơi “${ACTIVITY_INFO[type].label}”.`);
+              }}
+            />
+          ))}
+          {!isRainLevel(lesson.levelNumber) && <span className={cn(adultStyles.small, adultStyles.muted)}>Mưa từ vựng chỉ dành cho bài cấp 3–5.</span>}
         </div>
         {steps.length === 0 ? (
           <AdultEmpty title="Bài chưa có bước nào" text="Thêm từ hoặc câu hỏi ở cột gợi ý bên trái." />

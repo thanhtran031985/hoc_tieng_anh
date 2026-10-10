@@ -1,4 +1,4 @@
-import { estimateMinutes, isBuilderActivity, isQuestionActivity, type BuilderActivity } from "@/lib/rules/admin-builder";
+import { estimateMinutes, isBuilderActivity, isQuestionActivity, rainLevelProblem, type BuilderActivity } from "@/lib/rules/admin-builder";
 import { extraQuestionSummary } from "@/lib/rules/admin-question-types";
 import { questionSummary } from "@/lib/rules/admin-questions";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
@@ -122,7 +122,7 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
   if (!parsed.success) return firstIssue(parsed.error);
   const { id, title, status, steps } = parsed.data;
 
-  const lesson = await db.lesson.findUnique({ where: { id }, select: { id: true, steps: { select: { id: true } } } });
+  const lesson = await db.lesson.findUnique({ where: { id }, select: { id: true, unit: { select: { level: { select: { number: true } } } }, steps: { select: { id: true } } } });
   if (!lesson) return fail("Không tìm thấy bài học này nữa.");
   const existing = new Set(lesson.steps.map((s) => s.id));
   if (steps.some((s) => s.id !== undefined && !existing.has(s.id))) return fail("Danh sách bước đã thay đổi. Hãy tải lại trang rồi soạn lại.", "steps");
@@ -131,6 +131,10 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
     const block = lessonPublishBlock(steps.length, steps.filter((s) => s.activityType !== "word_card").length);
     if (block) return fail(block, "steps");
   }
+
+  // Mưa từ vựng chỉ có ở bài cấp 3–5 (task 18).
+  const rainProblem = steps.some((s) => s.activityType === "word_rain") ? rainLevelProblem(lesson.unit.level.number) : null;
+  if (rainProblem) return fail(rainProblem, "steps");
 
   // Dạng bài lấy nội dung từ câu hỏi (task 15) phải gắn đúng một câu hỏi cùng dạng.
   const needQuestion = steps.filter((s) => isQuestionActivity(s.activityType));

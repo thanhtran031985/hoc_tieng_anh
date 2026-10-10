@@ -1,6 +1,6 @@
 // Luật của màn Soạn bài học (task 12, Adult12): mô tả bước, thời lượng tự tính, thống kê và chỗ chèn bước mới. Hàm thuần.
 import { MAX_LESSON_MINUTES, MIN_LESSON_MINUTES } from "./admin-tree.ts";
-import { isGameActivity } from "./games.ts";
+import { MIN_GAME_ROUNDS, RAIN_LEVEL_MAX, RAIN_LEVEL_MIN, BUBBLE_LANES, isGameActivity, isRainLevel } from "./games.ts";
 
 /** Dạng bài (activity_type) của giai đoạn 1 mà màn soạn bài thêm được. */
 export type BuilderActivity =
@@ -65,8 +65,39 @@ export function lessonStats(steps: readonly Pick<BuilderStep, "activityType" | "
   return { words: words.size, activities: steps.filter(isActivityStep).length };
 }
 
-/** Vị trí chèn bước mới: cuối bài, nhưng trước trò chơi (lật thẻ hoặc mini game) nếu nó đang kết thúc bài. */
-export function insertIndex(steps: readonly Pick<BuilderStep, "activityType">[]): number {
+/**
+ * Vị trí chèn bước mới: cuối bài, nhưng trước trò chơi (lật thẻ hoặc mini game) nếu nó đang kết thúc bài.
+ * Bước mới chính là một trò chơi thì thêm vào cuối (các trò chơi đứng cuối bài theo thứ tự thêm).
+ */
+export function insertIndex(steps: readonly Pick<BuilderStep, "activityType">[], adding?: BuilderActivity): number {
+  if (adding && (adding === "memory_game" || isGameActivity(adding))) return steps.length;
   const last = steps[steps.length - 1];
   return last && (last.activityType === "memory_game" || isGameActivity(last.activityType)) ? steps.length - 1 : steps.length;
+}
+
+const hasPicture = (w: { image: string | null }) => w.image !== null;
+
+/** Mưa từ vựng chỉ có ở bài cấp 3–5: trả lời lỗi (hoặc null nếu cấp phù hợp). */
+export const rainLevelProblem = (levelNumber: number): string | null => (isRainLevel(levelNumber) ? null : `Mưa từ vựng chỉ dành cho bài cấp ${RAIN_LEVEL_MIN}–${RAIN_LEVEL_MAX} (bài này ở cấp ${levelNumber}).`);
+
+/**
+ * Lỗi của các mini game trong bài (hoặc null): Mưa từ vựng chỉ ở bài cấp 3–5; mỗi trò cần đủ từ có hình / từ một chữ trong bài và chủ đề.
+ * `words` là các từ của bài và của chủ đề (không cần trùng).
+ */
+export function gameStepProblem(steps: readonly Pick<BuilderStep, "activityType">[], levelNumber: number, words: readonly { id: number; word: string; image: string | null }[]): string | null {
+  const unique = [...new Map(words.map((w) => [w.id, w])).values()];
+  const pictured = unique.filter(hasPicture).length;
+  const typable = unique.filter((w) => /^[a-z]+$/i.test(w.word)).length;
+  for (const { activityType } of steps) {
+    if (activityType === "word_rain") {
+      const level = rainLevelProblem(levelNumber);
+      if (level) return level;
+      if (typable < MIN_GAME_ROUNDS) return `Mưa từ vựng cần ít nhất ${MIN_GAME_ROUNDS} từ một chữ trong bài hoặc chủ đề (đang có ${typable}).`;
+    } else if (activityType === "word_bubbles" && pictured < BUBBLE_LANES) {
+      return `Bong bóng từ vựng cần ít nhất ${BUBBLE_LANES} từ có hình trong bài hoặc chủ đề (đang có ${pictured}).`;
+    } else if ((activityType === "whack_letters" || activityType === "race") && pictured < MIN_GAME_ROUNDS) {
+      return `${ACTIVITY_INFO[activityType].label} cần ít nhất ${MIN_GAME_ROUNDS} từ có hình trong bài hoặc chủ đề (đang có ${pictured}).`;
+    }
+  }
+  return null;
 }

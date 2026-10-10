@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AdultButton } from "@/components/adult";
 import { LessonFrame } from "@/features/lesson/LessonFrame";
 import { StepView } from "@/features/lesson/StepView";
+import { isGameActivity } from "@/lib/rules/games";
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import styles from "./questions.module.css";
@@ -27,8 +28,11 @@ export function StepsPreview({ steps, level, onClose }: Props) {
   const [index, setIndex] = useState(0);
   const [round, setRound] = useState(0);
   const overlay = useRef<HTMLDivElement>(null);
+  const step = steps[Math.min(index, steps.length - 1)];
+  const isGame = step !== undefined && isGameActivity(step.kind);
   // Esc đóng bản xem thử (bước con như nối từ vẫn nhận Esc của nó trước).
-  useHotkeys({ Escape: onClose }, { inInputs: ESC_WHILE_TYPING });
+  // Mini game có Esc tạm dừng riêng; thoát bằng nút × hoặc “Dừng lại”.
+  useHotkeys({ Escape: onClose }, { inInputs: ESC_WHILE_TYPING, enabled: !isGame });
   // Đưa focus vào lớp phủ để Enter/Space không rơi vào nút của ngăn kéo bên dưới; đóng thì trả focus về chỗ cũ.
   useEffect(() => {
     const before = document.activeElement;
@@ -37,7 +41,6 @@ export function StepsPreview({ steps, level, onClose }: Props) {
       if (before instanceof HTMLElement && before.isConnected) before.focus();
     };
   }, []);
-  const step = steps[Math.min(index, steps.length - 1)];
   if (!step) return null;
   const go = (to: number) => {
     setIndex(Math.max(0, Math.min(steps.length - 1, to)));
@@ -45,9 +48,20 @@ export function StepsPreview({ steps, level, onClose }: Props) {
   };
   return createPortal(
     <div ref={overlay} tabIndex={-1} className={styles.preview} data-theme={level <= 5 ? "tieu-hoc" : "thcs"} role="dialog" aria-modal="true" aria-label="Xem như học sinh">
-      <LessonFrame level={level} mascot="ngoc" value={index} max={steps.length} onExit={onClose}>
-        <StepView key={`${index}-${round}`} step={step} active unit={{ title: "Xem thử", titleVi: "Xem thử" }} onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)} />
-      </LessonFrame>
+      {isGame ? (
+        <StepView
+          key={`${index}-${round}`}
+          step={step}
+          active
+          unit={{ title: "Xem thử", titleVi: "Xem thử" }}
+          host={{ level, mascot: "ngoc", onStop: onClose }}
+          onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)}
+        />
+      ) : (
+        <LessonFrame level={level} mascot="ngoc" value={index} max={steps.length} onExit={onClose}>
+          <StepView key={`${index}-${round}`} step={step} active unit={{ title: "Xem thử", titleVi: "Xem thử" }} onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)} />
+        </LessonFrame>
+      )}
       {steps.length > 1 && (
         <div className={styles.previewBar} role="group" aria-label="Chuyển bước xem thử">
           <AdultButton label="Bước trước" icon="back" variant="secondary" size="s" disabled={index === 0} onClick={() => go(index - 1)} />
