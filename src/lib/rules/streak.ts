@@ -2,7 +2,7 @@
 // Học ít nhất 1 bài hoặc 1 lượt ôn trong ngày thì được tính. Mỗi tuần có 1 "thẻ nghỉ phép" tự dùng khi bé bỏ đúng một ngày.
 // Thẻ nạp lại về 1 khi sang tuần mới (tuần bắt đầu thứ Hai, so với ngày học gần nhất) nên không cần thêm cột.
 // Ngày là "ngày lịch" (Date lúc 00:00 UTC, xem dates.ts).
-import { diffDays, weekStart } from "./dates.ts";
+import { addDays, diffDays, weekStart } from "./dates.ts";
 
 export type StreakState = {
   streakDays: number;
@@ -46,4 +46,56 @@ export function recordStudyDay(state: StreakState, today: Date): StreakState {
   if (gap === 1) return { streakDays: state.streakDays + 1, streakFreezes: freezes, lastStudyDate: today };
   if (gap === 2 && freezes > 0) return { streakDays: state.streakDays + 1, streakFreezes: freezes - 1, lastStudyDate: today };
   return { streakDays: 1, streakFreezes: freezes, lastStudyDate: today };
+}
+
+// ---- Thẻ chuỗi ngày trên trang chủ: 7 ngày T2–CN ----
+
+export type WeekDayStatus = "done" | "today" | "freeze" | "missed" | "future";
+export type WeekCell = { label: string; status: WeekDayStatus; isToday: boolean };
+
+export const WEEK_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] as const;
+/** Tên đầy đủ để đọc trong lời giải thích (“thứ Tư”). */
+export const WEEKDAY_NAMES = ["thứ Hai", "thứ Ba", "thứ Tư", "thứ Năm", "thứ Sáu", "thứ Bảy", "Chủ nhật"] as const;
+
+/**
+ * Ngày thẻ nghỉ phép đã dùng trong tuần của `today` (hoặc null). Database không lưu riêng ngày dùng thẻ nên suy ra từ trạng thái chuỗi:
+ * thẻ đã hết trong tuần này, và có một ngày bị bỏ nằm giữa hai ngày học liền nhau mà chuỗi hiện tại còn phủ tới ngày trước đó
+ * (`recordStudyDay` chỉ dùng thẻ khi bỏ đúng một ngày và vẫn giữ chuỗi).
+ * `studied` là các ngày có học (tính cả ngày cuối tuần trước để xét thứ Hai).
+ */
+export function freezeDayOfWeek(state: StreakState, studied: readonly Date[], today: Date): Date | null {
+  const last = state.lastStudyDate;
+  if (!last || freezesAvailable(state, today) > 0) return null;
+  const has = new Set(studied.map((day) => day.getTime()));
+  const monday = weekStart(today);
+  for (let day = monday; day.getTime() < last.getTime(); day = addDays(day, 1)) {
+    if (has.has(day.getTime())) continue;
+    const before = addDays(day, -1);
+    if (!has.has(before.getTime()) || state.streakDays < diffDays(last, before)) continue;
+    let after = true;
+    for (let next = addDays(day, 1); next.getTime() <= last.getTime(); next = addDays(next, 1)) if (!has.has(next.getTime())) after = false;
+    if (after) return day;
+  }
+  return null;
+}
+
+/** 7 ô của tuần chứa `today`: đã học, hôm nay (chưa học), dùng thẻ nghỉ phép, bỏ lỡ, chưa tới. */
+export function weekCells(state: StreakState, studied: readonly Date[], today: Date): WeekCell[] {
+  const has = new Set(studied.map((day) => day.getTime()));
+  const monday = weekStart(today);
+  const freeze = freezeDayOfWeek(state, studied, today);
+  return WEEK_LABELS.map((label, i) => {
+    const day = addDays(monday, i);
+    const isToday = day.getTime() === today.getTime();
+    const status: WeekDayStatus = has.has(day.getTime())
+      ? "done"
+      : isToday
+        ? "today"
+        : day.getTime() > today.getTime()
+          ? "future"
+          : freeze && freeze.getTime() === day.getTime()
+            ? "freeze"
+            : "missed";
+    return { label, status, isToday };
+  });
 }
