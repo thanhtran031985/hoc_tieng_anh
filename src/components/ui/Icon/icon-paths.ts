@@ -82,6 +82,9 @@ export const ICON_PATHS = {
   snow: "<path d=\"M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5\"/>",
   sunrise: "<path d=\"M4 18h16M7 18a5 5 0 0 1 10 0M12 5v4M5.5 9.5l2 2M18.5 9.5l-2 2\"/>",
   wand: "<path d=\"M4 20L15 9M13 7l4 4\"/><path d=\"M18 3v3M16.5 4.5h3M20.5 9v2M19.5 10h2M9.5 3v2M8.5 4h2\"/>",
+  translate: "<path d=\"M3.5 5.5h9M8 3.5v2M5.5 5.5c.8 3 3 5.4 6 6.6M10.5 5.5c-.8 3.2-3 5.8-6.5 7\"/><path d=\"M12.5 20.5l4-10 4 10M14 17h5\"/>",
+  snail: "<path d=\"M3 18.5h14.5c2 0 3.5-1.6 3.5-3.5V9\"/><circle cx=\"11\" cy=\"12\" r=\"5.5\"/><path d=\"M11 12a2 2 0 1 0 2-2\"/><path d=\"M19.5 9l-1.5-3M21.5 9l1-3\"/>",
+  branch: "<circle cx=\"5\" cy=\"12\" r=\"2.5\"/><circle cx=\"19\" cy=\"5\" r=\"2\"/><circle cx=\"19\" cy=\"12\" r=\"2\"/><circle cx=\"19\" cy=\"19\" r=\"2\"/><path d=\"M7.5 12h9.5M7 11c4-5 6-6 10-6M7 13c4 5 6 6 10 6\"/>",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

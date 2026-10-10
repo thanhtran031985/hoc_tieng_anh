@@ -82,6 +82,7 @@ export function ClickableWords({ text, glossary, litIndex = null, onWord, accent
               type="button"
               className={cn(styles.kw, (lit === index || litIndex === index) && styles.lit)}
               data-kw={index}
+              data-lit={lit === index || litIndex === index ? "" : undefined}
               data-w={t.word}
               aria-label={note ? `${t.core}, nghĩa: ${note}` : t.core}
               onClick={(event) => pick(index, t.word, event.currentTarget)}

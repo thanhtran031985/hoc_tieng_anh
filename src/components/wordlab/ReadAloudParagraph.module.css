@@ -1,0 +1,187 @@
+/* Đọc cả đoạn và dịch nghĩa (ReadAloudParagraph): khung đoạn văn dùng chung ở Khám phá từ và Họ vần. */
+.rap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+.head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 auto 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  font-weight: var(--text-stat--font-weight);
+  color: var(--ink);
+}
+.title svg {
+  color: var(--brand);
+}
+.tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: calc(var(--space-10) + var(--space-1));
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  border: var(--border-thin) solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: var(--text-label--font-weight);
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: var(--brand-soft-shade);
+}
+.chip[aria-pressed="true"] {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  color: var(--brand-shade);
+}
+.chip:focus-visible,
+.one:focus-visible,
+.say:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.body {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.sent {
+  display: grid;
+  grid-template-columns: var(--space-8) minmax(0, 1fr) var(--space-8);
+  column-gap: var(--space-2);
+  align-items: start;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+}
+.sent:hover {
+  background: var(--surface-soft);
+}
+.reading {
+  background: var(--read-highlight);
+}
+.reading:hover {
+  background: var(--read-highlight);
+}
+.en {
+  font-family: var(--font-display);
+  font-size: var(--text-body-l);
+  line-height: var(--text-word--line-height);
+  font-weight: 700;
+  color: var(--ink);
+}
+/* Chữ đang đọc (ClickableWords gắn data-lit): nền đậm hơn nền câu. */
+.en button[data-lit] {
+  background: var(--read-word-bg);
+  color: var(--read-word-ink);
+  box-shadow: 0 0 0 var(--space-1) var(--read-word-bg);
+}
+.one,
+.say {
+  width: var(--space-8);
+  height: var(--space-8);
+  margin-top: var(--space-1);
+  border-radius: var(--radius-round);
+  border: 0;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.reading .one,
+.reading .say {
+  background: var(--surface);
+}
+.one[aria-pressed="true"] {
+  background: var(--brand-soft);
+  color: var(--brand-shade);
+}
+.one:hover,
+.say:hover {
+  color: var(--brand);
+}
+.vi {
+  grid-column: 2;
+  margin: 0 0 var(--space-1);
+  padding-left: var(--space-3);
+  border-left: var(--space-1) solid var(--trans-rule);
+  color: var(--trans-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-translation);
+  line-height: var(--text-translation--line-height);
+  font-weight: var(--text-translation--font-weight);
+  animation: appear var(--duration-base) ease-out;
+}
+.vi[hidden] {
+  display: none;
+}
+
+.compact {
+  padding: var(--space-3) var(--space-4);
+  gap: var(--space-2);
+}
+.compact .title {
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+}
+.compact .en {
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+.compact .chip {
+  height: var(--space-10);
+  font-size: var(--text-caption);
+}
+.compact .sent {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.compact .vi {
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-1) * -1));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vi {
+    animation: none;
+  }
+}

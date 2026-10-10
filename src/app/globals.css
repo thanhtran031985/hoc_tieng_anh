@@ -899,6 +899,9 @@
   --text-key: 13px;
   --text-key--line-height: 16px;
   --text-key--font-weight: 800;
+  --text-translation: 18px;
+  --text-translation--line-height: 26px;
+  --text-translation--font-weight: 600;
   --text-thcs-title: 28px;
   --text-thcs-title--line-height: 36px;
   --text-thcs-title--font-weight: 700;
