@@ -1,0 +1,29 @@
+# Kế hoạch — Task 20 `20-boss-level-test` (nhánh `feat/20-boss-level-test`, tách từ `feat/19-content-new-types-l1-l4`)
+
+## Context
+Mỗi chủ đề (vùng) kết thúc bằng trận trùm; xong mọi chủ đề của cấp thì thi lên cấp 20 câu, đạt 80% thì rồng Bông lớn lên và mở đảo mới; chưa đạt thì ôn rồi thi lại; độ khó trong bài tự điều chỉnh. Nền sẵn có: bài `kind = unit_test` đã nằm trên bản đồ (`unlock.ts`, `IslandMap`, `LessonEnd` có nhánh `bossLesson`), `completeLesson` (`server/lesson-complete.ts`), `LessonPlayer`/`StepView`/`GameFrame`, `stageForLevel` + `Mascot stage`, `MascotGrowth`, bản đồ `getIslandMap`. Người dùng đã ủy quyền làm liền nên Bước 0 (“DỪNG chờ tôi”) **tự duyệt**, ghi vào `decisions.md`.
+
+## Quyết định (ghi `decisions.md`)
+- Trùm: dùng chung hình Vua Khỉ Lém của thiết kế, biến thể theo chủ đề bằng màu lông (token `boss-fur/face`) + phụ kiện (vương miện, mũ đầu bếp, kính, khăn, nơ, tai nghe, mũ bảo hiểm…): `src/lib/rules/bosses.ts` có 32 trùm cấp 1–4 (tên tiếng Việt, tên tiếng Anh, màu, phụ kiện, câu thách/trêu, tên huy hiệu “Bạn của …”). Không vẽ nhân vật mới.
+- Trận trùm = bài `unit_test` dựng lại bằng `buildLessons` bản 2: 6 câu trộn (nghe-chọn-hình ×2, chọn từ, điền từ, sắp xếp câu, ghép âm cấp 1–3 / nghe-gõ cấp 3–4). Seed dựng lại trận trùm chưa có lượt học cả ở chủ đề đã học. Thưởng: 30 xu (`COINS.boss`, mỗi lần thắng) + huy hiệu “Bạn của …” (lần đầu).
+- Phần thưởng: bảng `rewards` (type, code, name, condition JSON) + `learner_rewards` theo PRD G, nạp sẵn 32 huy hiệu trùm + 4 huy hiệu “Qua đảo …”; task 21 làm giao diện bộ sưu tập trên cùng bảng.
+- Bài thi lên cấp (chỉ cấp 1–4; cấp 5 hiện “Sắp có”): bảng `exams` (1 đề `level_test` mỗi cấp, `pass_percent = 80`), `exam_attempts` (items JSON, answers JSON, status, score, weak_units) và `exam_questions` (theo PRD, dành cho đề cố định GĐ3, chưa dùng). Mỗi lượt thi dựng 20 mục ngẫu nhiên có hạt giống từ mọi chủ đề của cấp (cân bằng chủ đề, trộn dạng bài: từ vựng + câu hỏi dạng mới), lưu ở `items`.
+- Cổng mở khi mọi bài thường của mọi chủ đề đã có ≥ 1 sao (trùm không bắt buộc). Server kiểm cổng khi vào `/exam/[level]` và khi nộp bài.
+- Đạt ≥ 16/20 đúng ngay lần đầu: lên `current_level_id`, +50 sao, +100 xu, huy hiệu “Qua đảo …” (một lần). Chưa đạt: lưu 3 chủ đề sai nhiều nhất + từ hay sai; thi lại chỉ được khi bé đã hoàn thành ≥ 1 bài của một chủ đề gợi ý sau lần thi đó (`lesson_attempts.finished_at > submitted_at`), kiểm ở server; nút “Ôn chủ đề này” mở bài còn thiếu sao nhất của chủ đề.
+- Rồng theo cấp: `MascotStageProvider` (React context) ở layout kid nạp dáng theo `current_level` của hồ sơ; `Mascot` lấy `stage` từ context khi không truyền → mọi nơi (trang chủ, bài học, kết thúc, chọn hồ sơ dùng cấp của từng hồ sơ) tự đổi.
+- Độ khó: hàm thuần `src/lib/rules/adaptive.ts` (3 đúng liên tiếp → +1 đáp án nhiễu cho câu chọn kế; 2 sai liên tiếp → bớt 1 lựa chọn và đọc chậm; hết chuỗi thì về mặc định); bước chọn có thêm `spare` (từ nhiễu dự phòng).
+
+## Các bước
+**Bước 0 — Trùm (tự duyệt).** `bosses.ts` + test (đủ 32 trùm duy nhất, mỗi chủ đề có trùm), 2 hình mẫu (ảnh chụp Edge của 2 biến thể).
+**Bước 1 — Trận trùm (Screen33).** Migration `rewards`, `learner_rewards` + seed huy hiệu; builder bản 2: trận trùm 6 câu trộn (test); seed dựng lại trận trùm; `BossArt` (SVG khỉ + phụ kiện), `BossIntro` (lớp phủ thách đấu, thẻ luật), dải trùm + thanh “Năng lượng của trùm” (n/6, không thể thua), trùm lắc khi đúng / trêu nhẹ khi từng sai, kết thúc “trùm làm bạn” + 3 sao + 30 xu + huy hiệu (`LessonEnd` nhánh boss); `completeLesson`: thưởng trùm + cấp huy hiệu. Kiểm: Edge chơi một trận trùm (sai rồi làm lại, không thể thua), về bản đồ vùng đã xong.
+**Bước 2 — Bản đồ có cổng (Screen34).** `levelGateState` (hàm thuần + test); `getIslandMap` trả `gate`; `LevelGate` + thẻ cổng (khóa: liệt kê vùng đã xong / còn thiếu + “Học tiếp”; mở: thẻ bài thi + “Vào bài thi”; cổng đọc được bằng trình đọc màn hình); đường đảo kết thúc ở cổng. Kiểm: gõ thẳng `/exam/<cấp>` khi cổng khóa bị chặn ở server.
+**Bước 3 — Bài thi lên cấp (Screen35–37).** Migration `exams`, `exam_attempts`, `exam_questions`; `level-test.ts` (chọn 20 mục cân bằng, chấm, đạt ≥ 16/20, 3 chủ đề yếu, điều kiện thi lại; test 16/20 đạt – 15/20 chưa đạt); server `startExam/submitExam` (kiểm quyền hồ sơ, cổng, thi lại, nộp một lần); trang `/exam/[level]` + `ExamPlayer` (thanh 20 chấm, câu sai vẫn làm lại), màn giới thiệu (Screen35), đạt (Screen36, rồng lớn lên + đảo mới sáng), chưa đạt (Screen37, thước 20 ô, không chữ “trượt”, không đỏ, 3 chủ đề ôn phím 1–3, “Thi lại sau”). Kiểm: Edge cả hai trường hợp (đạt 16/20, chưa đạt 15/20) + thi lại bị chặn tới khi ôn.
+**Bước 4 — Rồng Bông theo cấp.** `MascotStageProvider` + `Mascot` dùng context; trang chủ, bài học, kết thúc bài, chọn hồ sơ; Kiểm: cấp 4 thấy khăn quàng; đổi cấp ở database thì đổi.
+**Bước 5 — Điều chỉnh độ khó.** `adaptive.ts` + test (3 đúng liên tiếp → +1 đáp án nhiễu; 2 sai liên tiếp → bớt lựa chọn và đọc chậm); `buildPlaySteps` thêm `spare`; nối vào `LessonPlayer`/`ListenChooseStep`/`PickWordStep`.
+
+## Tái dùng
+`unlock.ts` (`computeLessonStates`, `findNextLesson`, `levelStatus`), `lesson-score.ts` (`starsFor`, `COINS`), `LessonFrame`/`StepView`/`LessonPlayer` (tách phần dùng lại cho `ExamPlayer`), `buildPlaySteps`, `stageForLevel`, `MascotGrowth`, `getIslandMap`, `requireActiveLearner`/`requireLearner`, `seededRandom/shuffled`, `GameStartDialog`/`Dialog`.
+
+## Kiểm thử
+Unit: `bosses`, builder bản 2 (trận trùm), `level-test` (chọn, chấm 16/15, yếu, thi lại), `levelGateState`, `adaptive`; tsc, lint, `npm test`, build; Edge (DB verify) từng bước 1–5 ở 1366×768/1920×1080 không cuộn, không lỗi console; e2e `tests/e2e/20-trum-thi-len-cap.spec.ts` viết, không chạy; dashboard 0 cảnh báo; commit từng bước + push.
+Việc thủ công để báo: `npx prisma migrate deploy` + `npx prisma db seed`; đi hết một cấp, đánh trùm, thi lên cấp đạt và chưa đạt; Playwright sau khi xong hết task.

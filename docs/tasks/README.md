@@ -23,7 +23,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 17 | [17-speaking](17-speaking/task.md) — Luyện nói từ và câu | ✅ | 15 | `feat/17-speaking` |
 | 18 | [18-mini-games](18-mini-games/task.md) — Mini game: mưa từ, bong bóng, đập chuột, đua xe | ✅ | 13, 14 | `feat/18-mini-games` |
 | 19 | [19-content-new-types-l1-l4](19-content-new-types-l1-l4/task.md) — Nội dung dạng bài mới cho cấp 1–4 | ✅ | 15, 16, 17, 18 | `feat/19-content-new-types-l1-l4` |
-| 20 | [20-boss-level-test](20-boss-level-test/task.md) — Trận trùm, bài thi lên cấp và rồng Bông lớn lên | ⬜ | 18, 19 | `feat/20-boss-level-test` |
+| 20 | [20-boss-level-test](20-boss-level-test/task.md) — Trận trùm, bài thi lên cấp và rồng Bông lớn lên | 🔄 | 18, 19 | `feat/20-boss-level-test` |
 | 21 | [21-rewards-collection](21-rewards-collection/task.md) — Bộ sưu tập sticker và huy hiệu | ⬜ | 13, 20 | `feat/21-rewards-collection` |
 | 22 | [22-room-shop](22-room-shop/task.md) — Phòng của tớ, cửa hàng và thẻ nghỉ phép | ⬜ | 21 | `feat/22-room-shop` |
 | 23 | [23-notebook-plus](23-notebook-plus/task.md) — Sổ từ bổ sung và in danh sách từ | ⬜ | 08, 13 | `feat/23-notebook-plus` |

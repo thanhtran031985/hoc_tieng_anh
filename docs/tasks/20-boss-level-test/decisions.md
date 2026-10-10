@@ -4,3 +4,7 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 
 | Ngày | Quyết định | Lý do |
 |---|---|---|
+| 10/10/2026 | Bước 0 tự duyệt: 32 trùm là biến thể của Vua Khỉ Lém (6 màu lông × 14 phụ kiện), không vẽ nhân vật mới | Người dùng ủy quyền làm liền; tiết kiệm công vẽ mà vẫn mỗi vùng một trùm khác nhau |
+| 10/10/2026 | Token mới: `boss-fur-1…6`, `boss-face-1…6` (bảng màu lông 6 nhóm trùm; số 1 là màu gốc) | Thiết kế chỉ có một màu lông; CLAUDE.md: thiếu token thì thêm vào theme và liệt kê trong báo cáo |
+| 10/10/2026 | Phần thưởng lưu ở bảng `rewards`/`learner_rewards` (PRD G) nạp sẵn huy hiệu trùm và “Qua đảo …”; task 21 làm giao diện sưu tập trên cùng bảng | Tránh làm lại khi sang task 21 |
+| 10/10/2026 | Bài thi lên cấp chỉ cấp 1–4 (cấp 5 → THCS là GĐ3); mỗi lượt thi tự dựng 20 mục có hạt giống từ mọi chủ đề của cấp và lưu ở `exam_attempts.items`; `exam_questions` có bảng nhưng chưa dùng (đề cố định ở GĐ3) | Câu hỏi từ vựng không nằm sẵn trong bảng `questions`; lượt thi cần lưu đúng bộ câu để nộp bài kiểm được |

@@ -1,0 +1,41 @@
+/* Trùm: lắc khi bị trúng chiêu (đúng), nhún nhẹ khi thách đấu. Giảm chuyển động thì đứng yên. */
+.boss {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+.tease {
+  animation: bob 2.4s ease-in-out infinite;
+}
+.hit {
+  animation: hit 0.5s ease;
+}
+.friend {
+  animation: bob 1.8s ease-in-out infinite;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(calc(-1 * var(--space-2)));
+  }
+}
+@keyframes hit {
+  20% {
+    transform: translateX(calc(-1 * var(--space-3))) rotate(-6deg);
+  }
+  40% {
+    transform: translateX(var(--space-3)) rotate(6deg);
+  }
+  60% {
+    transform: translateX(calc(-1 * var(--space-2)));
+  }
+  80% {
+    transform: translateX(var(--space-2));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tease,
+  .hit,
+  .friend {
+    animation: none;
+  }
+}

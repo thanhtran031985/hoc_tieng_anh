@@ -519,6 +519,19 @@
   --boss-energy-track: #efe3cd;
   --boss-fur: #b07a4f;
   --boss-face: #ffd9b0;
+  /* Bảng màu lông của 6 nhóm trùm (task 20): 1 là màu gốc của Vua Khỉ Lém. */
+  --boss-fur-1: var(--boss-fur);
+  --boss-face-1: var(--boss-face);
+  --boss-fur-2: #d28a45;
+  --boss-face-2: #ffe0b8;
+  --boss-fur-3: #8a6aa0;
+  --boss-face-3: #f3dcf0;
+  --boss-fur-4: #5f9a72;
+  --boss-face-4: #e4f3da;
+  --boss-fur-5: #5b86b8;
+  --boss-face-5: #dbeeff;
+  --boss-fur-6: #c9707f;
+  --boss-face-6: #ffe2e8;
   --gate-stone: #d2c1a4;
   --gate-stone-shade: #a38f72;
   --gate-glow: #fff1a8;
