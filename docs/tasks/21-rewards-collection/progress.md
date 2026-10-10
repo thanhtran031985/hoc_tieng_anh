@@ -1,6 +1,6 @@
 # Tiến độ — 21-rewards-collection — Bộ sưu tập sticker và huy hiệu
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 1 | Quy tắc rơi sticker và đạt huy hiệu | ✅ | Tự duyệt; 14 test quy tắc |
 | 2 | Kết thúc bài có quà (Screen40) | ✅ | Tự duyệt; Edge 21/21 đạt |
 | 3 | Bộ sưu tập (Screen38, Screen39) | ✅ | Tự duyệt; Edge 35/35 đạt |
-| 4 | Danh mục phần thưởng (Adult21: Sticker, Huy hiệu) | ⬜ | |
+| 4 | Danh mục phần thưởng (Adult21: Sticker, Huy hiệu) | ✅ | Tự duyệt; Edge 25/25 đạt |
 
 ## Nhật ký
 
@@ -23,6 +23,18 @@ Việc thủ công: `npx prisma migrate deploy` rồi `npx prisma db seed`.
 
 **10/10/2026 — Bước 3.** Bộ sưu tập (Screen38–39) thay màn “Sắp có”: `server/collection.ts` (`getCollection`: 4 album × 6 ô theo danh mục đã xuất bản, sticker đã mở mới tính là đã có, “Mới” trong 3 ngày; 10 huy hiệu kèm tiến độ từ `collectBadgeStats` + ngày nhận; quà chưa mở; huy hiệu trùm không liệt kê; `getCollectionCounts` cho trang chủ), trang `/collection` (tham số `?tab=badges`) + `loading.tsx` (khung xương) + `error.tsx`, `features/collection/`: `CollectionView` (tiêu đề, hai tab, tổng đã có/tổng + thanh tiến độ, banner “Bé có N quà chưa mở!” mở bằng `openRewardAction` + `RewardPopup`), `StickerBook` (album tab dọc ↑↓, 6 ô nghiêng nhẹ, ← → đổi trang, ô trống bóng mờ + gợi ý cách nhận, loa nghe tên, lời Bông khi album trống), `BadgeGrid` (lưới 5×2, tiến độ kèm số, thẻ chi tiết Enter/Esc với tên Anh + loa, điều kiện, chip xu chỉ khi xu > 0). Nút Bộ sưu tập ở trang chủ hiện “n sticker · m huy hiệu”. Token mới: `--size-album-index` (300px, cột album). Kiểm (Edge, DB verify, `.tmp-verify/check-21-collection.mjs`, 35/35): tổng sticker/huy hiệu khớp database, album 3/6, 3 ô ‘Chưa có’, gợi ý cách nhận, phím ←/→ và ↓, nhãn ‘Mới’, mở quà đang chờ (+10 xu một lần, banner biến mất), tiến độ “12/30 ngày”, thẻ chi tiết (30-day streak, +50 xu, còn 18 ngày), huy hiệu qua đảo không chip xu, trang chủ, trạng thái trống, không cuộn ở 1366×768 và 1920×1080, không lỗi console. tsc, lint, `npm test` (517 đạt), build sạch.
 
+**10/10/2026 — Bước 4.** Danh mục phần thưởng quản trị (Adult21): mục menu “Phần thưởng” (nhãn Mới), trang `/admin/rewards` (+ `loading.tsx`, `error.tsx`, `requireAdmin` ở trang và ở server action), `server/admin/rewards.ts` (`getRewards` kèm danh sách hình SVG chọn được; `saveSticker` kiểm tên Anh trùng, mỗi album tối đa 6 sticker xuất bản; `saveBadge` kiểm điều kiện cùng lược đồ `badgeConditionSchema`, mã `ach:<loại><mức>` không trùng, huy hiệu qua đảo không đổi điều kiện, huy hiệu trùm không hiện), Zod `schemas/admin-rewards.ts`, `RewardsView` (tab Sticker 24 / Huy hiệu 10 / “Đồ trong phòng” Sắp có; `AdultTable` có tìm, lọc album/điều kiện/trạng thái, sắp xếp, phân trang; ngăn kéo sửa có xem trước `Sticker`/`Medal`, báo lỗi dưới ô khi rời ô và khi lưu, Nháp/Xuất bản; bản nháp không rơi, không cấp, không hiện ở Bộ sưu tập). Kiểm (Edge, DB verify, `.tmp-verify/check-21-admin.mjs`, 25/25): chưa mở khóa bố mẹ bị chặn, đếm 24/10, tìm “dog”, sửa cat → Nháp có hiệu lực ngay ở Bộ sưu tập (23 sticker), thêm lion, album đủ 6 sticker và tên trùng báo lỗi dưới ô, tên sai dạng báo ngay khi rời ô, mức cần đạt ngoài khoảng “từ 2 đến 365 ngày”, xu > 200, đổi xu lưu vào database, thêm huy hiệu `ach:streak14` và chặn trùng điều kiện, ô Điều kiện của huy hiệu qua đảo bị khóa, không lỗi console. (Phân quyền theo vai trò của tài khoản kiểm bằng Playwright vì phiên giả của `cdp.mjs` luôn gắn vai trò admin.) tsc, lint, `npm test` (517 đạt), build sạch.
+
+## Kiểm tra cuối task (10/10/2026)
+
+`npx tsc --noEmit`, `npm run lint`, `npm test` (517 đạt), `npm run build` đều sạch. Kịch bản Edge của task 21: gift 21/21, collection 35/35, admin 25/25 (cả ba đều chạy ở 1366×768, 1920×1080 cho màn bé, không lỗi console). Spec Playwright `tests/e2e/21-bo-suu-tap.spec.ts` đã viết (quà cuối bài, Bộ sưu tập, quản trị), CHƯA chạy.
+
+### Việc thủ công (checklist)
+- [ ] `npx prisma migrate deploy` (migration `reward_catalog`) rồi `npx prisma db seed` (24 sticker, 6 huy hiệu thành tích, cập nhật tên Anh/xu cho huy hiệu cũ). Hình 6 khủng long đã commit ở `public/media/stickers/` (sinh lại bằng `node scripts/gen-sticker-art.mjs` nếu thiết kế đổi).
+- [ ] Học thử 3 bài mới bằng hồ sơ của con: nhận sticker bất ngờ, mở quà (+10 xu), xem album ở Bộ sưu tập; đặt chuỗi 7 ngày để thấy huy hiệu “7 ngày liên tiếp” (+50 xu).
+- [ ] Vào Quản trị → Phần thưởng: thử sửa tên/xu, đưa một sticker về Nháp và thêm huy hiệu mới.
+- [ ] Chạy Playwright một lượt sau khi xong mọi task (cần `prisma migrate reset`, bạn đồng ý riêng); sửa các chỗ phụ thuộc dữ liệu test nếu lệch.
+
 ## Bước tiếp theo
 
-Bước 4 — Danh mục phần thưởng (Adult21: Sticker, Huy hiệu)
+Hoàn thành

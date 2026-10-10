@@ -24,6 +24,7 @@ export const ADMIN_NAV: readonly AdultNavItem[] = [
   { key: "media", label: "Hình ảnh & âm thanh", icon: "image", href: "/admin/media", ready: true },
   { key: "excel", label: "Nhập & xuất Excel", icon: "sheet", href: "/admin/excel", ready: true },
   { key: "phonics", label: "Âm phonics", icon: "music", href: "/admin/phonics", ready: true },
+  { key: "rewards", label: "Phần thưởng", icon: "gift", href: "/admin/rewards", ready: true, badge: "Mới" },
   { key: "grammar", label: "Chủ điểm ngữ pháp", icon: "grammar", href: "/admin/grammar", ready: false },
   { key: "matrix", label: "Tạo đề thi", icon: "sliders", href: "/admin/matrix", ready: false },
 ];

@@ -1,0 +1,88 @@
+/* Danh mục phần thưởng (Adult21). */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: var(--border-thin) solid var(--line);
+}
+.tabs button {
+  border: 0;
+  background: none;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-thcs);
+  font-size: var(--text-adm-body);
+  line-height: var(--text-adm-body--line-height);
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-bottom: var(--space-1) solid transparent;
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.tabs button[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--brand);
+}
+.tabs button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.n {
+  background: var(--surface-sunk);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-2);
+  font-size: var(--text-adm-label);
+}
+.th {
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  display: grid;
+  place-items: center;
+}
+.nm b {
+  font-weight: 600;
+}
+.nm small {
+  display: block;
+  color: var(--ink-soft);
+  font-size: var(--text-adm-label);
+}
+.pr {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 600;
+}
+.cond {
+  display: inline-flex;
+  flex-direction: column;
+}
+.cond small {
+  color: var(--ink-soft);
+  font-size: var(--text-adm-label);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.prev {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  background: var(--surface-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
