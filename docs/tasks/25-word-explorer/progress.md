@@ -1,6 +1,6 @@
 # Tiến độ — 25-word-explorer — Khám phá từ
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -17,7 +17,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 
 ### Bước 0 — Bảng và seed mẫu (10/10/2026)
 - Migration `20261010101858_word_explorer`: `word_questions` (khóa ngoại tới `words`, xóa theo từ) và `word_readings` (`owner_type` word/family, không khóa ngoại vì trỏ tới hai bảng). Chỉ dùng kiểu có ở cả MariaDB và MySQL 8 (JSON, ENUM, utf8mb4_unicode_ci).
-- Zod dùng chung `lib/schemas/word-explorer.ts` (đáp án, hình nhiễu, câu của đoạn văn; bản Nháp được lưu dang dở, điều kiện xuất bản kiểm riêng). Hằng số `WORDLAB.readWordMs` (420), `readWordSlowMs` (640).
+- Zod dùng chung `lib/schemas/word-explorer.ts` (đáp án, hình nhiễu, câu của đoạn văn; bản Nháp được lưu dang dở, điều kiện xuất bản kiểm riêng). Hằng số `READ_WORD_MS` (420 và 640 ms mỗi chữ).
 - Quy tắc thuần `lib/rules/word-explorer.ts`: `buildChoices`, `dimWrongChoice`, `nextClosedBranch`, `allBranchesOpen`, `explorerIssues` / `canPublish` (kèm mã ô để cảnh báo nhảy tới), `printSides`, `QUESTION_SETS` (5 nhóm) và `fillQuestionSet`. 24 test.
 - Dữ liệu mẫu bird (6 nhánh) và cat (5 nhánh) trong `lib/rules/word-explorer-data.ts`, seed `prisma/seed/word-explorer.ts` (Nháp, bỏ qua từ đã có nhánh).
 - 17 hình đáp án còn thiếu sinh bằng `scripts/gen-explorer-art.mjs` (từ `Bong.pic`, không sửa `designs/`); `gen-pictures.mjs` giữ lại và `check-pictures.mjs` không coi là hình mồ côi (danh sách ở `scripts/explorer-art-keys.mjs`).
@@ -59,6 +59,15 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Server `server/admin/word-explorer.ts` (kiểm Zod `lib/schemas/admin-word-explorer.ts`; hình chỉ nhận đường dẫn trong thư viện hoặc tải lên, âm thanh chỉ nhận tên tệp mp3 hợp lệ của máy chủ hoặc của từ trong kho) và 3 server action đều gọi `requireAdmin()` ở dòng đầu.
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-editor.mjs`, 1440×900): cột, lọc, mở ngăn kéo, 16 cảnh báo, bấm cảnh báo nhảy tới `branch-0-answer-0-audio` và tự mở nhánh, Điền sẵn câu hỏi giữ đáp án, ↓ ở tay nắm đổi chỗ, Xem như học sinh, hộp thoại xóa, Hủy không đổi database, xuất bản bị chặn khi thiếu âm thanh, tạo giọng đọc thật cho 17 đáp án + đoạn văn (51 giây), xuất bản được, bé mở được `/explore`, đổi về Nháp thì bé thấy 404. 623 test (thêm `admin-word-explorer.test.ts`, `composeSentence`), `tsc`, `eslint` sạch.
 
+### Đóng task (10/10/2026)
+- Kiểm tra cuối: `npx tsc --noEmit`, `npm run lint`, `npm run build` đều chạy không lỗi; `npm test` 623 đạt; `node scripts/check-pictures.mjs` đạt (17 hình riêng của Khám phá không bị coi là hình mồ côi).
+- Spec Playwright `tests/e2e/25-kham-pha-tu.spec.ts` đã viết cho cả 6 bước (CHƯA CHẠY: đợi chạy một lượt sau khi xong mọi task, cần `prisma migrate reset` trên database test nên phải được đồng ý rõ ràng). Chưa thêm màn mới vào `chung.spec.ts` vì các màn Khám phá có đường dẫn theo mã từ; phần Tab/trợ năng của `/explore/[wordId]` và ngăn kéo Soạn nằm trong chính spec của task.
+- Việc thủ công cho người dùng:
+  1. `npx prisma migrate deploy` rồi `npx prisma db seed` trên database thật (tạo 2 bảng và nạp “bird”, “cat” ở trạng thái Nháp).
+  2. Vào Quản trị › Ngân hàng từ vựng › “Sửa Khám phá” của “bird”: bấm “Tạo giọng đọc tự động” (cần công cụ giọng đọc của máy chủ), đổi sang Xuất bản và Lưu; rồi mở Sổ từ của bé để khám phá “bird” bằng bàn phím và in thử ra PDF (Ctrl+P, khổ A4 dọc, một trang).
+  3. Thêm bước “Khám phá từ” vào một bài học ở Quản trị › Soạn bài học (nút nhánh cạnh từ có Khám phá), xuất bản bài.
+- Token và icon thêm so với trước: `--text-translation`; icon `translate`, `snail`, `branch`, `compass` (chép từ `designs/components/bundle.js`).
+
 ## Bước tiếp theo
 
-Đóng task: spec Playwright, tsc, lint, test, build, cập nhật README
+Task đã xong. Việc tiếp theo: task 26 (Họ vần, Ghép chữ đầu và liên kết qua lại).
