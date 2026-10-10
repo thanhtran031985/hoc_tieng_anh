@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "bus",
+    "van"
+  ],
+  "sentence_order": [
+    "We go to the beach by bus.",
+    "The pilot flies the plane.",
+    "I put my clothes in the suitcase.",
+    "They stay in a big hotel."
+  ],
+  "fill_blank": [
+    "We go to the ___ by plane. | airport | station | bridge",
+    "The ___ flies the plane. | pilot | driver | sailor",
+    "We sleep in a ___ when we go camping. | tent | taxi | ticket",
+    "I buy a ___ for the train. | ticket | passport | map"
+  ],
+  "dictation": [
+    "We go on a trip.",
+    "The ship is big.",
+    "I like the beach."
+  ],
+  "speaking": [
+    "I like holidays.",
+    "We go to the beach by bus.",
+    "I have a big suitcase."
+  ],
+  "short_reading": [
+    {
+      "title": "A Trip to the Beach",
+      "text": "We go on a trip to the beach. We go by bus. It is a long journey. At the beach, I play in the sand and swim in the sea.",
+      "questions": [
+        {
+          "q": "How do they go?",
+          "a": [
+            "By bus",
+            "By taxi",
+            "By ship"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Where does the child swim?",
+          "a": [
+            "In the sea",
+            "In the lake",
+            "In the pool"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

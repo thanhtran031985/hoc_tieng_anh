@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "The pirates find a secret treasure.",
+    "The brave knight fights the dragon.",
+    "The fairy makes a magic wish.",
+    "The king has a gold crown."
+  ],
+  "fill_blank": [
+    "The ___ lives in a big castle with the king. | queen | giant | pirate",
+    "The witch makes a ___. | spell | prize | tale",
+    "The knight rescues the ___. | princess | monster | ghost",
+    "The pirates hide the ___ in a cave. | treasure | wizard | kingdom"
+  ],
+  "dictation": [
+    "The dragon is huge.",
+    "The prince is brave.",
+    "A ghost is in the castle."
+  ],
+  "speaking": [
+    "I like fairy tales.",
+    "The pirate has a sword.",
+    "The princess has a gold crown."
+  ],
+  "short_reading": [
+    {
+      "title": "The Brave Knight",
+      "text": "A brave knight lives in a castle. One day a dragon comes to the kingdom. The knight fights the dragon and saves the princess. The king and queen are happy.",
+      "questions": [
+        {
+          "q": "Where does the knight live?",
+          "a": [
+            "In a castle",
+            "In a cave",
+            "In a hotel"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "Who does the knight save?",
+          "a": [
+            "The princess",
+            "The queen",
+            "The witch"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

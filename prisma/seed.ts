@@ -147,9 +147,10 @@ async function main() {
   }
 
   await seedCurriculum(db);
-  await seedContent(db);
   await seedPhonics(db);
+  // Truyện nạp trước nội dung chủ đề: bài học của chủ đề có bước truyện trỏ tới truyện của chủ đề đó.
   await seedStories(db);
+  await seedContent(db);
 
   const [stages, levels, units] = await Promise.all([db.stage.count(), db.level.count(), db.unit.count()]);
   await seedAdmin();

@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "sun",
+    "hot"
+  ],
+  "sentence_order": [
+    "Monday is the first day of the week.",
+    "We play football on Saturday.",
+    "School starts in September.",
+    "It is cold in winter."
+  ],
+  "fill_blank": [
+    "There are seven days in a ___. | week | month | year",
+    "We have no school on ___. | Sunday | May | winter",
+    "It is very hot in ___. | summer | winter | December",
+    "February comes after ___. | January | March | April"
+  ],
+  "dictation": [
+    "Today is Monday.",
+    "I like summer.",
+    "We go to school on Friday."
+  ],
+  "speaking": [
+    "Today is Monday.",
+    "I like summer.",
+    "My favourite month is May."
+  ],
+  "short_reading": [
+    {
+      "title": "Four Seasons",
+      "text": "There are four seasons in a year. They are spring, summer, autumn and winter. It is hot in summer. It is cold in winter.",
+      "questions": [
+        {
+          "q": "How many seasons are there?",
+          "a": [
+            "Four",
+            "Three",
+            "Seven"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "When is it cold?",
+          "a": [
+            "In winter",
+            "In summer",
+            "In spring"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

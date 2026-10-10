@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "egg",
+    "jam"
+  ],
+  "sentence_order": [
+    "I eat toast and eggs for breakfast.",
+    "We have a picnic on Sunday.",
+    "The soup is very hot.",
+    "I am hungry and thirsty."
+  ],
+  "fill_blank": [
+    "I eat my cereal with a ___. | spoon | knife | plate",
+    "I drink my soup with a ___. | spoon | fork | knife",
+    "This cake is ___! | delicious | hungry | thirsty",
+    "I put ___ on my toast. | honey | oil | pepper"
+  ],
+  "dictation": [
+    "I am hungry.",
+    "The pasta is delicious.",
+    "We eat lunch at school."
+  ],
+  "speaking": [
+    "I like noodles.",
+    "My favourite meal is dinner.",
+    "The cookies are delicious."
+  ],
+  "short_reading": [
+    {
+      "title": "A Picnic",
+      "text": "We have a picnic on Sunday. Mum makes sandwiches and a salad. I have the cookies and the juice. We eat under a big tree.",
+      "questions": [
+        {
+          "q": "When is the picnic?",
+          "a": [
+            "On Sunday",
+            "On Monday",
+            "On Friday"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "Who makes the sandwiches?",
+          "a": [
+            "Mum",
+            "Dad",
+            "The child"
+          ],
+          "evidence": 1
+        }
+      ]
+    }
+  ]
+}

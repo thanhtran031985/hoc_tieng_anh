@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "I have a bad headache.",
+    "She has a sore throat.",
+    "You should rest in bed.",
+    "The doctor gives me some medicine."
+  ],
+  "fill_blank": [
+    "I have a ___ because I eat many sweets. | toothache | flu | fever",
+    "He has a high ___. He is very hot. | fever | cough | plaster",
+    "She puts a ___ on her hand. | plaster | pill | vitamin",
+    "We should do ___ every day to be healthy. | exercise | injection | fever"
+  ],
+  "dictation": [
+    "I have a cough.",
+    "The nurse helps the patient.",
+    "He is ill today."
+  ],
+  "speaking": [
+    "I have a headache.",
+    "I am ill today.",
+    "I should rest."
+  ],
+  "short_reading": [
+    {
+      "title": "At the Clinic",
+      "text": "Tom is ill today. He has a bad cough and a fever. He goes to the clinic with his mum. The doctor gives him some medicine and says rest.",
+      "questions": [
+        {
+          "q": "What does Tom have?",
+          "a": [
+            "A cough and a fever",
+            "A toothache",
+            "A backache"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "Where does Tom go?",
+          "a": [
+            "To the clinic",
+            "To the zoo",
+            "To the bank"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

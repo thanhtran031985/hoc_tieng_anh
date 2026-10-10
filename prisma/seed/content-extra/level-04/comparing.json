@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "An elephant is bigger than a horse.",
+    "My bag is heavier than your bag.",
+    "This book is more interesting than that one.",
+    "Maths is the most difficult subject."
+  ],
+  "fill_blank": [
+    "The sea is ___ than the lake. | deeper | deep | deepest",
+    "A bike is ___ than a car. | cheaper | cheap | cheapest",
+    "This test is ___ than the last one. | easier | easy | easiest",
+    "She is the ___ player in our team. | best | good | better"
+  ],
+  "dictation": [
+    "My bag is heavy.",
+    "This is more expensive.",
+    "The red car is faster."
+  ],
+  "speaking": [
+    "An elephant is bigger than a cat.",
+    "This book is more interesting.",
+    "Summer is hotter than spring."
+  ],
+  "short_reading": [
+    {
+      "title": "Two Bikes",
+      "text": "I have two bikes. The red bike is new and the blue bike is old. The red bike is faster than the blue bike. The blue bike is cheaper and easier to ride.",
+      "questions": [
+        {
+          "q": "Which bike is faster?",
+          "a": [
+            "The red bike",
+            "The blue bike",
+            "The green bike"
+          ],
+          "evidence": 2
+        },
+        {
+          "q": "Which bike is cheaper?",
+          "a": [
+            "The blue bike",
+            "The red bike",
+            "The green bike"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

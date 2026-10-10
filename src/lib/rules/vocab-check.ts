@@ -15,7 +15,7 @@ big small little new old long short high low hot cold fast slow early late again
 today's with without under behind between near next to past half quarter o'clock
 `.split(/\s+/).filter(Boolean));
 // Tên riêng dùng trong câu ví dụ.
-export const NAMES = new Set(["tom", "anna", "ben", "lily", "mai", "nam", "lan", "minh"]);
+export const NAMES = new Set(["tom", "anna", "ben", "lily", "mai", "nam", "lan", "minh", "mimi", "lin"]);
 const IRREGULAR: Record<string, string> = { had: "have", has: "have", sent: "send", bought: "buy", brought: "bring", built: "build", chose: "choose", did: "do", drove: "drive", fell: "fall", felt: "feel", found: "find", gave: "give", heard: "hear", kept: "keep", knew: "know", left: "leave", met: "meet", paid: "pay", rode: "ride", rang: "ring", said: "say", sold: "sell", spoke: "speak", spent: "spend", taught: "teach", told: "tell", thought: "think", understood: "understand", wore: "wear", forgot: "forget", woke: "wake", began: "begin", fought: "fight", won: "win", flew: "fly", drew: "draw", drank: "drink", sat: "sit", better: "good", best: "good", worse: "bad", worst: "bad", teeth: "tooth", feet: "foot", mice: "mouse", leaves: "leaf", knives: "knife", men: "man", women: "woman", children: "child", people: "person", went: "go", ate: "eat", saw: "see", took: "take", made: "make", came: "come", got: "get", ran: "run", sang: "sing", wrote: "write", read: "read", slept: "sleep", swam: "swim" };
 
 export function stems(token: string): Set<string> {

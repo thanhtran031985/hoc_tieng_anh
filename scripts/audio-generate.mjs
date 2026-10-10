@@ -96,11 +96,28 @@ if (content) {
         }
         console.log(`Câu luyện nói: ${made}/${speaking.length} có âm thanh mẫu.`);
         const ids = (force ? pages : missingPages).map((p) => p.id);
-        const story = ids.length ? await generateStoryAudio({ pageIds: ids, force }) : { ok: true, items: [] };
-        if (!story.ok) {
-          console.error(`Lỗi truyện: ${story.message}`);
-          process.exitCode = 1;
-        } else console.log(`Truyện: tạo mới ${story.items.filter((i) => i.status === "made").length}/${ids.length} trang.`);
+        // Mỗi lượt tối đa 5 trang (giới hạn của màn quản trị).
+        let madePages = 0;
+        for (const group of chunk(ids, 5)) {
+          if (stop.value) break;
+          const story = await generateStoryAudio({ pageIds: group, force });
+          if (!story.ok) {
+            console.error(`Lỗi truyện: ${story.message}`);
+            process.exitCode = 1;
+            break;
+          }
+          madePages += story.items.filter((i) => i.status === "made").length;
+        }
+        console.log(`Truyện: tạo mới ${madePages}/${ids.length} trang.`);
+        // Truyện đã đủ âm thanh ở mọi trang thì xuất bản (cùng điều kiện xuất bản ở màn quản trị).
+        const drafts = await database.story.findMany({ where: { status: "draft", ...(level ? { level: { number: level } } : {}) }, select: { id: true, title: true, pages: { select: { kind: true, audio: true } } } });
+        for (const st of drafts) {
+          const texts = st.pages.filter((p) => p.kind === "page");
+          if (texts.length > 0 && texts.every((p) => p.audio)) {
+            await database.story.update({ where: { id: st.id }, data: { status: "published" } });
+            console.log(`  - đã xuất bản truyện “${st.title}”.`);
+          }
+        }
         console.log(`Xong trong ${Math.round((Date.now() - started) / 1000)} giây.${stop.value ? " Đã dừng giữa chừng; chạy lại để làm tiếp." : ""}`);
       }
     }

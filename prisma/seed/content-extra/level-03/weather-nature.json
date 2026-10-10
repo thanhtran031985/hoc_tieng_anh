@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "sun",
+    "rain"
+  ],
+  "sentence_order": [
+    "It is sunny and hot today.",
+    "The sky is blue and the clouds are white.",
+    "I see the moon and the stars.",
+    "The wind is very strong."
+  ],
+  "fill_blank": [
+    "The ___ is blue. | sky | rain | storm",
+    "I like to sit under the ___. | tree | storm | lightning",
+    "It is ___ and I can see the sun. | sunny | rainy | snowy",
+    "We can see the moon at ___. | night | lunch | morning"
+  ],
+  "dictation": [
+    "It is sunny.",
+    "I see a cloud.",
+    "The wind is cold."
+  ],
+  "speaking": [
+    "It is sunny today.",
+    "I like rainy days.",
+    "The sky is blue."
+  ],
+  "short_reading": [
+    {
+      "title": "A Rainy Day",
+      "text": "Today is a rainy day. The sky is grey and the clouds are big. I stay at home and read a book. Tomorrow will be sunny.",
+      "questions": [
+        {
+          "q": "What is the weather today?",
+          "a": [
+            "Rainy",
+            "Sunny",
+            "Windy"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "What does the child do at home?",
+          "a": [
+            "Reads a book",
+            "Plays football",
+            "Goes to the beach"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

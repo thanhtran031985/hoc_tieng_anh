@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "My father is a doctor.",
+    "The nurse works in a hospital.",
+    "A chef cooks in a restaurant.",
+    "She wants to be a vet."
+  ],
+  "fill_blank": [
+    "A ___ looks after sick dogs and cats. | vet | waiter | baker",
+    "A ___ makes bread and cakes. | baker | butcher | cleaner",
+    "A ___ puts out fires. | firefighter | dentist | farmer",
+    "A ___ brings letters to our house. | postman | actor | mechanic"
+  ],
+  "dictation": [
+    "My mum is a nurse.",
+    "He is a good chef.",
+    "I want to be a pilot."
+  ],
+  "speaking": [
+    "My dad is a farmer.",
+    "I want to be a doctor.",
+    "What does your mother do?"
+  ],
+  "short_reading": [
+    {
+      "title": "My Uncle",
+      "text": "My uncle is a chef. He works in a big restaurant. He cooks delicious food every day. On Sunday he cooks for our family.",
+      "questions": [
+        {
+          "q": "What is the uncle's job?",
+          "a": [
+            "A chef",
+            "A baker",
+            "A waiter"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "When does he cook for the family?",
+          "a": [
+            "On Sunday",
+            "On Friday",
+            "On Monday"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

@@ -31,7 +31,10 @@ export const GAME_ROTATION = {
 } as const satisfies Record<string, readonly GameActivity[]>;
 
 /** Mọi dạng bài mới của bản 2: bước thuộc các dạng này mới được thêm vào bài đã có tiến độ học. */
-export const NEW_ACTIVITY_TYPES: readonly string[] = [...EXTRA_KINDS, "word_rain", "word_bubbles", "whack_letters", "race"];
+export const NEW_ACTIVITY_TYPES: readonly string[] = [...EXTRA_KINDS, "story", "word_rain", "word_bubbles", "whack_letters", "race"];
+
+/** Khóa của bước truyện: `story:<slug>`; seed đổi slug thành `config.storyId` khi ghi vào database. */
+export const storyKey = (slug: string) => `story:${slug}`;
 
 export type BuilderWord = {
   /** Từ tiếng Anh, dùng để khớp với bản ghi `words` khi ghi vào DB. */
@@ -66,6 +69,8 @@ export type BuildOptions = {
   levelNumber?: number;
   /** Khóa các câu hỏi của chủ đề theo dạng (chỉ dùng ở bản 2). */
   extras?: UnitExtras;
+  /** Truyện tranh của chủ đề (slug), chỉ dùng ở bản 2: mỗi truyện thành một bước `story` ở cuối các bài thường, trước trò chơi. */
+  stories?: readonly string[];
 };
 
 /** Mỗi bài tối đa 8 từ (5–8 từ; vài trường hợp lẻ như 9 từ chia 5 + 4). */
@@ -126,6 +131,10 @@ function versionTwoSteps(options: BuildOptions, words: readonly BuilderWord[], i
     if (!extraAllowed(kind, levelNumber)) continue;
     for (const key of distribute(options.extras?.[kind] ?? [], count, index)) steps.push(makeStep(kind, null, {}, key));
   }
+  // Truyện làm phần thưởng cuối chủ đề: truyện thứ k vào bài thường thứ (count-1-k) tính từ cuối, vòng lại nếu nhiều truyện hơn bài.
+  (options.stories ?? []).forEach((slug, k) => {
+    if (count - 1 - (k % count) === index) steps.push({ activityType: "story", word: null, config: {}, questionKey: storyKey(slug) });
+  });
   const game = planGame(levelNumber, index, words);
   if (game) steps.push(makeStep(game, null, {}));
   return steps;

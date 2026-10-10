@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "How much does this shirt cost?",
+    "I pay in cash.",
+    "She saves her money in a purse.",
+    "The shop has a big sale today."
+  ],
+  "fill_blank": [
+    "I put my money in my ___. | wallet | basket | queue",
+    "Can I try on this ___? | shirt | coin | till",
+    "The ___ is five dollars. | price | queue | change",
+    "These shoes are too small. I need a bigger ___. | size | bill | note"
+  ],
+  "dictation": [
+    "How much is it?",
+    "I have five pounds.",
+    "It is a free gift."
+  ],
+  "speaking": [
+    "How much is this?",
+    "I want to buy a gift.",
+    "It is too expensive."
+  ],
+  "short_reading": [
+    {
+      "title": "At the Shop",
+      "text": "Mai goes shopping with her mum. She wants a new bag. The bag costs ten dollars. Mai pays and gets some change.",
+      "questions": [
+        {
+          "q": "What does Mai want?",
+          "a": [
+            "A new bag",
+            "A new hat",
+            "A new book"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "How much is the bag?",
+          "a": [
+            "Ten dollars",
+            "Five dollars",
+            "Twenty dollars"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

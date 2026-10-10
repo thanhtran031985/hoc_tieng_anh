@@ -1,0 +1,9 @@
+{
+  "_ghiChu": "Từ ngoài danh sách từ mục tiêu mà nội dung dạng bài mới được phép dùng, theo cấp bắt đầu dùng được. Mỗi từ ghi lý do; checker in danh sách này trong báo cáo.",
+  "words": {
+    "season": {
+      "level": 3,
+      "reason": "Từ thường gặp, thiếu trong khung (chủ đề Days, months, seasons có spring/summer/autumn/winter)"
+    }
+  }
+}

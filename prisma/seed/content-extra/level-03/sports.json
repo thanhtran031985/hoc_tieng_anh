@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "net",
+    "win"
+  ],
+  "sentence_order": [
+    "I play football with my friends.",
+    "She has a new tennis racket.",
+    "Our team wins the match.",
+    "The coach is in the gym."
+  ],
+  "fill_blank": [
+    "He scores a ___. | goal | medal | coach",
+    "I swim in the ___. | pool | court | gym",
+    "We play basketball on the ___. | court | pool | race",
+    "Our ___ wins the match. | team | racket | net"
+  ],
+  "dictation": [
+    "I like tennis.",
+    "We win the match.",
+    "He is a good player."
+  ],
+  "speaking": [
+    "I like football.",
+    "My team is very good.",
+    "I play badminton on Sunday."
+  ],
+  "short_reading": [
+    {
+      "title": "My Football Team",
+      "text": "I am in a football team. We have a good coach. We play a match every Saturday. Today we win and we are very happy.",
+      "questions": [
+        {
+          "q": "What sport does the child play?",
+          "a": [
+            "Football",
+            "Tennis",
+            "Judo"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "When do they play a match?",
+          "a": [
+            "Every Saturday",
+            "Every Monday",
+            "Every night"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}

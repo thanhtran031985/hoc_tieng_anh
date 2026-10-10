@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import type { PrismaClient } from "../../src/generated/prisma/client.ts";
 import { extraKeyOf, extrasOf } from "../../src/lib/rules/content-extra.ts";
-import { buildLessons, planAppend } from "../../src/lib/rules/lesson-builder.ts";
+import { buildLessons, planAppend, storyKey } from "../../src/lib/rules/lesson-builder.ts";
 import { pictureSlug, pictureUrl } from "../../src/lib/picture-path.ts";
 import { contentTopicSchema } from "../../src/lib/schemas/content.ts";
 import { buildUnitExtras, loadExtraFile, upsertExtraQuestions } from "./content-extra.ts";
@@ -63,13 +63,16 @@ export async function seedContent(db: PrismaClient) {
         // Câu hỏi dạng mới của chủ đề (gắn hình từ ngân hàng từ của chính chủ đề).
         const bank = new Map<string, { id: number; word: string; image: string | null }>();
         for (const [word, id] of wordIds) bank.set(word.toLowerCase(), { id, word, image: hasPictureFile(word) ? pictureUrl(word) : null });
+        // Truyện tranh của chủ đề (đã nạp bởi seedStories): mỗi truyện thành một bước `story`.
+        const stories = await tx.story.findMany({ where: { unitId: unit.id }, orderBy: { sortOrder: "asc" }, select: { id: true, slug: true } });
+        const storyIds = new Map(stories.map((st) => [storyKey(st.slug), st.id]));
         const extraItems = extraFile ? buildUnitExtras(extraFile, level.number, bank, `cấp ${level.number}/${slug}`) : [];
         const questionIds = await upsertExtraQuestions(tx, level.id, extraItems);
         extraQuestions += extraItems.length;
 
         const built = buildLessons(
           entries.map((e) => ({ word: e.word, hasPicture: hasPictureFile(e.word) })),
-          { unitTitle: unit.title, seed: unit.slug, levelNumber: level.number, extras: extrasOf(extraItems) },
+          { unitTitle: unit.title, seed: unit.slug, levelNumber: level.number, extras: extrasOf(extraItems), stories: stories.map((st) => st.slug) },
         );
         const studied = await tx.lessonAttempt.count({ where: { lesson: { unitId: unit.id } } });
         const progressed = await tx.lessonProgress.count({ where: { lesson: { unitId: unit.id } } });
@@ -87,9 +90,11 @@ export async function seedContent(db: PrismaClient) {
             const have = lesson.steps.map((st) => ({ activityType: st.activityType, questionKey: st.question ? extraKeyOf(st.question.type, st.question.prompt) : null }));
             let order = lesson.steps.reduce((m, st) => Math.max(m, st.sortOrder), 0);
             for (const step of planAppend(have, plan.steps)) {
-              const questionId = step.questionKey ? questionIds.get(step.questionKey) : null;
-              if (step.questionKey && questionId === undefined) continue;
-              await tx.lessonStep.create({ data: { lessonId: lesson.id, sortOrder: ++order, activityType: step.activityType, wordId: null, questionId: questionId ?? null, config: step.config as object } });
+              const storyId = step.activityType === "story" && step.questionKey ? storyIds.get(step.questionKey) : undefined;
+              const questionId = step.activityType !== "story" && step.questionKey ? questionIds.get(step.questionKey) : null;
+              if (step.questionKey && (step.activityType === "story" ? storyId === undefined : questionId === undefined)) continue;
+              const config = storyId !== undefined ? { storyId } : (step.config as object);
+              await tx.lessonStep.create({ data: { lessonId: lesson.id, sortOrder: ++order, activityType: step.activityType, wordId: null, questionId: questionId ?? null, config } });
               addedSteps += 1;
             }
           }
@@ -109,8 +114,8 @@ export async function seedContent(db: PrismaClient) {
                     sortOrder: i + 1,
                     activityType: step.activityType,
                     wordId: step.word === null ? null : wordIds.get(step.word)!,
-                    questionId: step.questionKey ? (questionIds.get(step.questionKey) ?? null) : null,
-                    config: step.config as object,
+                    questionId: step.activityType !== "story" && step.questionKey ? (questionIds.get(step.questionKey) ?? null) : null,
+                    config: (step.activityType === "story" ? { storyId: storyIds.get(step.questionKey ?? "") ?? 0 } : step.config) as object,
                   })),
                 },
               },

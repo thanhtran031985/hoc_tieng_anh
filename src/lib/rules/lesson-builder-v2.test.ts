@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { EXTRA_KINDS, NEW_ACTIVITY_TYPES, buildLessons, distribute, extraAllowed, planAppend, planGame, type BuilderWord, type UnitExtras } from "./lesson-builder.ts";
+import { EXTRA_KINDS, NEW_ACTIVITY_TYPES, buildLessons, distribute, extraAllowed, planAppend, planGame, storyKey, type BuilderWord, type UnitExtras } from "./lesson-builder.ts";
 
 const NAMES = ["cat", "dog", "pig", "hen", "cow", "duck", "fish", "bird", "frog", "goat", "lamb", "bear", "lion", "fox", "mouse", "horse", "sheep", "zebra"];
 const words = (n: number, picture = true): BuilderWord[] => NAMES.slice(0, n).map((word) => ({ word, hasPicture: picture }));
@@ -71,6 +71,26 @@ describe("lesson-builder bản 2", () => {
 
   it("cùng đầu vào cho cùng kết quả", () => {
     assert.deepEqual(buildLessons(words(16), { levelNumber: 3, extras }), buildLessons(words(16), { levelNumber: 3, extras }));
+  });
+});
+
+describe("truyện tranh trong bài", () => {
+  it("truyện vào bài thường cuối cùng, trước trò chơi; nhiều truyện thì lùi dần từ cuối", () => {
+    const lessons = regular(buildLessons(words(16), { levelNumber: 3, stories: ["a", "b"] }));
+    const withStory = lessons.map((l) => l.steps.filter((s) => s.activityType === "story").map((s) => s.questionKey));
+    assert.deepEqual(withStory, lessons.map((_, i) => (i === lessons.length - 1 ? [storyKey("a")] : i === lessons.length - 2 ? [storyKey("b")] : [])));
+    const last = lessons.at(-1)!.steps;
+    assert.equal(last.at(-1)!.activityType === "story", false, "trò chơi đứng sau truyện");
+    assert.ok(last.findIndex((s) => s.activityType === "story") < last.length - 1);
+  });
+  it("bài đã học cũng được thêm bước truyện (chỉ một lần)", () => {
+    const built = regular(buildLessons(words(8), { levelNumber: 3, stories: ["a"] }))[0].steps;
+    const first = planAppend([], built);
+    assert.ok(first.some((s) => s.activityType === "story"));
+    assert.deepEqual(planAppend(first.map((s) => ({ activityType: s.activityType, questionKey: s.questionKey })), built), []);
+  });
+  it("không truyền truyện thì không có bước truyện", () => {
+    assert.ok(regular(buildLessons(words(16), { levelNumber: 3 })).every((l) => l.steps.every((s) => s.activityType !== "story")));
   });
 });
 

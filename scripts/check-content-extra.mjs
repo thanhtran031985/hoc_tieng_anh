@@ -31,9 +31,13 @@ const EXPECTED = {
 const EXPECTED_STORIES = 2;
 
 const curriculum = (n) => (existsSync(new URL(`curriculum/level-${level2(n)}.json`, ROOT)) ? readJson(new URL(`curriculum/level-${level2(n)}.json`, ROOT)) : []);
+// Từ ngoài khung được phép dùng (kèm lý do), theo cấp bắt đầu dùng được: prisma/seed/content-extra/allowed-extra.json.
+const extraUrl = new URL("content-extra/allowed-extra.json", ROOT);
+const EXTRA_ALLOWED = existsSync(extraUrl) ? Object.entries(readJson(extraUrl).words ?? {}) : [];
 const allowedUpTo = (n) => {
   const words = [];
   for (let l = 1; l <= n; l++) for (const topic of curriculum(l)) words.push(...topic.target_words);
+  for (const [word, info] of EXTRA_ALLOWED) if (info.level <= n) words.push(word);
   return allowedTokensFor(words);
 };
 const sounds = new Map(PHONICS_SEED.map(([g, ipa]) => [g, { ipa, audio: null }]));
@@ -122,6 +126,10 @@ for (const level of levels) {
   console.log(`  truyện: ${stories.length} (${stories.map((s) => s.title).join("; ")})`);
 }
 
+if (EXTRA_ALLOWED.length) {
+  console.log(`
+Từ ngoài khung đã được phép (ghi lý do ở allowed-extra.json): ${EXTRA_ALLOWED.map(([w, i]) => `${w} (từ cấp ${i.level})`).join(", ")}.`);
+}
 if (warnings.length && verbose) {
   console.log(`\n${warnings.length} cảnh báo:`);
   for (const w of warnings) console.log(`- ${w}`);

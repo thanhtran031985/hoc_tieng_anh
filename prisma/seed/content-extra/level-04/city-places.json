@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "The library is next to the museum.",
+    "Turn left at the corner.",
+    "We buy bread at the bakery.",
+    "There is a big park in my city."
+  ],
+  "fill_blank": [
+    "I go to the ___ to see a film. | cinema | bank | bakery",
+    "Doctors work in a ___. | hospital | zoo | library",
+    "We see lions and monkeys at the ___. | zoo | museum | office",
+    "Go straight on and turn ___ at the bank. | right | pavement | traffic"
+  ],
+  "dictation": [
+    "The post office is on the corner.",
+    "Turn right at the library.",
+    "The park is very big."
+  ],
+  "speaking": [
+    "Where is the library?",
+    "The zoo is next to the park.",
+    "I live in a big city."
+  ],
+  "short_reading": [
+    {
+      "title": "My Town",
+      "text": "I live in a small town. There is a market and a park near my house. The library is next to the bank. I go to the park on Sunday.",
+      "questions": [
+        {
+          "q": "Where is the library?",
+          "a": [
+            "Next to the bank",
+            "Next to the zoo",
+            "Near the cinema"
+          ],
+          "evidence": 2
+        },
+        {
+          "q": "When does the child go to the park?",
+          "a": [
+            "On Sunday",
+            "On Monday",
+            "On Friday"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

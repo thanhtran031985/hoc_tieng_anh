@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "My favourite subject is science.",
+    "I use a laptop for my project.",
+    "We learn English every Monday.",
+    "Click here to download the video."
+  ],
+  "fill_blank": [
+    "I use the ___ to write words. | keyboard | battery | printer",
+    "I look up new words in my ___. | dictionary | timetable | password",
+    "We have a short ___ after maths. | break | exam | email",
+    "I get a good ___ in the test. | mark | file | app"
+  ],
+  "dictation": [
+    "I like maths.",
+    "The laptop is new.",
+    "Please send me an email."
+  ],
+  "speaking": [
+    "My favourite subject is English.",
+    "I practise English every day.",
+    "I use a tablet at school."
+  ],
+  "short_reading": [
+    {
+      "title": "My School Day",
+      "text": "I have five subjects on Monday. My favourite subject is science. We use tablets in class. After school I practise English on my laptop.",
+      "questions": [
+        {
+          "q": "What is the child's favourite subject?",
+          "a": [
+            "Science",
+            "Maths",
+            "History"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "What does the child do after school?",
+          "a": [
+            "Practises English",
+            "Plays football",
+            "Draws a picture"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 |---|---|---|---|
 | 0 | Đề xuất số lượng và cách trộn bài (DỪNG chờ tôi) | ✅ | Tự duyệt theo ủy quyền “làm liền, không hỏi” (10/10/2026); chỉnh số lượng bằng cách sửa dữ liệu rồi seed lại |
 | 1 | lesson-builder bản 2 | ✅ | |
-| 2 | Nội dung cấp 3–4 | ⬜ | |
+| 2 | Nội dung cấp 3–4 | ✅ | |
 | 3 | Nội dung cấp 1–2 | ⬜ | |
 | 4 | Kiểm tra toàn bộ nội dung | ⬜ | |
 
@@ -18,6 +18,8 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 
 **10/10/2026 — Bước 1.** `lesson-builder` bản 2 (`buildLessons(words, { levelNumber, extras })`): sau 5 dạng GĐ1, mỗi bài thường có các dạng bài mới chia vòng từ câu hỏi của chủ đề (mỗi câu dùng đúng một lần) rồi 1 mini game cuối bài xoay vòng (`planGame`: cấp 1–2 bong bóng / đập chuột / đua xe, từ cấp 3 thêm mưa từ vựng; thiếu từ có hình thì nhường trò khác); luật cấp `EXTRA_LEVELS` (ghép âm cấp 1–3, nghe-gõ từ cấp 2, đọc hiểu từ cấp 3); không truyền `levelNumber` thì y hệt bản 1 (nhập Excel không đổi); `planAppend` cho bài đã có tiến độ (chỉ thêm bước mới ở cuối). Nội dung: định dạng tệp gọn `prisma/seed/content-extra/level-NN/<slug>.json` (`contentExtraSchema`), `buildExtraItems` dựng qua đúng `buildExtraData` của Adult18 (ô âm, thẻ điền từ trộn ổn định, đáp án đọc hiểu trộn ổn định), seed `prisma/seed/content-extra.ts` (khớp câu theo (cấp, dạng, chữ chính), giữ `prompt.audio`) và `seedContent` dùng bản 2 (bé đã học → chỉ thêm bước). Vốn từ: `src/lib/rules/vocab-check.ts` dùng chung cho `scripts/check-content.mjs` và `scripts/check-content-extra.mjs` (`npm run content:check-extra`: dựng câu, số câu theo bảng, từ ngoài cấp, truyện). mp3 cho mọi câu: bảng `audio_clips` (migration `audio_clips`), `src/server/audio/clips.ts` (`ensureClips`, `clipMap`, `generateClips`), `extraQuestionTexts` (đúng chữ từng bước đọc), `getLessonPlay` gộp bảng clip vào `audio`; `npm run audio:generate -- --content [--level N]` tạo mp3 câu, âm thanh mẫu câu luyện nói và trang truyện. Kiểm: unit test mới (builder v2, content-extra, vocab-check, play-texts, audio-cli) — tổng 436/436 test, tsc và lint sạch; `content:check` cấp 1–4 vẫn đạt sau khi tách module.
 
+**10/10/2026 — Bước 2.** 16 tệp `prisma/seed/content-extra/level-03|04/<chủ đề>.json` (256 câu: cấp 3 mỗi chủ đề 2 ghép âm / 4 sắp xếp / 4 điền từ / 3 nghe-gõ câu / 3 luyện nói / 1 đọc hiểu; cấp 4 như vậy trừ ghép âm), 3 truyện mới có 6 tranh SVG mỗi truyện (“A Rainy Day” cấp 3; “The Lost Wallet”, “The Little Dragon” cấp 4) vẽ bằng `scripts/gen-story-art.mjs` + `scripts/story-art/scenes.mjs` (nền + hình từ thư viện hình từ vựng + nhân vật bé/người lớn), dữ liệu `STORY_SEED`. `builder` bản 2 có thêm bước truyện (`story:<slug>`, truyện của chủ đề vào bài thường cuối, trước trò chơi); `seed.ts` nạp truyện trước nội dung. Kiểm vốn từ: `npm run content:check-extra -- 3 4` — 0 lỗi (chỉ 1 từ ngoài khung được phép kèm lý do: “season”, ghi ở `allowed-extra.json`). Seed trên DB verify: 256 câu hỏi, 149 bài mới, bài đã học (daily-routines) chỉ được thêm 21 bước. mp3: `npm run audio:generate -- --content` tạo 473 câu + 49 âm thanh mẫu luyện nói + 24 trang truyện (20 phút), tự xuất bản truyện đã đủ âm thanh. Kiểm (Edge, DB verify): mỗi dạng mới (sắp xếp, điền từ, nghe-gõ, đọc hiểu, ghép âm, luyện nói) và truyện mở ra đúng màn, không lỗi console, nút nghe tải đúng mp3 theo câu (khi bật “Giọng mp3”); lesson 220 cấp 3 có đủ 5 dạng GĐ1 + ghép âm + sắp xếp + điền từ + nghe-gõ + luyện nói + đọc hiểu + mưa từ vựng. tsc, lint, 439/439 test sạch.
+
 ## Bước tiếp theo
 
-Bước 2 — Nội dung cấp 3–4
+Bước 3 — Nội dung cấp 1–2

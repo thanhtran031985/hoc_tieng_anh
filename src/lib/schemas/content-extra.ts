@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const sentence = z.string().trim().min(3).max(120);
 const word = z.string().trim().min(1).max(20);
+const choice = z.string().trim().min(1).max(30);
 
 /** Điền từ: "I have a ___. | cat | dog | pig" — câu có một ô trống, rồi đáp án ĐÚNG, rồi 2–3 thẻ nhiễu. */
 export const fillEntry = z
@@ -22,7 +23,7 @@ export const readingEntry = z.object({
   text: z.string().trim().min(10).max(500),
   /** Mỗi câu hỏi: đề, 3 đáp án (đáp án ĐÚNG đứng đầu), câu (từ 0) của đoạn chứa đáp án. */
   questions: z
-    .array(z.object({ q: z.string().trim().min(3).max(120), a: z.array(word.max(30)).length(3), evidence: z.number().int().min(0).max(5) }))
+    .array(z.object({ q: z.string().trim().min(3).max(120), a: z.array(choice).length(3), evidence: z.number().int().min(0).max(5) }))
     .min(2)
     .max(3),
 });

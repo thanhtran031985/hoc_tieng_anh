@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "fun",
+    "cook"
+  ],
+  "sentence_order": [
+    "My hobby is playing the guitar.",
+    "She sings a song at the concert.",
+    "I love to watch cartoons.",
+    "We have a party on Saturday."
+  ],
+  "fill_blank": [
+    "He plays the ___ in a band. | guitar | stamp | magazine",
+    "I read a ___ about music. | magazine | chess | piano",
+    "My favourite ___ is music. | hobby | stamp | present",
+    "It is a very ___ film. I like it. | interesting | boring | bad"
+  ],
+  "dictation": [
+    "I love music.",
+    "She plays the piano.",
+    "This film is fun."
+  ],
+  "speaking": [
+    "My hobby is music.",
+    "I like to sing songs.",
+    "I play chess with my friend."
+  ],
+  "short_reading": [
+    {
+      "title": "Lan's Hobby",
+      "text": "Lan loves music. She plays the piano every day. Her favourite song is very old. On Sunday she sings at a party.",
+      "questions": [
+        {
+          "q": "What does Lan play?",
+          "a": [
+            "The piano",
+            "The guitar",
+            "The violin"
+          ],
+          "evidence": 1
+        },
+        {
+          "q": "When does she sing at a party?",
+          "a": [
+            "On Sunday",
+            "On Monday",
+            "On Friday"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

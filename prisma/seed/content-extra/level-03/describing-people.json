@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "fat",
+    "thin"
+  ],
+  "sentence_order": [
+    "My grandfather has a long beard.",
+    "She is kind and very friendly.",
+    "The boy has curly blond hair.",
+    "My brother is tall and strong."
+  ],
+  "fill_blank": [
+    "He is very ___. He always helps people. | kind | lazy | angry",
+    "She has long ___ hair. | straight | bald | shy",
+    "The baby is ___ and wants to sleep. | tired | brave | funny",
+    "She says please and thank you. She is very ___. | polite | naughty | noisy"
+  ],
+  "dictation": [
+    "She is very pretty.",
+    "My dad is strong.",
+    "The boy is shy."
+  ],
+  "speaking": [
+    "My mother is kind.",
+    "I am not shy.",
+    "My friend is very funny."
+  ],
+  "short_reading": [
+    {
+      "title": "My Family",
+      "text": "My mum is young and pretty. My dad is tall and strong. My grandpa has a white beard. My little brother is naughty but funny.",
+      "questions": [
+        {
+          "q": "Who has a beard?",
+          "a": [
+            "Grandpa",
+            "Dad",
+            "Mum"
+          ],
+          "evidence": 2
+        },
+        {
+          "q": "How is the little brother?",
+          "a": [
+            "Naughty but funny",
+            "Quiet and shy",
+            "Tall and strong"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

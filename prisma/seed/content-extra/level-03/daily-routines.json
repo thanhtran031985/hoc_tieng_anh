@@ -1,0 +1,54 @@
+{
+  "phonics": [
+    "bed",
+    "sun"
+  ],
+  "sentence_order": [
+    "I get up at seven o'clock.",
+    "She always brushes her teeth after breakfast.",
+    "We have lunch at school.",
+    "He never goes to bed late."
+  ],
+  "fill_blank": [
+    "I wake up at six ___. | o'clock | morning | night",
+    "We eat dinner in the ___. | evening | morning | afternoon",
+    "She ___ brushes her teeth every day. | usually | yesterday | tomorrow",
+    "I go to bed at nine ___. | o'clock | breakfast | lunch"
+  ],
+  "dictation": [
+    "I get up early.",
+    "We have breakfast at seven.",
+    "He is late for school."
+  ],
+  "speaking": [
+    "I get up at seven o'clock.",
+    "I have lunch at school.",
+    "I go to bed at nine."
+  ],
+  "short_reading": [
+    {
+      "title": "My Day",
+      "text": "I get up at six o'clock. I have breakfast at half past six. I go to school at seven. I have dinner in the evening.",
+      "questions": [
+        {
+          "q": "When does the child get up?",
+          "a": [
+            "At six o'clock",
+            "At seven o'clock",
+            "At nine o'clock"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "When is dinner?",
+          "a": [
+            "In the evening",
+            "In the morning",
+            "At lunch"
+          ],
+          "evidence": 3
+        }
+      ]
+    }
+  ]
+}

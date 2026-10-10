@@ -16,7 +16,8 @@ export type StorySeed = {
   pages: readonly StorySeedPage[];
 };
 
-const art = (n: number) => `/media/stories/toms-red-kite-${n}.svg`;
+const artOf = (slug: string) => (n: number) => `/media/stories/${slug}-${n}.svg`;
+const art = artOf("toms-red-kite");
 
 export const STORY_SEED: readonly StorySeed[] = [
   {
@@ -35,6 +36,57 @@ export const STORY_SEED: readonly StorySeed[] = [
       { kind: "page", image: art(5), sentences: ["Dad helps Tom.", "He gets the kite."] },
       { kind: "page", image: art(6), sentences: ["Tom is happy.", "Thank you, Dad!"] },
     ],
+  },
+  {
+    slug: "a-rainy-day",
+    title: "A Rainy Day",
+    titleVi: "Một ngày mưa",
+    levelNumber: 3,
+    unitSlug: "weather-nature",
+    newWords: ["rain", "cloud", "coat", "sky", "rainbow"],
+    pages: ((a) => [
+      { kind: "page", image: a(1), sentences: ["It is a rainy day.", "Anna and her dog look at the sky."] },
+      { kind: "page", image: a(2), sentences: ["The sky is grey.", "The clouds are big."] },
+      { kind: "page", image: a(3), sentences: ["Anna puts on her coat.", "She wants to go out."] },
+      { kind: "question", text: "What does Anna put on?", choices: ["a coat", "a hat", "a shirt"], correct: 0 },
+      { kind: "page", image: a(4), sentences: ["Anna and the dog jump in the rain.", "They are very happy."] },
+      { kind: "page", image: a(5), sentences: ["Then the sun comes out.", "Look at the rainbow!"] },
+      { kind: "page", image: a(6), sentences: ["Anna is happy.", "Her dog is happy too."] },
+    ] as const)(artOf("a-rainy-day")),
+  },
+  {
+    slug: "the-lost-wallet",
+    title: "The Lost Wallet",
+    titleVi: "Chiếc ví bị mất",
+    levelNumber: 4,
+    unitSlug: "shopping-money",
+    newWords: ["wallet", "gift", "dollar", "pocket", "kind"],
+    pages: ((a) => [
+      { kind: "page", image: a(1), sentences: ["Ben is at the shopping centre.", "He has a new wallet."] },
+      { kind: "page", image: a(2), sentences: ["He buys a gift for his mum.", "It costs ten dollars."] },
+      { kind: "page", image: a(3), sentences: ["Oh no!", "His wallet is not in his bag."] },
+      { kind: "question", text: "Where is Ben?", choices: ["At the shopping centre", "At school", "At the zoo"], correct: 0 },
+      { kind: "page", image: a(4), sentences: ["He looks in his bag and in his pocket."] },
+      { kind: "page", image: a(5), sentences: ["A girl runs to him.", "She has his wallet!"] },
+      { kind: "page", image: a(6), sentences: ["“Thank you!” says Ben.", "“You are very kind.”"] },
+    ] as const)(artOf("the-lost-wallet")),
+  },
+  {
+    slug: "the-little-dragon",
+    title: "The Little Dragon",
+    titleVi: "Chú rồng nhỏ",
+    levelNumber: 4,
+    unitSlug: "stories-adventure",
+    newWords: ["dragon", "castle", "giant", "king", "hero"],
+    pages: ((a) => [
+      { kind: "page", image: a(1), sentences: ["A little dragon lives in a big castle."] },
+      { kind: "page", image: a(2), sentences: ["The king and queen do not like him."] },
+      { kind: "page", image: a(3), sentences: ["One day a giant comes to the kingdom."] },
+      { kind: "question", text: "Who comes to the kingdom?", choices: ["A giant", "A pirate", "A witch"], correct: 0 },
+      { kind: "page", image: a(4), sentences: ["The little dragon fights the giant."] },
+      { kind: "page", image: a(5), sentences: ["The giant runs to the forest."] },
+      { kind: "page", image: a(6), sentences: ["The king says, “Thank you!”", "Now the dragon is a hero."] },
+    ] as const)(artOf("the-little-dragon")),
   },
 ];
 

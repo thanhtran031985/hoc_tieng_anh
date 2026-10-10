@@ -1,0 +1,51 @@
+{
+  "phonics": [],
+  "sentence_order": [
+    "Yesterday I bought a new bike.",
+    "Last week we went to the beach.",
+    "She drove to the city two days ago.",
+    "Suddenly the lights went out."
+  ],
+  "fill_blank": [
+    "Yesterday I ___ my friend at the park. | met | meet | meeting",
+    "She ___ a letter to her uncle last week. | sent | send | sending",
+    "They ___ the bus to school yesterday. | took | take | taking",
+    "I ___ my keys at home yesterday. | forgot | forget | forgetting"
+  ],
+  "dictation": [
+    "I saw a big dog.",
+    "We went home early.",
+    "She bought a red hat."
+  ],
+  "speaking": [
+    "I bought a new bag.",
+    "Last Sunday I met my friend.",
+    "I saw a film yesterday."
+  ],
+  "short_reading": [
+    {
+      "title": "Last Sunday",
+      "text": "Last Sunday I went to the market with my dad. I bought some fruit and a new hat. Then we met my uncle. We had lunch at a small restaurant.",
+      "questions": [
+        {
+          "q": "Who went to the market?",
+          "a": [
+            "The child and Dad",
+            "The child and Mum",
+            "Only Dad"
+          ],
+          "evidence": 0
+        },
+        {
+          "q": "Who did they meet?",
+          "a": [
+            "Uncle",
+            "Grandpa",
+            "A teacher"
+          ],
+          "evidence": 2
+        }
+      ]
+    }
+  ]
+}
