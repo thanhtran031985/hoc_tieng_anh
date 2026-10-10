@@ -1,14 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BossArt } from "@/components/lesson";
+import { GiftBox, RewardPopup, Sticker } from "@/components/rewards";
 import { Button, ButtonLink, Icon, Mascot, Skeleton, SpeakerButton, WordPicture } from "@/components/ui";
 import type { Boss } from "@/lib/rules/bosses";
 import boss from "./boss/boss.module.css";
 import { cn } from "@/lib/cn";
 import type { PlayWord } from "@/lib/rules/lesson-play";
 import { useHotkeys } from "@/lib/use-hotkeys";
-import type { LessonCompletion } from "@/lib/schemas";
+import type { LessonCompletion, OpenedReward } from "@/lib/schemas";
+import { openRewardAction } from "@/features/rewards/actions";
+import { EarnedBadgePopups } from "@/features/rewards/EarnedBadgePopups";
 import styles from "./lesson-end.module.css";
 
 export type SaveState = { status: "idle" } | { status: "ok"; completion: LessonCompletion } | { status: "error"; message: string };
@@ -45,10 +49,38 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, b
   const primaryHref = nextHref ?? mapHref;
 
   const router = useRouter();
-  // Enter: đi tiếp khi đã lưu xong, hoặc Thử lại khi lưu lỗi (nút chính ghi nhãn Enter).
-  useHotkeys({ Enter: () => (failed ? onRetry() : router.push(primaryHref)) }, { enabled: !saving });
+  // Quà sticker bất ngờ (Screen40): hộp quà cạnh Bông; mở bằng Enter hoặc bấm hộp; xu thưởng cộng khi mở. Huy hiệu thành tích hiện hộp nhận quà trước.
+  const gift = save.status === "ok" ? (save.completion.gift ?? null) : null;
+  const earned = save.status === "ok" ? (save.completion.badges ?? []) : [];
+  const [opened, setOpened] = useState<OpenedReward | null>(null);
+  const [popup, setPopup] = useState(false);
+  const [giftBusy, setGiftBusy] = useState(false);
+  const [giftError, setGiftError] = useState<string | null>(null);
+  const [badgesDone, setBadgesDone] = useState(false);
+  const badgesBlocking = earned.length > 0 && !badgesDone;
+  const giftWaiting = gift !== null && opened === null;
 
-  const reward = result.xp > 0 ? { value: `+${result.xp}`, label: "XP" } : { value: `+${result.coins}`, label: "xu" };
+  async function openGift() {
+    if (!gift || opened || giftBusy || badgesBlocking) return;
+    setGiftBusy(true);
+    setGiftError(null);
+    try {
+      const res = await openRewardAction({ id: gift.id });
+      if (res.ok) {
+        setOpened(res.reward);
+        setPopup(true);
+      } else setGiftError(res.message);
+    } catch {
+      setGiftError("Mất kết nối. Bé thử mở lại nhé, quà vẫn được giữ!");
+    }
+    setGiftBusy(false);
+  }
+
+  // Enter: mở quà nếu còn quà chưa mở, đi tiếp khi đã lưu xong, hoặc Thử lại khi lưu lỗi (nút chính ghi nhãn Enter).
+  useHotkeys({ Enter: () => (failed ? onRetry() : giftWaiting ? void openGift() : router.push(primaryHref)) }, { enabled: !saving && !popup && !badgesBlocking });
+
+  const coinsShown = result.coins + (opened?.coins ?? 0);
+  const reward = result.xp > 0 ? { value: `+${result.xp}`, label: "XP" } : { value: `+${coinsShown}`, label: "xu" };
   return (
     <div className={styles.end}>
       <div className={styles.confetti} aria-hidden="true">
@@ -62,6 +94,12 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, b
           <div className={boss.pair}>
             <BossArt boss={bossInfo} mood="friend" size={220} />
             <Mascot expr={failed ? "dongvien" : saving ? "suynghi" : "chucmung"} size={190} />
+            {gift && <GiftSlot gift={gift} opened={opened} busy={giftBusy || badgesBlocking} onOpen={() => void openGift()} />}
+          </div>
+        ) : gift ? (
+          <div className={styles.duo}>
+            <Mascot expr="chucmung" size={230} />
+            <GiftSlot gift={gift} opened={opened} busy={giftBusy || badgesBlocking} onOpen={() => void openGift()} />
           </div>
         ) : (
           <Mascot expr={failed ? "dongvien" : saving ? "suynghi" : "chucmung"} size={280} />
@@ -95,6 +133,11 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, b
             </>
           )}
         </p>
+        {giftError && (
+          <p className={styles.giftError} role="alert">
+            {giftError}
+          </p>
+        )}
       </div>
 
       <section className={styles.card} aria-label="Kết quả bài học">
@@ -172,11 +215,58 @@ export function LessonEnd({ learnerName, unitTitleVi, lessonTitle, bossLesson, b
           <ButtonLink href={mapHref} variant="secondary" size="l" icon="map" label="Về bản đồ" />
           {failed ? (
             <Button variant="primary" size="l" icon="replay" label="Thử lại" shortcut="Enter" onClick={onRetry} />
+          ) : giftWaiting ? (
+            <Button variant="primary" size="l" icon="gift" data-end-next="" label={giftBusy ? "Đang mở…" : "Mở quà"} shortcut="Enter" disabled={giftBusy || badgesBlocking} onClick={() => void openGift()} />
           ) : (
-            <ButtonLink href={primaryHref} variant="primary" size="l" label={nextHref ? "Bài tiếp theo" : "Về bản đồ"} shortcut="Enter" aria-disabled={saving || undefined} onClick={(event) => saving && event.preventDefault()} />
+            <ButtonLink href={primaryHref} data-end-next="" variant="primary" size="l" label={nextHref ? "Bài tiếp theo" : "Về bản đồ"} shortcut="Enter" aria-disabled={saving || undefined} onClick={(event) => saving && event.preventDefault()} />
           )}
         </div>
       </section>
+
+      <EarnedBadgePopups badges={earned} onDone={() => setBadgesDone(true)} />
+      {gift && (
+        <RewardPopup
+          open={popup}
+          kind="sticker"
+          word={gift.key}
+          src={gift.image}
+          en={gift.en}
+          vi={gift.vi}
+          coins={opened?.coins ?? gift.coins}
+          skipGift
+          onAdd={() => {
+            setPopup(false);
+            window.setTimeout(() => document.querySelector<HTMLElement>("[data-end-next]")?.focus({ preventScroll: true }), 0);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Hộp quà bất ngờ cạnh Bông (lắc nhẹ); mở rồi thì sticker nằm lại với tên, loa và album đã dán. */
+function GiftSlot({ gift, opened, busy, onOpen }: { gift: NonNullable<LessonCompletion["gift"]>; opened: OpenedReward | null; busy: boolean; onOpen: () => void }) {
+  if (opened) {
+    return (
+      <div className={styles.got}>
+        <Sticker word={gift.key} src={gift.image} size={110} tilt={-5} label={`Sticker ${gift.en}, ${gift.vi}`} />
+        <span className={styles.gotName}>
+          <SpeakerButton word={gift.en} size="s" />
+          <b lang="en">{gift.en}</b>
+        </span>
+        <span className={styles.gotAlbum}>Đã dán vào album {opened.albumVi || gift.albumVi}</span>
+      </div>
+    );
+  }
+  return (
+    <div className={styles.surprise}>
+      <span className={styles.tag}>
+        <Icon name="gift" size={18} />
+        Quà bất ngờ!
+      </span>
+      <button type="button" className={styles.giftBtn} aria-label="Mở hộp quà bất ngờ (Enter)" disabled={busy} onClick={onOpen}>
+        <GiftBox size={150} />
+      </button>
     </div>
   );
 }

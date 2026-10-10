@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, ButtonLink, Icon, Mascot, Skeleton, SpeakerButton, WordPicture, type MascotColor } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import kid from "@/features/kid/kid.module.css";
 import { KidTopbar, type KidTopbarProps } from "@/features/kid/KidTopbar";
 import type { ReviewCompletion } from "@/lib/schemas";
+import { EarnedBadgePopups } from "@/features/rewards/EarnedBadgePopups";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import styles from "./review-end.module.css";
 
@@ -42,7 +44,10 @@ export function ReviewEnd({ topbar, learnerName, mascot, levelNumber, preview, s
   const saving = save.status === "idle";
   const failed = save.status === "error";
   const result = save.status === "ok" ? save.completion : preview;
-  useHotkeys({ Enter: () => (failed ? onRetry() : router.push("/home")) }, { enabled: !saving });
+  // Huy hiệu thành tích vừa đạt (vd 100 từ đầu tiên) hiện hộp nhận quà; bài ôn tập không rơi sticker.
+  const earned = save.status === "ok" ? (save.completion.badges ?? []) : [];
+  const [badgesDone, setBadgesDone] = useState(false);
+  useHotkeys({ Enter: () => (failed ? onRetry() : router.push("/home")) }, { enabled: !saving && (earned.length === 0 || badgesDone) });
 
   const shown = result.up.slice(0, SHOWN_MOVES);
   const others = result.up.length - shown.length;
@@ -151,6 +156,7 @@ export function ReviewEnd({ topbar, learnerName, mascot, levelNumber, preview, s
           </div>
         </section>
       </main>
+      <EarnedBadgePopups badges={earned} onDone={() => setBadgesDone(true)} />
     </div>
   );
 }

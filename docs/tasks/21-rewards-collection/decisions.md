@@ -9,3 +9,4 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 10/10/2026 | Điều kiện huy hiệu lưu `{kind, goal}` (qua đảo: `goal` = số cấp); xu: thành tích +50, qua đảo/trùm 0 vì xu đã nằm trong gói bài thi (+100) / trận trùm (+30) | Khớp thiết kế Screen36/33 và `COINS` |
 | 10/10/2026 | Seed chỉ bổ sung cột còn trống của dòng đã có, không ghi đè tên/mức/trạng thái quản trị đã sửa | Tránh seed lại làm mất chỉnh sửa ở Adult21 |
 | 10/10/2026 | 6 hình khủng long sinh bằng script từ `designs/components/bundle.js` (đọc, không sửa) vào `public/media/stickers/`, đổi `var(--dragon-line)` thành `#2b2440` | Hình mẫu của thiết kế dùng biến CSS, tệp SVG tĩnh không đọc được biến |
+| 10/10/2026 | Bước 2 tự duyệt. Hộp quà chỉ hiện sau khi lưu xong (không biết trước bài có rơi quà hay không), thay cho trạng thái “hộp quà chờ” khi đang lưu; huy hiệu thành tích hiện trước, quà sticker mở bằng tay | Chỉ lần đầu hoàn thành bài mới rơi quà nên màn đang lưu không có hộp để chờ |
