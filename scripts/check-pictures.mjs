@@ -4,6 +4,7 @@
 // mỗi hình phải thuộc một từ trong nội dung đã soạn. Từ chưa có hình (từ trừu tượng) chỉ được báo cáo.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { pictureSlug } from "../src/lib/picture-path.ts";
+import { EXPLORER_PICTURES } from "./explorer-art-keys.mjs";
 
 const ROOT = new URL("../prisma/seed/content/", import.meta.url);
 const PICS = new URL("../public/media/pictures/", import.meta.url);
@@ -16,7 +17,7 @@ const levels = requested.length
   : Array.from({ length: 10 }, (_, i) => i + 1).filter((n) => existsSync(new URL(`level-${level2(n)}/`, ROOT)));
 
 const errors = [];
-const known = new Set(); // tên tệp của mọi từ trong nội dung (mọi cấp), để bắt hình mồ côi
+const known = new Set(EXPLORER_PICTURES); // tên tệp của mọi từ trong nội dung (mọi cấp) và hình của Khám phá từ, để bắt hình mồ côi
 for (let n = 1; n <= 10; n++) {
   const dir = new URL(`level-${level2(n)}/`, ROOT);
   if (!existsSync(dir)) continue;

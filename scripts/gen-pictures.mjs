@@ -2,11 +2,12 @@
 // Chạy: node scripts/gen-pictures.mjs [--sheet đường-dẫn.html]   (--sheet ghi thêm trang xem hình để kiểm tra bằng mắt; SHEET_FROM, SHEET_COUNT chọn khoảng hình)
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { pictureSlug } from "../src/lib/picture-path.ts";
+import { EXPLORER_PICTURES } from "./explorer-art-keys.mjs";
 
 const OUT = new URL("../public/media/pictures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
-// Tệp SVG là sản phẩm sinh ra: xóa hết rồi ghi lại để không sót hình của từ đã bỏ.
-for (const f of readdirSync(OUT).filter((x) => x.endsWith(".svg"))) rmSync(new URL(f, OUT));
+// Tệp SVG là sản phẩm sinh ra: xóa hết rồi ghi lại để không sót hình của từ đã bỏ (trừ hình của Khám phá từ, do gen-explorer-art.mjs sinh).
+for (const f of readdirSync(OUT).filter((x) => x.endsWith(".svg") && !EXPLORER_PICTURES.includes(x.slice(0, -4)))) rmSync(new URL(f, OUT));
 
 const files = readdirSync(new URL("./pictures/", import.meta.url)).filter((f) => /^level-\d+\.mjs$/.test(f)).sort();
 const all = new Map(); // từ → { level, svg }

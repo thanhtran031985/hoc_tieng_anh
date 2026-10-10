@@ -27,3 +27,4 @@ export * from "./admin-rewards";
 export * from "./room";
 export * from "./notebook";
 export * from "./manual-unlock";
+export * from "./word-explorer";

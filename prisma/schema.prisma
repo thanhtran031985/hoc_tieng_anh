@@ -246,6 +246,7 @@ model Word {
   steps       LessonStep[]
   answerLogs  AnswerLog[]
   reviewCards ReviewCard[]
+  questions   WordQuestion[]
 
   @@index([word])
   @@index([levelId])
@@ -750,4 +751,52 @@ model ManualUnlock {
   @@index([learnerId, createdAt])
   @@index([unlockedBy])
   @@map("manual_unlocks")
+}
+
+// ---------------------------------------------------------------------------
+// Khám phá từ (dạng bài 8.27, task 25)
+// ---------------------------------------------------------------------------
+
+enum WordReadingOwner {
+  word
+  family
+}
+
+/// Một nhánh câu hỏi của Khám phá từ (4–6 nhánh mỗi từ). `answers` ([{ text, textVi, image, audio }]): đáp án đầu là đáp án bé đoán bằng hình,
+/// các đáp án còn lại hiện khi mở nhánh; `distractors` ([{ text, image }], 1–2 hình) là hình nhiễu. Schema: src/lib/schemas/word-explorer.ts.
+model WordQuestion {
+  id          Int           @id @default(autoincrement())
+  wordId      Int           @map("word_id")
+  sortOrder   Int           @map("sort_order")
+  /// Loại câu hỏi (identify, color, food, parts, action, place, time, use, other), để chọn bộ câu hỏi mẫu.
+  kind        String        @db.VarChar(30)
+  questionEn  String        @map("question_en") @db.VarChar(255)
+  questionVi  String        @map("question_vi") @db.VarChar(255)
+  answers     Json
+  distractors Json
+  status      ContentStatus @default(draft)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([wordId, sortOrder])
+  @@map("word_questions")
+}
+
+/// Đoạn văn "Đọc cả đoạn" của một từ (`owner_type` word) hoặc một họ vần (`family`, task 26). `sentences` ([{ en, vi }]): câu thứ i ứng với nhánh i.
+/// `owner_id` không có khóa ngoại vì trỏ tới hai bảng; ứng dụng dọn khi xóa từ.
+model WordReading {
+  id        Int              @id @default(autoincrement())
+  ownerType WordReadingOwner @map("owner_type")
+  ownerId   Int              @map("owner_id")
+  sentences Json
+  /// Tệp âm thanh đọc cả đoạn (`/audio/…mp3`); chưa có thì chưa xuất bản được.
+  audio     String?          @db.VarChar(255)
+  status    ContentStatus    @default(draft)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  @@unique([ownerType, ownerId])
+  @@map("word_readings")
 }
