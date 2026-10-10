@@ -5,6 +5,7 @@ import { MAX_BOX, nextReview } from "@/lib/rules/review-box";
 import { buildReviewSteps, maxReviewItems, rewardForReview, wordResults, type DueWord } from "@/lib/rules/review-play";
 import { recordStudyDay } from "@/lib/rules/streak";
 import { db } from "./db";
+import { loadExplorerContents } from "./word-explorer";
 import { requireLearner } from "./learners";
 import { grantAchievements } from "./rewards";
 
@@ -101,8 +102,8 @@ export async function getReviewPlay(userId: number, learnerId: number): Promise<
     select: wordSelect,
   });
   const dayKey = day.toISOString().slice(0, 10);
-  const steps = buildReviewSteps(due, pool, `${learnerId}:review:${dayKey}`, limit);
-  const inSteps = new Set(steps.flatMap((s) => (s.kind === "match_pairs" ? s.pairs.map((p) => p.id) : s.kind === "word_card" || s.kind === "memory_game" ? [] : [s.target.id])));
+  const steps = buildReviewSteps(due, pool, `${learnerId}:review:${dayKey}`, limit, await loadExplorerContents(due.map((w) => w.id)));
+  const inSteps = new Set(steps.flatMap((s) => (s.kind === "match_pairs" ? s.pairs.map((p) => p.id) : s.kind === "explorer_branch" ? [s.word.id] : s.kind === "word_card" || s.kind === "memory_game" ? [] : [s.target.id])));
   return { levelNumber, steps, words: due.filter((w) => inSteps.has(w.id)), day: dayKey };
 }
 

@@ -24,7 +24,7 @@ import {
 import { MASTERY_NAMES } from "@/lib/rules/review-box";
 import type { Notebook, NotebookWord } from "@/server/notebook";
 import { MasteryPips } from "./MasteryPips";
-import { WordZoom } from "./WordZoom";
+import { WordZoom, type ZoomTab } from "./WordZoom";
 import styles from "./notebook.module.css";
 
 type Props = {
@@ -32,6 +32,8 @@ type Props = {
   learnerName: string;
   mascot: MascotColor;
   notebook: Notebook;
+  /** Mở sẵn thẻ phóng to của một từ (quay về từ màn Khám phá đầy đủ). */
+  initialZoom?: { wordId: number; tab: ZoomTab };
 };
 
 /** Lọc bằng hộp chọn một: "all" hoặc số cấp / số chủ đề. */
@@ -44,11 +46,12 @@ const toNumber = (value: string): number | null =>
  * lưới 12 thẻ mỗi trang có phân trang, xếp từ mức thấp lên trước; bấm thẻ mở thẻ phóng to (← → đi theo danh sách đã lọc).
  * “In danh sách từ” mở bản in theo đúng bộ lọc đang chọn.
  */
-export function NotebookView({ topbar, learnerName, mascot, notebook }: Props) {
+export function NotebookView({ topbar, learnerName, mascot, notebook, initialZoom }: Props) {
   const [level, setLevel] = useState<string>(ALL);
   const [topic, setTopic] = useState<string>(ALL);
-  const [page, setPage] = useState(0);
-  const [zoomWord, setZoomWord] = useState<number | null>(null);
+  const startIndex = initialZoom ? notebook.words.findIndex((w) => w.id === initialZoom.wordId) : -1;
+  const [page, setPage] = useState(startIndex >= 0 ? Math.floor(startIndex / NOTEBOOK_PAGE_SIZE) : 0);
+  const [zoomWord, setZoomWord] = useState<number | null>(startIndex >= 0 ? startIndex : null);
   const radioRefs = useRef<Record<string, (HTMLButtonElement | null)[]>>({
     level: [],
     topic: [],
@@ -362,6 +365,7 @@ export function NotebookView({ topbar, learnerName, mascot, notebook }: Props) {
           index={zoomWord}
           total={words.length}
           topicLabel={topicName(zoomed)}
+          initialTab={initialZoom?.wordId === zoomed.id ? initialZoom.tab : "card"}
           onPrev={() => stepZoom(-1)}
           onNext={() => stepZoom(1)}
           onClose={() => setZoomWord(null)}

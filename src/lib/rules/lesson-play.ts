@@ -65,6 +65,8 @@ export type PlayStep =
   | ({ id: string; kind: "story" } & StoryPlay)
   /** 8.27 Khám phá từ: `word` ở giữa, 4–6 nhánh câu hỏi, rồi đoạn văn “Đọc cả đoạn”. */
   | { id: string; kind: "word_explorer"; word: PlayWord; branches: ExplorerViewBranch[]; reading: ExplorerContent["reading"]; glossary: Record<string, string> }
+  /** Ôn tập: một câu hỏi nhánh của Khám phá từ (bé chọn 1 trong 2–3 hình). Chỉ dựng ở phiên ôn, không có trong bài học. */
+  | { id: string; kind: "explorer_branch"; word: PlayWord; branch: ExplorerViewBranch }
   | { id: string; kind: "word_rain"; words: PlayWord[] }
   | ({ id: string; kind: "word_bubbles" } & BubbleGame<PlayWord>)
   | { id: string; kind: "whack_letters"; rounds: WhackRound<PlayWord>[] }
@@ -126,8 +128,11 @@ export type PlayStep =
 
 export type PlayStepKind = PlayStep["kind"];
 
+/** Câu hỏi nhánh Khám phá từ trong phiên ôn tập. */
+export type ExplorerBranchStep = Extract<PlayStep, { kind: "explorer_branch" }>;
+
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_explorer" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_explorer" | "explorer_branch" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
 
 const DEFAULT_OPTIONS = 3;
 /** Số từ nhiễu dự phòng của câu chọn (độ khó thích ứng cần tối đa 1, dư một từ phòng trùng). */

@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 1 | Đọc cả đoạn và dịch (ReadAloudParagraph) | ✅ | ReadAloudParagraph, trang thử /dev/wordlab |
 | 2 | Khám phá từ (Screen48) | ✅ | Dạng bài word_explorer, ExplorerMap/Player, /explore, Soạn bài |
 | 3 | Bản in (Screen49) | ✅ | Route in, công tắc dịch, PDF 1 trang A4 |
-| 4 | Trong Sổ từ và ôn tập | ⬜ | |
+| 4 | Trong Sổ từ và ôn tập | ✅ | Tab Khám phá ở WordZoom, explorer_branch trong ôn tập |
 | 5 | Soạn Khám phá từ (Adult22) | ⬜ | |
 
 ## Nhật ký
@@ -44,6 +44,11 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-print.mjs`) và xuất PDF thật: PDF đúng 1 trang khổ A4 (594,96 × 841,92 pt) cả khi tắt và bật dịch; trang xem trước tỉ lệ 210:297, không cuộn ở 1366×768; chỉ dùng đen, xám `#4d4d4d` và trắng, hình có `filter` xám; thanh công cụ ẩn khi in (`@media print`); tải lại với `?translate=1` công tắc bật sẵn; từ còn Nháp ra trang trống. `tsc`, `eslint` sạch.
 - Việc thủ công: mở một từ đã xuất bản Khám phá, bấm Ctrl+P hoặc nút In và xem thử bản in thật.
 
+### Bước 4 — Trong Sổ từ và ôn tập (10/10/2026)
+- Sổ từ: thẻ phóng to có `tablist` Thẻ từ · Khám phá (`WordZoom`): ← → ở dải tab đổi tab, ở chỗ khác vẫn là từ trước / từ sau; từ chưa có Khám phá thì chỉ có tab Thẻ từ kèm dòng “Từ … chưa có Khám phá nên chỉ có Thẻ từ”. Tab Khám phá nạp sơ đồ thu gọn bằng server action `getExplorerCompactAction` (đang tải / lỗi có Thử lại / chưa có), bấm đáp án để nghe, nút “Mở Khám phá đầy đủ” → `/explore/[id]?from=notebook`; Đóng hoặc Esc ở màn đó quay về `/notebook?word=ID&tab=explore` (thẻ phóng to mở sẵn tab Khám phá). `NotebookWord.hasExplorer` tính bằng đếm dòng (`wordsWithExplorer`), không đọc nội dung.
+- Ôn tập: `buildReviewSteps` (thêm tham số `explorers`, có overload nên cách gọi cũ không đổi) thay một phần lượt ôn của từ có Khám phá (xác suất 0,5 theo hạt giống ngày) bằng bước `explorer_branch`: Bông hỏi một nhánh, bé chọn 1 trong 2–3 hình (`ExplorerBranchStep`, dùng lại luồng câu chọn: sai không phạt, sai 2 lần mờ hình, sai lần 3 xem đáp án). Kết quả tính cho từ nên đi vào 5 hộp như câu thường.
+- Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-notebook.mjs`): thẻ bird có 2 tab, tab Khám phá hiện 6 nhánh đã mở, nút Mở đầy đủ đúng địa chỉ, ← → đổi tab / đổi từ, thẻ vừa 1366×768; cat (còn Nháp) chỉ có tab Thẻ từ kèm dòng giải thích; mở đầy đủ rồi Esc quay về đúng thẻ ở tab Khám phá; ôn tập có câu nhánh của bird không cuộn, chọn đúng thì hộp 2 → 3. 31 test của `word-explorer.test.ts` (thêm ôn tập), `tsc`, `eslint` sạch.
+
 ## Bước tiếp theo
 
-Bước 4 — Trong Sổ từ và ôn tập
+Bước 5 — Soạn Khám phá từ (Adult22)

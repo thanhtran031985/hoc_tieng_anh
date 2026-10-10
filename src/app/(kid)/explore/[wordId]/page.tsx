@@ -13,8 +13,8 @@ export const metadata: Metadata = { title: "Khám phá từ — Học cùng Bôn
 
 // Tự khám phá một từ (mở từ Sổ từ). getExplorerView đi qua requireLearner nên chỉ hồ sơ thuộc tài khoản đang đăng nhập dùng được;
 // chỉ từ đã xuất bản Khám phá mới mở được (bản Nháp là 404). Không ghi gì: không sao, không xu.
-export default async function ExplorePage({ params }: { params: Promise<{ wordId: string }> }) {
-  const { wordId: idParam } = await params;
+export default async function ExplorePage({ params, searchParams }: { params: Promise<{ wordId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const [{ wordId: idParam }, query] = await Promise.all([params, searchParams]);
   const wordId = Number(idParam);
   if (!Number.isInteger(wordId) || wordId < 1) notFound();
 
@@ -35,7 +35,7 @@ export default async function ExplorePage({ params }: { params: Promise<{ wordId
         audio={(await getVoiceMp3Enabled()) ? view.audio : {}}
         accent={learner.settings.voice.accent}
         speechScoring={learner.settings.speechScoring}
-        closeHref="/notebook"
+        closeHref={query.from === "notebook" ? `/notebook?word=${wordId}&tab=explore` : "/notebook"}
       />
     </SoundProvider>
   );

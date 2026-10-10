@@ -298,6 +298,69 @@
   gap: var(--space-6);
   align-items: center;
 }
+/* Tab của thẻ phóng to (Screen52): Thẻ từ · Khám phá. */
+.zoomTabs {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--space-2);
+  justify-self: start;
+  padding: var(--space-1);
+  background: var(--surface-sunk);
+  border-radius: var(--radius-pill);
+}
+.zoomTab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--space-10);
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  cursor: pointer;
+}
+.zoomTab[aria-selected="true"] {
+  background: var(--surface);
+  color: var(--brand-shade);
+  box-shadow: var(--shadow-raised);
+}
+.zoomTab:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.zoomNote {
+  grid-column: 1 / -1;
+  margin: calc(var(--space-3) * -1) 0 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+}
+.zoomWide {
+  width: min(calc(var(--space-16) * 17), calc(100% - 2 * var(--space-6)));
+  max-height: calc(100dvh - var(--space-8));
+  overflow-y: auto;
+}
+.zoomPanel {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+}
+.zoomOpen {
+  display: flex;
+  justify-content: center;
+}
+
 .zoomArt {
   width: calc(var(--space-16) * 3.5);
   height: calc(var(--space-16) * 3.5);

@@ -19,6 +19,7 @@ import {
   type ExplorerContent,
 } from "./word-explorer.ts";
 import { buildPlaySteps, type PlayWord } from "./lesson-play.ts";
+import { buildReviewSteps, type DueWord } from "./review-play.ts";
 import { EXPLORER_SEED } from "./word-explorer-data.ts";
 
 const bird = EXPLORER_SEED.find((w) => w.word === "bird")!;
@@ -232,5 +233,38 @@ describe("Khám phá từ trong bài học", () => {
     assert.equal(few.length, 0);
     const noWord = buildPlaySteps([{ id: 5, activityType: "word_explorer", config: {}, word: null }], [], "s", { explorers: new Map([[7, content(bird)]]) });
     assert.equal(noWord.length, 0);
+  });
+});
+
+describe("Khám phá từ trong ôn tập", () => {
+  const due: DueWord[] = [{ ...birdWord, box: 2 }];
+  const pool: PlayWord[] = [1, 2, 3].map((i) => ({ ...birdWord, id: 100 + i, word: `w${i}` }));
+
+  it("không có Khám phá thì phiên ôn giữ nguyên như trước", () => {
+    for (const seed of ["a", "b", "c"]) {
+      const without = buildReviewSteps(due, pool, seed, 15);
+      const withEmpty = buildReviewSteps(due, pool, seed, 15, new Map());
+      assert.deepEqual(withEmpty, without);
+      assert.ok(without.every((st) => st.kind !== "explorer_branch"));
+    }
+  });
+
+  it("từ có Khám phá: một phần lượt ôn là câu hỏi nhánh của chính từ đó, có 2–3 hình và đúng một hình đúng", () => {
+    const explorers = new Map([[7, content(bird)]]);
+    const kinds = Array.from({ length: 24 }, (_, i) => buildReviewSteps(due, pool, `seed-${i}`, 15, explorers)[0]);
+    const branches = kinds.filter((st) => st.kind === "explorer_branch");
+    assert.ok(branches.length > 0 && branches.length < kinds.length, "có cả hai kiểu câu");
+    for (const st of branches) {
+      assert.equal(st.kind, "explorer_branch");
+      if (st.kind !== "explorer_branch") continue;
+      assert.equal(st.word.id, 7);
+      assert.ok(st.branch.choices.length >= 2 && st.branch.choices.length <= 3);
+      assert.equal(st.branch.choices.filter((c) => c.correct).length, 1);
+    }
+  });
+
+  it("Khám phá chưa đủ nhánh thì không thay câu ôn", () => {
+    const explorers = new Map([[7, content(bird, 3)]]);
+    for (let i = 0; i < 12; i++) assert.notEqual(buildReviewSteps(due, pool, `s${i}`, 15, explorers)[0].kind, "explorer_branch");
   });
 });

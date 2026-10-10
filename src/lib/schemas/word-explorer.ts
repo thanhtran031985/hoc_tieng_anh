@@ -54,6 +54,9 @@ export const explorerSentenceSchema = z.object({
 export type ExplorerSentence = z.infer<typeof explorerSentenceSchema>;
 export const explorerSentencesSchema = z.array(explorerSentenceSchema).max(EXPLORER_SENTENCES_MAX);
 
+/** Tham số của các thao tác đọc Khám phá theo từ (tab Khám phá trong Sổ từ). */
+export const explorerWordInputSchema = z.object({ wordId: z.number().int().positive() });
+
 export const WORD_READING_OWNERS = ["word", "family"] as const;
 export const wordReadingOwnerSchema = z.enum(WORD_READING_OWNERS);
 

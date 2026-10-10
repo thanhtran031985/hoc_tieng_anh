@@ -1,3 +1,4 @@
+import { WORDLAB } from "@/lib/rules/constants";
 import { buildAudioMap } from "@/lib/rules/tts";
 import { splitSentence } from "@/lib/rules/sentence-words";
 import type { PlayWord } from "@/lib/rules/lesson-play";
@@ -142,8 +143,20 @@ export async function getExplorerPrint(userId: number, learnerId: number, wordId
   };
 }
 
-/** Các từ trong `wordIds` có Khám phá đã xuất bản (cho Sổ từ và ôn tập). */
+/**
+ * Các từ trong `wordIds` có Khám phá đã xuất bản (đủ nhánh tối thiểu, mọi nhánh và đoạn văn đã xuất bản), để Sổ từ biết có hiện tab Khám phá không.
+ * Chỉ đếm dòng, không đọc nội dung; nội dung đầy đủ nạp khi bé mở tab.
+ */
 export async function wordsWithExplorer(wordIds: readonly number[]): Promise<Set<number>> {
-  return new Set((await loadExplorerContents(wordIds)).keys());
+  const ids = [...new Set(wordIds)];
+  if (ids.length === 0) return new Set();
+  const [total, published, readings] = await Promise.all([
+    db.wordQuestion.groupBy({ by: ["wordId"], where: { wordId: { in: ids } }, _count: { _all: true } }),
+    db.wordQuestion.groupBy({ by: ["wordId"], where: { wordId: { in: ids }, status: "published" }, _count: { _all: true } }),
+    db.wordReading.findMany({ where: { ownerType: "word", ownerId: { in: ids }, status: "published" }, select: { ownerId: true } }),
+  ]);
+  const all = new Map(total.map((r) => [r.wordId, r._count._all]));
+  const withReading = new Set(readings.map((r) => r.ownerId));
+  return new Set(published.filter((r) => r._count._all === all.get(r.wordId) && r._count._all >= WORDLAB.branchMin && r._count._all <= WORDLAB.branchMax && withReading.has(r.wordId)).map((r) => r.wordId));
 }
 
