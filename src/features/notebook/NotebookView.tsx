@@ -1,13 +1,30 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ButtonLink, DataState, Dialog, SpeakerButton, WordPicture, type MascotColor } from "@/components/ui";
+import {
+  Button,
+  ButtonLink,
+  DataState,
+  Icon,
+  SpeakerButton,
+  WordPicture,
+  type MascotColor,
+} from "@/components/ui";
 import { cn } from "@/lib/cn";
 import kid from "@/features/kid/kid.module.css";
 import { KidTopbar, type KidTopbarProps } from "@/features/kid/KidTopbar";
+import {
+  NOTEBOOK_PAGE_SIZE,
+  countMastered,
+  filterWords,
+  neighbour,
+  paginate,
+  topicsForLevel,
+} from "@/lib/rules/notebook";
 import { MASTERY_NAMES } from "@/lib/rules/review-box";
 import type { Notebook, NotebookWord } from "@/server/notebook";
 import { MasteryPips } from "./MasteryPips";
+import { WordZoom } from "./WordZoom";
 import styles from "./notebook.module.css";
 
 type Props = {
@@ -17,44 +34,162 @@ type Props = {
   notebook: Notebook;
 };
 
-const ALL = 0;
+/** Lọc bằng hộp chọn một: "all" hoặc số cấp / số chủ đề. */
+const ALL = "all";
+const toNumber = (value: string): number | null =>
+  value === ALL ? null : Number(value);
 
-/** Sổ từ (Screen13): các từ đã học, sắp theo mức thuộc thấp lên trước, lọc theo chủ đề; bấm thẻ để xem lớn và nghe từ, câu ví dụ. */
+/**
+ * Sổ từ bổ sung (Screen44): số từ đã gặp / đã thuộc (mức Nhớ tốt trở lên), lọc Cấp (chấm màu cấp) rồi Chủ đề (đổi theo cấp),
+ * lưới 12 thẻ mỗi trang có phân trang, xếp từ mức thấp lên trước; bấm thẻ mở thẻ phóng to (← → đi theo danh sách đã lọc).
+ * “In danh sách từ” mở bản in theo đúng bộ lọc đang chọn.
+ */
 export function NotebookView({ topbar, learnerName, mascot, notebook }: Props) {
-  const [topic, setTopic] = useState<number>(ALL);
-  const [zoom, setZoom] = useState<NotebookWord | null>(null);
-  const [zoomOpen, setZoomOpen] = useState(false);
-  const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [level, setLevel] = useState<string>(ALL);
+  const [topic, setTopic] = useState<string>(ALL);
+  const [page, setPage] = useState(0);
+  const [zoomWord, setZoomWord] = useState<number | null>(null);
+  const radioRefs = useRef<Record<string, (HTMLButtonElement | null)[]>>({
+    level: [],
+    topic: [],
+  });
 
-  const words = topic === ALL ? notebook.words : notebook.words.filter((w) => w.unitIds.includes(topic));
-  const chips = [{ id: ALL, label: "Tất cả", count: notebook.words.length }, ...notebook.topics.map((t) => ({ id: t.id, label: t.titleVi, count: t.count }))];
+  const levelNumber = toNumber(level);
+  const topicId = toNumber(topic);
+  const inLevel = filterWords(notebook.words, {
+    level: levelNumber,
+    topic: null,
+  });
+  const topics = topicsForLevel(notebook.topics, notebook.words, levelNumber);
+  const words = filterWords(notebook.words, {
+    level: levelNumber,
+    topic: topicId,
+  });
+  const shown = paginate(words, page, NOTEBOOK_PAGE_SIZE);
+  const mastered = countMastered(notebook.words);
 
-  function moveChip(index: number, step: number) {
+  const levelChips = [
+    {
+      id: ALL,
+      label: "Tất cả cấp",
+      count: notebook.words.length,
+      level: null as number | null,
+    },
+    ...notebook.levels.map((l) => ({
+      id: String(l.number),
+      label: `Cấp ${l.number} · ${l.name}`,
+      count: l.count,
+      level: l.number as number | null,
+    })),
+  ];
+  const topicChips = [
+    { id: ALL, label: "Tất cả", count: inLevel.length },
+    ...topics.map((t) => ({
+      id: String(t.id),
+      label: t.titleVi,
+      count: t.count,
+    })),
+  ];
+
+  function pickLevel(id: string) {
+    setLevel(id);
+    setTopic(ALL);
+    setPage(0);
+  }
+  function pickTopic(id: string) {
+    setTopic(id);
+    setPage(0);
+  }
+  /** Nhóm radio: ← → ↑ ↓ chuyển chip và đưa tiêu điểm theo. */
+  function moveRadio(
+    group: "level" | "topic",
+    chips: { id: string }[],
+    index: number,
+    step: number,
+  ) {
     const next = (index + step + chips.length) % chips.length;
-    setTopic(chips[next].id);
-    chipRefs.current[next]?.focus();
+    (group === "level" ? pickLevel : pickTopic)(chips[next].id);
+    radioRefs.current[group][next]?.focus();
+  }
+  function keyHandler(
+    group: "level" | "topic",
+    chips: { id: string }[],
+    index: number,
+  ) {
+    return (event: React.KeyboardEvent) => {
+      const step =
+        event.key === "ArrowRight" || event.key === "ArrowDown"
+          ? 1
+          : event.key === "ArrowLeft" || event.key === "ArrowUp"
+            ? -1
+            : 0;
+      if (!step) return;
+      event.preventDefault();
+      moveRadio(group, chips, index, step);
+    };
   }
 
-  function open(word: NotebookWord) {
-    setZoom(word);
-    setZoomOpen(true);
+  const printHref = `/notebook/print${levelNumber !== null || topicId !== null ? `?${[levelNumber !== null ? `level=${levelNumber}` : "", topicId !== null ? `topic=${topicId}` : ""].filter(Boolean).join("&")}` : ""}`;
+  const zoomed = zoomWord !== null ? words[zoomWord] : undefined;
+  const topicName = (w: NotebookWord) =>
+    notebook.topics.find(
+      (t) =>
+        t.id ===
+        (topicId !== null && w.unitIds.includes(topicId)
+          ? topicId
+          : w.unitIds[0]),
+    )?.titleVi ?? null;
+
+  function openWord(w: NotebookWord) {
+    setZoomWord(words.indexOf(w));
+  }
+  function stepZoom(step: -1 | 1) {
+    if (zoomWord === null) return;
+    const next = neighbour(words, zoomWord, step);
+    if (!next) return;
+    const index = zoomWord + step;
+    setZoomWord(index);
+    setPage(Math.floor(index / NOTEBOOK_PAGE_SIZE));
   }
 
   return (
-    <div className={cn(kid.screen, styles.screen)} data-level={notebook.levelNumber} data-dragon={mascot}>
+    <div
+      className={cn(kid.screen, styles.screen)}
+      data-level={notebook.levelNumber}
+      data-dragon={mascot}
+    >
       <KidTopbar {...topbar} backHref="/home" backLabel="Về trang chủ" />
       <main className={styles.nb}>
         <div className={styles.head}>
-          <h1 className={styles.title}>
-            Sổ từ của {learnerName} <span className={styles.total}>{notebook.words.length} từ</span>
-          </h1>
-          <div className={styles.legend} aria-label="Mức độ thuộc">
-            {MASTERY_NAMES.map((name, i) => (
-              <span key={name} className={styles.lg} style={{ "--m": `var(--mastery-${i + 1})` } as React.CSSProperties}>
-                <i aria-hidden="true" />
-                {i + 1} · {name}
+          <h1 className={styles.title}>Sổ từ của {learnerName}</h1>
+          <div className={styles.kpis}>
+            <div className={styles.kpi}>
+              <span className={styles.kpiIc}>
+                <Icon name="book" size={24} />
               </span>
-            ))}
+              <div>
+                <b>{notebook.words.length}</b>
+                <span>từ đã gặp</span>
+              </div>
+            </div>
+            <div className={cn(styles.kpi, styles.kpiOk)}>
+              <span className={styles.kpiIc}>
+                <Icon name="check" size={24} />
+              </span>
+              <div>
+                <b>{mastered}</b>
+                <span>từ đã thuộc</span>
+              </div>
+            </div>
+            {notebook.words.length > 0 && (
+              <ButtonLink
+                href={printHref}
+                variant="secondary"
+                size="m"
+                icon="print"
+                label="In danh sách từ"
+              />
+            )}
           </div>
         </div>
 
@@ -65,90 +200,173 @@ export function NotebookView({ topbar, learnerName, mascot, notebook }: Props) {
             size={220}
             title="Sổ từ còn trống"
             text="Mỗi từ bé học sẽ được Bông ghi vào đây. Học bài đầu tiên nhé!"
-            action={<ButtonLink href={`/map/${notebook.levelNumber}`} size="l" icon="map" label="Học bài đầu tiên" />}
+            action={
+              <ButtonLink
+                href={`/map/${notebook.levelNumber}`}
+                size="l"
+                icon="map"
+                label="Học bài đầu tiên"
+              />
+            }
           />
         ) : (
           <>
-            <div className={styles.chips} role="radiogroup" aria-label="Lọc theo chủ đề">
-              {chips.map((chip, index) => {
-                const on = chip.id === topic;
-                return (
-                  <button
-                    key={chip.id}
-                    ref={(el) => {
-                      chipRefs.current[index] = el;
-                    }}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    tabIndex={on ? 0 : -1}
-                    className={cn(styles.chip, on && styles.chipOn)}
-                    onClick={() => setTopic(chip.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-                        event.preventDefault();
-                        moveChip(index, 1);
-                      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-                        event.preventDefault();
-                        moveChip(index, -1);
-                      }
-                    }}
-                  >
-                    {chip.label} <span className={styles.chipN}>{chip.count}</span>
-                  </button>
-                );
-              })}
+            <div className={styles.flt}>
+              <div className={styles.frow}>
+                <span className={styles.lb} id="nb-lv">
+                  Cấp
+                </span>
+                <div
+                  className={styles.chips}
+                  role="radiogroup"
+                  aria-labelledby="nb-lv"
+                >
+                  {levelChips.map((chip, index) => (
+                    <button
+                      key={chip.id}
+                      ref={(el) => {
+                        radioRefs.current.level[index] = el;
+                      }}
+                      type="button"
+                      role="radio"
+                      aria-checked={level === chip.id}
+                      tabIndex={level === chip.id ? 0 : -1}
+                      data-level={chip.level ?? undefined}
+                      className={cn(
+                        styles.chip,
+                        level === chip.id && styles.chipOn,
+                      )}
+                      onClick={() => pickLevel(chip.id)}
+                      onKeyDown={keyHandler("level", levelChips, index)}
+                    >
+                      {chip.level !== null && (
+                        <i className={styles.dot} aria-hidden="true" />
+                      )}
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.frow}>
+                <span className={styles.lb} id="nb-tp">
+                  Chủ đề
+                </span>
+                <div
+                  className={styles.chips}
+                  role="radiogroup"
+                  aria-labelledby="nb-tp"
+                >
+                  {topicChips.map((chip, index) => (
+                    <button
+                      key={chip.id}
+                      ref={(el) => {
+                        radioRefs.current.topic[index] = el;
+                      }}
+                      type="button"
+                      role="radio"
+                      aria-checked={topic === chip.id}
+                      tabIndex={topic === chip.id ? 0 : -1}
+                      className={cn(
+                        styles.chip,
+                        topic === chip.id && styles.chipOn,
+                      )}
+                      onClick={() => pickTopic(chip.id)}
+                      onKeyDown={keyHandler("topic", topicChips, index)}
+                    >
+                      {chip.label}{" "}
+                      <span className={styles.chipN}>{chip.count}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className={styles.gridw}>
-              <div className={styles.wg}>
-                {words.map((w) => (
-                  <article key={w.id} className={styles.wc} style={{ "--m": `var(--mastery-${w.mastery})` } as React.CSSProperties}>
+            <div className={styles.gw}>
+              <div className={styles.wg12}>
+                {shown.items.map((w) => (
+                  <article
+                    key={w.id}
+                    className={styles.wc}
+                    style={
+                      {
+                        "--m": `var(--mastery-${w.mastery})`,
+                      } as React.CSSProperties
+                    }
+                  >
                     <MasteryPips level={w.mastery} />
-                    <WordPicture word={w.word} src={w.image} size={88} label="" aria-hidden="true" />
+                    <WordPicture
+                      word={w.word}
+                      src={w.image}
+                      size={80}
+                      label=""
+                      aria-hidden="true"
+                      className={styles.cardPic}
+                    />
                     <div className={styles.wordRow}>
-                      <SpeakerButton word={w.word} size="s" className={styles.speak} />
-                      <button type="button" className={styles.en} lang="en" onClick={() => open(w)} aria-label={`${w.word}, xem lớn`}>
+                      <SpeakerButton
+                        word={w.word}
+                        size="s"
+                        className={styles.speak}
+                      />
+                      <button
+                        type="button"
+                        className={styles.en}
+                        lang="en"
+                        onClick={() => openWord(w)}
+                        aria-label={`${w.word}, ${w.meaningVi}, ${MASTERY_NAMES[w.mastery - 1]}${w.levelNumber ? `, cấp ${w.levelNumber}` : ""}. Bấm để phóng to`}
+                      >
                         {w.word}
                       </button>
                     </div>
                     <div className={styles.vi}>{w.meaningVi}</div>
+                    {w.levelNumber !== null && (
+                      <span className={styles.lvb} data-level={w.levelNumber}>
+                        Cấp {w.levelNumber}
+                      </span>
+                    )}
                   </article>
                 ))}
+              </div>
+              <div className={styles.pg}>
+                <span className={styles.pgText} aria-live="polite">
+                  {words.length} từ · trang {shown.page + 1}/{shown.pages} · xếp
+                  từ mức thấp lên
+                </span>
+                <div className={styles.pgBtns}>
+                  <Button
+                    label="Trang trước"
+                    variant="secondary"
+                    size="s"
+                    icon="back"
+                    disabled={shown.page === 0}
+                    onClick={() => setPage(shown.page - 1)}
+                  />
+                  <Button
+                    label="Trang sau"
+                    variant="secondary"
+                    size="s"
+                    icon="next"
+                    disabled={shown.page >= shown.pages - 1}
+                    onClick={() => setPage(shown.page + 1)}
+                  />
+                </div>
               </div>
             </div>
           </>
         )}
       </main>
 
-      <Dialog
-        open={zoomOpen}
-        onClose={() => setZoomOpen(false)}
-        title={zoom?.word ?? ""}
-        body={
-          zoom && (
-            <div className={styles.zoom} style={{ "--m": `var(--mastery-${zoom.mastery})` } as React.CSSProperties}>
-              {zoom.image && <WordPicture word={zoom.word} src={zoom.image} size={160} label="" aria-hidden="true" />}
-              <div className={styles.zoomWord}>
-                <SpeakerButton word={zoom.word} size="m" />
-                {zoom.ipa && <span className={styles.ipa}>{zoom.ipa}</span>}
-              </div>
-              <b className={styles.zoomVi}>{zoom.meaningVi}</b>
-              {zoom.exampleEn && (
-                <p className={styles.example}>
-                  <SpeakerButton word={zoom.exampleEn} size="s" />
-                  <span>
-                    <span lang="en">{zoom.exampleEn}</span>
-                    {zoom.exampleVi && <span className={styles.exVi}>{zoom.exampleVi}</span>}
-                  </span>
-                </p>
-              )}
-              <MasteryPips level={zoom.mastery} />
-            </div>
-          )
-        }
-        actions={[{ label: "Đóng", variant: "primary", shortcut: "Enter" }]}
-      />
+      {zoomed && zoomWord !== null && (
+        <WordZoom
+          word={zoomed}
+          index={zoomWord}
+          total={words.length}
+          topicLabel={topicName(zoomed)}
+          onPrev={() => stepZoom(-1)}
+          onNext={() => stepZoom(1)}
+          onClose={() => setZoomWord(null)}
+        />
+      )}
     </div>
   );
 }

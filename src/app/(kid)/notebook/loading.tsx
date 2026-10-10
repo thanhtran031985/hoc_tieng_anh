@@ -11,13 +11,13 @@ export default function NotebookLoading() {
       <main className={styles.nb}>
         <div className={styles.head}>
           <h1 className={styles.title}>
-            Sổ từ <span className={styles.total}>··</span>
+            Sổ từ
           </h1>
         </div>
-        <div className={styles.gridw} aria-hidden="true">
-          <div className={styles.wg}>
+        <div className={styles.gw} aria-hidden="true">
+          <div className={styles.wg12}>
             {Array.from({ length: 12 }, (_, i) => (
-              <Skeleton key={i} className={styles.skCard} width="100%" height="var(--size-notebook-sk)" radius="lg" />
+              <Skeleton key={i} className={styles.skCard} width="100%" height="100%" radius="lg" />
             ))}
           </div>
         </div>
