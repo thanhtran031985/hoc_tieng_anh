@@ -4,7 +4,7 @@ import { STORY_PAGE_MAX_WORDS, parseStoryQuestion, storySentencesSchema } from "
 import { STORY_SEED, storyQuestionFields } from "./story-data.ts";
 
 describe("truyện mẫu Tom’s Red Kite", () => {
-  const story = STORY_SEED[0];
+  const story = STORY_SEED.find((s) => s.slug === "toms-red-kite")!;
 
   it("có 6 trang truyện và 1 trang câu hỏi sau trang 3", () => {
     assert.equal(story.pages.filter((p) => p.kind === "page").length, 6);
@@ -38,5 +38,18 @@ describe("truyện mẫu Tom’s Red Kite", () => {
     assert.equal(new Set(story.newWords).size, story.newWords.length);
     const images = story.pages.flatMap((p) => (p.kind === "page" ? [p.image] : []));
     assert.equal(new Set(images).size, images.length);
+  });
+});
+
+describe("truyện của task 19", () => {
+  it("mỗi cấp 1–4 có đủ 2 truyện, mỗi truyện có 6 trang truyện và đúng 1 trang câu hỏi 3 lựa chọn, slug không trùng", () => {
+    for (const level of [1, 2, 3, 4]) assert.equal(STORY_SEED.filter((s) => s.levelNumber === level).length, 2, `cấp ${level}`);
+    assert.equal(new Set(STORY_SEED.map((s) => s.slug)).size, STORY_SEED.length);
+    for (const s of STORY_SEED) {
+      assert.equal(s.pages.filter((p) => p.kind === "page").length, 6, s.slug);
+      const q = s.pages.filter((p) => p.kind === "question");
+      assert.equal(q.length, 1, s.slug);
+      for (const p of s.pages) if (p.kind === "page") assert.ok(p.sentences.length >= 1 && p.sentences.length <= 2 && p.sentences.join(" ").split(/\s+/).length <= 16, `${s.slug}: trang dài`);
+    }
   });
 });

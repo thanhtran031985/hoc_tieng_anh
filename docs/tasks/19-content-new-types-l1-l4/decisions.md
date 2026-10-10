@@ -11,3 +11,10 @@ Ghi các quyết định đã chốt, thay đổi so với task.md và vấn đ�
 | 10/10/2026 | Bài mẫu cấp 3 (daily-routines, bài 1) sau builder bản 2: 8 thẻ từ → 5 nghe-chọn-hình → nối cặp → lật thẻ → 5 chọn từ → ghép âm → sắp xếp câu → điền từ → nghe-gõ câu → luyện nói → đọc hiểu → mưa từ vựng; bài cấp 4 (city-places, bài 1) tương tự không có ghép âm | Dài hơn bản 1 khoảng 6 bước dạng mới + 1 trò chơi; bé học dở vẫn tiếp tục được (bước mới ở cuối) |
 | 10/10/2026 | Từ ngoài khung được phép ghi ở `prisma/seed/content-extra/allowed-extra.json` (kèm cấp và lý do), checker in danh sách trong báo cáo; hiện chỉ có “season” | task.md: từ ngoài danh sách phải ghi vào báo cáo |
 | 10/10/2026 | Giọng mp3 theo câu chỉ dùng khi công tắc “Giọng mp3” (Adult13) đang bật, như từ và câu ví dụ; lúc tắt dùng giọng trình duyệt | Giữ nguyên hành vi của task 14: bản không có mp3 (hosting) vẫn chạy |
+
+## Tổng kết khác với task.md gốc
+- Bước 0 tự duyệt theo ủy quyền của người dùng (không dừng chờ).
+- Thêm bảng `audio_clips` và `npm run audio:generate -- --content` để mọi câu có mp3 (task.md chỉ nói “mọi câu có mp3”); thêm bước `story` vào bài (task.md chưa nói rõ).
+- Danh sách thiếu hình: 230 từ (chủ yếu từ trừu tượng), ghi ở `thieu-hinh.md`; chưa vẽ thêm hình.
+- Bài dài hơn bản 1 (+ 4–6 bước dạng mới và 1 trò chơi); nếu bé thấy dài, giảm số câu mỗi chủ đề trong `content-extra`.
+

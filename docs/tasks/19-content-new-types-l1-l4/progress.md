@@ -1,6 +1,6 @@
 # Tiến độ — 19-content-new-types-l1-l4 — Nội dung dạng bài mới cho cấp 1–4
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -8,7 +8,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 1 | lesson-builder bản 2 | ✅ | |
 | 2 | Nội dung cấp 3–4 | ✅ | |
 | 3 | Nội dung cấp 1–2 | ✅ | |
-| 4 | Kiểm tra toàn bộ nội dung | ⬜ | |
+| 4 | Kiểm tra toàn bộ nội dung | ✅ | |
 
 ## Nhật ký
 
@@ -22,6 +22,14 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 
 **10/10/2026 — Bước 3.** 16 tệp `content-extra/level-01|02/<chủ đề>.json` (208 câu: cấp 1 mỗi chủ đề 3 ghép âm / 3 sắp xếp / 3 điền từ / 3 luyện nói, không nghe-gõ; cấp 2 có 2 ghép âm / 3 / 3 / 3 nghe-gõ **từ** / 3 luyện nói), 4 truyện mới 6 tranh/truyện (cấp 1: “My Cat Mimi”, “My Family Day”; cấp 2: “Mum’s Soup”, “The Little Fox”). `npm run content:check-extra -- --strict`: cả 4 cấp 0 lỗi (đủ số câu theo bảng, 2 truyện mỗi cấp, vốn từ trong cấp). Seed lần 2 trên DB verify: 464 câu hỏi dạng mới, 0 bước thêm vào bài đã học (chạy lại không nhân đôi). mp3: 235 câu + 48 âm thanh mẫu + 24 trang truyện (5 phút), truyện tự xuất bản. `scripts/report-content.mjs` (báo cáo số câu theo cấp/dạng, truyện, bài thiếu dạng mới/trò chơi, từ thiếu hình/âm thanh). Kiểm (Edge, DB verify, bé tạm ở cấp 1 rồi cấp 2): mỗi dạng có ở cấp đó (ghép âm, sắp xếp, điền từ, luyện nói, nghe-gõ cấp 2, truyện) mở ra đúng màn, không lỗi console, nút nghe tải mp3 theo câu. Spec `tests/e2e/19-noi-dung-moi.spec.ts` đã viết, chưa chạy. tsc, lint sạch.
 
+**10/10/2026 — Bước 4.** `node scripts/report-content.mjs --strict` (DB verify): 464 câu hỏi dạng mới (cấp 1: 90, cấp 2: 112, cấp 3: 120, cấp 4: 120 — theo bảng), 8 truyện (2/cấp, đã xuất bản), 122 bài thường cấp 1–4 đều có dạng mới hoặc trò chơi, cấp 1 không có nghe-gõ, 708 câu đều có mp3 (`audio_clips`), 900 từ đều có mp3 từ và câu ví dụ (`npm run audio:generate -- --level 1..4`, ≈ 35 phút), 48 câu luyện nói có âm thanh mẫu. Adult08 không còn cảnh báo thiếu âm thanh (còn “230 từ chưa có hình”: phần lớn là từ trừu tượng như always, tomorrow, cheap — danh sách ở `thieu-hinh.md`). Seed trên database trống chạy 2 lần: 464 câu, 154 bài, 3393 bước, 8 truyện, không nhân đôi. Gate cuối: tsc, lint, 439 test, build.
+
+## Việc cần làm thủ công
+- [ ] Chạy `npx prisma migrate deploy` (bảng `game_records`, `audio_clips`) rồi `npx prisma db seed` (bài đã học chỉ được thêm bước mới ở cuối).
+- [ ] Bật “Giọng mp3” ở Adult13, chạy `npm run audio:generate -- --level 1` … `--level 4` rồi `npm run audio:generate -- --content` (≈ 35 + 25 phút); kiểm bằng `node scripts/report-content.mjs --strict`.
+- [ ] Học thử 3 bài cấp 3–4 và 1 bài cấp 1–2; nghe thử vài câu và truyện; duyệt/chỉnh nội dung ở `prisma/seed/content-extra/` (sửa rồi chạy lại seed và `npm run content:check-extra -- --strict`).
+- [ ] Chạy Playwright sau khi xong hết task: `npm run test:e2e:db` rồi `npx playwright test 19-`.
+
 ## Bước tiếp theo
 
-Bước 4 — Kiểm tra toàn bộ nội dung
+Hoàn thành
