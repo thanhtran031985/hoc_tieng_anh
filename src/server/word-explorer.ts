@@ -112,6 +112,36 @@ export async function loadExplorerView(wordId: number): Promise<ExplorerView | n
   return { word, content, audio: await audioOf(wordId) };
 }
 
+export type ExplorerPrint = {
+  learnerName: string;
+  grade: number | null;
+  /** “Cấp 3 · Lá xanh”: cấp của từ. */
+  levelLabel: string;
+  topicLabel: string;
+  word: PlayWord;
+  /** Khám phá đã xuất bản; null khi từ chưa có để in. */
+  content: ExplorerContent | null;
+};
+
+/** Dữ liệu bản in Khám phá (Screen49) của một từ, cho hồ sơ thuộc tài khoản đang đăng nhập. Từ không có thì null. */
+export async function getExplorerPrint(userId: number, learnerId: number, wordId: number): Promise<ExplorerPrint | null> {
+  const learner = await requireLearner(userId, learnerId);
+  const [word, contents] = await Promise.all([
+    db.word.findUnique({ where: { id: wordId }, select: { ...wordFields, level: { select: { number: true, name: true } }, topics: { take: 1, orderBy: { topicId: "asc" }, select: { topic: { select: { nameVi: true } } } } } }),
+    loadExplorerContents([wordId]),
+  ]);
+  if (!word) return null;
+  const { level, topics, ...fields } = word;
+  return {
+    learnerName: learner.name,
+    grade: learner.schoolGrade,
+    levelLabel: `Cấp ${level.number} · ${level.name}`,
+    topicLabel: topics[0]?.topic.nameVi ?? "—",
+    word: fields,
+    content: contents.get(wordId) ?? null,
+  };
+}
+
 /** Các từ trong `wordIds` có Khám phá đã xuất bản (cho Sổ từ và ôn tập). */
 export async function wordsWithExplorer(wordIds: readonly number[]): Promise<Set<number>> {
   return new Set((await loadExplorerContents(wordIds)).keys());

@@ -1,0 +1,348 @@
+/* Bản in Khám phá từ (Screen49): trang A4 dọc, chỉ trắng đen. Mọi kích thước bên trong theo em (1em = 1/80 chiều cao trang)
+   nên bản xem trước thu nhỏ và bản in A4 có cùng bố cục. Khung màn, thanh công cụ và lớp phủ in lấy từ notebook/print.module.css. */
+.sw {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+}
+.switch {
+  position: relative;
+  flex: none;
+  width: var(--size-switch-w);
+  height: var(--size-switch-h);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--line-strong);
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+}
+.switch:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.switch:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.switch i {
+  position: absolute;
+  top: var(--space-1);
+  left: var(--space-1);
+  width: var(--size-switch-knob);
+  height: var(--size-switch-knob);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 var(--border-thin) 0 var(--sticker-shadow);
+  transition: transform var(--duration-fast);
+}
+.switch[aria-checked="true"] {
+  background: var(--success);
+}
+.switch[aria-checked="true"] i {
+  transform: translateX(calc(var(--size-switch-w) - var(--size-switch-knob) - 2 * var(--space-1)));
+}
+
+.page {
+  --H: calc(100dvh - var(--space-16) - var(--space-8));
+  flex: none;
+  height: var(--H);
+  aspect-ratio: 210 / 297;
+  font-size: calc(var(--H) / 80);
+  background: var(--print-paper);
+  color: var(--print-ink);
+  box-shadow: var(--shadow-raised);
+  padding: 3.4em 3.8em 2.4em;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+.ph {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1em;
+  align-items: end;
+  border-bottom: 0.3em solid var(--print-ink);
+  padding-bottom: 0.8em;
+}
+.ph h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.9em;
+  line-height: 1.1;
+  font-weight: 800;
+}
+.meta {
+  font-size: 1.3em;
+  line-height: 1.45;
+}
+.meta b {
+  font-weight: 800;
+}
+.who {
+  text-align: right;
+  font-size: 1.2em;
+  line-height: 1.5;
+}
+.ln {
+  display: inline-block;
+  width: 8em;
+  border-bottom: 0.1em solid var(--print-ink);
+}
+.tip {
+  margin: 0;
+  font-size: 1.15em;
+  color: var(--print-muted);
+}
+
+/* Sơ đồ: thẻ từ ở giữa, câu hỏi chia hai bên */
+.dg {
+  position: relative;
+  display: grid;
+  grid-template-columns: 17em 1fr 17em;
+  column-gap: 2.6em;
+  row-gap: 0.8em;
+}
+.dg > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.dg > svg :global(path) {
+  fill: none;
+  stroke: var(--print-ink);
+  stroke-width: 0.13;
+}
+.dg > svg :global(circle) {
+  fill: var(--print-paper);
+  stroke: var(--print-ink);
+  stroke-width: 0.13;
+}
+.wc {
+  grid-column: 2;
+  align-self: center;
+  position: relative;
+  border: 0.2em solid var(--print-ink);
+  border-radius: 1em;
+  padding: 1em 0.6em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3em;
+  text-align: center;
+  background: var(--print-paper);
+}
+.wc svg,
+.wc img {
+  width: 7.2em;
+  height: 7.2em;
+  filter: grayscale(1) contrast(1.15);
+}
+.wc b {
+  font-family: var(--font-display);
+  font-size: 3.4em;
+  line-height: 1;
+  font-weight: 800;
+}
+.ipa {
+  font-size: 1.15em;
+  color: var(--print-muted);
+}
+.ex {
+  font-family: var(--font-display);
+  font-size: 1.25em;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.exv {
+  font-size: 1em;
+  color: var(--print-muted);
+}
+.bx {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 0.5em 0.7em 0.55em;
+  border: 0.12em solid var(--print-ink);
+  border-radius: 0.8em;
+  background: var(--print-paper);
+}
+.q {
+  display: flex;
+  gap: 0.45em;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  line-height: 1.2;
+  font-weight: 800;
+}
+.q i {
+  flex: none;
+  width: 1.35em;
+  height: 1.35em;
+  display: grid;
+  place-items: center;
+  border: 0.1em solid var(--print-ink);
+  border-radius: 50%;
+  font-style: normal;
+  font-family: var(--font-body);
+  font-size: 0.8em;
+  line-height: 1;
+  font-weight: 800;
+}
+.qv {
+  margin: -0.2em 0 0 1.95em;
+  font-size: 0.95em;
+  color: var(--print-muted);
+}
+.an {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  margin-left: 1.6em;
+}
+.an > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 1em;
+  line-height: 1;
+  font-weight: 700;
+}
+.an svg,
+.an img {
+  width: 2em;
+  height: 2em;
+  filter: grayscale(1) contrast(1.15);
+}
+.an small {
+  font-family: var(--font-body);
+  font-size: 0.82em;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--print-muted);
+}
+.wl {
+  margin: auto 0 0 1.6em;
+  height: 1.6em;
+  border-bottom: 0.09em dashed var(--print-rule);
+}
+
+/* Đoạn văn và dòng tập viết */
+.para {
+  border: 0.12em solid var(--print-ink);
+  border-radius: 0.8em;
+  padding: 0.7em 1em;
+}
+.para h2,
+.wr h2 {
+  margin: 0 0 0.35em;
+  font-family: var(--font-body);
+  font-size: 1.35em;
+  line-height: 1.2;
+  font-weight: 800;
+}
+.para p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  line-height: 1.45;
+  font-weight: 700;
+}
+.para p span {
+  display: block;
+  margin: -0.1em 0 0.25em;
+  font-family: var(--font-body);
+  font-size: 0.78em;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--print-muted);
+}
+.al {
+  height: 2.42em;
+  border-bottom: 0.09em solid var(--print-rule);
+}
+.pf {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.7em;
+  border-top: 0.08em solid var(--print-ink);
+  font-size: 1.05em;
+  color: var(--print-muted);
+}
+.pf b {
+  color: var(--print-ink);
+}
+.empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 1.6em;
+}
+.empty span {
+  color: var(--print-muted);
+}
+
+/* In kèm bản dịch: thêm dòng tiếng Việt nên thu gọn khoảng cách để vẫn vừa một trang */
+.tr {
+  gap: 0.75em;
+  padding-top: 3em;
+}
+.tr .ph h1 {
+  font-size: 2.6em;
+}
+.tr .tip {
+  font-size: 1.05em;
+}
+.tr .dg {
+  row-gap: 0.6em;
+}
+.tr .para {
+  padding: 0.55em 1em;
+}
+.tr .para p {
+  font-size: 1.12em;
+  line-height: 1.32;
+}
+.tr .para p span {
+  margin-bottom: 0.12em;
+}
+.tr .bx {
+  padding-bottom: 0.4em;
+}
+.tr .wl {
+  height: 1.4em;
+}
+
+@media print {
+  .page {
+    width: var(--size-print-page-w);
+    height: var(--size-print-page-h);
+    aspect-ratio: auto;
+    font-size: calc(var(--size-print-page-h) / 80);
+    box-shadow: none;
+    padding: var(--size-print-margin);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .al {
+    height: var(--size-print-answer-line);
+  }
+}

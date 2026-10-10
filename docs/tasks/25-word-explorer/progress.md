@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 | 0 | Bảng và seed mẫu | ✅ | Migration, Zod, quy tắc, seed bird/cat, 17 hình |
 | 1 | Đọc cả đoạn và dịch (ReadAloudParagraph) | ✅ | ReadAloudParagraph, trang thử /dev/wordlab |
 | 2 | Khám phá từ (Screen48) | ✅ | Dạng bài word_explorer, ExplorerMap/Player, /explore, Soạn bài |
-| 3 | Bản in (Screen49) | ⬜ | |
+| 3 | Bản in (Screen49) | ✅ | Route in, công tắc dịch, PDF 1 trang A4 |
 | 4 | Trong Sổ từ và ôn tập | ⬜ | |
 | 5 | Soạn Khám phá từ (Adult22) | ⬜ | |
 
@@ -38,6 +38,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 09/10/2026
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-explorer.mjs`, `check-25-builder.mjs`): tự khám phá — 6 nhánh, 6 đường nối, phím 1–6, ↑ ↓, bấm chuột, mở đủ thì hiện đoạn văn, T bật dịch, Nói theo, Xem lại sơ đồ, Esc về Sổ từ, không ghi nhật ký, bản Nháp là 404, không cuộn ở 1366×768, 1440×900, 1920×1080. Trong bài — Bông hỏi, sai hiện dải cam, sai 2 lần mờ một hình, H gợi ý, Esc thôi hỏi (không mở hộp thoát), đúng hiện câu, mở đủ thì Đọc cả đoạn, Tiếp tục sang màn kết thúc, 6 mục vào nhật ký, 5/6 đúng ngay lần đầu = 2 sao. Soạn bài: nút thêm bước, lưu, chặn xuất bản bài khi từ còn Nháp. `npm test` 610 đạt, `tsc`, `eslint` sạch.
 - Token thiếu đã thêm ở bước 1: `text-translation`. Icon thêm: `branch`, `compass`, `translate`, `snail`.
 
+### Bước 3 — Bản in (Screen49) (10/10/2026)
+- Route `/explore/[wordId]/print?translate=1` (có loading, error; từ chưa có Khám phá đã xuất bản thì hiện trang trống và khóa nút In), dữ liệu qua `getExplorerPrint` (đi qua `requireLearner`). `features/word-explorer/PrintExplorer`: một trang A4 dọc, thẻ từ ở giữa, câu hỏi chia hai bên (`printSides`), mỗi ô có hình + đáp án + dòng trống để viết, đường cong nối vẽ theo em để bản xem và bản in A4 trùng nhau, đoạn văn “Đọc cả đoạn”, 2 dòng tập viết (`size-print-answer-line`), chân trang.
+- Công tắc “In kèm bản dịch tiếng Việt” (`role=switch`, Space bật/tắt, giữ trong `?translate=1`): thêm câu hỏi, đáp án, thẻ từ và từng câu bằng tiếng Việt chữ `print-muted`, thu gọn khoảng cách để vẫn vừa một trang. `PrintToolbar` của Sổ từ thêm chỗ cho điều khiển phụ và nhãn nút quay lại.
+- Kiểm tra bằng Edge không đầu (`.tmp-verify/check-25-print.mjs`) và xuất PDF thật: PDF đúng 1 trang khổ A4 (594,96 × 841,92 pt) cả khi tắt và bật dịch; trang xem trước tỉ lệ 210:297, không cuộn ở 1366×768; chỉ dùng đen, xám `#4d4d4d` và trắng, hình có `filter` xám; thanh công cụ ẩn khi in (`@media print`); tải lại với `?translate=1` công tắc bật sẵn; từ còn Nháp ra trang trống. `tsc`, `eslint` sạch.
+- Việc thủ công: mở một từ đã xuất bản Khám phá, bấm Ctrl+P hoặc nút In và xem thử bản in thật.
+
 ## Bước tiếp theo
 
-Bước 3 — Bản in (Screen49)
+Bước 4 — Trong Sổ từ và ôn tập
