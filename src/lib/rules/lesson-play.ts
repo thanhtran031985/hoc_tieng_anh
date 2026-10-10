@@ -56,8 +56,9 @@ export type OrderCard = { n: number; word: string };
 
 export type PlayStep =
   | { id: string; kind: "word_card"; word: PlayWord; showExample: boolean; ordinal: number; total: number }
-  | { id: string; kind: "listen_choose_picture"; target: PlayWord; options: PlayWord[]; autoPlay: boolean }
-  | { id: string; kind: "choose_word_for_picture"; target: PlayWord; options: PlayWord[] }
+  /** `spare`: từ nhiễu dự phòng (không trùng `options`) để thêm 1 đáp án khi bé đúng liên tiếp (`adaptive.ts`). */
+  | { id: string; kind: "listen_choose_picture"; target: PlayWord; options: PlayWord[]; spare?: PlayWord[]; autoPlay: boolean }
+  | { id: string; kind: "choose_word_for_picture"; target: PlayWord; options: PlayWord[]; spare?: PlayWord[] }
   | { id: string; kind: "match_pairs"; pairs: PlayWord[] }
   | { id: string; kind: "memory_game"; pairs: PlayWord[] }
   | ({ id: string; kind: "story" } & StoryPlay)
@@ -126,6 +127,8 @@ export type PlayStepKind = PlayStep["kind"];
 export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
 
 const DEFAULT_OPTIONS = 3;
+/** Số từ nhiễu dự phòng của câu chọn (độ khó thích ứng cần tối đa 1, dư một từ phòng trùng). */
+const SPARE_OPTIONS = 2;
 const DEFAULT_PAIRS = 4;
 const MIN_PAIRS = 2;
 const DEFAULT_MEMORY_PAIRS = 6;
@@ -188,12 +191,14 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
         // Nghe và chọn hình: các lựa chọn là hình nên chỉ lấy từ có hình. Chọn từ cho hình: lựa chọn là chữ, lấy từ cả chủ đề.
         const pool = (listen ? pictureWords : unitWords).filter((w) => w.id !== target.id);
         const count = config.optionCount ?? DEFAULT_OPTIONS;
-        const options = shuffled([target, ...shuffled(pool, random).slice(0, count - 1)], random);
+        const distractors = shuffled(pool, random);
+        const options = shuffled([target, ...distractors.slice(0, count - 1)], random);
         if (options.length < 2) break;
+        const spare = distractors.slice(count - 1, count - 1 + SPARE_OPTIONS);
         play.push(
           listen
-            ? { id, kind: "listen_choose_picture", target, options, autoPlay: config.autoPlay ?? true }
-            : { id, kind: "choose_word_for_picture", target, options },
+            ? { id, kind: "listen_choose_picture", target, options, spare, autoPlay: config.autoPlay ?? true }
+            : { id, kind: "choose_word_for_picture", target, options, spare },
         );
         break;
       }

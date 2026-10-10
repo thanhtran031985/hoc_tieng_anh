@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Button, ChoiceCard, Icon, Mascot, WordPicture } from "@/components/ui";
+import { ADAPT, NORMAL_DIFFICULTY, adaptOptions } from "@/lib/rules/adaptive";
 import { playPronunciation, stopPronunciation } from "@/lib/speech";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import { ChoiceFeedback } from "./ChoiceFeedback";
@@ -17,8 +18,11 @@ const KEYS = ["1", "2", "3", "4"] as const;
 const LETTERS = ["a", "b", "c", "d"] as const;
 
 /** Chọn từ đúng cho hình (Screen18): như nghe-chọn nhưng đáp án là chữ; chọn thẻ nào thì Bông đọc từ đó. */
-export function PickWordStep({ step, active, onComplete }: StepProps<"choose_word_for_picture">) {
-  const { target, options } = step;
+export function PickWordStep({ step, active, difficulty = NORMAL_DIFFICULTY, onComplete }: StepProps<"choose_word_for_picture">) {
+  const { target } = step;
+  // Độ khó thích ứng: đúng liên tiếp thì thêm 1 từ nhiễu, sai liên tiếp thì bớt 1 từ và đọc chậm.
+  const { extraOption, fewerOption, slow } = difficulty;
+  const options = useMemo(() => adaptOptions(step.options, step.target, step.spare ?? [], { extraOption, fewerOption, slow }), [step.options, step.target, step.spare, extraOption, fewerOption, slow]);
   const flow = useChoiceFlow(target, options);
 
   // Rời câu thì ngừng đọc.
@@ -32,7 +36,7 @@ export function PickWordStep({ step, active, onComplete }: StepProps<"choose_wor
     const option = options.find((o) => o.id === id);
     if (!option || flow.removed.includes(id) || flow.phase !== "answering") return;
     flow.select(id);
-    playPronunciation(option.word);
+    playPronunciation(option.word, { rate: slow ? ADAPT.slowRate : undefined });
   }
 
   const keys: Record<string, () => void> = { h: flow.hint, Enter: flow.check };

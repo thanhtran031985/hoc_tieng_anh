@@ -131,6 +131,8 @@ export function playPronunciation(text: string, options: PronunciationOptions = 
 
   if (audioUrl) {
     const audio = new Audio(audioUrl);
+    // Tốc độ chậm hơn mặc định (đọc chậm, từ khó) cũng áp cho tệp mp3, không chỉ giọng trình duyệt.
+    if (options.rate !== undefined && options.rate < DEFAULT_SPEECH_RATE) audio.playbackRate = Math.max(0.5, options.rate / DEFAULT_SPEECH_RATE);
     currentAudio = audio;
     audio.onended = () => {
       currentAudio = null;

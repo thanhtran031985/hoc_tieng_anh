@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Button, ChoiceCard, Icon, Mascot, SpeakerButton, WordPicture } from "@/components/ui";
+import { ADAPT, NORMAL_DIFFICULTY, adaptOptions } from "@/lib/rules/adaptive";
 import { playPronunciation, stopPronunciation } from "@/lib/speech";
 import { useHotkeys } from "@/lib/use-hotkeys";
 import { ChoiceFeedback } from "./ChoiceFeedback";
@@ -17,20 +18,24 @@ const KEYS = ["1", "2", "3", "4"] as const;
 const LETTERS = ["a", "b", "c", "d"] as const;
 
 /** Nghe và chọn hình (Screen07): 1–4 (hoặc A–D) chọn, Space nghe lại, H gợi ý, Enter kiểm tra; sai không phạt. */
-export function ListenChooseStep({ step, active, onComplete }: StepProps<"listen_choose_picture">) {
-  const { target, options } = step;
+export function ListenChooseStep({ step, active, difficulty = NORMAL_DIFFICULTY, onComplete }: StepProps<"listen_choose_picture">) {
+  const { target } = step;
+  // Độ khó thích ứng: đúng liên tiếp thì thêm 1 hình nhiễu, sai liên tiếp thì bớt 1 hình và đọc chậm.
+  const { extraOption, fewerOption, slow } = difficulty;
+  const options = useMemo(() => adaptOptions(step.options, step.target, step.spare ?? [], { extraOption, fewerOption, slow }), [step.options, step.target, step.spare, extraOption, fewerOption, slow]);
+  const rate = slow ? ADAPT.slowRate : undefined;
   const flow = useChoiceFlow(target, options);
   const speakerRef = useRef<HTMLButtonElement>(null);
 
   // Tự đọc từ khi câu hỏi hiện ra (nếu trình duyệt cho phép), và ngừng đọc khi rời câu.
   useEffect(() => {
     if (!step.autoPlay) return;
-    const timer = window.setTimeout(() => playPronunciation(target.word), 350);
+    const timer = window.setTimeout(() => playPronunciation(target.word, { rate }), 350);
     return () => {
       window.clearTimeout(timer);
       stopPronunciation();
     };
-  }, [step.autoPlay, target.word]);
+  }, [step.autoPlay, target.word, rate]);
 
   // Đúng thì sao bay từ thẻ vừa chọn vào thanh tiến độ.
   useEffect(() => {
@@ -59,7 +64,7 @@ export function ListenChooseStep({ step, active, onComplete }: StepProps<"listen
             <Mascot expr={flow.hintUsed ? "suynghi" : "chao"} size={120} />
           </div>
           <div className={styles.speakCol}>
-            <SpeakerButton ref={speakerRef} word={target.word} size="l" label="Nghe từ cần chọn" />
+            <SpeakerButton ref={speakerRef} word={target.word} size="l" label="Nghe từ cần chọn" rate={rate} />
             {flow.hintUsed ? (
               <span className={styles.hintTip}>
                 <Icon name="bulb" size={20} />

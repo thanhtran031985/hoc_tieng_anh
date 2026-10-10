@@ -1,6 +1,6 @@
 # Tiến độ — 20-boss-level-test — Trận trùm, bài thi lên cấp và rồng Bông lớn lên
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -9,7 +9,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 2 | Bản đồ có cổng (Screen34) | ✅ | Tự duyệt; Edge 17/17 đạt |
 | 3 | Bài thi lên cấp (Screen35–37) | ✅ | Tự duyệt; Edge 47/47 đạt |
 | 4 | Rồng Bông theo cấp | ✅ | Tự duyệt; Edge 18/18 đạt |
-| 5 | Điều chỉnh độ khó trong bài | ⬜ | |
+| 5 | Điều chỉnh độ khó trong bài | ✅ | Tự duyệt; Edge 9/9 đạt |
 
 ## Nhật ký
 
@@ -27,6 +27,20 @@ Việc thủ công: `npx prisma migrate deploy` rồi `npx prisma db seed` (đ�
 
 **10/10/2026 — Bước 4.** Rồng Bông theo cấp: `MascotStageProvider` + `useMascotStage`/`useSetMascotStage` (`src/components/ui/Mascot/MascotStage.tsx`); `Mascot` (nay là client component) lấy `stage` từ context khi không truyền, không có provider thì giữ dáng gốc (parent/admin/đăng nhập không đổi); `(kid)/layout.tsx` nạp dáng theo `current_level` của hồ sơ đang chọn (`stageForLevel`); khi cấp đổi ngay trên máy mà layout chưa vẽ lại, `ExamLevelUp` và `PlacementFlow` gọi `setStage` để các màn sau đã là dáng mới (không dùng `revalidatePath` vì làm trang bài thi tải lại và đá bé ra khỏi màn lên cấp); trang chọn hồ sơ giữ dáng gốc vì chưa chọn bé nào (thẻ hồ sơ trong thiết kế chỉ có ảnh bé, không có rồng). Kiểm (Edge, DB verify, `.tmp-verify/check-20-stage.mjs`, 18/18): đổi `current_level_id` ở database sang cấp 4, 1, 2, 5, 3 thì rồng ở trang chủ, tổng quan 10 cấp và bài học đều đổi đúng dáng (nhãn “dáng cấp N”), bản đồ cấp 4 dáng 4, trang chọn hồ sơ dáng gốc, ảnh chụp cấp 4 thấy khăn quàng; không lỗi console. tsc, lint, `npm test` (478 đạt), build sạch.
 
+**10/10/2026 — Bước 5.** Điều chỉnh độ khó trong bài: `src/lib/rules/adaptive.ts` (hàm thuần + 18 test: `performanceOf` đếm chuỗi đúng/sai liên tiếp tính ngược, bước không tính điểm không làm đứt chuỗi; `difficultyFor`: 3 đúng liên tiếp → thêm 1 đáp án nhiễu, 2 sai liên tiếp → bớt 1 đáp án và đọc chậm, hết chuỗi → mặc định; `adaptOptions`: tối đa 4 và tối thiểu 2 lựa chọn, không bao giờ bỏ đáp án đúng, giữ vị trí các lựa chọn còn lại); `buildPlaySteps` thêm `spare` (tối đa 2 từ nhiễu dự phòng) vào câu nghe-chọn-hình và chọn-từ mà không đổi thứ tự số ngẫu nhiên (test mới); `LessonPlayer` tính độ khó từ `session.results` (không thêm state, nên mở lại bài vẫn ra cùng độ khó) và truyền `difficulty` qua `StepView` cho `ListenChooseStep`/`PickWordStep`; đọc chậm dùng `rate` 0.6 và nay áp cả cho tệp mp3 (`playbackRate`) trong `playPronunciation`; bài thi lên cấp không dùng (đề công bằng). Kiểm (Edge, DB verify, `.tmp-verify/check-20-adaptive.mjs`, 9/9): 3 câu đầu 3 hình → câu 4 có 4 hình → câu sai nên câu 5 về 3 hình → hai câu sai liên tiếp nên câu 6 có 2 hình và mp3 phát tốc độ 0.73 → câu 7, 8 về 3 hình, tốc độ thường. Spec e2e `tests/e2e/20-trum-thi-len-cap.spec.ts` đã viết (5 nhóm test cho bước 1–5), CHƯA chạy; tsc, lint sạch.
+
+## Kiểm tra cuối task (10/10/2026)
+
+`npx tsc --noEmit`, `npm run lint`, `npm test` (497 đạt), `npm run build` đều sạch. Chạy lại cả 5 script Edge (trùm 17/17, cổng 17/17, bài thi 47/47, rồng 18/18, độ khó 9/9) sau bước 5: đạt hết. Đi hết một cấp (cấp 3 trên DB verify), đánh trùm, thi lên cấp đạt (16/20) và chưa đạt (15/20) đều đã chạy qua giao diện thật ở 1366×768 và 1920×1080.
+
+Spec Playwright chung (`chung.spec.ts`, `thiet-ke.spec.ts`) chưa thêm `/exam/3` vì màn này chỉ vào được khi cổng mở (bé thử Bảo chưa xong cấp 3); cổng và bài thi được kiểm riêng trong `20-trum-thi-len-cap.spec.ts`.
+
+### Việc thủ công (checklist)
+- [ ] `npx prisma migrate deploy` (hai migration mới: `rewards`, `exams`) rồi `npx prisma db seed` (nạp phần thưởng, đề thi, dựng lại trận trùm chưa đấu).
+- [ ] Đi một bé qua hết cấp 3: đánh một trùm (kiểm “Bạn của …”), mở cổng cuối đảo, thi lên cấp đạt (rồng lên dáng cấp 4, đảo Cành cây sáng) và thử một lần chưa đạt (3 chủ đề ôn, thi lại sau khi ôn).
+- [ ] Nghe thử độ khó: làm 3 câu nghe-chọn liên tiếp đúng thì câu kế có 4 hình; sai 2 câu liên tiếp thì còn 2 hình và từ đọc chậm hơn.
+- [ ] Chạy Playwright một lượt sau khi xong mọi task (`prisma migrate reset` cần bạn đồng ý riêng); sửa các chỗ ghi “có thể cần chỉnh” trong `20-trum-thi-len-cap.spec.ts` nếu lệch dữ liệu test.
+
 ## Bước tiếp theo
 
-Bước 5 — Điều chỉnh độ khó trong bài
+Hoàn thành

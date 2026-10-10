@@ -1,5 +1,6 @@
 import type { MascotColor } from "@/components/ui";
 import type { PlayStep, PlayStepKind } from "@/lib/rules/lesson-play";
+import type { Difficulty } from "@/lib/rules/adaptive";
 import type { ItemResult } from "@/lib/rules/lesson-session";
 
 /** Phần khung bài học mà mini game cần để tự vẽ khung của mình (không lồng khung bài học trong khung trò chơi). */
@@ -22,6 +23,8 @@ export type StepProps<K extends PlayStepKind = PlayStepKind> = {
   active: boolean;
   /** Chủ đề của bài (nhãn "Trái cây · Fruits"). */
   unit: { title: string; titleVi: string };
+  /** Độ khó thích ứng cho câu chọn (thêm/bớt đáp án, đọc chậm), tính từ các câu vừa làm; không có thì độ khó mặc định. */
+  difficulty?: Difficulty;
   /** Có khi bé được xem lại thẻ trước (chỉ các thẻ từ liền nhau). */
   onBack?: () => void;
   /** Khung của bài học đang chơi, chỉ cho mini game. Không có (xem thử ở Soạn bài học) thì trò chơi tự dùng khung mặc định. */

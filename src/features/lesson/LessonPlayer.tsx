@@ -7,6 +7,7 @@ import { ButtonLink, Mascot, type AvatarHair, type MascotColor } from "@/compone
 import { BOSS_LINES, bossEnergy, pickLine, type Boss } from "@/lib/rules/bosses";
 import { bossReward } from "@/lib/rules/rewards";
 import type { LessonPlay } from "@/server/lesson-play";
+import { difficultyFor, performanceOf } from "@/lib/rules/adaptive";
 import { isGameActivity } from "@/lib/rules/games";
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { isPrimaryLevel, rewardFor, starsFor } from "@/lib/rules/lesson-score";
@@ -99,6 +100,8 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   const step = stepId ? stepsById.get(baseId(stepId)) : undefined;
   const { value, max } = session ? progressOf(session) : { value: 0, max: plan.steps.length };
   const isGame = step !== undefined && isGameActivity(step.kind);
+  // Độ khó của câu kế tính từ chuỗi đúng/sai ngay trước đó (hàm thuần, nên mở lại bài vẫn ra cùng độ khó).
+  const difficulty = useMemo(() => difficultyFor(performanceOf(session?.results ?? [])), [session]);
   const mapHref = `/map/${plan.levelNumber}`;
   // Hết giờ học giữa bài: làm nốt câu đang dở rồi chuyển sang màn Hết giờ học (tiến độ dở đã giữ trên máy).
   useTimeUpRedirect(session?.position ?? 0, !finished);
@@ -289,7 +292,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
       head={boss ? <BossStrip boss={boss} energy={bossEnergy(value, max)} total={max} beat={beat} /> : undefined}
     >
       {step && stepId && (
-        <StepView key={stepId} step={step} active={!exitOpen && (!boss || introSeen || value > 0)} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
+        <StepView key={stepId} step={step} active={!exitOpen && (!boss || introSeen || value > 0)} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} difficulty={difficulty} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
       )}
       {boss && (
         <GameStartDialog

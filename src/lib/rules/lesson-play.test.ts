@@ -44,6 +44,22 @@ describe("buildPlaySteps", () => {
     assert.equal(new Set(play.options.map((o) => o.id)).size, 3);
   });
 
+  it("câu chọn có từ nhiễu dự phòng không trùng lựa chọn và đáp án đúng; thiếu từ thì ít hoặc không có", () => {
+    const big = ["cat", "dog", "fish", "bird", "cow", "pig", "hen", "duck"].map((n, i) => word(i + 1, n));
+    for (const kind of ["listen_choose_picture", "choose_word_for_picture"] as const) {
+      const [play] = buildPlaySteps([step(1, kind, big[0], { optionCount: 3 })], big, "s1");
+      if (play.kind !== kind) throw new Error("sai dạng");
+      assert.equal(play.options.length, 3);
+      assert.ok(play.spare && play.spare.length >= 1 && play.spare.length <= 2);
+      const used = new Set([...play.options.map((o) => o.id), ...(play.spare ?? []).map((o) => o.id)]);
+      assert.equal(used.size, play.options.length + (play.spare ?? []).length, "từ dự phòng trùng lựa chọn");
+      assert.ok(!(play.spare ?? []).some((w) => w.id === play.target.id));
+    }
+    const [tight] = buildPlaySteps([step(1, "listen_choose_picture", unit[0], { optionCount: 3 })], unit.slice(0, 3), "s1");
+    if (tight.kind !== "listen_choose_picture") throw new Error("sai dạng");
+    assert.deepEqual(tight.spare, []);
+  });
+
   it("chọn từ cho hình: lựa chọn lấy từ cả chủ đề, kể cả từ chưa có hình", () => {
     const seen = new Set<string>();
     for (let i = 0; i < 40; i++) {
