@@ -1,0 +1,123 @@
+/* Họ vần (Screen50): khung trong bài học và khung tự khám phá. Vừa 1366×768, không cuộn. */
+.root {
+  display: contents;
+}
+.stage {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: min(var(--space-3), 1.2dvh);
+}
+.footGrp {
+  display: contents;
+}
+
+/* Lời của Bông */
+.instr {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.instr svg {
+  flex: none;
+  width: min(var(--space-12), 6dvh);
+  height: auto;
+}
+.say {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: var(--text-body-l--font-weight);
+  color: var(--ink);
+}
+.count {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  color: var(--brand-shade);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+}
+
+/* Tự khám phá: màn riêng có thanh trên và nút Đóng. */
+.screen {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+}
+.top {
+  flex: none;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-12) 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.ttl {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.kind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--brand-shade);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 800;
+}
+.free {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--links-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  font-weight: 800;
+}
+.mainFree {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--size-content-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-12) var(--space-4);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 1400px) {
+  .top,
+  .mainFree {
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
+  }
+}

@@ -4,6 +4,7 @@ import type { PlayStep } from "@/lib/rules/lesson-play";
 import { DictationStep } from "./DictationStep";
 import { ExplorerBranchStep } from "./ExplorerBranchStep";
 import { ExplorerStep } from "./ExplorerStep";
+import { FamilyStep } from "./FamilyStep";
 import { FillBlankStep } from "./FillBlankStep";
 import { ListenChooseStep } from "./ListenChooseStep";
 import { MatchStep } from "./MatchStep";
@@ -51,6 +52,8 @@ export function StepView({ step, ...rest }: StepProps & { step: PlayStep }) {
       return <StoryStep step={step} {...rest} />;
     case "word_explorer":
       return <ExplorerStep step={step} {...rest} />;
+    case "word_family":
+      return <FamilyStep step={step} {...rest} />;
     case "explorer_branch":
       return <ExplorerBranchStep step={step} {...rest} />;
     case "word_rain":

@@ -139,13 +139,22 @@ export type FamilyView = {
   build: BuildInfo;
 };
 
-/** Họ vần chơi được: có ít nhất một từ cùng âm để bé nghe. */
+/** Họ vần chơi được khi tự khám phá: có ít nhất một từ cùng âm để bé nghe. */
 export const isFamilyPlayable = (family: Pick<FamilyView, "members">): boolean => family.members.length > 0;
+
+/** Họ vần chơi được trong bài học: có ít nhất một từ cùng âm bé đã học (bước bắt bé nghe đủ các từ đã học). */
+export const isFamilyLessonPlayable = (family: Pick<FamilyView, "members">): boolean => family.members.some((m) => m.learned);
 
 /** Chỉ số thẻ sau khi bấm ← hoặc →, không vòng quanh. */
 export function cardNav(index: number, key: "ArrowLeft" | "ArrowRight", total: number): number {
   if (total <= 0) return 0;
   return Math.min(total - 1, Math.max(0, index + (key === "ArrowRight" ? 1 : -1)));
+}
+
+/** Tiến độ của Họ vần trong bài: [số từ đã học bé đã nghe, số từ đã học]. */
+export function listenProgress(members: readonly Pick<FamilyMemberView, "wordId" | "learned">[], heard: readonly number[]): [number, number] {
+  const learned = members.filter((m) => m.learned);
+  return [learned.filter((m) => heard.includes(m.wordId)).length, learned.length];
 }
 
 /** Các từ đã học mà bé chưa nghe (cho Gợi ý H và điều kiện Tiếp tục trong bài). */

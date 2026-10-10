@@ -24,6 +24,8 @@ import {
   splitOnset,
   splitRime,
   unheardLearned,
+  isFamilyLessonPlayable,
+  listenProgress,
   type FamilyDraft,
   type FamilyMemberRef,
   type LabEntry,
@@ -158,6 +160,19 @@ describe("Họ vần", () => {
     ];
     assert.deepEqual(unheardLearned(members, [1]), [3]);
     assert.deepEqual(unheardLearned(members, [1, 3]), []);
+  });
+  it("tiến độ nghe chỉ đếm từ đã học", () => {
+    const members = [
+      { wordId: 1, learned: true },
+      { wordId: 2, learned: false },
+      { wordId: 3, learned: true },
+    ];
+    assert.deepEqual(listenProgress(members, [2]), [0, 2]);
+    assert.deepEqual(listenProgress(members, [1, 2, 3]), [2, 2]);
+  });
+  it("họ chơi được trong bài khi có từ đã học", () => {
+    assert.equal(isFamilyLessonPlayable({ members: [{ learned: false }] as never }), false);
+    assert.equal(isFamilyLessonPlayable({ members: [{ learned: false }, { learned: true }] as never }), true);
   });
 });
 

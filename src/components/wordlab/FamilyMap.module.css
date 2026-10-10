@@ -1,0 +1,382 @@
+/* Họ vần (Screen50): vần ở giữa, thẻ từ cùng âm hai bên, ô Bẫy chính tả bên cạnh. Vừa 1366×768, không cuộn. */
+.fam {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(calc(var(--space-16) * 4), calc(var(--space-16) * 4.7));
+  gap: var(--space-5);
+  width: 100%;
+  align-items: center;
+}
+.noTrap {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+.lines {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.lines path {
+  stroke: var(--rime-line);
+  stroke-width: var(--size-branch-line);
+  stroke-linecap: round;
+  fill: none;
+}
+.lines path.dash {
+  stroke-dasharray: var(--space-1) var(--space-3);
+}
+.side {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, var(--size-family-card));
+  gap: min(var(--space-3), 1.2dvh) var(--space-3);
+  position: relative;
+  z-index: 1;
+}
+.side li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+/* Vần ở giữa */
+.hub {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: var(--size-rime-hub);
+  height: var(--size-rime-hub);
+  border-radius: var(--radius-round);
+  border: 0;
+  background: var(--rime-hub);
+  color: var(--rime-hub-ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  box-shadow:
+    0 var(--space-1) 0 var(--rime-ink),
+    0 0 0 var(--space-2) var(--rime-bg);
+  cursor: pointer;
+  transition: transform var(--duration-fast);
+}
+.hub:hover {
+  transform: translateY(calc(var(--space-1) * -0.5));
+}
+.hubPlaying {
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}
+.hubRime {
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: 1;
+  font-weight: 800;
+}
+.hubIpa {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 700;
+}
+.hubCap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: var(--text-key--line-height);
+  font-weight: 800;
+  margin-top: var(--space-1);
+}
+
+/* Thẻ từ */
+.card {
+  position: relative;
+  width: var(--size-family-card);
+}
+.main {
+  width: 100%;
+  border: var(--border-thin) solid transparent;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: min(var(--space-2), 0.8dvh) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(var(--space-1), 0.4dvh);
+  cursor: pointer;
+  color: var(--ink);
+  transition:
+    background-color var(--duration-base),
+    border-color var(--duration-base);
+}
+.main:hover {
+  border-color: var(--rime-line);
+}
+.pic svg,
+.pic img {
+  width: min(calc(var(--space-12) + var(--space-2)), 6dvh);
+  height: auto;
+}
+.w {
+  font-family: var(--font-display);
+  font-size: min(var(--text-word), 3.6dvh);
+  line-height: 1.1;
+  font-weight: 800;
+}
+.rime {
+  color: var(--rime-ink);
+  background: var(--rime-bg);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-1);
+}
+.ipa {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.pos {
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: var(--text-key--line-height);
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--surface-sunk);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-2);
+}
+.vi {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+  color: var(--ink);
+}
+.soon .main {
+  background: var(--surface-soft);
+  border: var(--border-thin) dashed var(--line-strong);
+  box-shadow: none;
+}
+.soon .pic {
+  opacity: 0.4;
+  filter: grayscale(0.7);
+}
+.soon .w,
+.soon .vi {
+  color: var(--ink-soft);
+}
+.soonTag {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+  background: var(--soon-bg);
+  color: var(--soon-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: var(--text-key--line-height);
+  font-weight: 800;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+}
+.tick {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 2;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-round);
+  background: var(--success);
+  color: var(--ink-on-dark);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.hl .main {
+  border-color: var(--brand);
+  box-shadow:
+    0 0 0 var(--border-thick) var(--brand-soft),
+    var(--shadow-card);
+}
+.glow .main {
+  box-shadow:
+    0 0 0 var(--space-1) var(--read-highlight),
+    var(--shadow-card);
+}
+.playing .main {
+  background: var(--read-highlight);
+}
+.go {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  margin-top: var(--space-2);
+}
+.mini {
+  height: var(--space-8);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  border: var(--border-thin) solid var(--links-line);
+  background: var(--links-bg);
+  color: var(--brand-shade);
+  font-family: var(--font-body);
+  font-size: var(--text-key);
+  line-height: 1;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+.mini:hover:not(:disabled) {
+  border-color: var(--brand);
+}
+.mini:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Bẫy chính tả */
+.trap {
+  background: var(--trap-bg);
+  border: var(--border-thick) dashed var(--trap-line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.trapTitle {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-body-l);
+  line-height: var(--text-body-l--line-height);
+  font-weight: 800;
+  color: var(--trap-ink);
+}
+.trapList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.trapWord {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  border: 0;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  color: var(--ink);
+  text-align: left;
+}
+.trapWord b {
+  font-family: var(--font-display);
+  font-size: var(--text-word);
+  line-height: 1.1;
+  font-weight: 800;
+}
+.trapWord svg {
+  margin-left: auto;
+  align-self: center;
+  color: var(--ink-soft);
+}
+.mark {
+  color: var(--trap-ink);
+  text-decoration: underline wavy var(--trap-line);
+  text-underline-offset: var(--space-1);
+  text-decoration-thickness: var(--border-thin);
+}
+.trapIpa,
+.trapVi {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  font-weight: 700;
+}
+.trapIpa {
+  color: var(--ink-soft);
+}
+.trapBong {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.trapBong svg {
+  width: min(var(--space-12), 6dvh);
+  height: auto;
+  flex: none;
+}
+.trapBong p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--text-body--line-height);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Thu gọn (Sổ từ) */
+.compact {
+  grid-template-columns: minmax(0, 1fr) calc(var(--space-16) * 3.9);
+}
+.compact .side {
+  grid-template-columns: repeat(2, calc(var(--size-family-card) * 0.83));
+  gap: var(--space-2);
+}
+.compact .card {
+  width: calc(var(--size-family-card) * 0.83);
+}
+.compact .pic svg,
+.compact .pic img {
+  width: var(--space-10);
+}
+.compact .w {
+  font-size: var(--text-body-l);
+}
+.compact .hub {
+  width: calc(var(--size-rime-hub) * 0.78);
+  height: calc(var(--size-rime-hub) * 0.78);
+}
+.compact .hubRime {
+  font-size: var(--text-title);
+}
+.compact .ring {
+  gap: var(--space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hubPlaying {
+    animation: none;
+  }
+}

@@ -31,7 +31,7 @@ export const GAME_ROTATION = {
 } as const satisfies Record<string, readonly GameActivity[]>;
 
 /** Mọi dạng bài mới của bản 2: bước thuộc các dạng này mới được thêm vào bài đã có tiến độ học. */
-export const NEW_ACTIVITY_TYPES: readonly string[] = [...EXTRA_KINDS, "story", "word_rain", "word_bubbles", "whack_letters", "race", "word_explorer"];
+export const NEW_ACTIVITY_TYPES: readonly string[] = [...EXTRA_KINDS, "story", "word_rain", "word_bubbles", "whack_letters", "race", "word_explorer", "word_family"];
 
 /** Khóa của bước truyện: `story:<slug>`; seed đổi slug thành `config.storyId` khi ghi vào database. */
 export const storyKey = (slug: string) => `story:${slug}`;

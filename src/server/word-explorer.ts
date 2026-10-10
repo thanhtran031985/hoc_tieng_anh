@@ -61,7 +61,7 @@ export async function loadExplorerContents(wordIds: readonly number[], mode: "pu
 /**
  * Nghĩa ngắn theo chữ thường cho các chữ trong đoạn văn: tra ngân hàng từ vựng, rồi đáp án một chữ (nghĩa do người soạn nhập) ghi đè.
  */
-async function glossaryFor(contents: readonly Omit<ExplorerContent, "glossary">[]): Promise<Map<Omit<ExplorerContent, "glossary">, Record<string, string>>> {
+export async function glossaryFor(contents: readonly Omit<ExplorerContent, "glossary">[]): Promise<Map<Omit<ExplorerContent, "glossary">, Record<string, string>>> {
   const tokensOf = (c: Omit<ExplorerContent, "glossary">) => new Set(c.reading.sentences.flatMap((s) => splitSentence(s.en).flatMap((t) => (t.word ? [t.word] : []))));
   const all = new Set(contents.flatMap((c) => [...tokensOf(c)]));
   const rows = all.size ? await db.word.findMany({ where: { word: { in: [...all] } }, select: { word: true, meaningVi: true }, orderBy: { id: "asc" } }) : [];
@@ -90,11 +90,15 @@ export type ExplorerView = {
   audio: Record<string, string>;
 };
 
-/** Bảng mp3 của một từ (từ và câu ví dụ), đúng như bảng của bài học. */
-async function audioOf(wordId: number): Promise<Record<string, string>> {
-  const rows = await db.word.findMany({ where: { id: wordId, OR: [{ audio: { not: null } }, { exampleAudio: { not: null } }] }, select: { word: true, audio: true, exampleEn: true, exampleAudio: true } });
+/** Bảng mp3 của các từ (từ và câu ví dụ), đúng như bảng của bài học. */
+export async function audioOfWords(wordIds: readonly number[]): Promise<Record<string, string>> {
+  const ids = [...new Set(wordIds)];
+  if (ids.length === 0) return {};
+  const rows = await db.word.findMany({ where: { id: { in: ids }, OR: [{ audio: { not: null } }, { exampleAudio: { not: null } }] }, select: { word: true, audio: true, exampleEn: true, exampleAudio: true } });
   return buildAudioMap(rows);
 }
+
+const audioOf = (wordId: number) => audioOfWords([wordId]);
 
 /**
  * Khám phá của một từ cho bé tự khám phá (Sổ từ) hoặc in: chỉ bản đã xuất bản, ngược lại null. Nội dung học không phải dữ liệu riêng của bé

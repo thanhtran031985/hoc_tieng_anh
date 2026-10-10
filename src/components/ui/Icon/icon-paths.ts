@@ -86,6 +86,8 @@ export const ICON_PATHS = {
   snail: "<path d=\"M3 18.5h14.5c2 0 3.5-1.6 3.5-3.5V9\"/><circle cx=\"11\" cy=\"12\" r=\"5.5\"/><path d=\"M11 12a2 2 0 1 0 2-2\"/><path d=\"M19.5 9l-1.5-3M21.5 9l1-3\"/>",
   branch: "<circle cx=\"5\" cy=\"12\" r=\"2.5\"/><circle cx=\"19\" cy=\"5\" r=\"2\"/><circle cx=\"19\" cy=\"12\" r=\"2\"/><circle cx=\"19\" cy=\"19\" r=\"2\"/><path d=\"M7.5 12h9.5M7 11c4-5 6-6 10-6M7 13c4 5 6 6 10 6\"/>",
   compass: "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M15.5 8.5l-2 5-5 2 2-5z\" fill=\"currentColor\"/>",
+  family: "<circle cx=\"12\" cy=\"12\" r=\"3.2\"/><circle cx=\"4.5\" cy=\"6\" r=\"2\"/><circle cx=\"19.5\" cy=\"6\" r=\"2\"/><circle cx=\"4.5\" cy=\"18\" r=\"2\"/><circle cx=\"19.5\" cy=\"18\" r=\"2\"/><path d=\"M6.2 7.2l3.2 2.8M17.8 7.2l-3.2 2.8M6.2 16.8l3.2-2.8M17.8 16.8l-3.2-2.8\"/>",
+  blocks: "<rect x=\"3\" y=\"9\" width=\"8\" height=\"8\" rx=\"2\"/><rect x=\"13\" y=\"9\" width=\"8\" height=\"8\" rx=\"2\" fill=\"currentColor\"/><path d=\"M7 6V4M17 6V4\"/>",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

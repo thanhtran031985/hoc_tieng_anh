@@ -4,12 +4,14 @@ import { questionSummary } from "@/lib/rules/admin-questions";
 import { lessonPublishBlock } from "@/lib/rules/admin-tree";
 import type { PlayWord, StoryPlay } from "@/lib/rules/lesson-play";
 import type { ExplorerContent } from "@/lib/rules/word-explorer";
+import type { FamilyView } from "@/lib/rules/word-family";
 import { lessonIdSchema, saveLessonSchema, unitWordsSchema } from "@/lib/schemas/admin-builder";
 import { lessonStepConfigSchemas } from "@/lib/schemas/lesson-step-config";
 import { EXTRA_QUESTION_TYPES, isExtraQuestionType } from "@/lib/schemas/question-extra";
 import { db } from "../db";
 import { getStoriesPlay } from "../story-play";
 import { loadExplorerContents } from "../word-explorer";
+import { loadFamilies } from "../word-family";
 import { fail, firstIssue, type AdminResult } from "./result";
 
 // Soạn bài học (Adult12): danh sách bài, đọc một bài kèm gợi ý từ và câu hỏi, và lưu bài (tên, trạng thái, danh sách bước).
@@ -47,6 +49,8 @@ export type BuilderData = {
   explorerWordIds: number[];
   /** Nội dung Khám phá (kể cả bản nháp) của các từ đang có bước “Khám phá từ”, để Xem như học sinh dựng được bước. */
   explorers: { wordId: number; content: ExplorerContent }[];
+  /** Họ vần đã xuất bản của các cấp từ cấp của bài trở xuống, để thêm thành một bước `word_family` (mọi từ coi như đã học để xem thử). */
+  families: FamilyView[];
 };
 
 /** Từ của một chủ đề (theo bảng `topics` trùng tên chủ đề). */
@@ -86,6 +90,8 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
     db.story.findMany({ where: { levelId: unit.level.id, status: "published" }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true } }),
   ]);
   const stories = [...(await getStoriesPlay(storyRows.map((r) => r.id))).values()];
+  const familyRows = await db.wordFamily.findMany({ where: { status: "published", level: { number: { lte: unit.level.number } } }, orderBy: [{ level: { number: "asc" } }, { pattern: "asc" }], select: { id: true } });
+  const families = [...(await loadFamilies(familyRows.map((f) => f.id), "all")).values()];
   const explorerWordIds = (await db.wordQuestion.findMany({ distinct: ["wordId"], select: { wordId: true } })).map((r) => r.wordId);
   const explorers = [...(await loadExplorerContents(lesson.steps.flatMap((s) => (s.activityType === "word_explorer" && s.wordId !== null ? [s.wordId] : [])), "any")).entries()].map(([wordId, content]) => ({ wordId, content }));
 
@@ -123,6 +129,7 @@ export async function getBuilder(input: unknown): Promise<BuilderData | null> {
     stories,
     explorerWordIds,
     explorers,
+    families,
   };
 }
 
@@ -164,6 +171,17 @@ export async function saveLesson(input: unknown): Promise<AdminResult> {
       const names = (await db.word.findMany({ where: { id: { in: missing } }, select: { word: true } })).map((w) => w.word).join(", ");
       return fail(`Từ “${names}” chưa xuất bản Khám phá nên bước “Khám phá từ” chưa dùng được. Xuất bản Khám phá ở Ngân hàng từ vựng hoặc lưu bài ở dạng nháp.`, "steps");
     }
+  }
+
+  // Bước Họ vần cần `config.familyId` trỏ tới một họ có thật; xuất bản bài thì họ đó phải đã xuất bản (bản Nháp không tới bé nên bước sẽ bị bỏ qua).
+  const familySteps = steps.filter((s) => s.activityType === "word_family");
+  const familyIds = [...new Set(familySteps.map((s) => (s.config as { familyId?: unknown } | null)?.familyId))];
+  if (familyIds.some((fid) => typeof fid !== "number" || !Number.isInteger(fid) || fid < 1)) return fail("Bước Họ vần chưa chọn họ. Hãy thêm lại từ danh sách Họ vần.", "steps");
+  if (familyIds.length) {
+    const rows = await db.wordFamily.findMany({ where: { id: { in: familyIds as number[] } }, select: { pattern: true, status: true } });
+    if (rows.length !== familyIds.length) return fail("Có họ vần không còn nữa. Hãy tải lại trang.", "steps");
+    const draft = rows.filter((r) => r.status !== "published");
+    if (status === "published" && draft.length) return fail(`Họ vần “-${draft.map((r) => r.pattern).join(", -")}” chưa xuất bản nên bước Họ vần chưa dùng được. Xuất bản ở Quản trị › Họ vần hoặc lưu bài ở dạng nháp.`, "steps");
   }
 
   // Bước truyện cần `config.storyId` trỏ tới một truyện có thật.

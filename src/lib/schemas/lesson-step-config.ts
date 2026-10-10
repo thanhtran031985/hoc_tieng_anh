@@ -22,6 +22,7 @@ export const ACTIVITY_TYPES = [
   "whack_letters",
   "race",
   "word_explorer",
+  "word_family",
 ] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
@@ -57,6 +58,8 @@ export const lessonStepConfigSchemas = {
   race: z.object({}),
   /** 8.27 Khám phá từ (task 25): từ của bước có 4–6 nhánh câu hỏi đã xuất bản trong `word_questions`, nên không có cấu hình riêng. */
   word_explorer: z.object({}),
+  /** 8.28 Họ vần (task 26): họ vần nào lấy từ `word_families`. */
+  word_family: z.object({ familyId: z.number().int().positive() }),
 } satisfies Record<ActivityType, z.ZodType>;
 
 export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;

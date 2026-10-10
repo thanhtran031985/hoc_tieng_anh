@@ -27,7 +27,7 @@ import { getUnitWordsAction, saveLessonAction } from "./builder-actions";
 import styles from "./builder.module.css";
 import { StepsPreview } from "./StepsPreview";
 
-type Tab = "words" | "qs" | "stories";
+type Tab = "words" | "qs" | "stories" | "families";
 type Errors = Record<string, string>;
 
 const toStep = (s: BuilderData["steps"][number]): BuilderStep => ({ key: `s${s.id}`, id: s.id, activityType: s.activityType, wordId: s.wordId, questionId: s.questionId, config: s.config });
@@ -65,6 +65,8 @@ export function BuilderView({ data }: { data: BuilderData }) {
   const hasQuestion = (id: number) => steps.some((s) => s.questionId === id);
   const storyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => (s.activityType === "story" && typeof s.config?.storyId === "number" ? s.config.storyId : null);
   const hasStory = (id: number) => steps.some((s) => storyIdOf(s) === id);
+  const familyIdOf = (s: Pick<BuilderStep, "activityType" | "config">): number | null => (s.activityType === "word_family" && typeof s.config?.familyId === "number" ? s.config.familyId : null);
+  const hasFamily = (id: number) => steps.some((s) => familyIdOf(s) === id);
 
   function add(step: Omit<BuilderStep, "key">) {
     setErrors((e) => ({ ...e, steps: "" }));
@@ -91,6 +93,11 @@ export function BuilderView({ data }: { data: BuilderData }) {
   const describe = (s: BuilderStep): string => {
     const storyId = storyIdOf(s);
     if (storyId !== null) return data.stories.find((st) => st.storyId === storyId)?.title ?? `Truyện #${storyId}`;
+    const familyId = familyIdOf(s);
+    if (familyId !== null) {
+      const family = data.families.find((f) => f.id === familyId);
+      return family ? `Họ vần -${family.pattern} ${family.soundIpa}` : `Họ vần #${familyId}`;
+    }
     if (s.questionId !== null) return data.questions.find((q) => q.id === s.questionId)?.summary ?? `Câu hỏi #${s.questionId}`;
     if (s.wordId !== null) return known.get(s.wordId)?.word ?? `Từ #${s.wordId}`;
     if (isGameActivity(s.activityType)) return "Dùng các từ có hình của bài";
@@ -135,7 +142,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
     });
     const unitWords = stored.flatMap((s) => (s.activityType === "word_card" && s.word ? [s.word] : []));
     const pool = [...new Map([...unitWords, ...suggestions].map((w) => [w.id, w])).values()];
-    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known, levelNumber: lesson.levelNumber, explorers: new Map(data.explorers.map((e) => [e.wordId, e.content])) });
+    const play = buildPlaySteps(stored, pool, "preview", { stories: new Map(data.stories.map((st) => [st.storyId, st])), words: known, levelNumber: lesson.levelNumber, explorers: new Map(data.explorers.map((e) => [e.wordId, e.content])), families: new Map(data.families.map((f) => [f.id, f])) });
     if (play.length === 0) {
       toast(steps.length === 0 ? "Bài chưa có bước nào để xem trước." : "Chưa có bước nào xem trước được (các bước cần từ có hình và đủ từ trong bài).");
       return;
@@ -160,6 +167,7 @@ export function BuilderView({ data }: { data: BuilderData }) {
               ["words", `Từ vựng (${suggestions.length})`],
               ["qs", `Câu hỏi (${data.questions.length})`],
               ["stories", `Truyện (${data.stories.length})`],
+              ["families", `Họ vần (${data.families.length})`],
             ]}
           />
         </div>
@@ -193,6 +201,45 @@ export function BuilderView({ data }: { data: BuilderData }) {
                       </>
                     )}
                   </span>
+                </li>
+              ))}
+            </ul>
+          )
+        ) : tab === "families" ? (
+          data.families.length === 0 ? (
+            <AdultEmpty title="Chưa có họ vần đã xuất bản" text="Soạn và xuất bản họ vần ở Quản trị › Họ vần rồi quay lại đây để thêm vào bài." action={<AdultButtonLink href="/admin/families" label="Mở Họ vần" variant="secondary" />} />
+          ) : (
+            <ul className={styles.sug}>
+              {data.families.map((f) => (
+                <li key={f.id}>
+                  <span className={styles.thumb}>
+                    <Icon name="family" size={18} />
+                  </span>
+                  <span>
+                    <b className={adultStyles.body} lang="en">
+                      -{f.pattern} {f.soundIpa}
+                    </b>
+                    <br />
+                    <span className={cn(adultStyles.small, adultStyles.muted)}>{f.members.length} từ cùng âm</span>
+                  </span>
+                  {hasFamily(f.id) ? (
+                    <span className={styles.in}>
+                      <Icon name="check" size={14} />
+                      Đã có
+                    </span>
+                  ) : (
+                    <AdultButton
+                      label="Thêm"
+                      icon="plus"
+                      variant="secondary"
+                      size="s"
+                      aria-label={`Thêm bước Họ vần -${f.pattern} vào bài`}
+                      onClick={() => {
+                        add({ activityType: "word_family", wordId: null, questionId: null, config: { familyId: f.id } });
+                        toast("Đã thêm bước Họ vần vào bài.");
+                      }}
+                    />
+                  )}
                 </li>
               ))}
             </ul>

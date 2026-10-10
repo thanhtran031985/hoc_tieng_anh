@@ -13,6 +13,8 @@ import { splitSentence } from "@/lib/rules/sentence-words";
 import { lastRaceSequence } from "./game-records";
 import { getStoriesPlay } from "./story-play";
 import { loadExplorerContents } from "./word-explorer";
+import type { FamilyView } from "@/lib/rules/word-family";
+import { familyWordIds, learnedWordIdsOf, loadFamilies } from "./word-family";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { getLevelNodes } from "./level-nodes";
@@ -88,6 +90,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   if (!node || node.state === "locked") throw new LessonLockedError();
 
   const unitWords = unitCards.flatMap((c) => (c.word ? [c.word] : []));
+  const families = await loadLessonFamilies(learnerId, lesson.steps.flatMap((s) => (s.activityType === "word_family" ? [parseLessonStepConfig("word_family", s.config)] : [])).flatMap((c) => (c && "familyId" in c ? [c.familyId] : [])), lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])));
   const seed = `${learnerId}:${lesson.id}:${today().toISOString().slice(0, 10)}`;
   const steps = buildPlaySteps(
     lesson.steps.map((s) => ({
@@ -106,6 +109,7 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
         learner.settings.speechScoring,
       )),
       levelNumber: unit.level.number,
+      families,
       explorers: await loadExplorerContents(lesson.steps.flatMap((s) => (s.activityType === "word_explorer" && s.word ? [s.word.id] : []))),
       raceGhost: lesson.steps.some((s) => s.activityType === "race") ? await lastRaceSequence(learnerId, lesson.id) : null,
     },
@@ -117,10 +121,21 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
   // Giọng mp3: từ và câu ví dụ (bảng từ vựng) cộng các câu của dạng bài mới (bảng `audio_clips`).
   const clipTexts = lesson.steps.flatMap((s) => (s.question && s.question.status === "published" && isExtraQuestionType(s.question.type) ? extraQuestionTexts(s.question.type, s.question.prompt, s.question.options, s.question.answer) : []));
   const audio = (await getVoiceMp3Enabled())
-    ? { ...(await getAudioMap([...lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])), ...unitWords.map((w) => w.id)])), ...(await clipMap(clipTexts)) }
+    ? { ...(await getAudioMap([...lesson.steps.flatMap((s) => (s.word ? [s.word.id] : [])), ...unitWords.map((w) => w.id), ...[...families.values()].flatMap(familyWordIds)])), ...(await clipMap(clipTexts)) }
     : {};
 
   return { lessonId: lesson.id, title: lesson.title, kind: lesson.kind, unitTitle: unit.title, unitTitleVi: unit.titleVi, levelNumber: unit.level.number, levelName: unit.level.name, boss: lesson.kind === "unit_test" ? bossOf(unit.level.number, unit.slug) : null, steps, words, audio };
+}
+
+/**
+ * Họ vần đã xuất bản của các bước `word_family`. Từ bé đã học là từ có thẻ ôn tập, cộng các từ của chính bài này (bé vừa học xong ở các bước trước).
+ */
+async function loadLessonFamilies(learnerId: number, familyIds: readonly number[], lessonWordIds: readonly number[]) {
+  if (familyIds.length === 0) return new Map<number, FamilyView>();
+  const members = await db.wordFamilyMember.findMany({ where: { familyId: { in: [...familyIds] } }, select: { wordId: true } });
+  const learned = await learnedWordIdsOf(learnerId, members.map((m) => m.wordId));
+  for (const id of lessonWordIds) learned.add(id);
+  return loadFamilies(familyIds, learned);
 }
 
 /** Bảng mp3 của các từ (theo id): tra thêm cột `audio`/`example_audio` vì `wordSelect` không lấy chúng. */
