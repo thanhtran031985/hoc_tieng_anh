@@ -1,0 +1,185 @@
+/* Họ vần (Adult23): bảng các họ và ngăn kéo soạn. Khu người lớn, không linh vật. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sum {
+  flex: 1;
+  margin: 0;
+}
+.rimeCell {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border-radius: var(--adm-radius-md);
+  background: var(--rime-bg);
+  color: var(--rime-ink);
+  font-weight: 700;
+}
+
+/* Thông tin chung của họ */
+.info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: var(--space-3);
+}
+
+/* Từ của họ */
+.members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.mem {
+  display: grid;
+  grid-template-columns: var(--space-8) minmax(0, 1fr) auto var(--adm-control);
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface);
+}
+.memTrap {
+  border: var(--border-thin) dashed var(--trap-line);
+  background: var(--trap-bg);
+}
+.memInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.memWord {
+  font-size: var(--text-adm-h3);
+  font-weight: 700;
+}
+.rime {
+  color: var(--rime-ink);
+  background: var(--rime-bg);
+  border-radius: var(--adm-radius-sm);
+  padding: 0 var(--space-1);
+}
+.mark {
+  color: var(--trap-ink);
+  text-decoration: underline wavy var(--trap-line);
+  text-underline-offset: var(--space-1);
+  text-decoration-thickness: var(--border-thin);
+}
+.maybe {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--retry-soft);
+  color: var(--ink);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+}
+.noRime {
+  color: var(--ink);
+}
+
+/* Gợi ý từ trong kho */
+.suggest {
+  border: var(--border-thin) solid var(--line);
+  border-radius: var(--adm-radius-lg);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--surface-soft);
+}
+.suggestHead {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+.suggestHead > :first-child {
+  flex: 1;
+}
+.suggestList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  max-height: calc(var(--space-16) * 4);
+  overflow-y: auto;
+}
+.suggestList label {
+  display: grid;
+  grid-template-columns: auto var(--space-8) minmax(0, 1fr);
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--adm-radius-md);
+  background: var(--surface);
+  cursor: pointer;
+}
+.suggestList label[data-added] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Ghép chữ đầu */
+.real {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.real li {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--found-chip);
+  font-weight: 700;
+}
+.decoys {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.decoy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--letter-tile);
+  border: var(--border-thin) solid var(--line-strong);
+  font-weight: 700;
+}
+.decoyBad {
+  background: var(--fake-word-bg);
+  border-color: var(--retry);
+}
+.decoyAdd {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+.decoyAdd > :first-child {
+  flex: 1;
+  max-width: calc(var(--space-16) * 3);
+}
+.fieldErr {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--ink);
+}

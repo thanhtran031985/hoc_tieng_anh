@@ -9,7 +9,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 2 | Ghép chữ đầu (Screen51) | ✅ | BuildBoard, BuildPlayer, build-flow, route /family/[id]/build, dạng bài build_family |
 | 3 | Liên kết qua lại (WordLinks, Screen53) | ✅ | WordLabShell, WordLinks, getWordLabEntry; /explore, /family, /family/[id]/build dùng chung khung |
 | 4 | Tab Họ vần trong Sổ từ (Screen52) | ✅ | WordZoom 3 tab, familiesOfWords, getFamilyCompactAction |
-| 5 | Soạn Họ vần (Adult23) | ⬜ | |
+| 5 | Soạn Họ vần (Adult23) | ✅ | /admin/families: bảng + ngăn kéo FamilyDrawer, saveFamily, generateFamilyAudio |
 
 ## Nhật ký
 
@@ -57,6 +57,13 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - Kiểm tra bằng Edge không đầu (`.tmp-verify/check-26-notebook.mjs`, 35 mục đạt): bird đủ 3 tab, họ -ir 4 thẻ, bird được tô sáng, hộp thoại nằm gọn ở 1366×768 và trang không cuộn; ← → vòng quanh 3 tab; Tab 30 lần không ra khỏi hộp thoại; Ghép → màn Ghép chữ đầy đủ với “Từ cần ghép đầu tiên”, Esc về đúng thẻ bird ở tab Họ vần; Mở Họ vần đầy đủ → Esc về thẻ; cat chỉ có Thẻ từ + Họ vần kèm dòng giải thích, ← → ngoài dải tab sang từ khác và về tab Thẻ từ; “time” chỉ có Thẻ từ; họ -ir Nháp thì bird mất tab Họ vần. `npm test` 682/682, `tsc` và `lint` sạch.
 - Việc thủ công: không có thêm.
 
+### Bước 5 — Soạn Họ vần (Adult23) (10/10/2026)
+- Menu quản trị có mục “Họ vần” (nhãn “Mới”) ngay sau “Ngân hàng từ vựng”; trang `/admin/families` (+ loading, error) dùng `requireAdmin()`. Bảng `FamiliesView`: vần tô `rime`, âm IPA, cấp, số từ (cùng âm · bẫy), trạng thái; tìm, lọc Cấp / Trạng thái, sắp xếp, chia trang; “Thêm họ vần”.
+- `FamilyDrawer` (ngăn kéo rộng, họ mới hoặc đã có): vần, âm IPA, cấp, vần để ghép; danh sách từ của họ (chọn “Cùng âm” hoặc “Bẫy: khác âm”, từ Bẫy viền nét đứt `trap-line` và chữ vần gạch lượn sóng); “Gợi ý từ trong kho” (từ có chứa vần, lọc theo chữ, tick để thêm, từ khác âm gắn “khác âm?” và tự thành Bẫy); Ghép chữ đầu (chữ đầu của từ thật tự tính, chữ đầu nhiễu thêm/bỏ, trùng từ thật thì báo lỗi); lời Bông cho ô Bẫy; đoạn văn vui (tối đa 4 câu Anh + Việt, “Tạo giọng đọc tự động”); Nháp / Xuất bản; “Xem như học sinh” (Họ vần và Ghép chữ đầu bằng giao diện bé). Cảnh báo bấm được, nhảy tới đúng ô; lỗi dưới ô khi rời ô và khi bấm Lưu; lỗi của lần Lưu tự mất khi sửa.
+- Server `server/admin/family.ts`: `getFamilyList`, `getFamilyEditor`, `searchBankWords`, `saveFamily` (Zod `saveFamilySchema`; lỗi dữ liệu chặn cả Nháp, `familyIssues` chặn xuất bản; trùng vần + âm báo lỗi; đổi chữ đoạn văn thì bỏ giọng đọc cũ), `generateFamilyAudio` (dùng lại `synthesizeMp3`, tệp loại “explorer” theo mã đoạn văn). Server action `family-actions.ts` gọi `requireAdmin()` ở dòng đầu.
+- Kiểm tra bằng Edge không đầu: `check-26-editor.mjs` (50 mục đạt: bảng, tìm, 7 từ/2 Bẫy, báo lỗi vần có ký tự lạ, IPA thiếu /…/, chữ đầu nhiễu trùng từ thật và 4 chữ cái, chặn xuất bản kèm lý do, bấm cảnh báo nhảy tới ô, còn 2 từ cùng âm báo thiếu, gợi ý từ kèm “khác âm?” tự thành Bẫy, tạo họ mới -ake, lưu Nháp, tạo giọng đọc thật ra mp3, Xem như học sinh, xuất bản, bé mở được họ đã xuất bản và Nháp thì 404, họ mẫu -at không bị đổi); `check-26-builder.mjs` (11 mục đạt: tab Họ vần chỉ có họ đã xuất bản, thêm hai bước, lưu đúng `config.familyId`, xem trước, xuất bản bài bị chặn khi họ còn Nháp). `npm test` 682/682, `tsc` và `lint` sạch.
+- Việc thủ công: vào Quản trị › Họ vần xuất bản “-at” và “-ir” (bổ sung từ còn thiếu như mat, chat, that ở task 27 và bấm Tạo giọng đọc).
+
 ## Bước tiếp theo
 
-Bước 5 — Soạn Họ vần (Adult23)
+Đóng task: spec Playwright, tsc/lint/test/build, README ✅.

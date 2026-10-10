@@ -18,6 +18,7 @@ export const ADMIN_NAV: readonly AdultNavItem[] = [
   { key: "dash", label: "Bảng điều khiển", icon: "grid", href: "/admin", ready: true },
   { key: "tree", label: "Cấu trúc lộ trình", icon: "tree", href: "/admin/tree", ready: true },
   { key: "vocab", label: "Ngân hàng từ vựng", icon: "notebook", href: "/admin/vocab", ready: true },
+  { key: "families", label: "Họ vần", icon: "family", href: "/admin/families", ready: true, badge: "Mới" },
   { key: "questions", label: "Ngân hàng câu hỏi", icon: "exam", href: "/admin/questions", ready: true },
   { key: "question-types", label: "Câu hỏi dạng mới", icon: "exam", href: "/admin/question-types", ready: true, badge: "Mới" },
   { key: "stories", label: "Truyện tranh", icon: "book", href: "/admin/stories", ready: true, badge: "Mới" },
