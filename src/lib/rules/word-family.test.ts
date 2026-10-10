@@ -75,6 +75,10 @@ describe("chữ đầu và vần", () => {
     assert.equal(soundMatches("/bɜːd/", "/ɜː/"), true);
     assert.equal(soundMatches("/ˈfaɪə/", "/ɜː/"), false);
     assert.equal(soundMatches("/iːt/", "/æt/"), false);
+    // /ɪn/ nằm trong nguyên âm đôi /eɪn/ của rain thì không tính là cùng âm; train và coin cũng vậy.
+    assert.equal(soundMatches("/reɪn/", "/ɪn/"), false);
+    assert.equal(soundMatches("/kɔɪn/", "/ɪn/"), false);
+    assert.equal(soundMatches("/ʃɪn/", "/ɪn/"), true);
     assert.equal(soundMatches(null, "/æt/"), false);
   });
   it("vần để ghép lấy build_rime, không có thì lấy vần", () => {

@@ -1,13 +1,13 @@
 # Tiến độ — 27-content-wordlab — Nội dung Khám phá từ và Họ vần
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 10/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Danh sách và mẫu (DỪNG chờ tôi) | ✅ | Đã viết đề xuất và mẫu; chờ bạn duyệt `proposal.md` trước khi sang bước 1 |
 | 1 | Khám phá từ cấp 3–4 | ✅ | 57 từ mới (cấp 3: 29, cấp 4: 28) + 3 mẫu; 16 hình mới; mp3 đã tạo trên DB verify |
 | 2 | Khám phá từ cấp 1–2 | ✅ | 56 từ mới (cấp 1: 27, cấp 2: 29) + 4 mẫu; 10 hình mới; mp3 đã tạo trên DB verify |
-| 3 | Họ vần | ⬜ | |
+| 3 | Họ vần | ✅ | 30 họ (4 mẫu + 26), 94 từ thêm vào kho; mp3 đoạn văn đã tạo trên DB verify |
 
 ## Nhật ký
 
@@ -34,6 +34,25 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - **Giọng đọc**: `npm run audio:generate -- --level 1 --wordlab` và `--level 2 --wordlab` trên DB verify: 184 và 190 tệp, 0 lỗi (mỗi lần ~8 phút).
 - **Kiểm tra**: `npm run wordlab:check` đạt cho cả 120 từ; script đọc DB verify cho thấy 30/30 từ cấp 1 và 30/30 từ cấp 2 không còn lý do chưa xuất bản (cùng hàm `explorerIssues` với Adult22); `node scripts/check-pictures.mjs` đạt; `npm test` 688/688; seed chạy lại không nhân đôi.
 
+### Bước 3 — Họ vần (10/10/2026)
+- **Nội dung**: 30 họ vần, mỗi họ có chữ đầu nhiễu, đoạn văn vui 2 câu kèm dịch và (nếu có) lời Bông giải thích ô Bẫy chính tả: -at, -ir (thiết kế, mở rộng ở task 26–27), -ake, -ight (mẫu Bước 0) và 26 họ mới: -an, -ad, -en, -et, -ig, -in, -ip, -it, -ick, -og, -op, -ock, -uck, -ate, -ame, -ice, -eep, -oat, -ay, -ook, -oon, -ow, -all, -ing, -ar, -ee. Dữ liệu ở `src/lib/rules/wordlab-data/families.ts` và `families-more.ts`. Họ có Bẫy: -at, -ir, -ight, -an, -ad, -en, -et, -in, -it, -ate, -ice, -ow, -ar, -ee (ví dụ rain/train cho -in, cow/now cho -ow, bear/pear/ear cho -ar).
+- **Từ thêm vào kho**: `prisma/seed/wordlab/family-words.json` có 94 từ (không hình, không thuộc bài), nạp bởi `seedWordLabWords` trước `seedWordFamilies`.
+- **Ghép chữ đầu**: 28/30 họ có ≥ 5 từ thật; **ít hơn 5: -ir (3: shirt, skirt, dirt) và -oon (4: moon, spoon, soon, noon)**; hai họ này vẫn chơi được (mục tiêu = số từ thật). Họ nhiều nhất: -at (10), -ow (9).
+- **Sửa nhỏ ở quy tắc**: `soundMatches` (gợi ý cùng âm khi soạn Adult23) không coi /ɪn/ trong nguyên âm đôi /eɪn/ là cùng âm (rain, train, coin là Bẫy chứ không phải từ cùng âm); thêm 3 phép thử.
+- **Giọng đọc**: `npm run audio:generate -- --wordlab` tạo 30 đoạn văn vui (trên DB verify, 0 lỗi).
+- **Kiểm tra**: `npm run wordlab:check` đạt (mọi họ ≥ 3 từ cùng âm, mọi từ có trong kho, IPA khớp, chữ đầu nhiễu không trùng); script đọc DB verify cho thấy 30/30 họ không còn lý do chưa xuất bản (cùng hàm `familyIssues` với Adult23); `npm test` 688/688.
+
+### Kiểm tra cuối task (10/10/2026)
+- **Seed trên database trống** (`hoc_tieng_anh_verify27`: `prisma migrate deploy` rồi `prisma db seed`, 24 giây): 994 từ, 120 từ có Khám phá (603 nhánh), 150 đoạn văn, 30 họ (223 từ trong họ), không mục nào xuất bản. Chạy seed lần hai: số lượng không đổi.
+- **Xuất bản 10 từ và 2 họ trên DB verify rồi bé thử ở Sổ từ** (Edge không đầu, 1366×768): dog, apple, penguin, hat, pizza, bus, camera, doctor, library, dragon đều mở tab Khám phá với 5–6 nhánh và đủ nút nghe; snake và night mở tab Họ vần (-ake 7 thẻ, -ight 8 thẻ); màn Họ vần -ight có ô Bẫy chính tả (eight); Ghép chữ đầu của -ake mở được. Dữ liệu đã trả về Nháp sau khi thử.
+- `npx tsc --noEmit`, `npm run lint`, `npm test` (688/688), `npm run content:check`, `npm run wordlab:check`, `node scripts/check-pictures.mjs` và `npm run build` đều sạch.
+- Spec Playwright: không thêm (task không có màn mới).
+
+### Việc bạn cần làm thủ công
+1. `npx prisma db seed` trên database thật (sẽ thêm 94 từ vào kho, 120 từ Khám phá và các họ còn thiếu; **họ -at và -ir đã có sẵn trong database của bạn thì không được cập nhật**, thêm từ mới cho hai họ này bằng Adult23 hoặc xóa hai họ Nháp rồi seed lại).
+2. `npm run audio:generate -- --wordlab` (khoảng 10 phút mỗi cấp; chạy lại được, chỉ tạo chỗ còn thiếu).
+3. Vào Quản trị › Từ vựng (cột Khám phá) và Quản trị › Họ vần: xem rồi xuất bản từng mục. Chạy lệnh trên xong thì không còn cảnh báo thiếu âm thanh.
+
 ## Bước tiếp theo
 
-Bước 3 — Họ vần
+Task đã xong. Việc tiếp theo là task 28 (`28-content-l5`), bắt đầu bằng Plan mode.

@@ -1,8 +1,9 @@
 // Họ vần của task 27 (ngoài hai họ mẫu “-at”, “-ir” của thiết kế ở word-family-data.ts). Từ chưa có trong kho thì nằm ở prisma/seed/wordlab/family-words.json.
 // Mọi họ ở trạng thái Nháp cho tới khi đoạn văn vui có giọng đọc và người dùng xuất bản.
 import type { FamilySeedEntry } from "../word-family-data.ts";
+import { FAMILIES_WORDLAB_MORE } from "./families-more.ts";
 
-export const FAMILIES_WORDLAB: FamilySeedEntry[] = [
+const SAMPLES: FamilySeedEntry[] = [
   {
     pattern: "ake",
     soundIpa: "/eɪk/",
@@ -32,3 +33,5 @@ export const FAMILIES_WORDLAB: FamilySeedEntry[] = [
     ],
   },
 ];
+
+export const FAMILIES_WORDLAB: FamilySeedEntry[] = [...SAMPLES, ...FAMILIES_WORDLAB_MORE];

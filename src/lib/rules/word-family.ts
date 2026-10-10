@@ -34,7 +34,13 @@ const stripIpa = (ipa: string) => ipa.replace(/[/ˈˌ.\s]/g, "");
 export function soundMatches(wordIpa: string | null | undefined, familyIpa: string): boolean {
   const core = stripIpa(familyIpa);
   if (!wordIpa || !core) return false;
-  return stripIpa(wordIpa).includes(core);
+  const word = stripIpa(wordIpa);
+  // Âm của họ bắt đầu bằng nguyên âm ngắn (ɪ, ʊ) mà nằm ngay sau một nguyên âm khác là phần của nguyên âm đôi (eɪ, aɪ, ɔɪ, əʊ…): “reɪn” không chứa âm /ɪn/.
+  for (let at = word.indexOf(core); at >= 0; at = word.indexOf(core, at + 1)) {
+    const diphthong = at > 0 && "ɪʊ".includes(core[0]) && "eaɔəoɑ".includes(word[at - 1]);
+    if (!diphthong) return true;
+  }
+  return false;
 }
 
 // ---- Từ ở một họ ----

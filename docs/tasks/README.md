@@ -30,7 +30,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 24 | [24-parent-gd2](24-parent-gd2/task.md) — Khu bố mẹ GĐ2: kỹ năng, mở khóa thủ công, khung giờ học | ✅ | 11, 17, 20 | `feat/24-parent-gd2` |
 | 25 | [25-word-explorer](25-word-explorer/task.md) — Khám phá từ | ✅ | 14, 15, 23 | `feat/25-word-explorer` |
 | 26 | [26-word-family](26-word-family/task.md) — Họ vần, Ghép chữ đầu và liên kết qua lại | ✅ | 25 | `feat/26-word-family` |
-| 27 | [27-content-wordlab](27-content-wordlab/task.md) — Nội dung Khám phá từ và Họ vần | 🔄 | 26 | `feat/27-content-wordlab` |
+| 27 | [27-content-wordlab](27-content-wordlab/task.md) — Nội dung Khám phá từ và Họ vần | ✅ | 26 | `feat/27-content-wordlab` |
 | 28 | [28-content-l5](28-content-l5/task.md) — Nội dung cấp 5 (Cây lớn, Flyers) | ⬜ | 19, 20, 27 | `feat/28-content-l5` |
 | 29 | [29-fix-ui-findings](29-fix-ui-findings/task.md) — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7, 10, 11) | ✅ | 12 | `feat/29-fix-ui-findings` |
 
