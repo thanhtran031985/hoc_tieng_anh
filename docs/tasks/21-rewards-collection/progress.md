@@ -7,7 +7,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | 0 | Bảng phần thưởng và seed | ✅ | Tự duyệt |
 | 1 | Quy tắc rơi sticker và đạt huy hiệu | ✅ | Tự duyệt; 14 test quy tắc |
 | 2 | Kết thúc bài có quà (Screen40) | ✅ | Tự duyệt; Edge 21/21 đạt |
-| 3 | Bộ sưu tập (Screen38, Screen39) | ⬜ | |
+| 3 | Bộ sưu tập (Screen38, Screen39) | ✅ | Tự duyệt; Edge 35/35 đạt |
 | 4 | Danh mục phần thưởng (Adult21: Sticker, Huy hiệu) | ⬜ | |
 
 ## Nhật ký
@@ -21,6 +21,8 @@ Việc thủ công: `npx prisma migrate deploy` rồi `npx prisma db seed`.
 
 **10/10/2026 — Bước 2.** Kết thúc bài có quà (Screen40, biến thể của `LessonEnd`, không route mới): hộp quà `GiftBox` lắc nhẹ cạnh Bông (cả cạnh cặp trùm–Bông ở trận trùm) với nhãn “Quà bất ngờ!”, Enter hoặc bấm hộp gọi `openRewardAction` rồi mở `RewardPopup` (bỏ bước hộp), nút chính “Mở quà” → sau khi mở đổi thành “Bài tiếp theo”/“Về bản đồ”, ô xu cộng thêm xu sticker; sticker nằm lại cạnh Bông kèm tên, loa và “Đã dán vào album …”; lỗi mở quà báo nhẹ (quà vẫn giữ, mở lại được); `EarnedBadgePopups` (`features/rewards`) hiện hộp huy hiệu thành tích lần lượt trước khi bé mở quà (Enter nhận từng cái), dùng cả ở `ReviewEnd` (bài ôn tập không có hộp quà). Token mới: `--size-gift-end` (150px, cỡ hộp quà ở màn kết thúc). Kiểm (Edge, DB verify, `.tmp-verify/check-21-gift.mjs`, 21/21): lần đầu xong bài → hộp huy hiệu “7 ngày liên tiếp” +50 xu (database có `ach:streak7`) rồi hộp quà; sticker rơi nhưng `opened_at` null và gắn lượt học; Enter mở quà → “Sticker mới!” +10 xu, `opened_at` đặt, xu +10 đúng một lần; sticker ở lại cạnh Bông + album Con vật; học lại bài đã làm không rơi quà; thoát khi chưa mở thì quà còn trong database; không cuộn ở 1366×768 và 1920×1080; không lỗi console. tsc, lint, `npm test` (517 đạt), build sạch.
 
+**10/10/2026 — Bước 3.** Bộ sưu tập (Screen38–39) thay màn “Sắp có”: `server/collection.ts` (`getCollection`: 4 album × 6 ô theo danh mục đã xuất bản, sticker đã mở mới tính là đã có, “Mới” trong 3 ngày; 10 huy hiệu kèm tiến độ từ `collectBadgeStats` + ngày nhận; quà chưa mở; huy hiệu trùm không liệt kê; `getCollectionCounts` cho trang chủ), trang `/collection` (tham số `?tab=badges`) + `loading.tsx` (khung xương) + `error.tsx`, `features/collection/`: `CollectionView` (tiêu đề, hai tab, tổng đã có/tổng + thanh tiến độ, banner “Bé có N quà chưa mở!” mở bằng `openRewardAction` + `RewardPopup`), `StickerBook` (album tab dọc ↑↓, 6 ô nghiêng nhẹ, ← → đổi trang, ô trống bóng mờ + gợi ý cách nhận, loa nghe tên, lời Bông khi album trống), `BadgeGrid` (lưới 5×2, tiến độ kèm số, thẻ chi tiết Enter/Esc với tên Anh + loa, điều kiện, chip xu chỉ khi xu > 0). Nút Bộ sưu tập ở trang chủ hiện “n sticker · m huy hiệu”. Token mới: `--size-album-index` (300px, cột album). Kiểm (Edge, DB verify, `.tmp-verify/check-21-collection.mjs`, 35/35): tổng sticker/huy hiệu khớp database, album 3/6, 3 ô ‘Chưa có’, gợi ý cách nhận, phím ←/→ và ↓, nhãn ‘Mới’, mở quà đang chờ (+10 xu một lần, banner biến mất), tiến độ “12/30 ngày”, thẻ chi tiết (30-day streak, +50 xu, còn 18 ngày), huy hiệu qua đảo không chip xu, trang chủ, trạng thái trống, không cuộn ở 1366×768 và 1920×1080, không lỗi console. tsc, lint, `npm test` (517 đạt), build sạch.
+
 ## Bước tiếp theo
 
-Bước 3 — Bộ sưu tập (Screen38, Screen39)
+Bước 4 — Danh mục phần thưởng (Adult21: Sticker, Huy hiệu)

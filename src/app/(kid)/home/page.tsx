@@ -65,7 +65,7 @@ export default async function HomePage() {
           </div>
           <LevelCard data={data} />
         </div>
-        <NavTiles levelNumber={levelNumber} levelName={levelName} learnedWords={data?.learnedWords ?? 0} />
+        <NavTiles levelNumber={levelNumber} levelName={levelName} learnedWords={data?.learnedWords ?? 0} collection={data?.collection ?? { stickers: 0, badges: 0 }} />
       </main>
       <HomeHotkeys href={enterHref} />
     </div>

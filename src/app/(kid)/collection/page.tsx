@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/features/coming-soon/ComingSoon";
+import { CollectionView, type CollectionTab } from "@/features/collection/CollectionView";
+import { toMascotColor, topbarProps } from "@/features/kid/learner-art";
+import { requireActiveLearner } from "@/server/active-learner";
+import { getCollection } from "@/server/collection";
+import { requireUser } from "@/server/session";
 
-export const metadata: Metadata = { title: "Sắp có — Học cùng Bông" };
+export const metadata: Metadata = { title: "Bộ sưu tập — Học cùng Bông" };
 
-// Giữ chỗ: màn thật sẽ thay trang này ở task sau.
-export default function Page() {
-  return <ComingSoon feature="collection" />;
+// Bộ sưu tập sticker và huy hiệu của bé. getCollection đi qua requireLearner nên chỉ đọc được hồ sơ thuộc tài khoản đang đăng nhập.
+export default async function CollectionPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const { tab } = await searchParams;
+  const user = await requireUser();
+  const learner = await requireActiveLearner();
+  const data = await getCollection(user.id, learner.id);
+  const initialTab: CollectionTab = tab === "badges" ? "badges" : "stickers";
+  return <CollectionView topbar={topbarProps(learner)} mascot={toMascotColor(learner.mascot)} data={data} initialTab={initialTab} />;
 }

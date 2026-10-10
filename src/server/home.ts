@@ -2,6 +2,7 @@ import { computeLessonStates, findNextLesson, summarizeUnits, type MapLesson } f
 import { dayStartInstant, today } from "@/lib/rules/dates";
 import { studyAllowance } from "@/lib/rules/study-time";
 import { db } from "./db";
+import { getCollectionCounts } from "./collection";
 import { requireLearner } from "./learners";
 import { dueCardWhere } from "./review";
 
@@ -40,6 +41,8 @@ export type HomeData = {
   learnedWords: number;
   /** Phút đã học hôm nay so với giới hạn bố mẹ đặt (không có thì mục tiêu ngày); `remainingMinutes` null là không giới hạn. */
   studyToday: { minutes: number; goalMinutes: number; remainingMinutes: number | null };
+  /** Số sticker và huy hiệu đã có (nút Bộ sưu tập). */
+  collection: { stickers: number; badges: number };
   /** Nhiệm vụ hôm nay: số đã xong / tổng. */
   missions: { done: number; total: number };
 };
@@ -137,6 +140,7 @@ export async function getHomeData(userId: number, learnerId: number): Promise<Ho
     next,
     levelProgress: { done: doneLessons, total: totalLessons },
     learnedWords,
+    collection: await getCollectionCounts(learnerId),
     studyToday: { minutes: usedMinutes, goalMinutes: allowance.total ?? learner.settings.dailyGoalMinutes, remainingMinutes: allowance.remaining },
     missions,
   };
