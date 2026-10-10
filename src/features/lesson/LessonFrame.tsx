@@ -1,4 +1,5 @@
 import { IconButton, ProgressBar, type MascotColor } from "@/components/ui";
+import { cn } from "@/lib/cn";
 import styles from "./lesson.module.css";
 
 /** Vùng hoạt động giữa màn (tiêu đề câu + nội dung bài). */
@@ -37,6 +38,8 @@ export type LessonFrameProps = {
   focus?: boolean;
   /** Bỏ thanh tiến độ (trò chơi lật thẻ, màn kết thúc). */
   head?: React.ReactNode;
+  /** Nền riêng của màn (mini game: trời, biển). */
+  className?: string;
   children: React.ReactNode;
 };
 
@@ -44,9 +47,9 @@ export type LessonFrameProps = {
  * Khung bài học: nút × (hỏi "Dừng bài học?"), thanh tiến độ kèm số "n/N", rồi vùng hoạt động và chân bài do từng dạng bài đưa vào.
  * `head` thay phần giữa của thanh đầu khi dạng bài cần tiêu đề riêng (trò chơi lật thẻ).
  */
-export function LessonFrame({ level, mascot, value, max, onExit, onPause, crumb, extra, focus = false, head, children }: LessonFrameProps) {
+export function LessonFrame({ level, mascot, value, max, onExit, onPause, crumb, extra, focus = false, head, className, children }: LessonFrameProps) {
   return (
-    <div className={styles.screen} data-level={level} data-dragon={mascot} data-focus={focus ? "true" : undefined}>
+    <div className={cn(styles.screen, className)} data-level={level} data-dragon={mascot} data-focus={focus ? "true" : undefined}>
       {!focus && crumb}
       <header className={styles.head}>
         <IconButton icon="close" label="Thoát bài học" onClick={onExit} data-exit data-hotkey-skip />

@@ -1,5 +1,6 @@
 // Luật của màn Soạn bài học (task 12, Adult12): mô tả bước, thời lượng tự tính, thống kê và chỗ chèn bước mới. Hàm thuần.
 import { MAX_LESSON_MINUTES, MIN_LESSON_MINUTES } from "./admin-tree.ts";
+import { isGameActivity } from "./games.ts";
 
 /** Dạng bài (activity_type) của giai đoạn 1 mà màn soạn bài thêm được. */
 export type BuilderActivity =
@@ -14,13 +15,17 @@ export type BuilderActivity =
   | "fill_blank"
   | "story"
   | "short_reading"
-  | "speaking";
+  | "speaking"
+  | "word_rain"
+  | "word_bubbles"
+  | "whack_letters"
+  | "race";
 
 /** Dạng bài lấy toàn bộ nội dung từ câu hỏi gắn vào bước (task 15): bước phải có `questionId`. */
 export const QUESTION_ACTIVITIES: readonly BuilderActivity[] = ["phonics", "sentence_order", "dictation", "fill_blank", "short_reading", "speaking"];
 export const isQuestionActivity = (type: string): boolean => (QUESTION_ACTIVITIES as readonly string[]).includes(type);
 
-export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "cards" | "speaker" | "image" | "plusbox" | "gem" | "music" | "grammar" | "keyboard" | "pen" | "book" | "notebook" | "mic"; seconds: number; needsWord: boolean }> = {
+export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "cards" | "speaker" | "image" | "plusbox" | "gem" | "music" | "grammar" | "keyboard" | "pen" | "book" | "notebook" | "mic" | "snow" | "wand" | "target" | "flag"; seconds: number; needsWord: boolean }> = {
   word_card: { label: "Giới thiệu từ", icon: "cards", seconds: 20, needsWord: true },
   listen_choose_picture: { label: "Nghe và chọn hình", icon: "speaker", seconds: 25, needsWord: true },
   choose_word_for_picture: { label: "Chọn từ đúng cho hình", icon: "image", seconds: 25, needsWord: true },
@@ -33,6 +38,10 @@ export const ACTIVITY_INFO: Record<BuilderActivity, { label: string; icon: "card
   story: { label: "Truyện tranh", icon: "book", seconds: 150, needsWord: false },
   short_reading: { label: "Đọc hiểu ngắn", icon: "notebook", seconds: 90, needsWord: false },
   speaking: { label: "Luyện nói", icon: "mic", seconds: 40, needsWord: false },
+  word_rain: { label: "Mưa từ vựng", icon: "snow", seconds: 120, needsWord: false },
+  word_bubbles: { label: "Bong bóng từ vựng", icon: "wand", seconds: 90, needsWord: false },
+  whack_letters: { label: "Đập chuột chữ cái", icon: "target", seconds: 100, needsWord: false },
+  race: { label: "Đua xe trả lời", icon: "flag", seconds: 120, needsWord: false },
 };
 
 export const MAX_STEPS = 60;
@@ -56,8 +65,8 @@ export function lessonStats(steps: readonly Pick<BuilderStep, "activityType" | "
   return { words: words.size, activities: steps.filter(isActivityStep).length };
 }
 
-/** Vị trí chèn bước mới: cuối bài, nhưng trước trò chơi lật thẻ nếu nó đang kết thúc bài. */
+/** Vị trí chèn bước mới: cuối bài, nhưng trước trò chơi (lật thẻ hoặc mini game) nếu nó đang kết thúc bài. */
 export function insertIndex(steps: readonly Pick<BuilderStep, "activityType">[]): number {
   const last = steps[steps.length - 1];
-  return last?.activityType === "memory_game" ? steps.length - 1 : steps.length;
+  return last && (last.activityType === "memory_game" || isGameActivity(last.activityType)) ? steps.length - 1 : steps.length;
 }

@@ -17,6 +17,10 @@ export const ACTIVITY_TYPES = [
   "story",
   "short_reading",
   "speaking",
+  "word_rain",
+  "word_bubbles",
+  "whack_letters",
+  "race",
 ] as const;
 export const activityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof activityTypeSchema>;
@@ -45,6 +49,11 @@ export const lessonStepConfigSchemas = {
   short_reading: z.object({}),
   /** 8.7 Luyện nói (task 17): câu mẫu và mức chấm nằm trong câu hỏi gắn vào bước. */
   speaking: z.object({}),
+  /** Mini game (task 18): từ, lượt và câu dựng từ các từ có hình của bài, nên không có cấu hình riêng. */
+  word_rain: z.object({}),
+  word_bubbles: z.object({}),
+  whack_letters: z.object({}),
+  race: z.object({}),
 } satisfies Record<ActivityType, z.ZodType>;
 
 export type LessonStepConfig = z.infer<(typeof lessonStepConfigSchemas)[ActivityType]>;

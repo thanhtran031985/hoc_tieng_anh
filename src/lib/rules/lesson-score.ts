@@ -24,10 +24,16 @@ export const isPrimaryLevel = (levelNumber: number) => levelNumber <= 5;
 
 export type Reward = { coins: number; xp: number };
 
+/** Xu cho mỗi sao ở Tiểu học (PRD Phần F: 10 xu + 5 xu mỗi sao). */
+export const COINS_PER_STAR = 5;
+
 /** Xong một bài: Tiểu học 10 xu + 5 xu mỗi sao; THCS 20 XP + 10 XP mỗi sao. */
 export function rewardFor(stars: number, levelNumber: number): Reward {
-  return isPrimaryLevel(levelNumber) ? { coins: 10 + 5 * stars, xp: 0 } : { coins: 0, xp: 20 + 10 * stars };
+  return isPrimaryLevel(levelNumber) ? { coins: 10 + COINS_PER_STAR * stars, xp: 0 } : { coins: 0, xp: 20 + 10 * stars };
 }
+
+/** Xu hiện ở bảng kết thúc mini game: phần “mỗi sao” của quy tắc trên. Xu thật chỉ được cộng một lần, khi xong cả bài (các lượt của trò cũng tính vào sao của bài). */
+export const gameCoins = (stars: number): number => COINS_PER_STAR * Math.max(0, Math.min(3, Math.round(stars)));
 
 /** Số sao cộng thêm vào hồ sơ: chỉ phần vượt kết quả tốt nhất trước đó (làm lại không cộng trùng). */
 export function newStars(stars: number, previousBest: number): number {

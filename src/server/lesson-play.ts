@@ -86,11 +86,14 @@ export async function getLessonPlay(userId: number, learnerId: number, lessonId:
     })),
     unitWords,
     seed,
-    await getPlayExtras(
-      lesson.steps.flatMap((s) => (s.question && s.question.status === "published" ? [s.question] : [])),
-      lesson.steps.flatMap((s) => (s.activityType === "story" ? [parseLessonStepConfig("story", s.config)] : [])).flatMap((c) => (c && "storyId" in c ? [c.storyId] : [])),
-      learner.settings.speechScoring,
-    ),
+    {
+      ...(await getPlayExtras(
+        lesson.steps.flatMap((s) => (s.question && s.question.status === "published" ? [s.question] : [])),
+        lesson.steps.flatMap((s) => (s.activityType === "story" ? [parseLessonStepConfig("story", s.config)] : [])).flatMap((c) => (c && "storyId" in c ? [c.storyId] : [])),
+        learner.settings.speechScoring,
+      )),
+      levelNumber: unit.level.number,
+    },
   );
 
   const seen = new Set<number>();

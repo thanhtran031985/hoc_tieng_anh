@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FocusBadge, LessonCrumb, LessonTools, useFocusMode } from "@/components/lesson";
 import { ButtonLink, Mascot, type AvatarHair, type MascotColor } from "@/components/ui";
 import type { LessonPlay } from "@/server/lesson-play";
+import { isGameActivity } from "@/lib/rules/games";
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { rewardFor, starsFor } from "@/lib/rules/lesson-score";
 import {
@@ -90,6 +91,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   const stepId = session ? currentStepId(session) : null;
   const step = stepId ? stepsById.get(baseId(stepId)) : undefined;
   const { value, max } = session ? progressOf(session) : { value: 0, max: plan.steps.length };
+  const isGame = step !== undefined && isGameActivity(step.kind);
   const mapHref = `/map/${plan.levelNumber}`;
   // Hết giờ học giữa bài: làm nốt câu đang dở rồi chuyển sang màn Hết giờ học (tiến độ dở đã giữ trên máy).
   useTimeUpRedirect(session?.position ?? 0, !finished);
@@ -179,7 +181,7 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
   // Esc thoát học tập trung trước; bấm Esc lần nữa mới hỏi "Dừng bài học?". F bật/tắt học tập trung.
   useHotkeys(
     { Escape: () => (tools.focus ? tools.setFocus(false) : setExitOpen(true)), f: tools.toggle },
-    { enabled: !exitOpen && !stopped && state !== null && !finished, inInputs: ESC_WHILE_TYPING },
+    { enabled: !exitOpen && !stopped && state !== null && !finished && !isGame, inInputs: ESC_WHILE_TYPING },
   );
   useHotkeys({ Enter: () => router.push(mapHref) }, { enabled: stopped });
 
@@ -229,30 +231,39 @@ export function LessonPlayer({ plan, learnerId, learnerName, mascot, hair, learn
     );
   }
 
+  const crumb = (
+    <LessonCrumb
+      island={plan.levelName}
+      unit={plan.unitTitleVi}
+      lesson={plan.title}
+      learner={{ name: learnerName, level: learnerLevel, hair }}
+      minutes={usedMinutes === null ? null : { used: usedMinutes, limit: limitMinutes }}
+    />
+  );
+  const extra = (
+    <>
+      {tools.focus && <FocusBadge />}
+      <LessonTools focus={tools.focus} onToggleFocus={tools.toggle} sound={sound} onSoundChange={setSound} musicAvailable={musicAvailable} />
+    </>
+  );
+
+  // Mini game tự vẽ khung của mình (bắt đầu, tạm dừng, kết thúc) nên không đặt trong khung bài học.
+  if (step && stepId && isGame) {
+    return (
+      <StepView
+        key={stepId}
+        step={step}
+        active
+        unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }}
+        lessonId={plan.lessonId}
+        host={{ level: plan.levelNumber, mascot, crumb, extra, focus: tools.focus, onStop: stop }}
+        onComplete={handleComplete}
+      />
+    );
+  }
+
   return (
-    <LessonFrame
-      level={plan.levelNumber}
-      mascot={mascot}
-      value={value}
-      max={max}
-      onExit={() => setExitOpen(true)}
-      focus={tools.focus}
-      crumb={
-        <LessonCrumb
-          island={plan.levelName}
-          unit={plan.unitTitleVi}
-          lesson={plan.title}
-          learner={{ name: learnerName, level: learnerLevel, hair }}
-          minutes={usedMinutes === null ? null : { used: usedMinutes, limit: limitMinutes }}
-        />
-      }
-      extra={
-        <>
-          {tools.focus && <FocusBadge />}
-          <LessonTools focus={tools.focus} onToggleFocus={tools.toggle} sound={sound} onSoundChange={setSound} musicAvailable={musicAvailable} />
-        </>
-      }
-    >
+    <LessonFrame level={plan.levelNumber} mascot={mascot} value={value} max={max} onExit={() => setExitOpen(true)} focus={tools.focus} crumb={crumb} extra={extra}>
       {step && stepId && (
         <StepView key={stepId} step={step} active={!exitOpen} unit={{ title: plan.unitTitle, titleVi: plan.unitTitleVi }} onBack={canRewind ? handleBack : undefined} onComplete={handleComplete} />
       )}

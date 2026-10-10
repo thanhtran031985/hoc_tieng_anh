@@ -17,8 +17,7 @@ export function GameDemo() {
 
   return (
     <GameFrame
-      level={3}
-      mascot="ngoc"
+      host={{ level: 3, mascot: "ngoc", onStop: () => setLog("Bé chọn Dừng lại") }}
       value={score}
       max={TOTAL}
       unitTitle="Con vật"
@@ -29,7 +28,6 @@ export function GameDemo() {
         how: "Bấm vào từ đúng trước khi nó rơi xuống đất.",
       }}
       end={end}
-      onExit={() => setLog("Bé chọn Dừng lại")}
       onNext={() => {
         setEnd(null);
         setScore(0);

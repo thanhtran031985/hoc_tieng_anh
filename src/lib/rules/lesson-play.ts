@@ -7,6 +7,7 @@ import { splitPassage } from "./grading/reading.ts";
 import type { Leniency } from "./speaking.ts";
 import { splitSentence } from "./sentence-words.ts";
 import { isShortWord } from "./grading/dictation.ts";
+import { buildBubbleRounds, buildRaceQuestions, buildRainWords, buildWhackRounds, gameWords, isRainLevel, type BubbleRound, type RaceQuestion, type WhackRound } from "./games.ts";
 import { seededRandom, shuffled } from "./random.ts";
 
 export type PlayWord = {
@@ -60,6 +61,11 @@ export type PlayStep =
   | { id: string; kind: "match_pairs"; pairs: PlayWord[] }
   | { id: string; kind: "memory_game"; pairs: PlayWord[] }
   | ({ id: string; kind: "story" } & StoryPlay)
+  | { id: string; kind: "word_rain"; words: PlayWord[] }
+  | { id: string; kind: "word_bubbles"; rounds: BubbleRound<PlayWord>[] }
+  | { id: string; kind: "whack_letters"; rounds: WhackRound<PlayWord>[] }
+  /** `ghost`: các lượt trả lời đúng/sai (0/1) của lần chơi trước cùng bài; null ở lần đầu. */
+  | { id: string; kind: "race"; questions: RaceQuestion<PlayWord>[]; ghost: number[] | null }
   | {
       id: string;
       kind: "speak";
@@ -117,7 +123,7 @@ export type PlayStep =
 export type PlayStepKind = PlayStep["kind"];
 
 /** Bước dựng từ từ vựng (không cần câu hỏi): bài ôn tập chỉ dùng các bước này. */
-export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" }>;
+export type WordPlayStep = Exclude<PlayStep, { kind: "phonics" | "sentence_order" | "dictation" | "fill_blank" | "story" | "short_reading" | "speak" | "word_rain" | "word_bubbles" | "whack_letters" | "race" }>;
 
 const DEFAULT_OPTIONS = 3;
 const DEFAULT_PAIRS = 4;
@@ -146,6 +152,10 @@ export type PlayExtras = {
   speechScoring?: boolean;
   /** Truyện đã nạp, theo mã truyện (bước `story`). */
   stories?: ReadonlyMap<number, StoryPlay>;
+  /** Cấp của bài: Mưa từ vựng chỉ chơi ở cấp 3–5 (không biết cấp thì không chặn). */
+  levelNumber?: number;
+  /** Lần đua xe trước cùng bài của bé (mảng 0/1 theo từng lượt trả lời) cho xe ma; null/bỏ trống là lần đầu. */
+  raceGhost?: readonly number[] | null;
 };
 
 /**
@@ -200,6 +210,14 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
         play.push({ id, kind: "memory_game", pairs });
         break;
       }
+      case "word_rain":
+      case "word_bubbles":
+      case "whack_letters":
+      case "race": {
+        const built = buildGameStep(step.activityType, id, cardWords.flatMap((c) => (c.word ? [c.word] : [])), unitWords, random, extras);
+        if (built) play.push(built);
+        break;
+      }
       case "phonics":
       case "sentence_order":
       case "dictation":
@@ -220,6 +238,32 @@ export function buildPlaySteps(steps: readonly StoredStep[], unitWords: readonly
     }
   }
   return play;
+}
+
+/** Dựng mini game từ các từ của bài (thiếu từ thì lấy thêm từ cùng chủ đề); không đủ lượt để chơi thì bỏ qua bước (null). */
+function buildGameStep(type: string, id: string, lessonWords: readonly PlayWord[], unitWords: readonly PlayWord[], random: () => number, extras: PlayExtras): PlayStep | null {
+  const words = gameWords(lessonWords, unitWords);
+  switch (type) {
+    case "word_rain": {
+      if (extras.levelNumber !== undefined && !isRainLevel(extras.levelNumber)) return null;
+      const picked = buildRainWords(words, random);
+      return picked.length > 0 ? { id, kind: "word_rain", words: picked } : null;
+    }
+    case "word_bubbles": {
+      const rounds = buildBubbleRounds(words, random);
+      return rounds.length > 0 ? { id, kind: "word_bubbles", rounds } : null;
+    }
+    case "whack_letters": {
+      const rounds = buildWhackRounds(words, random);
+      return rounds.length > 0 ? { id, kind: "whack_letters", rounds } : null;
+    }
+    case "race": {
+      const questions = buildRaceQuestions(words, words, random);
+      return questions.length > 0 ? { id, kind: "race", questions, ghost: extras.raceGhost ? [...extras.raceGhost] : null } : null;
+    }
+    default:
+      return null;
+  }
 }
 
 /** Dựng bước từ câu hỏi gắn vào; câu hỏi thiếu, sai dạng hoặc hỏng dữ liệu thì bỏ qua bước (null). */
