@@ -1,7 +1,10 @@
 // Khám phá từ cấp 4 (Cành cây): thành phố, sức khỏe, nghề nghiệp, công nghệ, mua sắm, truyện. Câu hỏi chỉ dùng từ của cấp 1–4.
 import { ans, branch, dis, sent, type ExplorerSeedWord } from "./helpers.ts";
+import { EXPLORER_LEVEL_4_JOBS } from "./explorer-level-04-jobs.ts";
+import { EXPLORER_LEVEL_4_PLACES } from "./explorer-level-04-places.ts";
+import { EXPLORER_LEVEL_4_THINGS } from "./explorer-level-04-things.ts";
 
-export const EXPLORER_LEVEL_4: ExplorerSeedWord[] = [
+const SAMPLES: ExplorerSeedWord[] = [
   {
     word: "doctor",
     branches: [
@@ -23,3 +26,5 @@ export const EXPLORER_LEVEL_4: ExplorerSeedWord[] = [
     ],
   },
 ];
+
+export const EXPLORER_LEVEL_4: ExplorerSeedWord[] = [...SAMPLES, ...EXPLORER_LEVEL_4_PLACES, ...EXPLORER_LEVEL_4_JOBS, ...EXPLORER_LEVEL_4_THINGS];

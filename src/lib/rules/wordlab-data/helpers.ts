@@ -30,3 +30,6 @@ export const branch = (
   distractors: ExplorerDistractor[],
   sentence: ExplorerSentence,
 ): ExplorerSeedBranch => ({ kind, questionEn: question[0], questionVi: question[1], answers, distractors, sentence });
+
+/** Câu hỏi nhận diện dùng chung: “What’s this?” */
+export const Q_THIS = ["What’s this?", "Đây là gì?"] as const;

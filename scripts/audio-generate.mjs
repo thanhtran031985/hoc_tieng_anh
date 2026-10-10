@@ -18,7 +18,7 @@ if (!parsed.ok) {
   console.error(`Lỗi: ${parsed.message}`);
   process.exit(2);
 }
-const { level, force, limit, dryRun, content, help } = parsed.options;
+const { level, force, limit, dryRun, content, wordlab, help } = parsed.options;
 if (help) {
   console.log(AUDIO_CLI_USAGE);
   process.exit(0);
@@ -39,6 +39,95 @@ process.on("SIGINT", () => {
   stopping = true;
   console.log("\nĐang dừng sau từ hiện tại… (bấm Ctrl+C lần nữa để thoát ngay)");
 });
+
+if (wordlab) {
+  // Khám phá từ và Họ vần (task 27): mp3 cho đáp án của từng nhánh, đoạn văn “Đọc cả đoạn” và đoạn văn vui của họ vần. Cùng hàm với màn soạn Adult22 / Adult23.
+  const { generateExplorerAudio } = await import("../src/server/admin/word-explorer.ts");
+  const { generateFamilyAudio } = await import("../src/server/admin/family.ts");
+  const { parseExplorerAnswers } = await import("../src/lib/schemas/word-explorer.ts");
+  const { isTtsAvailable: ttsReady, currentVoice: voiceName } = await import("../src/server/audio/tts.ts");
+  const { db: database } = await import("../src/server/db.ts");
+  const stop = { value: false };
+  process.on("SIGINT", () => {
+    stop.value = true;
+  });
+  try {
+    const levelWhere = level ? { level: { number: level } } : {};
+    const words = await database.word.findMany({ where: { ...levelWhere, questions: { some: {} } }, orderBy: [{ level: { number: "asc" } }, { id: "asc" }], select: { id: true, word: true, questions: { orderBy: { sortOrder: "asc" }, select: { id: true, answers: true } } } });
+    const readings = await database.wordReading.findMany({ where: { ownerType: "word", ownerId: { in: words.map((w) => w.id) } }, select: { ownerId: true, audio: true } });
+    const readingOf = new Map(readings.map((r) => [r.ownerId, r.audio]));
+    const families = await database.wordFamily.findMany({ where: levelWhere, orderBy: { id: "asc" }, select: { id: true, pattern: true } });
+    const familyReadings = await database.wordReading.findMany({ where: { ownerType: "family", ownerId: { in: families.map((f) => f.id) } }, select: { ownerId: true, audio: true } });
+    const familyAudio = new Map(familyReadings.map((r) => [r.ownerId, r.audio]));
+
+    const todoWords = [];
+    for (const w of words) {
+      const ids = [];
+      for (const q of w.questions) {
+        const answers = parseExplorerAnswers(q.answers) ?? [];
+        let missingAnswer = false;
+        for (const a of answers) if (force || !(await audioFileExists(a.audio))) missingAnswer = true;
+        if (missingAnswer) ids.push(q.id);
+      }
+      if (force || !(await audioFileExists(readingOf.get(w.id)))) ids.push(0);
+      if (ids.length) todoWords.push({ id: w.id, word: w.word, ids });
+    }
+    const todoFamilies = [];
+    for (const f of families) if (force || !(await audioFileExists(familyAudio.get(f.id)))) todoFamilies.push(f);
+    const pickedWords = limit ? todoWords.slice(0, limit) : todoWords;
+    const pickedFamilies = limit ? todoFamilies.slice(0, Math.max(0, limit - pickedWords.length)) : todoFamilies;
+    const scope = level ? `cấp ${level}` : "mọi cấp";
+    console.log(`Khám phá từ (${scope}): ${words.length} từ, ${todoWords.length} từ còn thiếu mp3 (${todoWords.reduce((n, t) => n + t.ids.length, 0)} mục). Họ vần: ${families.length} họ, ${todoFamilies.length} họ còn thiếu đoạn văn.`);
+
+    if (dryRun) {
+      for (const t of pickedWords) console.log(`  - ${t.word}: ${t.ids.length} mục`);
+      for (const f of pickedFamilies) console.log(`  - họ -${f.pattern}`);
+      console.log("Chạy thử (--dry-run): chưa tạo tệp nào.");
+    } else if (pickedWords.length + pickedFamilies.length === 0) {
+      console.log("Không có gì để tạo.");
+    } else if (!(await ttsReady())) {
+      console.error("Lỗi: máy này chưa cài kokoro-js (npm install, gói devDependencies).");
+      process.exitCode = 1;
+    } else {
+      console.log(`Giọng: ${voiceName()} (Kokoro, lần đầu sẽ tải mô hình ~160 MB). Ctrl+C để dừng.`);
+      const started = Date.now();
+      const counts = { made: 0, skipped: 0, error: 0 };
+      let done = 0;
+      for (const t of pickedWords) {
+        if (stop.value) break;
+        const r = await generateExplorerAudio({ wordId: t.id, ids: t.ids, force });
+        done++;
+        if (!r.ok) {
+          console.error(`Lỗi: ${r.message}`);
+          process.exitCode = 1;
+          break;
+        }
+        for (const item of r.items) {
+          counts[item.status]++;
+          if (item.status === "error") console.log(`  - ${t.word}: ${item.word}: ${item.message ?? "chưa tạo được"}`);
+        }
+        if (done % 5 === 0 || done === pickedWords.length) console.log(`[từ ${done}/${pickedWords.length}] ${t.word}`);
+      }
+      let doneFamilies = 0;
+      for (const f of pickedFamilies) {
+        if (stop.value || process.exitCode) break;
+        const r = await generateFamilyAudio({ familyId: f.id, force });
+        if (!r.ok) {
+          console.log(`  - họ -${f.pattern}: ${r.message}`);
+          counts.error++;
+        } else {
+          counts[r.made ? "made" : "skipped"]++;
+          doneFamilies++;
+        }
+      }
+      console.log(`Xong trong ${Math.round((Date.now() - started) / 1000)} giây: tạo mới ${counts.made}, đã có ${counts.skipped}, lỗi ${counts.error}; ${doneFamilies}/${pickedFamilies.length} họ vần.${stop.value ? " Đã dừng giữa chừng; chạy lại để làm tiếp." : ""}`);
+      if (counts.error > 0) process.exitCode = 1;
+    }
+  } finally {
+    await database.$disconnect();
+  }
+  process.exit(process.exitCode ?? 0);
+}
 
 if (content) {
   // Nội dung dạng bài mới (task 19): câu của các dạng bài → `audio_clips`; âm thanh mẫu của câu luyện nói; âm thanh trang truyện.

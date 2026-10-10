@@ -5,7 +5,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Danh sách và mẫu (DỪNG chờ tôi) | ✅ | Đã viết đề xuất và mẫu; chờ bạn duyệt `proposal.md` trước khi sang bước 1 |
-| 1 | Khám phá từ cấp 3–4 | ⬜ | |
+| 1 | Khám phá từ cấp 3–4 | ✅ | 57 từ mới (cấp 3: 29, cấp 4: 28) + 3 mẫu; 16 hình mới; mp3 đã tạo trên DB verify |
 | 2 | Khám phá từ cấp 1–2 | ⬜ | |
 | 3 | Họ vần | ⬜ | |
 
@@ -21,6 +21,13 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 10/10/2026
 - **Kiểm tra**: `npm run wordlab:check` đạt (7 từ, 4 họ; in rõ -ir ghép 3 từ thật), `node scripts/check-pictures.mjs` đạt, `npm test` 687/687, `npx tsc --noEmit` và `npm run lint` sạch; seed hai lần trên database verify không nhân đôi (lần đầu: 5 từ Khám phá, 14 từ kho, 2 họ mới).
 - **Việc bạn cần làm**: đọc `proposal.md`, trả lời mục 8 (duyệt danh sách, quy tắc vốn từ, từ họ vần không hình) rồi nói “continue”.
 
+### Bước 1 — Khám phá từ cấp 3–4 (10/10/2026)
+- **Nội dung**: 30 từ cấp 3 (bus mẫu + 29 từ: taxi, ship, helicopter, suitcase, tent, map, beach, island, lake, forest, farm, guitar, piano, camera, noodle, pancake, cookie, mushroom, fork, spoon, knife, football, tennis, skateboard, moon, sun, tree, flower, cloud) và 30 từ cấp 4 (doctor, library mẫu + 28 từ: museum, cinema, hospital, bank, supermarket, bakery, zoo, castle, stadium, nurse, farmer, firefighter, chef, astronaut, vet, postman, laptop, mobile phone, keyboard, wallet, medicine, ambulance, dragon, pirate, treasure, crown, knight, ghost). Mỗi từ 5 nhánh theo bộ câu hỏi mẫu (đáp án có hình và nghĩa Việt, 1–2 hình nhiễu, một câu trong đoạn văn kèm dịch). Dữ liệu ở `src/lib/rules/wordlab-data/explorer-level-03*.ts`, `explorer-level-04*.ts`.
+- **Hình mới (16)**: propeller, handle, strings, keys, lens, stem, mushroom-stem, petals, helmet (cấp 3); dinosaur, popcorn, tractor, fire, hose, rocket, letter (cấp 4) trong `scripts/pictures/wordlab-03.mjs`, `wordlab-04.mjs`. Đã xem bằng Edge không đầu. Đáp án còn lại dùng lại hình từ vựng sẵn có.
+- **Giọng đọc**: thêm `--wordlab` vào `npm run audio:generate` (`src/lib/rules/audio-cli.ts` + test, `scripts/audio-generate.mjs`): với từng từ có Khám phá tạo mp3 cho đáp án chưa có tệp và đoạn văn, rồi đoạn văn vui của họ vần; dùng đúng `generateExplorerAudio` / `generateFamilyAudio` của màn soạn. `--level N`, `--limit`, `--dry-run`, `--force` như các chế độ khác. Chạy trên DB verify: cấp 3 (181 tệp, 576 giây) và cấp 4 (180 tệp, 523 giây), 0 lỗi.
+- **Kiểm tra**: `npm run wordlab:check` đạt (không từ ngoài cấp, không thiếu hình); script đọc dữ liệu từ DB verify cho thấy 30/30 từ cấp 3 và 30/30 từ cấp 4 không còn lý do chưa xuất bản (cùng hàm `explorerIssues` với cảnh báo đầu ngăn kéo Adult22); `node scripts/check-pictures.mjs` đạt; `npm test` 688/688; `tsc`, `lint` sạch; seed hai lần không nhân đôi.
+- **Việc bạn cần làm sau cả task**: `npx prisma db seed` rồi `npm run audio:generate -- --wordlab` trên database thật (khoảng 10 phút mỗi cấp), vào Quản trị › Từ vựng mở từng từ, xem rồi xuất bản.
+
 ## Bước tiếp theo
 
-Bước 1 — Khám phá từ cấp 3–4 (sau khi bạn duyệt đề xuất)
+Bước 2 — Khám phá từ cấp 1–2

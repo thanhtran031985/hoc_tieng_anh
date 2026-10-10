@@ -11,6 +11,8 @@ export type AudioCliOptions = {
   dryRun: boolean;
   /** Tạo giọng đọc cho nội dung dạng bài mới (câu hỏi, truyện) thay vì từ vựng. */
   content: boolean;
+  /** Tạo giọng đọc cho Khám phá từ (đáp án, đoạn văn) và đoạn văn vui của Họ vần (task 27). */
+  wordlab: boolean;
   help: boolean;
 };
 
@@ -27,6 +29,7 @@ Tùy chọn:
   --limit N    chỉ làm tối đa N từ
   --dry-run    chỉ liệt kê việc sẽ làm
   --content    tạo giọng đọc cho câu của các dạng bài mới (sắp xếp câu, nghe-gõ, điền từ, đọc hiểu, luyện nói) và trang truyện
+  --wordlab    tạo giọng đọc cho Khám phá từ (đáp án và đoạn văn của từng từ) và đoạn văn vui của Họ vần; --level N chọn cấp
   --help       xem hướng dẫn
 
 Chạy lại bao nhiêu lần cũng được: chỗ đã có tệp thì bỏ qua, không gọi giọng đọc.`;
@@ -38,7 +41,7 @@ function positiveInt(raw: string | undefined, name: string, max: number): number
 }
 
 export function parseAudioArgs(argv: readonly string[]): AudioCliParse {
-  const options: AudioCliOptions = { level: null, force: false, limit: null, dryRun: false, content: false, help: false };
+  const options: AudioCliOptions = { level: null, force: false, limit: null, dryRun: false, content: false, wordlab: false, help: false };
   let missing = false;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -46,6 +49,7 @@ export function parseAudioArgs(argv: readonly string[]): AudioCliParse {
     else if (arg === "--force") options.force = true;
     else if (arg === "--dry-run") options.dryRun = true;
     else if (arg === "--content") options.content = true;
+    else if (arg === "--wordlab") options.wordlab = true;
     else if (arg === "--help" || arg === "-h") options.help = true;
     else if (arg === "--level" || arg === "--limit") {
       const value = positiveInt(argv[++i], arg, arg === "--level" ? 10 : 100000);
@@ -54,6 +58,7 @@ export function parseAudioArgs(argv: readonly string[]): AudioCliParse {
       else options.limit = value;
     } else return { ok: false, message: `Không hiểu tùy chọn “${arg}”. Dùng --help để xem hướng dẫn.` };
   }
+  if (options.content && options.wordlab) return { ok: false, message: "--content và --wordlab không đi cùng nhau." };
   if (missing && options.force) return { ok: false, message: "--missing và --force không đi cùng nhau." };
   return { ok: true, options };
 }
