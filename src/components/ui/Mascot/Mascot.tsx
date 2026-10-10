@@ -4,6 +4,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 import type { Expr } from "./dragon-parts";
 import { dragonMarkup, type Stage } from "./dragon-stages";
+import { OUTFIT_LABEL, type Outfit } from "./outfits";
 import { useMascotStage } from "./MascotStage";
 import styles from "./Mascot.module.css";
 
@@ -30,12 +31,15 @@ export type MascotProps = Omit<ComponentProps<"svg">, "children" | "role"> & {
   color?: MascotColor;
   /** Dáng lớn lên theo cấp 1–5 (1 Hạt giống … 5 Cây lớn). Bỏ trống thì theo cấp của hồ sơ đang chọn (MascotStageProvider), không có thì là dáng gốc (3). */
   stage?: Stage;
+  /** Đồ đang mặc (áo, mũ) từ Tủ đồ; bỏ trống thì rồng giữ nguyên hình. */
+  outfit?: Outfit;
 };
 
 /** Rồng Bông, linh vật đồng hành. Không bao giờ buồn bã hay chê: khi sai luôn dùng `dongvien`. Chuyển động tắt khi bật giảm chuyển động. */
-export function Mascot({ expr, size = 200, color, stage: stageProp, className, ...rest }: MascotProps) {
+export function Mascot({ expr, size = 200, color, stage: stageProp, outfit, className, ...rest }: MascotProps) {
   const inherited = useMascotStage();
   const stage = stageProp ?? inherited;
+  const worn = [outfit?.top, outfit?.hat].flatMap((k) => (k ? [OUTFIT_LABEL[k]] : []));
   return (
     <svg
       className={cn(styles.dragon, styles[expr], className)}
@@ -43,11 +47,11 @@ export function Mascot({ expr, size = 200, color, stage: stageProp, className, .
       height={size}
       viewBox="0 -10 200 210"
       role="img"
-      aria-label={`Rồng Bông ${EXPR_LABEL[expr]}${stage ? `, dáng cấp ${stage}` : ""}`}
+      aria-label={`Rồng Bông ${EXPR_LABEL[expr]}${stage ? `, dáng cấp ${stage}` : ""}${worn.length > 0 ? `, đang mặc ${worn.join(" và ")}` : ""}`}
       data-dragon={color}
       {...rest}
       // Nội dung ghép từ hằng số trong dragon-parts.ts và dragon-stages.ts, không có dữ liệu người dùng.
-      dangerouslySetInnerHTML={{ __html: dragonMarkup(expr, stage) }}
+      dangerouslySetInnerHTML={{ __html: dragonMarkup(expr, stage, outfit) }}
     />
   );
 }

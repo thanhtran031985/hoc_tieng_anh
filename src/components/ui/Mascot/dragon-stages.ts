@@ -2,6 +2,7 @@
 // Cùng nét vẽ với dáng gốc; chỉ đổi tỉ lệ đầu/thân, cánh, đuôi và phụ kiện theo từng đảo. Dáng 3 là dáng gốc, giữ nguyên hình cũ.
 import type { MascotStage } from "@/lib/rules/mascot-stage";
 import { DRAGON_SEGMENTS, type Expr } from "./dragon-parts.ts";
+import { hatMarkup, splitBodyAtArms, topMarkup, type Outfit } from "./outfits.ts";
 
 export type Stage = MascotStage;
 
@@ -64,23 +65,30 @@ const SHAPES: Record<Exclude<Stage, 3>, StageShape> = {
   },
 };
 
-/** Nét vẽ bên trong thẻ svg của rồng Bông ở một biểu cảm và một dáng. Không truyền dáng, hoặc dáng 3, thì là hình gốc. */
-export function dragonMarkup(expr: Expr, stage?: Stage): string {
+/**
+ * Nét vẽ bên trong thẻ svg của rồng Bông ở một biểu cảm, một dáng và (tùy chọn) đồ đang mặc. Không truyền dáng, hoặc dáng 3, thì là hình gốc;
+ * không truyền đồ thì hình giữ nguyên từng nét như cũ. Áo nằm giữa thân và hai tay, mũ nằm trên đầu.
+ */
+export function dragonMarkup(expr: Expr, stage?: Stage, outfit?: Outfit): string {
   const p = DRAGON_SEGMENTS[expr];
   const shape = stage && stage !== 3 ? SHAPES[stage] : undefined;
+  const top = topMarkup(outfit?.top);
+  const hat = hatMarkup(outfit?.hat);
+  const [bodyBase, arms] = top ? splitBodyAtArms(p.body) : [p.body, ""];
+  const body = bodyBase + top + arms;
   if (!shape) {
-    return p.tail + p.tailWing + p.wings + p.body + p.head + p.acc.join("");
+    return p.tail + p.tailWing + p.wings + body + p.head + hat + p.acc.join("");
   }
   const hammer = p.hammerAt > -1 ? p.acc[p.hammerAt] : "";
   const acc = p.hammerAt > -1 ? p.acc.filter((_, i) => i !== p.hammerAt) : p.acc;
   const back =
     `<g transform="${shape.tail}">${p.tail}${shape.noWings ? "" : p.tailWing}</g>` +
     (shape.noWings ? "" : `<g transform="${shape.wing}">${p.wings}</g>`) +
-    p.body;
+    body;
   return (
     `<g class="dg-stage dg-stage--${stage}" transform="${shape.all}"><g transform="${shape.body}">${back}</g>` +
     (shape.under ?? "") +
-    `<g transform="${shape.head}">${p.head}${shape.headExtra ?? ""}${acc.join("")}</g>` +
+    `<g transform="${shape.head}">${p.head}${shape.headExtra ?? ""}${hat}${acc.join("")}</g>` +
     (hammer ? `<g transform="${shape.body}">${hammer}</g>` : "") +
     `</g>`
   );

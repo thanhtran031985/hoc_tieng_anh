@@ -9,6 +9,7 @@ import { seedCurriculum } from "./seed/curriculum.ts";
 import { seedPhonics } from "./seed/phonics.ts";
 import { seedExams } from "./seed/exams.ts";
 import { seedRewards } from "./seed/rewards.ts";
+import { seedRoomItems } from "./seed/room.ts";
 import { seedStories } from "./seed/stories.ts";
 
 try {
@@ -155,6 +156,7 @@ async function main() {
   await seedContent(db);
   await seedRewards(db);
   await seedExams(db);
+  await seedRoomItems(db);
 
   const [stages, levels, units] = await Promise.all([db.stage.count(), db.level.count(), db.unit.count()]);
   await seedAdmin();

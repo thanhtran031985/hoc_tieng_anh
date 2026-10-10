@@ -7,6 +7,7 @@ export { Mascot, type Expr, type MascotColor, type MascotProps, type Stage } fro
 export { MascotGrowth, type MascotGrowthProps } from "./Mascot/MascotGrowth";
 export { MascotStageProvider, useMascotStage, useSetMascotStage } from "./Mascot/MascotStage";
 export { STAGES } from "./Mascot/dragon-stages";
+export { OUTFIT_HATS, OUTFIT_LABEL, OUTFIT_TOPS, isOutfitHat, isOutfitTop, type Outfit, type OutfitHat, type OutfitTop } from "./Mascot/outfits";
 export { WordPicture, type WordPictureProps } from "./WordPicture/WordPicture";
 export { PICTURE_NAMES, type PictureName } from "./WordPicture/pictures";
 export { SpeakerButton, type SpeakerButtonProps, type SpeakerButtonSize } from "./SpeakerButton/SpeakerButton";

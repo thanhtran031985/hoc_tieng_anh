@@ -24,3 +24,4 @@ export * from "./word-extra";
 export * from "./game-record";
 export * from "./reward";
 export * from "./admin-rewards";
+export * from "./room";
