@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { wordQuestionKindSchema, type ExplorerSentence, type WordQuestionKind } from "./word-explorer.ts";
-import { familyPatternSchema } from "./word-family.ts";
+import { FAMILY_MEMBERS_MAX, familyPatternSchema } from "./word-family.ts";
 
 // AI gợi ý khi soạn Khám phá từ (Adult22) và Họ vần (Adult23), task 29: đầu vào của server action, hình dạng thô AI trả về (đọc rất dễ tính,
 // vì AI hay thiếu hoặc sai trường; bộ lọc ở src/lib/rules/ai-suggest.ts sửa lại cho đúng luật) và kết quả đã lọc gửi về form.
@@ -11,6 +11,17 @@ export const questionSetKeySchema = z.enum(QUESTION_SET_KEYS);
 /** `set`: nhóm từ người soạn đang chọn ở form, dùng làm gợi ý cho AI. */
 export const suggestExplorerInputSchema = z.object({ wordId: z.number().int().positive(), set: questionSetKeySchema.optional() });
 export const suggestFamilyInputSchema = z.object({ pattern: familyPatternSchema });
+
+/** Gợi ý câu cho đoạn văn vui của một họ (task 31): vần, cấp của họ và mã các từ đang có trong họ (server tự nạp chữ, IPA, nghĩa từ database). */
+export const suggestFamilySentencesInputSchema = z.object({
+  pattern: familyPatternSchema,
+  levelId: z.number().int().positive(),
+  wordIds: z
+    .array(z.number().int().positive())
+    .min(1, "Họ cần có ít nhất một từ để AI viết câu.")
+    .max(FAMILY_MEMBERS_MAX)
+    .refine((ids) => new Set(ids).size === ids.length, "Có từ bị chọn hai lần."),
+});
 
 const str = z
   .string()
@@ -49,6 +60,9 @@ export const aiFamilyRawSchema = z.object({
 });
 export type AiFamilyRaw = z.infer<typeof aiFamilyRawSchema>;
 
+/** Kết quả thô của lần gợi ý câu cho Họ vần. */
+export const aiFamilySentencesRawSchema = z.object({ sentences: list(z.object({ en: str, vi: str })) });
+
 // ---- Kết quả đã lọc gửi về form ----
 
 export type SuggestedBranch = {
@@ -80,3 +94,5 @@ export type SuggestedFamily = {
 };
 
 export type SuggestResult<T> = { ok: true; data: T } | { ok: false; message: string };
+
+export type SuggestedFamilySentences = { sentences: ExplorerSentence[]; warnings: string[] };

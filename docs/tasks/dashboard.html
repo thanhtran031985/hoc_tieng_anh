@@ -91,14 +91,14 @@
           <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">⋯</button>
         </div>
       </div>
-      <p class="subtitle">Sinh lúc 2026-10-11 09:55 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
+      <p class="subtitle">Sinh lúc 2026-10-11 09:58 (UTC+07:00) từ docs/tasks/README.md và docs/tasks/*/progress.md</p>
     </div>
 
     <div class="stats">
       <div class="stat"><div class="stat-value">33</div><div class="stat-label">tổng số task</div></div>
       <div class="stat"><div class="stat-value" style="color:#34d399">31</div><div class="stat-label">✅ xong</div></div>
       <div class="stat"><div class="stat-value"><span style="color:#22d3ee">1</span> / <span style="color:#94a3b8">1</span></div><div class="stat-label">🔄 đang làm / ⬜ chưa làm</div></div>
-      <div class="stat"><div class="stat-value">95%</div><div class="stat-label">bước đã xong (154/162)</div></div>
+      <div class="stat"><div class="stat-value">96%</div><div class="stat-label">bước đã xong (155/162)</div></div>
     </div>
 
     
@@ -576,10 +576,10 @@
           <text x="4088" y="177" font-size="12" text-anchor="end">🔄</text>
           <text x="3906" y="176" fill="white" font-size="12" font-weight="600">31-ai-family-sentences</text>
           <text x="3882" y="196" fill="#94a3b8" font-size="9">AI gợi ý câu cho đoạn văn vui của H…</text>
-          <text x="3882" y="218" fill="#cbd5e1" font-size="9">1/4 bước</text>
-          <text x="4088" y="218" fill="#94a3b8" font-size="9" text-anchor="end">25%</text>
+          <text x="3882" y="218" fill="#cbd5e1" font-size="9">2/4 bước</text>
+          <text x="4088" y="218" fill="#94a3b8" font-size="9" text-anchor="end">50%</text>
           <rect x="3882" y="228" width="206" height="5" rx="2.5" fill="#1e293b"/>
-          <rect x="3882" y="228" width="52" height="5" rx="2.5" fill="#34d399"/>
+          <rect x="3882" y="228" width="103" height="5" rx="2.5" fill="#34d399"/>
         </g>
         <g>
           <title>900 — 900-real-db-finalize: Hoàn tất dữ liệu trên database thật (giọng đọc, xuất bản, Playwright) (chưa làm)</title>
@@ -990,8 +990,8 @@
         </div>
         <p class="task-title">AI gợi ý câu cho đoạn văn vui của Họ vần</p>
         <p class="meta">Nhánh: <code>feat/31-ai-family-sentences</code> · Cập nhật: 11/10/2026 · Phụ thuộc: 26, 29</p>
-        <div class="bar"><div class="bar-fill" style="width:25%"></div></div><div class="bar-label">1/4 bước · 25%</div>
-        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Kế hoạch</div><div class="note"><code>plan.md</code> (chung với task 30)</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 1 · Luật và schema (không mạng)</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 2 · Server, action và nút</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 3 · Kiểm với Gemini thật và đóng task</div></div></li></ul>
+        <div class="bar"><div class="bar-fill" style="width:50%"></div></div><div class="bar-label">2/4 bước · 50%</div>
+        <ul class="steps"><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 0 · Kế hoạch</div><div class="note"><code>plan.md</code> (chung với task 30)</div></div></li><li><span class="sym" style="color:#34d399" title="xong">✅</span><div><div class="step-name">Bước 1 · Luật và schema (không mạng)</div><div class="note">familySentencesPrompt, cleanFamilySentences, schema; 10 test mới</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 2 · Server, action và nút</div></div></li><li><span class="sym" style="color:#94a3b8" title="chưa làm">⬜</span><div><div class="step-name">Bước 3 · Kiểm với Gemini thật và đóng task</div></div></li></ul>
         <p class="links"><a href="31-ai-family-sentences/task.md">task.md</a> · <a href="31-ai-family-sentences/progress.md">progress.md</a></p>
       </div>
       <div class="card task-card">
@@ -1027,7 +1027,7 @@
   </div>
 
   <script type="application/json" id="tasks-data">{
-  "generatedAt": "2026-10-11 09:55 (UTC+07:00)",
+  "generatedAt": "2026-10-11 09:58 (UTC+07:00)",
   "warnings": [],
   "tasks": [
     {
@@ -2783,8 +2783,8 @@
             "step": "1",
             "numbered": true,
             "name": "Luật và schema (không mạng)",
-            "status": "todo",
-            "note": ""
+            "status": "done",
+            "note": "familySentencesPrompt, cleanFamilySentences, schema; 10 test mới"
           },
           {
             "step": "2",
@@ -2804,7 +2804,7 @@
         "hasTable": true
       },
       "stepsTotal": 4,
-      "stepsDone": 1,
+      "stepsDone": 2,
       "level": 12
     },
     {

@@ -1,12 +1,12 @@
 // AI gợi ý khi soạn Khám phá từ và Họ vần (task 29): dựng lời nhắc, mô tả JSON trả về, và lọc kết quả của AI cho đúng luật của sản phẩm.
 // Hàm thuần, không gọi mạng, không đụng database; AI chỉ điền form, người soạn đọc và sửa rồi mới lưu.
 // Import tương đối có đuôi .ts để Node chạy thẳng được (test).
-import { aiExplorerRawSchema, aiFamilyRawSchema, type SuggestedBranch, type SuggestedExplorer, type SuggestedFamily, type SuggestedFamilyMember } from "../schemas/ai-suggest.ts";
+import { aiExplorerRawSchema, aiFamilyRawSchema, aiFamilySentencesRawSchema, type SuggestedBranch, type SuggestedExplorer, type SuggestedFamily, type SuggestedFamilyMember, type SuggestedFamilySentences } from "../schemas/ai-suggest.ts";
 import { WORD_QUESTION_KINDS } from "../schemas/word-explorer.ts";
 import { EXPLORER_ANSWERS_MAX, EXPLORER_DISTRACTORS_MAX } from "../schemas/word-explorer.ts";
 import { FAMILY_DECOYS_MAX, FAMILY_MEMBERS_MAX, FAMILY_SENTENCES_MAX } from "../schemas/word-family.ts";
 import { WORDLAB } from "./constants.ts";
-import { tokenize, unknownTokens } from "./vocab-check.ts";
+import { stems, tokenize, unknownTokens } from "./vocab-check.ts";
 import { QUESTION_SETS, composeSentence, explorerIssues, withArticle, type ExplorerBranch } from "./word-explorer.ts";
 import { buildInfo, familyIssues, soundMatches } from "./word-family.ts";
 
@@ -341,4 +341,100 @@ export function cleanFamily(raw: unknown, ctx: FamilyFilterContext): SuggestedFa
     warnings.push(issue.message);
   }
   return { soundIpa, members, decoys, trapNote, sentences, warnings };
+}
+
+// ---- Gợi ý câu cho đoạn văn vui của họ (task 31) ----
+
+/** Số câu AI được hỏi và giữ lại, và số chữ tối đa của một câu vui. */
+export const AI_FAMILY_SENTENCES = 3;
+export const AI_SENTENCE_WORDS_MAX = 12;
+
+export const FAMILY_SENTENCES_RESPONSE_SCHEMA: JsonSchema = {
+  type: S.OBJECT,
+  properties: {
+    sentences: { type: S.ARRAY, items: { type: S.OBJECT, properties: { en: { type: S.STRING }, vi: { type: S.STRING } }, required: ["en", "vi"] } },
+  },
+  required: ["sentences"],
+};
+
+export type FamilySentencesPromptInput = {
+  pattern: string;
+  soundIpa: string | null;
+  /** Cấp 1–10 của họ. */
+  level: number;
+  members: readonly { word: string; ipa: string | null; meaningVi: string; sameSound: boolean }[];
+  /** Chữ ngoài cấp ở lần thử trước: yêu cầu tránh. */
+  avoid?: readonly string[];
+};
+
+/** Lời nhắc viết câu vui cho một họ vần. Chỉ gửi từ vựng, nghĩa và cấp (nội dung công khai của dự án), không gửi gì về học sinh. */
+export function familySentencesPrompt(input: FamilySentencesPromptInput): string {
+  const { pattern, soundIpa, level, members, avoid } = input;
+  const same = members.filter((m) => m.sameSound);
+  const traps = members.filter((m) => !m.sameSound);
+  const list = (items: typeof members) => items.map((m) => `${m.word}${m.ipa ? ` ${m.ipa}` : ""} = ${m.meaningVi}`).join("; ");
+  return `You help a Vietnamese teacher write the fun practice sentences of a "Word Family" (rhyme / spelling pattern) activity for children aged 6-11 learning English (curriculum level ${level} of 10; level 1 = very easy, 5 = upper primary).
+
+PATTERN: "-${pattern}"${soundIpa ? ` pronounced ${soundIpa}` : ""}.
+WORDS OF THE FAMILY (same sound): ${list(same) || "(none)"}.${traps.length ? `\nSPELLING TRAPS (same letters, different sound; avoid them unless needed): ${list(traps)}.` : ""}
+
+Write exactly ${AI_FAMILY_SENTENCES} short, fun, grammatically correct English sentences (max ${AI_SENTENCE_WORDS_MAX} words each).
+- Use as many words of the family as you naturally can, copied exactly (a word may take a normal ending, e.g. a plural).
+- Every other word must be very simple, known by a child at level ${level}. Never use hard words.${avoid?.length ? `\n- Do NOT use these words (too hard for this level): ${avoid.join(", ")}.` : ""}
+- Each sentence has a natural, child-friendly Vietnamese translation ("vi").
+No text outside the JSON.`;
+}
+
+export type FamilySentencesFilterContext = {
+  members: readonly { word: string; sameSound: boolean }[];
+  /** Vốn từ của cấp; null khi không nạp được thì bỏ qua kiểm từ ngoài cấp. */
+  allowed: ReadonlySet<string> | null;
+};
+
+/** Câu có dùng từ này của họ không (kể cả dạng thêm đuôi: số nhiều, -ing, -ed…). */
+const usesWord = (tokens: readonly string[], word: string): boolean => {
+  const w = word.toLowerCase();
+  return tokens.some((t) => t === w || stems(t).has(w));
+};
+
+/**
+ * Sửa kết quả thô của AI cho đoạn văn vui của họ: bỏ câu rỗng hoặc trùng, giữ tối đa `AI_FAMILY_SENTENCES` câu, rồi báo câu quá dài,
+ * thiếu bản dịch, không dùng từ nào của họ, và chữ ngoài cấp (chữ của các từ trong họ được phép). `outOfLevel` để gọi lại một lần.
+ */
+export function cleanFamilySentences(raw: unknown, ctx: FamilySentencesFilterContext): { data: SuggestedFamilySentences; outOfLevel: string[] } | null {
+  const parsed = aiFamilySentencesRawSchema.safeParse(raw);
+  if (!parsed.success) return null;
+  const seen = new Set<string>();
+  const sentences = parsed.data.sentences
+    .filter((s) => {
+      const key = s.en.toLowerCase();
+      if (!s.en || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, Math.min(AI_FAMILY_SENTENCES, FAMILY_SENTENCES_MAX))
+    .map((s) => ({ en: clip(s.en, 300), vi: clip(s.vi, 300) }));
+  if (sentences.length === 0) return null;
+
+  const warnings: string[] = [];
+  const outOfLevel: string[] = [];
+  const own = new Set<string>(ctx.members.flatMap((m) => tokenize(m.word)));
+  const usedSame = new Set<string>();
+  sentences.forEach((s, i) => {
+    const n = i + 1;
+    const tokens = tokenize(s.en);
+    if (tokens.length > AI_SENTENCE_WORDS_MAX) warnings.push(`Câu ${n} dài ${tokens.length} chữ (nên tối đa ${AI_SENTENCE_WORDS_MAX}).`);
+    if (!s.vi) warnings.push(`Câu ${n} chưa có bản dịch.`);
+    const used = ctx.members.filter((m) => usesWord(tokens, m.word));
+    for (const m of used) if (m.sameSound) usedSame.add(m.word);
+    if (used.length === 0) warnings.push(`Câu ${n} không dùng từ nào của họ.`);
+    if (ctx.allowed) {
+      const hard = unknownTokens(s.en, ctx.allowed, own);
+      if (hard.length) warnings.push(`Câu ${n}: từ ngoài cấp (${hard.join(", ")}), hãy đổi sang từ đơn giản hơn.`);
+      for (const t of hard) if (!outOfLevel.includes(t)) outOfLevel.push(t);
+    }
+  });
+  const unused = ctx.members.filter((m) => m.sameSound && !usedSame.has(m.word)).map((m) => m.word);
+  if (unused.length > 0 && unused.length < ctx.members.filter((m) => m.sameSound).length) warnings.push(`Chưa câu nào dùng từ: ${unused.slice(0, 6).join(", ")}${unused.length > 6 ? "…" : ""}.`);
+  return { data: { sentences, warnings }, outOfLevel };
 }

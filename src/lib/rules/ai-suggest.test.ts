@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { allowedTokensFor } from "./vocab-check.ts";
-import { cleanExplorer, cleanFamily, explorerPrompt, familyPrompt, libraryPictureKeys, pictureKeyOf, pictureUrlOf, type ExplorerFilterContext, type FamilyCandidate } from "./ai-suggest.ts";
+import { cleanExplorer, cleanFamily, cleanFamilySentences, explorerPrompt, familyPrompt, familySentencesPrompt, libraryPictureKeys, pictureKeyOf, pictureUrlOf, type ExplorerFilterContext, type FamilyCandidate } from "./ai-suggest.ts";
 
 const KEYS = new Set(["volcano", "fire", "smoke", "rock", "water", "snow", "castle", "factory", "island", "mountain", "hot"]);
 const ctx = (extra: Partial<ExplorerFilterContext> = {}): ExplorerFilterContext => ({
@@ -236,5 +236,99 @@ describe("cleanFamily", () => {
     assert.equal(cleanFamily("x", famCtx), null);
     assert.equal(cleanFamily({}, famCtx), null);
     assert.equal(cleanFamily(null, famCtx), null);
+  });
+});
+
+// ---- Câu vui của họ (task 31) ----
+
+const FAM = [
+  { word: "famous", sameSound: true },
+  { word: "nervous", sameSound: true },
+  { word: "curious", sameSound: true },
+  { word: "house", sameSound: false },
+];
+const FAM_ALLOWED = allowedTokensFor(["cat", "dog", "chef", "cook", "food", "meet", "play", "park"]);
+const fctx = { members: FAM, allowed: FAM_ALLOWED };
+
+describe("familySentencesPrompt", () => {
+  it("nêu vần, cấp, từ cùng âm, từ Bẫy, số câu và chữ cần tránh", () => {
+    const text = familySentencesPrompt({
+      pattern: "ous",
+      soundIpa: "/əs/",
+      level: 4,
+      members: [
+        { word: "famous", ipa: "/ˈfeɪməs/", meaningVi: "nổi tiếng", sameSound: true },
+        { word: "house", ipa: "/haʊs/", meaningVi: "ngôi nhà", sameSound: false },
+      ],
+      avoid: ["delighted"],
+    });
+    for (const part of ['"-ous"', "/əs/", "level 4", "famous /ˈfeɪməs/ = nổi tiếng", "SPELLING TRAPS", "house /haʊs/ = ngôi nhà", "exactly 3", "max 12 words", "delighted"]) assert.ok(text.includes(part), part);
+  });
+
+  it("không có Bẫy thì không nhắc Bẫy", () => {
+    const text = familySentencesPrompt({ pattern: "at", soundIpa: null, level: 1, members: [{ word: "cat", ipa: null, meaningVi: "con mèo", sameSound: true }] });
+    assert.ok(!text.includes("SPELLING TRAPS") && !text.includes("Do NOT use"));
+  });
+});
+
+describe("cleanFamilySentences", () => {
+  it("giữ câu tốt, không cảnh báo", () => {
+    const out = cleanFamilySentences({ sentences: [{ en: "The famous chef cooks food.", vi: "Đầu bếp nổi tiếng nấu ăn." }, { en: "A curious dog and a nervous cat meet.", vi: "Chó tò mò gặp mèo lo lắng." }] }, fctx);
+    assert.ok(out);
+    assert.equal(out.data.sentences.length, 2);
+    assert.deepEqual(out.outOfLevel, []);
+    assert.deepEqual(out.data.warnings, []);
+  });
+
+  it("cắt còn 3 câu, bỏ câu rỗng và câu trùng", () => {
+    const s = (en: string) => ({ en, vi: "Câu." });
+    const out = cleanFamilySentences({ sentences: [s("A famous dog."), s(""), s("a famous DOG."), s("A nervous cat."), s("A curious dog."), s("A famous cat.")] }, fctx);
+    assert.ok(out);
+    assert.deepEqual(out.data.sentences.map((x) => x.en), ["A famous dog.", "A nervous cat.", "A curious dog."]);
+  });
+
+  it("nhận từ có đuôi (số nhiều, -ing) là dùng từ của họ", () => {
+    const out = cleanFamilySentences({ sentences: [{ en: "The houses are big.", vi: "Các ngôi nhà to." }] }, { members: [{ word: "house", sameSound: true }], allowed: null });
+    assert.ok(out);
+    assert.ok(!out.data.warnings.some((w) => w.includes("không dùng từ nào")));
+  });
+
+  it("báo câu không dùng từ nào của họ, quá dài, thiếu dịch", () => {
+    const long = "The famous dog and the nervous cat and the curious dog play in the park with food today.";
+    const out = cleanFamilySentences({ sentences: [{ en: "I play in the park.", vi: "Tớ chơi ở công viên." }, { en: long, vi: "" }] }, fctx);
+    assert.ok(out);
+    const w = out.data.warnings.join("\n");
+    assert.ok(w.includes("Câu 1 không dùng từ nào của họ"));
+    assert.ok(/Câu 2 dài \d+ chữ/.test(w));
+    assert.ok(w.includes("Câu 2 chưa có bản dịch"));
+  });
+
+  it("báo chữ ngoài cấp và trả về để gọi lại; chữ của từ trong họ thì được phép", () => {
+    const out = cleanFamilySentences({ sentences: [{ en: "The famous chef delighted the nervous dog.", vi: "Đầu bếp nổi tiếng làm chú chó lo lắng vui." }] }, fctx);
+    assert.ok(out);
+    assert.deepEqual(out.outOfLevel, ["delighted"]);
+    assert.ok(out.data.warnings.some((w) => w.startsWith("Câu 1: từ ngoài cấp") && w.includes("delighted")));
+    assert.ok(!out.data.warnings.some((w) => w.includes("famous") || w.includes("nervous")));
+  });
+
+  it("không có vốn từ thì bỏ qua kiểm ngoài cấp", () => {
+    const out = cleanFamilySentences({ sentences: [{ en: "The famous chef delighted the nervous dog.", vi: "Dịch." }] }, { members: FAM, allowed: null });
+    assert.ok(out);
+    assert.deepEqual(out.outOfLevel, []);
+  });
+
+  it("nhắc từ cùng âm chưa câu nào dùng (khi đã dùng một vài từ)", () => {
+    const out = cleanFamilySentences({ sentences: [{ en: "The famous cat is here.", vi: "Dịch." }] }, fctx);
+    assert.ok(out);
+    assert.ok(out.data.warnings.some((w) => w.startsWith("Chưa câu nào dùng từ:") && w.includes("nervous") && w.includes("curious")));
+  });
+
+  it("hỏng hoặc rỗng thì null; trường sai kiểu không làm hỏng cả kết quả", () => {
+    assert.equal(cleanFamilySentences("x", fctx), null);
+    assert.equal(cleanFamilySentences({ sentences: [] }, fctx), null);
+    assert.equal(cleanFamilySentences({ sentences: [{ en: "", vi: "" }] }, fctx), null);
+    const out = cleanFamilySentences({ sentences: [{ en: "A famous cat.", vi: 7 }] }, fctx);
+    assert.ok(out);
+    assert.equal(out.data.sentences[0].vi, "");
   });
 });
