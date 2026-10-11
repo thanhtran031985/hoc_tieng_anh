@@ -1,5 +1,3 @@
-import { readdir } from "node:fs/promises";
-import path from "node:path";
 import { audioNameFromUrl } from "@/lib/rules/tts";
 import { canPublish, explorerIssues, type ExplorerBranch } from "@/lib/rules/word-explorer";
 import { editorWordInputSchema, generateExplorerAudioSchema, saveExplorerSchema, type EditorBranchInput } from "@/lib/schemas/admin-word-explorer";
@@ -8,6 +6,7 @@ import { parseExplorerAnswers, parseExplorerDistractors, parseExplorerSentences,
 import { audioFileExists, removeAudioFile, saveAudioFile } from "../audio/files";
 import { TtsTextError, TtsUnavailableError, currentVoice, isTtsAvailable, synthesizeMp3 } from "../audio/tts";
 import { db } from "../db";
+import { listPictures } from "./pictures";
 import { fail, type AdminResult } from "./result";
 
 // Soạn Khám phá từ (Adult22): đọc dữ liệu soạn của một từ, lưu (Nháp / Xuất bản có kiểm điều kiện) và tạo giọng đọc tự động.
@@ -36,14 +35,6 @@ export type ExplorerEditorData = {
   /** Kho từ vựng để lấy sẵn chữ, nghĩa, hình, âm thanh cho đáp án. */
   bank: { word: string; meaningVi: string; image: string | null; audio: string | null }[];
 };
-
-const PICTURE_DIR = path.join(process.cwd(), "public", "media", "pictures");
-
-async function listPictures(): Promise<string[]> {
-  const files = await readdir(PICTURE_DIR).catch(() => [] as string[]);
-  const uploaded = await db.media.findMany({ where: { type: "image" }, select: { path: true }, orderBy: { id: "desc" }, take: 300 });
-  return [...files.filter((f) => f.endsWith(".svg")).sort().map((f) => `/media/pictures/${f}`), ...uploaded.map((m) => m.path)];
-}
 
 /** Dữ liệu soạn của một từ (kể cả bản Nháp); từ không có thì null. */
 export async function getExplorerEditor(input: unknown): Promise<ExplorerEditorData | null> {

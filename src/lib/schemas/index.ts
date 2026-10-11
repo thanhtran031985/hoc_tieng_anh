@@ -30,3 +30,4 @@ export * from "./manual-unlock";
 export * from "./word-explorer";
 export * from "./word-family";
 export * from "./admin-word-family";
+export * from "./ai-suggest";
