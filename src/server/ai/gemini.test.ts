@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { AiBusyError, AiFailedError, AiUnavailableError, generateJson, isAiAvailable } from "./gemini.ts";
+import { AiBusyError, AiFailedError, AiUnavailableError, generateJson, generateJsonWithRetry, isAiAvailable } from "./gemini.ts";
 
 const KEY = "test-key-not-real";
 const reply = (status: number, body: unknown): typeof fetch => (async () => new Response(typeof body === "string" ? body : JSON.stringify(body), { status })) as typeof fetch;
@@ -69,6 +69,31 @@ describe("gọi Gemini", () => {
     await assert.rejects(() => call(offline), /kết nối/);
     const slow = (async (_url: string, init: RequestInit) => new Promise<Response>((_, reject) => init.signal!.addEventListener("abort", () => reject(init.signal!.reason)))) as unknown as typeof fetch;
     await assert.rejects(() => call(slow, { timeoutMs: 20 }), /quá lâu/);
+  });
+
+  it("gọi lại đúng một lần khi lỗi tạm thời; không gọi lại khi bận hoặc khóa sai", async () => {
+    const sequence = (...replies: (() => Response | Promise<never>)[]) => {
+      let n = 0;
+      const fetchImpl = (async () => {
+        const next = replies[Math.min(n, replies.length - 1)];
+        n += 1;
+        return next();
+      }) as unknown as typeof fetch;
+      return { fetchImpl, calls: () => n };
+    };
+    const good = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"ok":true}' }] } }] }));
+    const flaky = sequence(() => new Response("{}", { status: 500 }), good);
+    assert.deepEqual(await generateJsonWithRetry("hi", { schema: {}, apiKey: KEY, fetchImpl: flaky.fetchImpl }), { ok: true });
+    assert.equal(flaky.calls(), 2);
+    const dead = sequence(() => new Response("{}", { status: 500 }));
+    await assert.rejects(() => generateJsonWithRetry("hi", { schema: {}, apiKey: KEY, fetchImpl: dead.fetchImpl }), AiFailedError);
+    assert.equal(dead.calls(), 2);
+    const busy = sequence(() => new Response("{}", { status: 429 }), good);
+    await assert.rejects(() => generateJsonWithRetry("hi", { schema: {}, apiKey: KEY, fetchImpl: busy.fetchImpl }), AiBusyError);
+    assert.equal(busy.calls(), 1);
+    const wrongKey = sequence(() => new Response("{}", { status: 403 }), good);
+    await assert.rejects(() => generateJsonWithRetry("hi", { schema: {}, apiKey: KEY, fetchImpl: wrongKey.fetchImpl }), AiFailedError);
+    assert.equal(wrongKey.calls(), 1);
   });
 
   it("tên model lạ bị từ chối trước khi gọi", async () => {

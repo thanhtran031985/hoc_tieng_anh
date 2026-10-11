@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AdultButton, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSegmented, AdultSelect, AdultTextarea, adultStyles, useToast } from "@/components/adult";
+import { AdultButton, AdultDialog, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSegmented, AdultSelect, AdultTextarea, adultStyles, useToast } from "@/components/adult";
 import { Icon, SpeakerButton } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { PlayStep } from "@/lib/rules/lesson-play";
@@ -22,6 +22,7 @@ import { BUILD_MIN_REAL } from "@/lib/rules/constants";
 import { FAMILY_DECOYS_MAX, FAMILY_MEMBERS_MAX, FAMILY_SENTENCES_MAX, onsetSchema, saveFamilySchema } from "@/lib/schemas";
 import type { BankWord, FamilyEditorData, FamilyEditorWord } from "@/server/admin/family";
 import { StepsPreview } from "./StepsPreview";
+import { suggestFamilyAction } from "./ai-suggest-actions";
 import { generateFamilyAudioAction, getFamilyEditorAction, saveFamilyAction, searchFamilyBankAction } from "./family-actions";
 import editor from "./explorer-editor.module.css";
 import styles from "./families.module.css";
@@ -98,6 +99,9 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
   const [making, setMaking] = useState(false);
   const [preview, setPreview] = useState<PlayStep[] | null>(null);
   const [suggest, setSuggest] = useState<{ open: boolean; query: string; loading: boolean; results: BankWord[]; picks: number[] }>({ open: false, query: "", loading: false, results: [], picks: [] });
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiConfirm, setAiConfirm] = useState(false);
+  const [aiWarnings, setAiWarnings] = useState<string[]>([]);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const payloadOf = () => ({
@@ -130,6 +134,8 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
     members: members.map((m) => ({ wordId: m.wordId, word: m.word, sameSound: m.sameSound, ipa: m.ipa })),
     reading: sentences.some((s) => s.en.trim() !== "") ? { sentences: sentences.filter((s) => s.en.trim() !== "").map((s) => ({ en: s.en, vi: s.vi })), audio: readingValid ? readingAudio : null } : null,
   });
+  // Lời nhắc của AI trừ những việc đã có trong khung “Còn … việc”.
+  const shownAiWarnings = aiWarnings.filter((w) => !issues.some((i) => i.message === w));
   const info = buildInfo(members.map((m) => ({ wordId: m.wordId, word: m.word, sameSound: m.sameSound })), pattern.trim().toLowerCase(), buildRime.trim() === "" ? null : buildRime, decoys);
   const levelNumber = data.levels.find((l) => l.id === levelId)?.number ?? 1;
   const patternKey = pattern.trim().toLowerCase();
@@ -175,6 +181,38 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
     const traps = words.filter((w) => ipaOk && !soundMatches(w.ipa, soundIpa)).length;
     toast(`Đã thêm ${words.length} từ${traps > 0 ? `, trong đó ${traps} từ khác âm thành Bẫy` : ""}.`);
     setSuggest((s) => ({ ...s, picks: [] }));
+  }
+
+  // Có nội dung đã soạn thì hỏi trước khi AI thay thế.
+  const hasContent = members.length > 0 || decoys.length > 0 || trapNote.trim() !== "" || sentences.some((s) => s.en.trim() !== "");
+
+  async function suggestWithAi() {
+    setAiConfirm(false);
+    if (!/^[a-z]{1,6}$/.test(patternKey)) {
+      touch(familyFieldId.pattern);
+      toast("Nhập vần (1–6 chữ cái a–z) trước để AI gợi ý.");
+      return;
+    }
+    setAiBusy(true);
+    try {
+      const result = await suggestFamilyAction({ pattern: patternKey });
+      if (!result.ok) {
+        toast(result.message);
+        return;
+      }
+      const d = result.data;
+      if (d.soundIpa) setSoundIpa(d.soundIpa);
+      setMembers(d.members.map((m) => ({ wordId: m.wordId, word: m.word, ipa: m.ipa, partOfSpeech: m.partOfSpeech, meaningVi: m.meaningVi, image: m.image, sameSound: m.sameSound })));
+      setDecoys(d.decoys);
+      setTrapNote(d.trapNote);
+      setSentences(d.sentences.map(toSentence));
+      setAiWarnings(d.warnings);
+      toast(`AI đã điền ${d.members.length} từ, ${d.decoys.length} chữ đầu nhiễu và ${d.sentences.length} câu (chưa lưu). Hãy đọc lại, sửa rồi bấm Lưu thay đổi.`);
+    } catch {
+      toast("Chưa gợi ý được. Kiểm tra mạng rồi thử lại nhé.");
+    } finally {
+      setAiBusy(false);
+    }
   }
 
   function addDecoy() {
@@ -309,8 +347,32 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
               <h3 className={adultStyles.h3}>
                 Từ của họ ({same.length} cùng âm{trapCount > 0 ? `, ${trapCount} bẫy` : ""})
               </h3>
-              <AdultButton label="Gợi ý từ trong kho" icon="wand" variant="secondary" size="s" onClick={() => void runSearch(suggest.query)} />
+              <span className={editor.audioBtns}>
+                <AdultButton label="Gợi ý từ trong kho" icon="wand" variant="secondary" size="s" onClick={() => void runSearch(suggest.query)} />
+                <AdultButton
+                  label={aiBusy ? "AI đang soạn…" : "Gợi ý bằng AI"}
+                  icon="wand"
+                  size="s"
+                  loading={aiBusy}
+                  disabled={!data.aiAvailable || aiBusy}
+                  title={data.aiAvailable ? "AI chọn từ cùng âm và từ Bẫy trong kho, soạn chữ đầu nhiễu, lời Bông và câu vui; bạn đọc, sửa rồi mới lưu" : "Chưa bật AI: điền GEMINI_API_KEY vào tệp .env rồi khởi động lại máy chủ"}
+                  onClick={() => (hasContent ? setAiConfirm(true) : void suggestWithAi())}
+                />
+              </span>
             </div>
+            {shownAiWarnings.length > 0 && (
+              <div className={editor.warn} role="status">
+                <h3 className={adultStyles.h3}>
+                  <Icon name="warn" size={16} /> AI nhắc bạn xem lại
+                </h3>
+                <ul>
+                  {shownAiWarnings.map((w, i) => (
+                    <li key={i}>{w}</li>
+                  ))}
+                </ul>
+                <AdultButton label="Ẩn" variant="ghost" size="s" onClick={() => setAiWarnings([])} />
+              </div>
+            )}
             <p className={cn(adultStyles.small, adultStyles.muted)}>
               Cần ít nhất {FAMILY_SAME_SOUND_MIN} từ cùng âm. Từ cùng chữ nhưng khác âm (eat, what trong họ -at) đánh dấu “Bẫy: khác âm” để bé nghe kỹ.
             </p>
@@ -505,6 +567,18 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
           )}
         </div>
       </AdultDrawer>
+
+      <AdultDialog
+        open={aiConfirm}
+        onClose={() => setAiConfirm(false)}
+        title="Thay nội dung hiện có bằng gợi ý của AI?"
+        actions={[
+          { label: "Giữ nguyên", variant: "ghost" },
+          { label: "Thay bằng gợi ý", icon: "wand", onClick: () => void suggestWithAi() },
+        ]}
+      >
+        <p className={adultStyles.body}>AI sẽ soạn lại các từ của họ -{patternKey}, chữ đầu nhiễu, lời Bông giải thích Bẫy và đoạn văn vui (vần và cấp giữ nguyên; âm IPA được điền lại nếu AI đề xuất). Giọng đọc đoạn văn cũ sẽ mất (tạo lại được). Chưa lưu gì cho đến khi bạn bấm Lưu thay đổi; bấm Hủy để bỏ hết.</p>
+      </AdultDialog>
       {preview && <StepsPreview steps={preview} level={levelNumber} onClose={() => setPreview(null)} />}
     </>
   );

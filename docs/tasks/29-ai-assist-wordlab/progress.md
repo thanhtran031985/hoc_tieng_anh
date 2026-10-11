@@ -1,13 +1,13 @@
 # Tiến độ — 29-ai-assist-wordlab — AI hỗ trợ soạn Khám phá từ và Họ vần
 
-Trạng thái chung: 🔄 · Cập nhật lần cuối: 11/10/2026
+Trạng thái chung: ✅ · Cập nhật lần cuối: 11/10/2026
 
 | Bước | Tên | Trạng thái | Ghi chú |
 |---|---|---|---|
 | 0 | Đề xuất và chốt lựa chọn (DỪNG chờ tôi) | ✅ | Gemini + `fetch` (không gói mới); thử thật 1 từ, 1 họ; chờ bạn duyệt `proposal.md` |
 | 1 | Hạ tầng gọi AI | ✅ | `gemini.ts` (fetch, thời gian chờ 40 s, tắt “suy nghĩ”), `throttle.ts` (6 lượt/phút/admin), lọc kết quả AI (hàm thuần), 34 test mới |
 | 2 | Gợi ý Khám phá từ | ✅ | Nút “Gợi ý bằng AI” ở Adult22; thử Edge với Gemini thật 5 từ (3 từ mới + 2 từ đã có nhánh); khóa sai báo thân thiện, form không mất |
-| 3 | Gợi ý Họ vần | ⬜ | |
+| 3 | Gợi ý Họ vần | ✅ | Nút “Gợi ý bằng AI” ở Adult23; thử Edge với Gemini thật 4 họ (-ous, -ack, -ound, -ear); chưa có khóa thì nút xám |
 
 ## Nhật ký
 
@@ -34,6 +34,22 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 11/10/2026
 - **Nhận xét chất lượng** (để bạn đọc lại như mọi nội dung AI): nhánh “What is next to a chair?” và “What is a pizza like?” hơi gượng; bản dịch tiếng Việt cần đọc lại. Việc “chưa có âm thanh” còn lại là bình thường (mp3 tạo sau khi lưu).
 - **Việc thủ công**: máy chủ `npm run dev` đang chạy ở cổng 3000 cần khởi động lại một lần để đọc khóa mới trong `.env` (tôi đã tắt và bật lại giúp bạn khi xong task).
 
+### Bước 3 — Gợi ý Họ vần (11/10/2026)
+- **Đã làm**: `suggestFamily` ở `src/server/admin/ai-suggest.ts` (lấy từ có thật trong kho chứa vần làm ứng viên; kho có dưới 3 từ thì không gọi AI; AI chọn Cùng âm/Bẫy, IPA, chữ đầu nhiễu, lời Bông, 2 câu vui; `cleanFamily` tính lại Cùng âm/Bẫy bằng `soundMatches`, bỏ chữ đầu nhiễu tạo từ thật), `suggestFamilyAction` (`requireAdmin()` dòng đầu), `aiAvailable` trong dữ liệu soạn họ, nút “Gợi ý bằng AI” cạnh “Gợi ý từ trong kho” ở `FamilyDrawer` (chưa nhập vần thì nhắc nhập vần; họ đã có nội dung thì hỏi xác nhận; vần và cấp giữ nguyên, âm IPA điền lại nếu AI đề xuất; hộp “AI nhắc bạn xem lại”). Thêm `generateJsonWithRetry` (lỗi tạm thời gọi lại một lần, chờ 25 giây mỗi lượt) vì một lượt -ear từng treo quá 40 giây.
+- **Kiểm tra** (Edge không đầu, DB verify, Gemini thật, `.tmp-verify/check-29-family.mjs`): 4 họ mới — -ous /əs/ (6 từ), -ack /æk/ (6 từ), -ound /aʊnd/ (4 từ + Bẫy wound kèm lời Bông), -ear /ɪə/ (ear, year, hear + Bẫy bear, pear, wear): mỗi họ 4–5 giây, mọi Cùng âm/Bẫy khớp `soundMatches`, chữ đầu nhiễu 1–3 chữ a–z và không tạo từ có trong kho, 2 câu vui kèm bản dịch, chưa ghi database trước khi lưu; Lưu Nháp được họ -ound (đủ từ) rồi xóa; họ có sẵn (-ack) hiện hộp xác nhận, “Giữ nguyên” không gọi AI. Một lượt -ous gặp 429 (đã dùng hết lượt/phút của khóa miễn phí) và hiện đúng thông báo thân thiện.
+- **Việc thủ công**: xem checklist bên dưới.
+
+### Đóng task (11/10/2026)
+- `npm test` 725/725 (35 test mới), `npx tsc --noEmit`, `npm run lint`, `npm run build` sạch. Khóa không có trong bundle client (`.next/static` chỉ có chữ “GEMINI_API_KEY” ở dòng giải thích của nút khi chưa bật AI) và không có trong mã nguồn/git.
+- Không có spec Playwright (xem `decisions.md`). Kiểm bằng Edge không đầu với Gemini thật ở Bước 2 và 3.
+- Chưa bật khóa: cả hai nút xám kèm giải thích (kiểm ở Khám phá từ). Khóa sai: thông báo thân thiện, form giữ nguyên.
+
+## Checklist test thủ công
+- [ ] Khởi động lại `npm run dev` (máy chủ đọc `GEMINI_API_KEY` lúc khởi động; tôi đã khởi động lại cổng 3000 giúp bạn), mở Quản trị › Ngân hàng từ vựng › Sửa Khám phá của một từ chưa có nhánh, bấm “Gợi ý bằng AI” (mất 5–10 giây), đọc 5 nhánh và bản dịch, sửa rồi Lưu thay đổi.
+- [ ] Mở Họ vần › Thêm họ vần, nhập vần (vd `ous`), bấm “Gợi ý bằng AI”, xem từ cùng âm, Bẫy, chữ đầu nhiễu, lời Bông, câu vui.
+- [ ] Đọc kỹ bản dịch tiếng Việt và các nhánh gượng (AI chỉ nháp, không tự lưu).
+- [ ] **Tạo lại khóa Gemini** ở Google AI Studio (khóa từng dán trong khung chat) rồi sửa dòng `GEMINI_API_KEY` trong `.env`; khởi động lại máy chủ.
+
 ## Bước tiếp theo
 
-Bước 3 — Gợi ý Họ vần (`suggestFamily`, nút ở ngăn kéo Adult23).
+Hoàn thành. Task kế tiếp theo thứ tự: `900-real-db-finalize` (làm sau, theo yêu cầu của bạn).

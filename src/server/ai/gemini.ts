@@ -20,14 +20,18 @@ export class AiBusyError extends Error {
 
 /** Gọi AI không thành công vì lý do khác (khóa sai, mạng, hết thời gian chờ, kết quả hỏng). `message` đã thân thiện, hiện thẳng cho người soạn. */
 export class AiFailedError extends Error {
-  constructor(message: string) {
+  /** Lỗi tạm thời (quá lâu, mất mạng, AI sự cố, dữ liệu hỏng): gọi lại một lần có thể được. Khóa sai thì không. */
+  readonly retriable: boolean;
+  constructor(message: string, retriable = false) {
     super(message);
     this.name = "AiFailedError";
+    this.retriable = retriable;
   }
 }
 
 const DEFAULT_MODEL = "gemini-flash-latest";
-const DEFAULT_TIMEOUT_MS = 40_000;
+// Một lượt thường mất 4–13 giây; thỉnh thoảng Gemini treo nên chờ ngắn rồi gọi lại (xem `generateJsonWithRetry`).
+const DEFAULT_TIMEOUT_MS = 25_000;
 const ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const apiKeyFromEnv = (): string => process.env.GEMINI_API_KEY?.trim() ?? "";
@@ -85,7 +89,7 @@ export async function generateJson(prompt: string, options: GenerateJsonOptions)
     const timedOut = error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
     // Chỉ ghi tên lỗi, không ghi nội dung yêu cầu (có khóa trong tiêu đề).
     console.error("gọi AI:", error instanceof Error ? error.name : "lỗi lạ");
-    throw new AiFailedError(timedOut ? "AI trả lời quá lâu. Thử lại nhé." : "Không kết nối được tới AI. Kiểm tra mạng rồi thử lại.");
+    throw new AiFailedError(timedOut ? "AI trả lời quá lâu. Thử lại nhé." : "Không kết nối được tới AI. Kiểm tra mạng rồi thử lại.", true);
   }
 
   if (response.status === 429 || response.status === 503) throw new AiBusyError();
@@ -95,20 +99,30 @@ export async function generateJson(prompt: string, options: GenerateJsonOptions)
   }
   if (!response.ok) {
     console.error("gọi AI: HTTP", response.status);
-    throw new AiFailedError("AI đang gặp sự cố. Thử lại sau nhé.");
+    throw new AiFailedError("AI đang gặp sự cố. Thử lại sau nhé.", true);
   }
 
   let body: GeminiBody;
   try {
     body = (await response.json()) as GeminiBody;
   } catch {
-    throw new AiFailedError("AI trả về dữ liệu hỏng. Thử lại nhé.");
+    throw new AiFailedError("AI trả về dữ liệu hỏng. Thử lại nhé.", true);
   }
   const text = body.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-  if (!text.trim()) throw new AiFailedError(body.promptFeedback?.blockReason ? "AI không trả lời yêu cầu này. Thử từ khác nhé." : "AI không trả kết quả. Thử lại nhé.");
+  if (!text.trim()) throw new AiFailedError(body.promptFeedback?.blockReason ? "AI không trả lời yêu cầu này. Thử từ khác nhé." : "AI không trả kết quả. Thử lại nhé.", !body.promptFeedback?.blockReason);
   try {
     return JSON.parse(text) as unknown;
   } catch {
-    throw new AiFailedError("AI trả về dữ liệu hỏng. Thử lại nhé.");
+    throw new AiFailedError("AI trả về dữ liệu hỏng. Thử lại nhé.", true);
+  }
+}
+
+/** Như `generateJson` nhưng gặp lỗi tạm thời (treo, mạng chập chờn, dữ liệu hỏng) thì gọi lại đúng một lần. 429 và khóa sai không gọi lại. */
+export async function generateJsonWithRetry(prompt: string, options: GenerateJsonOptions): Promise<unknown> {
+  try {
+    return await generateJson(prompt, options);
+  } catch (error) {
+    if (error instanceof AiFailedError && error.retriable) return generateJson(prompt, options);
+    throw error;
   }
 }

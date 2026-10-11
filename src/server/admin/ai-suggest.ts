@@ -1,6 +1,6 @@
 import { cleanExplorer, cleanFamily, explorerPrompt, familyPrompt, libraryPictureKeys, EXPLORER_RESPONSE_SCHEMA, FAMILY_RESPONSE_SCHEMA } from "@/lib/rules/ai-suggest";
 import { suggestExplorerInputSchema, suggestFamilyInputSchema, type SuggestResult, type SuggestedExplorer, type SuggestedFamily } from "@/lib/schemas/ai-suggest";
-import { AiBusyError, AiFailedError, AiUnavailableError, generateJson, isAiAvailable } from "../ai/gemini";
+import { AiBusyError, AiFailedError, AiUnavailableError, generateJsonWithRetry, isAiAvailable } from "../ai/gemini";
 import { aiThrottle } from "../ai/throttle";
 import { db } from "../db";
 import { searchBankWords } from "./family";
@@ -40,10 +40,10 @@ export async function suggestExplorer(input: unknown, adminId: number): Promise<
   const base = { word: word.word, ipa: word.ipa, meaningVi: word.meaningVi, level: word.level.number, pictureKeys, set: parsed.data.set };
 
   try {
-    let best = cleanExplorer(await generateJson(explorerPrompt(base), { schema: EXPLORER_RESPONSE_SCHEMA }), ctx);
+    let best = cleanExplorer(await generateJsonWithRetry(explorerPrompt(base), { schema: EXPLORER_RESPONSE_SCHEMA }), ctx);
     if (best && best.outOfLevel.length > 0) {
       try {
-        const again = cleanExplorer(await generateJson(explorerPrompt({ ...base, avoid: best.outOfLevel }), { schema: EXPLORER_RESPONSE_SCHEMA }), ctx);
+        const again = cleanExplorer(await generateJsonWithRetry(explorerPrompt({ ...base, avoid: best.outOfLevel }), { schema: EXPLORER_RESPONSE_SCHEMA }), ctx);
         if (again && again.outOfLevel.length < best.outOfLevel.length) best = again;
       } catch (error) {
         describe(error); // lần gọi lại hỏng thì giữ kết quả đầu (lỗi lạ vẫn ném)
@@ -73,7 +73,7 @@ export async function suggestFamily(input: unknown, adminId: number): Promise<Su
   const levels = await db.word.findMany({ where: { id: { in: candidates.map((c) => c.wordId) } }, select: { id: true, level: { select: { number: true } } } });
   const levelOf = new Map(levels.map((w) => [w.id, w.level.number]));
   try {
-    const raw = await generateJson(familyPrompt({ pattern, candidates: candidates.map((c) => ({ word: c.word, ipa: c.ipa, level: levelOf.get(c.wordId) ?? 1 })) }), { schema: FAMILY_RESPONSE_SCHEMA });
+    const raw = await generateJsonWithRetry(familyPrompt({ pattern, candidates: candidates.map((c) => ({ word: c.word, ipa: c.ipa, level: levelOf.get(c.wordId) ?? 1 })) }), { schema: FAMILY_RESPONSE_SCHEMA });
     const data = cleanFamily(raw, { pattern, candidates });
     if (!data) return fail("AI chưa trả về họ vần nào dùng được. Thử lại nhé.");
     return { ok: true, data };
