@@ -1,4 +1,4 @@
-# 29 — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7)
+# 999 — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7)
 
 > Quy trình làm việc và quy tắc code: xem `CLAUDE.md`.
 > Nguồn: `docs/test/bao-cao-test.md` (bộ test Playwright chạy 09/10/2026). Task này sửa **lỗi 1–7**.

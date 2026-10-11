@@ -1,4 +1,4 @@
-# Quyết định — 29-fix-ui-findings
+# Quyết định — 999-fix-ui-findings
 
 ### 09/10/2026 — Lỗi 1 dùng `retry` của Next thay vì `router.refresh()`
 - Bối cảnh: báo cáo test đề xuất thêm `router.refresh()`. Next 16.3.8 có sẵn prop `retry()` cho `error.tsx` (tài liệu trong `node_modules/next/dist/docs/.../error.md`): lấy lại dữ liệu rồi vẽ lại; `reset()` chỉ vẽ lại.
@@ -38,6 +38,6 @@
 - Lưu ý: các yêu cầu tải trước (prefetch) đang chạy dở với cookie cũ có thể làm cookie sống lại vài giây; lần vào trang bảo vệ kế tiếp tự xóa lại, không lặp. Test kiểm cả hai điều này.
 - Lỗi 11: `use-mic-test.ts` thêm trạng thái `insecure` (`!window.isSecureContext`), `StepAudio.tsx` hiện "Mở web bằng localhost hoặc https" thay vì "bấm Cho phép".
 
-### 09/10/2026 — Tổng kết task 29
+### 09/10/2026 — Tổng kết task 999
 - Khác với task.md gốc: (1) 19 tệp `error.tsx` thay vì 16, dùng `retry` có sẵn của Next thay vì `router.refresh()`; (2) thêm lỗi 10 và 11 theo yêu cầu; (3) thêm `allowedDevOrigins` cho `next.config.ts`, nới luật mật khẩu mới ở Khu bố mẹ, `eslint.config.mjs` bỏ qua thư mục báo cáo test; (4) áp dụng gói thiết kế GĐ2 và tài liệu task 13–28 trong cùng nhánh (commit riêng).
 - Còn lại: lỗi 8 (từ chưa có hình) và 9 (câu "ôn hết từ đến hạn" cho bé mới) chưa sửa, chờ bạn quyết; test token màu của `01-nen-tang` đỏ 108 token GĐ2 cho tới task 13.

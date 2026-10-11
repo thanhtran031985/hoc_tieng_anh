@@ -1,6 +1,6 @@
 # Báo cáo test giao diện tự động — task 01 đến 12
 
-> **Cập nhật sau task 29 (09/10/2026):** lỗi 1–7 đã sửa; chạy lại `npm run test:e2e` được 410 đạt, 1 hỏng (token GĐ2, chờ task 13), 44 bỏ qua. Lỗi 8, 9 chưa sửa (chờ quyết). Nội dung bên dưới là kết quả lần chạy đầu (trước khi sửa).
+> **Cập nhật sau task 999 (09/10/2026):** lỗi 1–7 đã sửa; chạy lại `npm run test:e2e` được 410 đạt, 1 hỏng (token GĐ2, chờ task 13), 44 bỏ qua. Lỗi 8, 9 chưa sửa (chờ quyết). Nội dung bên dưới là kết quả lần chạy đầu (trước khi sửa).
 
 Chạy ngày 09/10/2026 bằng `npm run test:e2e` (Chrome 155, database `hoc_tieng_anh_test`, bản build production, 33,8 phút). Cách chạy lại: xem `docs/test/README.md`.
 
@@ -95,7 +95,7 @@ Xem `docs/test/so-sanh-thiet-ke.html` (31 màn, trái thiết kế, phải màn 
 
 Sửa **lỗi số 1** (nút "Thử lại" không tải lại dữ liệu) trước vì nó ảnh hưởng 16 màn và là lúc bé hoặc bố mẹ đang gặp sự cố; cách sửa chung cho cả 16 tệp `error.tsx`. Các lỗi còn lại đều nhỏ, có thể gộp vào một lần dọn.
 
-Đề xuất (bạn quyết, tôi không tự sửa `docs/tasks/README.md`): tạo **task 29 — sửa lỗi giao diện sau rà soát test tự động** ở cuối danh sách, gồm lỗi 1 (quan trọng), rồi 2–9. task 29 nên chạy lại `npm run test:e2e` làm phần kiểm tra cuối.
+Đề xuất (bạn quyết, tôi không tự sửa `docs/tasks/README.md`): tạo **task 999 — sửa lỗi giao diện sau rà soát test tự động** ở cuối danh sách, gồm lỗi 1 (quan trọng), rồi 2–9. task 29 nên chạy lại `npm run test:e2e` làm phần kiểm tra cuối.
 
 ## 7. Thay đổi ngoài code test (cấu hình kho)
 
