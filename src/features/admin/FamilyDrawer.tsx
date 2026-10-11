@@ -22,7 +22,7 @@ import { BUILD_MIN_REAL } from "@/lib/rules/constants";
 import { FAMILY_DECOYS_MAX, FAMILY_MEMBERS_MAX, FAMILY_SENTENCES_MAX, onsetSchema, saveFamilySchema } from "@/lib/schemas";
 import type { BankWord, FamilyEditorData, FamilyEditorWord } from "@/server/admin/family";
 import { StepsPreview } from "./StepsPreview";
-import { suggestFamilyAction } from "./ai-suggest-actions";
+import { suggestFamilyAction, suggestFamilySentencesAction } from "./ai-suggest-actions";
 import { generateFamilyAudioAction, getFamilyEditorAction, saveFamilyAction, searchFamilyBankAction } from "./family-actions";
 import editor from "./explorer-editor.module.css";
 import styles from "./families.module.css";
@@ -102,6 +102,10 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
   const [aiBusy, setAiBusy] = useState(false);
   const [aiConfirm, setAiConfirm] = useState(false);
   const [aiWarnings, setAiWarnings] = useState<string[]>([]);
+  // Gợi ý riêng phần câu (task 31).
+  const [sentBusy, setSentBusy] = useState(false);
+  const [sentConfirm, setSentConfirm] = useState(false);
+  const [sentWarnings, setSentWarnings] = useState<string[]>([]);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const payloadOf = () => ({
@@ -136,6 +140,7 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
   });
   // Lời nhắc của AI trừ những việc đã có trong khung “Còn … việc”.
   const shownAiWarnings = aiWarnings.filter((w) => !issues.some((i) => i.message === w));
+  const shownSentWarnings = sentWarnings.filter((w) => !issues.some((i) => i.message === w));
   const info = buildInfo(members.map((m) => ({ wordId: m.wordId, word: m.word, sameSound: m.sameSound })), pattern.trim().toLowerCase(), buildRime.trim() === "" ? null : buildRime, decoys);
   const levelNumber = data.levels.find((l) => l.id === levelId)?.number ?? 1;
   const patternKey = pattern.trim().toLowerCase();
@@ -212,6 +217,28 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
       toast("Chưa gợi ý được. Kiểm tra mạng rồi thử lại nhé.");
     } finally {
       setAiBusy(false);
+    }
+  }
+
+  const hasSentences = sentences.some((s) => s.en.trim() !== "" || s.vi.trim() !== "");
+  const sentenceAiWhy = !data.aiAvailable ? "Chưa bật AI: điền GEMINI_API_KEY vào tệp .env rồi khởi động lại máy chủ" : same.length === 0 ? "Thêm ít nhất một từ cùng âm vào họ để AI viết câu" : undefined;
+
+  async function suggestSentences() {
+    setSentConfirm(false);
+    setSentBusy(true);
+    try {
+      const result = await suggestFamilySentencesAction({ pattern: patternKey, soundIpa: soundIpa.trim(), levelId, members: members.map((m) => ({ wordId: m.wordId, sameSound: m.sameSound })) });
+      if (!result.ok) {
+        toast(result.message);
+        return;
+      }
+      setSentences(result.data.sentences.map(toSentence));
+      setSentWarnings(result.data.warnings);
+      toast(`AI đã viết ${result.data.sentences.length} câu (chưa lưu). Hãy đọc lại, sửa rồi bấm Lưu thay đổi.`);
+    } catch {
+      toast("Chưa gợi ý được. Kiểm tra mạng rồi thử lại nhé.");
+    } finally {
+      setSentBusy(false);
     }
   }
 
@@ -514,8 +541,33 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
               <h3 className={adultStyles.h3}>
                 Đoạn văn vui “Đọc cả đoạn” ({sentences.length}/{FAMILY_SENTENCES_MAX} câu)
               </h3>
-              <AdultButton label="Thêm câu" icon="plus" variant="secondary" size="s" disabled={sentences.length >= FAMILY_SENTENCES_MAX} onClick={() => setSentences((list) => [...list, toSentence({ en: "", vi: "" })])} />
+              <span className={editor.audioBtns}>
+                <AdultButton
+                  label={sentBusy ? "AI đang viết…" : "Gợi ý câu bằng AI"}
+                  icon="wand"
+                  variant="secondary"
+                  size="s"
+                  loading={sentBusy}
+                  disabled={sentenceAiWhy !== undefined || sentBusy}
+                  title={sentenceAiWhy ?? "AI viết 2–3 câu vui dùng các từ trong họ, kèm bản dịch; bạn đọc, sửa rồi mới lưu"}
+                  onClick={() => (hasSentences ? setSentConfirm(true) : void suggestSentences())}
+                />
+                <AdultButton label="Thêm câu" icon="plus" variant="secondary" size="s" disabled={sentences.length >= FAMILY_SENTENCES_MAX} onClick={() => setSentences((list) => [...list, toSentence({ en: "", vi: "" })])} />
+              </span>
             </div>
+            {shownSentWarnings.length > 0 && (
+              <div className={editor.warn} role="status">
+                <h3 className={adultStyles.h3}>
+                  <Icon name="warn" size={16} /> AI nhắc bạn xem lại các câu
+                </h3>
+                <ul>
+                  {shownSentWarnings.map((w, i) => (
+                    <li key={i}>{w}</li>
+                  ))}
+                </ul>
+                <AdultButton label="Ẩn" variant="ghost" size="s" onClick={() => setSentWarnings([])} />
+              </div>
+            )}
             {sentences.length === 0 ? (
               <p className={cn(adultStyles.small, adultStyles.muted)}>Thêm 1–{FAMILY_SENTENCES_MAX} câu vui dùng các từ trong họ (The fat cat sat on a mat.), mỗi câu kèm bản dịch.</p>
             ) : (
@@ -578,6 +630,17 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
         ]}
       >
         <p className={adultStyles.body}>AI sẽ soạn lại các từ của họ -{patternKey}, chữ đầu nhiễu, lời Bông giải thích Bẫy và đoạn văn vui (vần và cấp giữ nguyên; âm IPA được điền lại nếu AI đề xuất). Giọng đọc đoạn văn cũ sẽ mất (tạo lại được). Chưa lưu gì cho đến khi bạn bấm Lưu thay đổi; bấm Hủy để bỏ hết.</p>
+      </AdultDialog>
+      <AdultDialog
+        open={sentConfirm}
+        onClose={() => setSentConfirm(false)}
+        title="Thay các câu hiện có bằng gợi ý của AI?"
+        actions={[
+          { label: "Giữ nguyên", variant: "ghost" },
+          { label: "Thay bằng gợi ý", icon: "wand", onClick: () => void suggestSentences() },
+        ]}
+      >
+        <p className={adultStyles.body}>AI sẽ viết lại các câu của đoạn văn vui dựa trên các từ đang có trong họ -{patternKey}; từ, chữ đầu nhiễu và lời Bông giữ nguyên. Giọng đọc đoạn văn cũ sẽ mất (tạo lại được). Chưa lưu gì cho đến khi bạn bấm Lưu thay đổi; bấm Hủy để bỏ hết.</p>
       </AdultDialog>
       {preview && <StepsPreview steps={preview} level={levelNumber} onClose={() => setPreview(null)} />}
     </>

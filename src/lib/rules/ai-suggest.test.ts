@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { suggestFamilySentencesInputSchema } from "../schemas/ai-suggest.ts";
 import { allowedTokensFor } from "./vocab-check.ts";
 import { cleanExplorer, cleanFamily, cleanFamilySentences, explorerPrompt, familyPrompt, familySentencesPrompt, libraryPictureKeys, pictureKeyOf, pictureUrlOf, type ExplorerFilterContext, type FamilyCandidate } from "./ai-suggest.ts";
 
@@ -330,5 +331,37 @@ describe("cleanFamilySentences", () => {
     const out = cleanFamilySentences({ sentences: [{ en: "A famous cat.", vi: 7 }] }, fctx);
     assert.ok(out);
     assert.equal(out.data.sentences[0].vi, "");
+  });
+});
+
+describe("suggestFamilySentencesInputSchema", () => {
+  const ok = { pattern: "ous", soundIpa: "/əs/", levelId: 4, members: [{ wordId: 1, sameSound: true }, { wordId: 2, sameSound: false }] };
+
+  it("nhận đầu vào đúng và chuẩn hóa vần", () => {
+    const r = suggestFamilySentencesInputSchema.safeParse({ ...ok, pattern: " OUS " });
+    assert.ok(r.success);
+    assert.equal(r.data.pattern, "ous");
+  });
+
+  it("âm IPA có thể trống", () => {
+    const r = suggestFamilySentencesInputSchema.safeParse({ ...ok, soundIpa: undefined });
+    assert.ok(r.success);
+    assert.equal(r.data.soundIpa, "");
+  });
+
+  it("từ chối họ không có từ nào, không có từ cùng âm, từ trùng, vần sai, cấp sai", () => {
+    for (const bad of [
+      { ...ok, members: [] },
+      { ...ok, members: [{ wordId: 2, sameSound: false }] },
+      { ...ok, members: [{ wordId: 1, sameSound: true }, { wordId: 1, sameSound: false }] },
+      { ...ok, pattern: "o-u" },
+      { ...ok, levelId: 0 },
+      { ...ok, members: [{ wordId: -1, sameSound: true }] },
+    ]) assert.equal(suggestFamilySentencesInputSchema.safeParse(bad).success, false, JSON.stringify(bad));
+  });
+
+  it("tối đa 24 từ", () => {
+    const many = Array.from({ length: 25 }, (_, i) => ({ wordId: i + 1, sameSound: true }));
+    assert.equal(suggestFamilySentencesInputSchema.safeParse({ ...ok, members: many }).success, false);
   });
 });

@@ -1,8 +1,8 @@
 "use server";
 
 import { requireAdmin } from "@/server/admin-gate";
-import { suggestExplorer, suggestFamily } from "@/server/admin/ai-suggest";
-import type { SuggestResult, SuggestedExplorer, SuggestedFamily } from "@/lib/schemas";
+import { suggestExplorer, suggestFamily, suggestFamilySentences } from "@/server/admin/ai-suggest";
+import type { SuggestResult, SuggestedExplorer, SuggestedFamily, SuggestedFamilySentences } from "@/lib/schemas";
 
 // Server action của nút “Gợi ý bằng AI” (task 29): gọi `requireAdmin()` ở dòng đầu (không dựa vào layout), rồi hàm ở server (kiểm Zod,
 // giới hạn lượt theo quản trị viên). Chỉ trả gợi ý để điền vào form, không ghi gì vào database.
@@ -25,6 +25,16 @@ export async function suggestFamilyAction(input: unknown): Promise<SuggestResult
     return await suggestFamily(input, admin.id);
   } catch (error) {
     console.error("gợi ý Họ vần bằng AI:", error);
+    return FAILED;
+  }
+}
+
+export async function suggestFamilySentencesAction(input: unknown): Promise<SuggestResult<SuggestedFamilySentences>> {
+  const admin = await requireAdmin();
+  try {
+    return await suggestFamilySentences(input, admin.id);
+  } catch (error) {
+    console.error("gợi ý câu Họ vần bằng AI:", error);
     return FAILED;
   }
 }

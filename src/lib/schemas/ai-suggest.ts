@@ -12,15 +12,18 @@ export const questionSetKeySchema = z.enum(QUESTION_SET_KEYS);
 export const suggestExplorerInputSchema = z.object({ wordId: z.number().int().positive(), set: questionSetKeySchema.optional() });
 export const suggestFamilyInputSchema = z.object({ pattern: familyPatternSchema });
 
-/** Gợi ý câu cho đoạn văn vui của một họ (task 31): vần, cấp của họ và mã các từ đang có trong họ (server tự nạp chữ, IPA, nghĩa từ database). */
+/** Gợi ý câu cho đoạn văn vui của một họ (task 31): vần, âm, cấp của họ và các từ đang có trong họ (server tự nạp chữ, IPA, nghĩa từ database theo mã từ). */
 export const suggestFamilySentencesInputSchema = z.object({
   pattern: familyPatternSchema,
+  /** Âm IPA đang nhập ở form (có thể trống hoặc chưa đúng dạng: chỉ để AI biết vần đọc thế nào). */
+  soundIpa: z.string().trim().max(40).default(""),
   levelId: z.number().int().positive(),
-  wordIds: z
-    .array(z.number().int().positive())
+  members: z
+    .array(z.object({ wordId: z.number().int().positive(), sameSound: z.boolean() }))
     .min(1, "Họ cần có ít nhất một từ để AI viết câu.")
     .max(FAMILY_MEMBERS_MAX)
-    .refine((ids) => new Set(ids).size === ids.length, "Có từ bị chọn hai lần."),
+    .refine((list) => new Set(list.map((m) => m.wordId)).size === list.length, "Có từ bị chọn hai lần.")
+    .refine((list) => list.some((m) => m.sameSound), "Cần ít nhất một từ cùng âm để AI viết câu."),
 });
 
 const str = z

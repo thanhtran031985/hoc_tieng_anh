@@ -1,5 +1,5 @@
-import { cleanExplorer, cleanFamily, explorerPrompt, familyPrompt, libraryPictureKeys, EXPLORER_RESPONSE_SCHEMA, FAMILY_RESPONSE_SCHEMA } from "@/lib/rules/ai-suggest";
-import { suggestExplorerInputSchema, suggestFamilyInputSchema, type SuggestResult, type SuggestedExplorer, type SuggestedFamily } from "@/lib/schemas/ai-suggest";
+import { cleanExplorer, cleanFamily, cleanFamilySentences, explorerPrompt, familyPrompt, familySentencesPrompt, libraryPictureKeys, EXPLORER_RESPONSE_SCHEMA, FAMILY_RESPONSE_SCHEMA, FAMILY_SENTENCES_RESPONSE_SCHEMA } from "@/lib/rules/ai-suggest";
+import { suggestExplorerInputSchema, suggestFamilyInputSchema, suggestFamilySentencesInputSchema, type SuggestResult, type SuggestedExplorer, type SuggestedFamily, type SuggestedFamilySentences } from "@/lib/schemas/ai-suggest";
 import { AiBusyError, AiFailedError, AiUnavailableError, generateJsonWithRetry, isAiAvailable } from "../ai/gemini";
 import { aiThrottle } from "../ai/throttle";
 import { db } from "../db";
@@ -77,6 +77,46 @@ export async function suggestFamily(input: unknown, adminId: number): Promise<Su
     const data = cleanFamily(raw, { pattern, candidates });
     if (!data) return fail("AI chưa trả về họ vần nào dùng được. Thử lại nhé.");
     return { ok: true, data };
+  } catch (error) {
+    return describe(error);
+  }
+}
+
+/**
+ * Gợi ý 2–3 câu vui (kèm dịch) cho đoạn văn của một họ, từ các từ đang có trong họ (task 31). Chữ, IPA và nghĩa của từ do server nạp
+ * từ database theo mã từ, không tin chữ do client gửi. Có chữ ngoài cấp thì gọi lại đúng một lần kèm danh sách chữ cần tránh.
+ */
+export async function suggestFamilySentences(input: unknown, adminId: number): Promise<SuggestResult<SuggestedFamilySentences>> {
+  const parsed = suggestFamilySentencesInputSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Dữ liệu chưa hợp lệ.");
+  const { pattern, soundIpa, levelId, members } = parsed.data;
+  const blocked = allowCall(adminId);
+  if (blocked) return blocked;
+
+  const [level, words] = await Promise.all([
+    db.level.findUnique({ where: { id: levelId }, select: { number: true } }),
+    db.word.findMany({ where: { id: { in: members.map((m) => m.wordId) } }, select: { id: true, word: true, ipa: true, meaningVi: true } }),
+  ]);
+  if (!level) return fail("Cấp này không còn nữa. Hãy tải lại trang.");
+  const wordOf = new Map(words.map((w) => [w.id, w]));
+  if (members.some((m) => !wordOf.has(m.wordId))) return fail("Có từ không còn trong kho từ vựng. Hãy tải lại trang.");
+  const family = members.map((m) => ({ word: wordOf.get(m.wordId)!.word, ipa: wordOf.get(m.wordId)!.ipa, meaningVi: wordOf.get(m.wordId)!.meaningVi, sameSound: m.sameSound }));
+
+  const allowed = await allowedTokensUpToLevel(level.number);
+  const ctx = { members: family, allowed };
+  const base = { pattern, soundIpa: /^\/[^/\s][^/]*\/$/.test(soundIpa) ? soundIpa : null, level: level.number, members: family };
+  try {
+    let best = cleanFamilySentences(await generateJsonWithRetry(familySentencesPrompt(base), { schema: FAMILY_SENTENCES_RESPONSE_SCHEMA }), ctx);
+    if (best && best.outOfLevel.length > 0) {
+      try {
+        const again = cleanFamilySentences(await generateJsonWithRetry(familySentencesPrompt({ ...base, avoid: best.outOfLevel }), { schema: FAMILY_SENTENCES_RESPONSE_SCHEMA }), ctx);
+        if (again && again.outOfLevel.length < best.outOfLevel.length) best = again;
+      } catch (error) {
+        describe(error); // lần gọi lại hỏng thì giữ kết quả đầu (lỗi lạ vẫn ném)
+      }
+    }
+    if (!best) return fail("AI chưa trả về câu nào dùng được. Thử lại nhé.");
+    return { ok: true, data: best.data };
   } catch (error) {
     return describe(error);
   }
