@@ -44,6 +44,10 @@ Trạng thái chung: ✅ · Cập nhật lần cuối: 11/10/2026
 - Không có spec Playwright (xem `decisions.md`). Kiểm bằng Edge không đầu với Gemini thật ở Bước 2 và 3.
 - Chưa bật khóa: cả hai nút xám kèm giải thích (kiểm ở Khám phá từ). Khóa sai: thông báo thân thiện, form giữ nguyên.
 
+### Sửa sau khi đóng task (11/10/2026): hết hạn mức miễn phí
+- Người dùng thử thì báo “AI đang bận hoặc hết hạn mức”. Chẩn đoán bằng một lệnh gọi nhỏ: HTTP 429, `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, giới hạn 20 lượt/ngày cho model `gemini-3.8-flash` (bí danh của `gemini-flash-latest`), còn chờ khoảng 22 giờ; do lúc thử tôi đã dùng gần hết.
+- Sửa: `GEMINI_MODEL` có thể liệt kê nhiều model và tự chuyển model kế khi hết hạn mức ngày, cộng thêm 4 model mặc định (xem `decisions.md`); thông báo hết hạn mức ngày riêng. Test mới trong `gemini.test.ts` (726 test đạt). Với `.env` hiện tại (vẫn ghi `gemini-flash-latest`) AI chạy được ngay vì tự chuyển sang model mặc định.
+
 ## Checklist test thủ công
 - [ ] Khởi động lại `npm run dev` (máy chủ đọc `GEMINI_API_KEY` lúc khởi động; tôi đã khởi động lại cổng 3000 giúp bạn), mở Quản trị › Ngân hàng từ vựng › Sửa Khám phá của một từ chưa có nhánh, bấm “Gợi ý bằng AI” (mất 5–10 giây), đọc 5 nhánh và bản dịch, sửa rồi Lưu thay đổi.
 - [ ] Mở Họ vần › Thêm họ vần, nhập vần (vd `ous`), bấm “Gợi ý bằng AI”, xem từ cùng âm, Bẫy, chữ đầu nhiễu, lời Bông, câu vui.

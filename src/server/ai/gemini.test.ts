@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { AiBusyError, AiFailedError, AiUnavailableError, generateJson, generateJsonWithRetry, isAiAvailable } from "./gemini.ts";
+import { AiBusyError, AiFailedError, AiQuotaError, AiUnavailableError, generateJson, generateJsonWithRetry, isAiAvailable } from "./gemini.ts";
 
 const KEY = "test-key-not-real";
 const reply = (status: number, body: unknown): typeof fetch => (async () => new Response(typeof body === "string" ? body : JSON.stringify(body), { status })) as typeof fetch;
 const ok = (text: string) => reply(200, { candidates: [{ content: { parts: [{ text }] } }] });
+const sequenceOnce = () => {
+  let n = 0;
+  return { fetchImpl: (async () => (n++, new Response(JSON.stringify({ error: { message: "per minute" } }), { status: 429 }))) as unknown as typeof fetch, calls: () => n };
+};
 const call = (fetchImpl: typeof fetch, extra = {}) => generateJson("hi", { schema: { type: "OBJECT" }, apiKey: KEY, fetchImpl, ...extra });
 
 describe("gọi Gemini", () => {
@@ -94,6 +98,22 @@ describe("gọi Gemini", () => {
     const wrongKey = sequence(() => new Response("{}", { status: 403 }), good);
     await assert.rejects(() => generateJsonWithRetry("hi", { schema: {}, apiKey: KEY, fetchImpl: wrongKey.fetchImpl }), AiFailedError);
     assert.equal(wrongKey.calls(), 1);
+  });
+
+  it("hết hạn mức ngày thì thử model kế trong GEMINI_MODEL; hết cả thì báo hết hạn mức", async () => {
+    const urls: string[] = [];
+    const day = JSON.stringify({ error: { details: [{ violations: [{ quotaId: "GenerateRequestsPerDayPerProjectPerModel-FreeTier" }] }] } });
+    const fetchImpl = (async (url: string) => {
+      urls.push(url);
+      return url.includes("model-a") ? new Response(day, { status: 429 }) : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: "{\"m\":\"b\"}" }] } }] }));
+    }) as unknown as typeof fetch;
+    assert.deepEqual(await call(fetchImpl, { model: "model-a, model-b" }), { m: "b" });
+    assert.ok(urls[0].includes("model-a") && urls[1].includes("model-b"));
+    await assert.rejects(() => call(reply(429, day), { model: "model-a,model-a2" }), AiQuotaError);
+    // 429 theo phút thì không đổi model: chỉ báo bận.
+    const perMinute = sequenceOnce();
+    await assert.rejects(() => call(perMinute.fetchImpl, { model: "model-x,model-y" }), (e: unknown) => e instanceof AiBusyError && !(e instanceof AiQuotaError));
+    assert.equal(perMinute.calls(), 1);
   });
 
   it("tên model lạ bị từ chối trước khi gọi", async () => {
