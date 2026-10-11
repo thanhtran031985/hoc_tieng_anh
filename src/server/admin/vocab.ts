@@ -1,3 +1,4 @@
+import { groupFamiliesByWord, type WordFamilyRef } from "@/lib/rules/admin-vocab";
 import { audioKey } from "@/lib/rules/tts";
 import { saveWordSchema } from "@/lib/schemas/admin-vocab";
 import { getVoiceMp3Enabled } from "../app-settings";
@@ -26,6 +27,8 @@ export type VocabRow = {
   exampleAudio: string | null;
   /** Khám phá từ (task 25): số nhánh và trạng thái (đã xuất bản khi mọi nhánh đã xuất bản); null là chưa có. */
   explorer: { count: number; status: "draft" | "published" } | null;
+  /** Họ vần của từ (task 30): các họ mà từ là thành viên, Cùng âm trước Bẫy; rỗng là chưa thuộc họ nào. */
+  families: WordFamilyRef[];
 };
 
 export type VocabData = {
@@ -40,7 +43,7 @@ export type VocabData = {
 };
 
 export async function getVocab(): Promise<VocabData> {
-  const [words, levels, units, mp3Enabled, ttsAvailable, explorerRows] = await Promise.all([
+  const [words, levels, units, mp3Enabled, ttsAvailable, explorerRows, familyRows] = await Promise.all([
     db.word.findMany({
       orderBy: [{ level: { number: "asc" } }, { id: "asc" }],
       select: {
@@ -64,7 +67,10 @@ export async function getVocab(): Promise<VocabData> {
     getVoiceMp3Enabled(),
     isTtsAvailable(),
     db.wordQuestion.groupBy({ by: ["wordId", "status"], _count: { _all: true } }),
+    // Một truy vấn cho cả bảng (không truy vấn theo từng hàng).
+    db.wordFamilyMember.findMany({ select: { wordId: true, sameSound: true, family: { select: { id: true, pattern: true, soundIpa: true, status: true } } } }),
   ]);
+  const familiesOf = groupFamiliesByWord(familyRows);
   const explorerOf = new Map<number, { count: number; published: number }>();
   for (const r of explorerRows) {
     const cur = explorerOf.get(r.wordId) ?? { count: 0, published: 0 };
@@ -90,6 +96,7 @@ export async function getVocab(): Promise<VocabData> {
       image: w.image,
       audio: w.audio,
       exampleAudio: w.exampleAudio,
+      families: familiesOf.get(w.id) ?? [],
       explorer: explorerOf.has(w.id) ? { count: explorerOf.get(w.id)!.count, status: explorerOf.get(w.id)!.published === explorerOf.get(w.id)!.count ? "published" : "draft" } : null,
     })),
     levels,

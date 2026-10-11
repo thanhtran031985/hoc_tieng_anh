@@ -54,3 +54,46 @@ export function exampleContainsWord(word: string, example: string): boolean {
   if (need.length === 0 || have.length === 0) return true;
   return need.every((token) => have.some((h) => matches(token, h)));
 }
+
+// ---- Họ vần của từ (task 30): cột “Họ vần” ở Ngân hàng từ vựng ----
+
+/** Một họ vần mà từ là thành viên: vần, âm, từ là Cùng âm hay Bẫy, họ Nháp hay Xuất bản. */
+export type WordFamilyRef = { familyId: number; pattern: string; soundIpa: string; sameSound: boolean; status: "draft" | "published" };
+
+/** Một dòng thành viên của họ vần như đọc từ database (mỗi cặp họ–từ một dòng). */
+export type FamilyMemberRow = { wordId: number; sameSound: boolean; family: { id: number; pattern: string; soundIpa: string; status: string } };
+
+/** Họ Cùng âm trước họ Bẫy, rồi vần theo bảng chữ cái, rồi mã họ. */
+export function sortFamilyRefs(refs: readonly WordFamilyRef[]): WordFamilyRef[] {
+  return [...refs].sort((a, b) => Number(b.sameSound) - Number(a.sameSound) || a.pattern.localeCompare(b.pattern) || a.familyId - b.familyId);
+}
+
+/** Gộp các dòng thành viên theo từ; mỗi danh sách đã sắp xếp. Từ không thuộc họ nào thì không có mục. */
+export function groupFamiliesByWord(rows: readonly FamilyMemberRow[]): Map<number, WordFamilyRef[]> {
+  const out = new Map<number, WordFamilyRef[]>();
+  for (const r of rows) {
+    const ref: WordFamilyRef = { familyId: r.family.id, pattern: r.family.pattern, soundIpa: r.family.soundIpa, sameSound: r.sameSound, status: r.family.status === "published" ? "published" : "draft" };
+    const list = out.get(r.wordId);
+    if (list) list.push(ref);
+    else out.set(r.wordId, [ref]);
+  }
+  for (const [wordId, list] of out) out.set(wordId, sortFamilyRefs(list));
+  return out;
+}
+
+/** Số chip hiện trong ô của bảng; còn lại gộp thành “+n”. */
+export const FAMILY_CHIPS_SHOWN = 2;
+
+/** Các họ hiện thành chip và số họ còn lại gộp thành “+n”. */
+export function splitFamilyChips<T>(refs: readonly T[], shown = FAMILY_CHIPS_SHOWN): { shown: T[]; more: number } {
+  return { shown: refs.slice(0, shown), more: Math.max(0, refs.length - shown) };
+}
+
+/** Giá trị của bộ lọc “Họ vần”. */
+export type FamilyFilterState = "has" | "none";
+export const familyFilterState = (refs: readonly unknown[]): FamilyFilterState => (refs.length > 0 ? "has" : "none");
+
+/** Nhãn đọc cho chip: “-at, cùng âm, đã xuất bản”. */
+export function familyRefLabel(ref: WordFamilyRef): string {
+  return `-${ref.pattern}, ${ref.sameSound ? "cùng âm" : "bẫy chính tả"}, ${ref.status === "published" ? "đã xuất bản" : "nháp"}`;
+}
