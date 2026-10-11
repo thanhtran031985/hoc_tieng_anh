@@ -3,6 +3,7 @@ import { canPublish, explorerIssues, type ExplorerBranch } from "@/lib/rules/wor
 import { editorWordInputSchema, generateExplorerAudioSchema, saveExplorerSchema, type EditorBranchInput } from "@/lib/schemas/admin-word-explorer";
 import type { AudioItemResult } from "@/lib/schemas/admin-audio";
 import { parseExplorerAnswers, parseExplorerDistractors, parseExplorerSentences, type ExplorerAnswer, type ExplorerDistractor, type ExplorerSentence } from "@/lib/schemas";
+import { isAiAvailable } from "../ai/gemini";
 import { audioFileExists, removeAudioFile, saveAudioFile } from "../audio/files";
 import { TtsTextError, TtsUnavailableError, currentVoice, isTtsAvailable, synthesizeMp3 } from "../audio/tts";
 import { db } from "../db";
@@ -30,6 +31,8 @@ export type ExplorerEditorData = {
   /** Âm thanh của cả đoạn văn (chưa có thì null). */
   readingAudio: string | null;
   ttsAvailable: boolean;
+  /** Có khóa AI: nút “Gợi ý bằng AI” dùng được (task 29). */
+  aiAvailable: boolean;
   /** Hình chọn được: thư viện hình của sản phẩm cộng hình đã tải lên. */
   pictures: string[];
   /** Kho từ vựng để lấy sẵn chữ, nghĩa, hình, âm thanh cho đáp án. */
@@ -70,6 +73,7 @@ export async function getExplorerEditor(input: unknown): Promise<ExplorerEditorD
     branches,
     readingAudio: reading?.audio ?? null,
     ttsAvailable,
+    aiAvailable: isAiAvailable(),
     pictures,
     bank,
   };

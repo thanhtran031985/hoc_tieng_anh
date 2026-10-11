@@ -8,7 +8,8 @@ import { familyPatternSchema } from "./word-family.ts";
 export const QUESTION_SET_KEYS = ["animals", "food", "things", "jobs", "places"] as const;
 export const questionSetKeySchema = z.enum(QUESTION_SET_KEYS);
 
-export const suggestExplorerInputSchema = z.object({ wordId: z.number().int().positive() });
+/** `set`: nhóm từ người soạn đang chọn ở form, dùng làm gợi ý cho AI. */
+export const suggestExplorerInputSchema = z.object({ wordId: z.number().int().positive(), set: questionSetKeySchema.optional() });
 export const suggestFamilyInputSchema = z.object({ pattern: familyPatternSchema });
 
 const str = z

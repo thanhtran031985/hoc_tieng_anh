@@ -213,7 +213,8 @@ export function cleanExplorer(raw: unknown, ctx: ExplorerFilterContext): { data:
     const sentenceEn = clip(b.sentenceEn, 300) || composeSentence(b.kind, ctx.word, answers);
     branches.push({
       kind: b.kind,
-      questionEn: clip(b.questionEn, 255) || IDENTIFY_EN,
+      // Dấu nháy cong như các câu hỏi mẫu (“What’s this?”).
+      questionEn: clip(b.questionEn, 255).replaceAll("'", "’") || IDENTIFY_EN,
       questionVi: clip(b.questionVi, 255) || (identify ? IDENTIFY_VI : ""),
       answers,
       distractors,

@@ -59,6 +59,7 @@ describe("cleanExplorer", () => {
     assert.equal(first.kind, "identify");
     assert.deepEqual(first.answers, [{ text: "a volcano", textVi: "núi lửa", image: "/media/pictures/volcano.svg", guess: true }]);
     assert.equal(first.questionVi, "Đây là gì?");
+    assert.equal(first.questionEn, "What’s this?");
     assert.equal(second.answers[0].image, "/media/pictures/fire.svg");
     assert.equal(second.sentence.vi, "Cậu thấy lửa và khói.");
     assert.deepEqual(out.outOfLevel, []);

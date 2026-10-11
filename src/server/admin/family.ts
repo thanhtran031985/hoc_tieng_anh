@@ -1,5 +1,6 @@
 import { canPublishFamily, canSaveFamily, familyIssues } from "@/lib/rules/word-family";
 import { familyBankSearchSchema, familyEditorInputSchema, generateFamilyAudioSchema, parseExplorerSentences, parseFamilyDecoys, saveFamilySchema, type ExplorerSentence } from "@/lib/schemas";
+import { isAiAvailable } from "../ai/gemini";
 import { audioFileExists, removeAudioFile, saveAudioFile } from "../audio/files";
 import { TtsTextError, TtsUnavailableError, currentVoice, isTtsAvailable, synthesizeMp3 } from "../audio/tts";
 import { db } from "../db";
@@ -53,6 +54,8 @@ export type FamilyEditorData = {
   status: "draft" | "published";
   levels: FamilyLevel[];
   ttsAvailable: boolean;
+  /** Có khóa AI: nút “Gợi ý bằng AI” dùng được (task 29). */
+  aiAvailable: boolean;
 };
 
 const bankSelect = { id: true, word: true, ipa: true, partOfSpeech: true, meaningVi: true, image: true } as const;
@@ -65,7 +68,7 @@ export async function getFamilyEditor(input: unknown): Promise<FamilyEditorData 
   const [levels, ttsAvailable] = await Promise.all([db.level.findMany({ orderBy: { number: "asc" }, select: { id: true, number: true, name: true } }), isTtsAvailable()]);
   if (familyId === null) {
     if (levels.length === 0) return null;
-    return { id: null, pattern: "", soundIpa: "", levelId: levels[0].id, buildRime: null, decoys: [], trapNote: "", members: [], sentences: [], readingAudio: null, status: "draft", levels, ttsAvailable };
+    return { id: null, pattern: "", soundIpa: "", levelId: levels[0].id, buildRime: null, decoys: [], trapNote: "", members: [], sentences: [], readingAudio: null, status: "draft", levels, ttsAvailable, aiAvailable: isAiAvailable() };
   }
   const [family, reading] = await Promise.all([
     db.wordFamily.findUnique({ where: { id: familyId }, include: { members: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], include: { word: { select: bankSelect } } } } }),
@@ -86,6 +89,7 @@ export async function getFamilyEditor(input: unknown): Promise<FamilyEditorData 
     status: family.status === "published" && (reading === null || reading.status === "published") ? "published" : "draft",
     levels,
     ttsAvailable,
+    aiAvailable: isAiAvailable(),
   };
 }
 

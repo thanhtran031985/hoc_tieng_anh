@@ -9,11 +9,12 @@ import { WORDLAB } from "@/lib/rules/constants";
 import type { PlayStep } from "@/lib/rules/lesson-play";
 import { QUESTION_SETS, canPublish, composeSentence, explorerFieldId, explorerIssues, fillQuestionSet, isPlayable, viewBranches, type ExplorerBranch, type QuestionSetKey } from "@/lib/rules/word-explorer";
 import { saveExplorerSchema } from "@/lib/schemas/admin-word-explorer";
-import { WORD_QUESTION_KINDS, type ExplorerAnswer, type ExplorerDistractor, type ExplorerSentence, type WordQuestionKind } from "@/lib/schemas";
+import { WORD_QUESTION_KINDS, type SuggestedBranch, type ExplorerAnswer, type ExplorerDistractor, type ExplorerSentence, type WordQuestionKind } from "@/lib/schemas";
 import type { ExplorerEditorData } from "@/server/admin/word-explorer";
 import { AudioBatchStatus } from "./AudioBatchStatus";
 import { StepsPreview } from "./StepsPreview";
 import { useAudioBatch } from "./useAudioBatch";
+import { suggestExplorerAction } from "./ai-suggest-actions";
 import { generateExplorerAudioAction, getExplorerEditorAction, saveExplorerAction } from "./word-explorer-actions";
 import styles from "./explorer-editor.module.css";
 
@@ -39,6 +40,16 @@ const nextKey = () => `b${++counter}`;
 const emptyAnswer = (): ExplorerAnswer => ({ text: "", textVi: "", image: null, audio: null });
 const blankBranch = (): EBranch => ({ key: nextKey(), kind: "other", questionEn: "", questionVi: "", answers: [emptyAnswer()], distractors: [], sentence: { en: "", vi: "" }, open: true });
 const toEditor = (b: ExplorerEditorData["branches"][number]): EBranch => ({ key: nextKey(), id: b.id, kind: b.kind, questionEn: b.questionEn, questionVi: b.questionVi, answers: b.answers, distractors: b.distractors, sentence: b.sentence, open: false });
+const fromSuggestion = (b: SuggestedBranch): EBranch => ({
+  key: nextKey(),
+  kind: b.kind,
+  questionEn: b.questionEn,
+  questionVi: b.questionVi,
+  answers: b.answers.map((a) => ({ text: a.text, textVi: a.textVi, image: a.image, audio: null, guess: a.guess })),
+  distractors: b.distractors,
+  sentence: b.sentence,
+  open: false,
+});
 const toPayload = (branches: readonly EBranch[]) => branches.map(({ key, open, ...b }) => (void key, void open, b));
 /** Hình trong danh sách chỉ là tệp tĩnh của thư viện: không cần tối ưu ảnh của Next. */
 function Thumb({ src }: { src: string | null | undefined }) {
@@ -100,6 +111,9 @@ function EditorBody({ data, onClose, onSaved }: { data: ExplorerEditorData; onCl
   const [errors, setErrors] = useState<{ form?: string; status?: string }>({});
   const [busy, setBusy] = useState(false);
   const [removing, setRemoving] = useState<string | null>(null);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiConfirm, setAiConfirm] = useState(false);
+  const [aiWarnings, setAiWarnings] = useState<string[]>([]);
   const [preview, setPreview] = useState<PlayStep | null>(null);
   const [bankPick, setBankPick] = useState<Record<string, string>>({});
   // Bản đã lưu (chữ đoạn văn và toàn bộ nội dung) để biết đã sửa chưa và giọng đọc đoạn văn còn đúng không.
@@ -116,6 +130,8 @@ function EditorBody({ data, onClose, onSaved }: { data: ExplorerEditorData; onCl
   const rules: ExplorerBranch[] = branches.map((b) => ({ kind: b.kind, questionEn: b.questionEn, questionVi: b.questionVi, answers: b.answers, distractors: b.distractors }));
   const issues = explorerIssues(rules, { sentences: branches.map((b) => b.sentence), audio: readingValid ? readingAudio : null });
   const dirty = JSON.stringify(toPayload(branches)) !== saved.json;
+  // Lời nhắc của AI trừ những việc đã có trong khung “Còn … việc trước khi xuất bản”.
+  const shownAiWarnings = aiWarnings.filter((w) => !issues.some((i) => i.message === w));
 
   // Tạo giọng đọc: lượt mục là các nhánh còn đáp án chưa có tệp và (nếu chưa có) đoạn văn.
   const batch = useAudioBatch(
@@ -154,6 +170,31 @@ function EditorBody({ data, onClose, onSaved }: { data: ExplorerEditorData; onCl
       return next;
     });
     toast(`Đã điền sẵn ${filled.length} câu hỏi mẫu “${QUESTION_SETS[set].label}”. Đáp án giữ nguyên.`);
+  }
+
+  // Có nội dung đã soạn thì hỏi trước khi AI thay thế (đáp án cũ đã có giọng đọc sẽ mất giọng đọc).
+  const hasContent = branches.some((b) => b.questionEn.trim() !== "" || b.answers.some((a) => a.text.trim() !== "" || a.image));
+
+  async function suggest() {
+    setAiConfirm(false);
+    setAiBusy(true);
+    setErrors({});
+    try {
+      const result = await suggestExplorerAction({ wordId: word.id, set });
+      if (!result.ok) {
+        toast(result.message);
+        return;
+      }
+      const { branches: next, suggestedSet, warnings } = result.data;
+      setBranches(next.map(fromSuggestion));
+      if (suggestedSet) setSet(suggestedSet);
+      setAiWarnings(warnings);
+      toast(`AI đã điền ${next.length} nhánh (chưa lưu). Hãy đọc lại, sửa rồi bấm Lưu thay đổi.`);
+    } catch {
+      toast("Chưa gợi ý được. Kiểm tra mạng rồi thử lại nhé.");
+    } finally {
+      setAiBusy(false);
+    }
   }
 
   function composeParagraph() {
@@ -287,8 +328,29 @@ function EditorBody({ data, onClose, onSaved }: { data: ExplorerEditorData; onCl
             <div className={styles.setRow}>
               <AdultSelect label="Nhóm từ" value={set} onChange={(e) => setSet(e.target.value as QuestionSetKey)} options={(Object.keys(QUESTION_SETS) as QuestionSetKey[]).map((k) => [k, QUESTION_SETS[k].label] as const)} />
               <AdultButton label="Điền sẵn câu hỏi" icon="wand" variant="secondary" onClick={fillQuestions} />
+              <AdultButton
+                label={aiBusy ? "AI đang soạn…" : "Gợi ý bằng AI"}
+                icon="wand"
+                loading={aiBusy}
+                disabled={!data.aiAvailable || aiBusy}
+                title={data.aiAvailable ? "AI soạn nháp các nhánh, đáp án, hình nhiễu và câu cho đoạn văn; bạn đọc, sửa rồi mới lưu" : "Chưa bật AI: điền GEMINI_API_KEY vào tệp .env rồi khởi động lại máy chủ"}
+                onClick={() => (hasContent ? setAiConfirm(true) : void suggest())}
+              />
             </div>
-            <p className={cn(adultStyles.small, adultStyles.muted)}>Điền câu hỏi tiếng Anh và tiếng Việt theo nhóm từ; đáp án đã soạn được giữ nguyên.</p>
+            <p className={cn(adultStyles.small, adultStyles.muted)}>Điền câu hỏi tiếng Anh và tiếng Việt theo nhóm từ; đáp án đã soạn được giữ nguyên. “Gợi ý bằng AI” soạn nháp cả nhánh (mất 5–10 giây), chưa lưu gì cho đến khi bạn bấm Lưu thay đổi.</p>
+            {shownAiWarnings.length > 0 && (
+              <div className={styles.warn} role="status">
+                <h3 className={adultStyles.h3}>
+                  <Icon name="warn" size={16} /> AI nhắc bạn xem lại
+                </h3>
+                <ul>
+                  {shownAiWarnings.map((w, i) => (
+                    <li key={i}>{w}</li>
+                  ))}
+                </ul>
+                <AdultButton label="Ẩn" variant="ghost" size="s" onClick={() => setAiWarnings([])} />
+              </div>
+            )}
           </section>
 
           <section className={styles.sec} aria-label="Các nhánh câu hỏi">
@@ -462,6 +524,18 @@ function EditorBody({ data, onClose, onSaved }: { data: ExplorerEditorData; onCl
           )}
         </div>
       </AdultDrawer>
+
+      <AdultDialog
+        open={aiConfirm}
+        onClose={() => setAiConfirm(false)}
+        title="Thay các nhánh hiện có bằng gợi ý của AI?"
+        actions={[
+          { label: "Giữ nguyên", variant: "ghost" },
+          { label: "Thay bằng gợi ý", icon: "wand", onClick: () => void suggest() },
+        ]}
+      >
+        <p className={adultStyles.body}>AI sẽ soạn lại toàn bộ các nhánh, đáp án, hình nhiễu và đoạn văn của “{word.word}”. Đáp án cũ đã có giọng đọc sẽ mất giọng đọc (tạo lại được). Chưa lưu gì cho đến khi bạn bấm Lưu thay đổi; bấm Hủy để bỏ hết.</p>
+      </AdultDialog>
 
       <AdultDialog
         open={removing !== null}

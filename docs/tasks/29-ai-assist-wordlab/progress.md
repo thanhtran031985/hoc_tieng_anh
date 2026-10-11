@@ -6,7 +6,7 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 11/10/2026
 |---|---|---|---|
 | 0 | Đề xuất và chốt lựa chọn (DỪNG chờ tôi) | ✅ | Gemini + `fetch` (không gói mới); thử thật 1 từ, 1 họ; chờ bạn duyệt `proposal.md` |
 | 1 | Hạ tầng gọi AI | ✅ | `gemini.ts` (fetch, thời gian chờ 40 s, tắt “suy nghĩ”), `throttle.ts` (6 lượt/phút/admin), lọc kết quả AI (hàm thuần), 34 test mới |
-| 2 | Gợi ý Khám phá từ | ⬜ | |
+| 2 | Gợi ý Khám phá từ | ✅ | Nút “Gợi ý bằng AI” ở Adult22; thử Edge với Gemini thật 5 từ (3 từ mới + 2 từ đã có nhánh); khóa sai báo thân thiện, form không mất |
 | 3 | Gợi ý Họ vần | ⬜ | |
 
 ## Nhật ký
@@ -28,6 +28,12 @@ Trạng thái chung: 🔄 · Cập nhật lần cuối: 11/10/2026
 - **Kiểm tra**: `npm test` 724/724 (34 test mới: gemini với `fetch` giả, throttle, lọc), `npx tsc --noEmit` và `npm run lint` sạch. Chưa có mã client nào nhập `src/server/ai`, nên khóa chưa thể xuống client; kiểm bundle sau khi build ở bước đóng task.
 - **Việc thủ công**: không.
 
+### Bước 2 — Gợi ý Khám phá từ (11/10/2026)
+- **Đã làm**: `src/server/admin/ai-suggest.ts` (`suggestExplorer`: nạp từ, hình thư viện, vốn từ cấp → lời nhắc → Gemini → `cleanExplorer`; có chữ ngoài cấp thì gọi lại đúng một lần kèm danh sách chữ cần tránh và giữ bản ít chữ ngoài cấp hơn; giới hạn 6 lượt/phút/admin), `src/features/admin/ai-suggest-actions.ts` (`suggestExplorerAction`, `requireAdmin()` dòng đầu), `aiAvailable` trong dữ liệu soạn, nút “Gợi ý bằng AI” cạnh “Điền sẵn câu hỏi” ở `ExplorerDrawer` (chưa có khóa thì nút xám kèm giải thích; form đã có nội dung thì hỏi xác nhận trước khi thay; kết quả chỉ điền vào form, nhóm từ được chọn sẵn theo gợi ý; hộp “AI nhắc bạn xem lại” bỏ các việc đã có trong khung “Còn … việc”).
+- **Kiểm tra** (Edge không đầu, DB verify, Gemini thật, `.tmp-verify/check-29-explorer.mjs`): 5 từ — tiger/teacher/school (chưa có nhánh) và pizza/chair (đã có nhánh, hiện hộp xác nhận): mỗi từ AI điền 5 nhánh trong 7–13 giây, nhóm từ gợi ý đúng (Con vật/Nghề nghiệp/Nơi chốn/Đồ ăn/Đồ vật), mọi khóa hình có trong thư viện, 0 cảnh báo từ ngoài cấp, chưa ghi database trước khi bấm Lưu; Lưu Nháp thành công (đủ nhánh và câu đoạn văn) rồi trả dữ liệu thử về như cũ. Khóa sai (`.tmp-verify/check-29-fail.mjs`): thông báo “AI từ chối yêu cầu…”, không lộ khóa, form giữ nguyên 5 nhánh, nút bật lại. `tsc`, `lint` sạch, `npm test` đạt.
+- **Nhận xét chất lượng** (để bạn đọc lại như mọi nội dung AI): nhánh “What is next to a chair?” và “What is a pizza like?” hơi gượng; bản dịch tiếng Việt cần đọc lại. Việc “chưa có âm thanh” còn lại là bình thường (mp3 tạo sau khi lưu).
+- **Việc thủ công**: máy chủ `npm run dev` đang chạy ở cổng 3000 cần khởi động lại một lần để đọc khóa mới trong `.env` (tôi đã tắt và bật lại giúp bạn khi xong task).
+
 ## Bước tiếp theo
 
-Bước 2 — Gợi ý Khám phá từ (`suggestExplorer`, action, nút và hộp xác nhận ở ngăn kéo Adult22).
+Bước 3 — Gợi ý Họ vần (`suggestFamily`, nút ở ngăn kéo Adult23).
