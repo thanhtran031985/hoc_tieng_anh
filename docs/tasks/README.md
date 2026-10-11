@@ -33,6 +33,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 27 | [27-content-wordlab](27-content-wordlab/task.md) — Nội dung Khám phá từ và Họ vần | ✅ | 26 | `feat/27-content-wordlab` |
 | 28 | [28-content-l5](28-content-l5/task.md) — Nội dung cấp 5 (Cây lớn, Flyers) | ✅ | 19, 20, 27 | `feat/28-content-l5` |
 | 29 | [29-ai-assist-wordlab](29-ai-assist-wordlab/task.md) — AI hỗ trợ soạn Khám phá từ và Họ vần | ✅ | 25, 26, 27 | `feat/29-ai-assist-wordlab` |
+| 30 | [30-vocab-family-link](30-vocab-family-link/task.md) — Ngân hàng từ vựng: xem từ thuộc Họ vần nào và bấm để mở | ⬜ | 26, 27 | `feat/30-vocab-family-link` |
 | 900 | [900-real-db-finalize](900-real-db-finalize/task.md) — Hoàn tất dữ liệu trên database thật (giọng đọc, xuất bản, Playwright) | ⬜ | 28 | `feat/900-real-db-finalize` |
 | 999 | [999-fix-ui-findings](999-fix-ui-findings/task.md) — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7, 10, 11) | ✅ | 12 | `feat/29-fix-ui-findings` |
 
