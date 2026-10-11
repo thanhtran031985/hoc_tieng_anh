@@ -5,22 +5,40 @@ import { useState } from "react";
 import { AdultButton, AdultButtonLink, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSelect, AdultTable, AdultTextarea, adultStyles, useToast, type AdultColumn } from "@/components/adult";
 import { Icon, LevelChip, SpeakerButton, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { familyFilterState, familyRefLabel, splitFamilyChips, type WordFamilyRef } from "@/lib/rules/admin-vocab";
 import { TTS_UI_BATCH_SIZE, hasFullAudio } from "@/lib/rules/tts";
 import { PARTS_OF_SPEECH } from "@/lib/schemas/content";
 import { PART_OF_SPEECH_LABEL, saveWordSchema } from "@/lib/schemas/admin-vocab";
 import type { VocabData, VocabRow } from "@/server/admin/vocab";
 import { AudioBatchStatus } from "./AudioBatchStatus";
 import { ExplorerDrawer } from "./ExplorerDrawer";
+import { FamilyDrawer } from "./FamilyDrawer";
 import { useAudioBatch } from "./useAudioBatch";
 import { saveWordAction } from "./vocab-actions";
 import styles from "./vocab.module.css";
 
-type Row = VocabRow & { posLabel: string; topicText: string; hasImage: boolean; hasAudio: boolean; explorerState: "published" | "draft" | "none" };
+type Row = VocabRow & { posLabel: string; topicText: string; hasImage: boolean; hasAudio: boolean; explorerState: "published" | "draft" | "none"; familyCount: number; familyState: "has" | "none" };
 type Errors = Record<string, string>;
 
 const nf = (n: number) => n.toLocaleString("vi-VN");
 const fileName = (path: string) => path.split("/").pop() ?? path;
 const posLabel = (pos: string) => PART_OF_SPEECH_LABEL[pos as keyof typeof PART_OF_SPEECH_LABEL] ?? pos;
+
+/** Chip một họ vần của từ (task 30): bấm để mở họ đó. Bẫy có chữ “Bẫy”, họ Nháp nét đứt và mờ hơn (như cột Khám phá). */
+function FamilyChip({ word, family, onOpen }: { word: string; family: WordFamilyRef; onOpen: (familyId: number) => void }) {
+  return (
+    <button
+      type="button"
+      className={cn(styles.fam, family.sameSound ? styles.famSame : styles.famTrap, family.status === "draft" && styles.famDraft)}
+      aria-label={`Mở họ vần ${familyRefLabel(family)} của từ ${word}`}
+      title={`Họ vần -${family.pattern} ${family.soundIpa} · ${family.sameSound ? "cùng âm" : "bẫy chính tả (khác âm)"} · ${family.status === "published" ? "đã xuất bản" : "nháp"}`}
+      onClick={() => onOpen(family.familyId)}
+    >
+      <span lang="en">-{family.pattern}</span>
+      {!family.sameSound && <small>Bẫy</small>}
+    </button>
+  );
+}
 
 /** Ngân hàng từ vựng (Adult10): bảng có tìm, lọc theo cấp / chủ đề / thiếu hình–âm, sắp xếp, phân trang; sửa và thêm từ trong ngăn kéo. */
 export function VocabView({ data }: { data: VocabData }) {
@@ -28,13 +46,16 @@ export function VocabView({ data }: { data: VocabData }) {
   const [editing, setEditing] = useState<number | "new" | null>(null);
   // `exploring`: id từ đang soạn Khám phá (ngăn kéo rộng riêng).
   const [exploring, setExploring] = useState<number | null>(null);
+  // `familyOpen`: id họ vần đang mở (ngăn kéo Họ vần của task 26); `familyVersion` mở lại ngăn kéo với dữ liệu mới sau khi lưu.
+  const [familyOpen, setFamilyOpen] = useState<number | null>(null);
+  const [familyVersion, setFamilyVersion] = useState(0);
   const levelName = new Map(data.levels.map((l) => [l.number, l.name]));
   const router = useRouter();
   const batch = useAudioBatch(() => router.refresh());
   const canMake = data.mp3Enabled && data.ttsAvailable;
   const why = !data.ttsAvailable ? "Máy chủ này chưa có công cụ tạo giọng đọc" : !data.mp3Enabled ? "Bật “Giọng mp3” ở Hình ảnh & âm thanh để tạo giọng đọc" : undefined;
 
-  const rows: Row[] = data.rows.map((r) => ({ ...r, posLabel: posLabel(r.pos), topicText: r.topics.join(", "), hasImage: Boolean(r.image), hasAudio: hasFullAudio(r), explorerState: r.explorer?.status ?? "none" }));
+  const rows: Row[] = data.rows.map((r) => ({ ...r, posLabel: posLabel(r.pos), topicText: r.topics.join(", "), hasImage: Boolean(r.image), hasAudio: hasFullAudio(r), explorerState: r.explorer?.status ?? "none", familyCount: r.families.length, familyState: familyFilterState(r.families) }));
   const noImage = rows.filter((r) => !r.hasImage).length;
   const noAudio = rows.filter((r) => !r.hasAudio).length;
   const topicNames = [...new Set(rows.flatMap((r) => r.topics))].sort((a, b) => a.localeCompare(b));
@@ -93,6 +114,27 @@ export function VocabView({ data }: { data: VocabData }) {
           <span className={cn(adultStyles.small, adultStyles.muted)}>Chưa có</span>
         ),
     },
+    {
+      key: "familyCount",
+      label: "Họ vần",
+      sort: true,
+      render: (r) => {
+        if (r.families.length === 0) return <span className={cn(adultStyles.small, adultStyles.muted)}>Chưa có</span>;
+        const { shown, more } = splitFamilyChips(r.families);
+        return (
+          <span className={styles.fams}>
+            {shown.map((f) => (
+              <FamilyChip key={f.familyId} word={r.word} family={f} onOpen={setFamilyOpen} />
+            ))}
+            {more > 0 && (
+              <span className={styles.famMore} title={r.families.slice(shown.length).map((f) => `-${f.pattern}`).join(", ")}>
+                +{more}
+              </span>
+            )}
+          </span>
+        );
+      },
+    },
   ];
 
   const addButton = <AdultButton label="Thêm từ" icon="plus" onClick={() => setEditing("new")} />;
@@ -144,6 +186,15 @@ export function VocabView({ data }: { data: VocabData }) {
             match: (r, v) => r.explorerState === v,
           },
           {
+            key: "family",
+            label: "Họ vần",
+            options: [
+              ["has", "Đã thuộc họ vần"],
+              ["none", "Chưa có"],
+            ],
+            match: (r, v) => r.familyState === v,
+          },
+          {
             key: "missing",
             label: "Thiếu",
             options: [
@@ -174,14 +225,26 @@ export function VocabView({ data }: { data: VocabData }) {
           </span>
         )}
       />
-      {editing !== null && <WordDrawer key={editing} data={data} row={current} onClose={() => setEditing(null)} onExplore={(id) => (setEditing(null), setExploring(id))} />}
+      {editing !== null && <WordDrawer key={editing} data={data} row={current} onClose={() => setEditing(null)} onExplore={(id) => (setEditing(null), setExploring(id))} onOpenFamily={(familyId) => (setEditing(null), setFamilyOpen(familyId))} />}
       {exploring !== null && <ExplorerDrawer key={`x${exploring}`} wordId={exploring} onClose={() => setExploring(null)} />}
+      {familyOpen !== null && (
+        <FamilyDrawer
+          key={`f${familyOpen}-${familyVersion}`}
+          familyId={familyOpen}
+          onClose={() => setFamilyOpen(null)}
+          onSaved={(id) => {
+            router.refresh();
+            setFamilyOpen(id);
+            setFamilyVersion((v) => v + 1);
+          }}
+        />
+      )}
     </div>
   );
 }
 
 /** Ngăn kéo thêm / sửa một từ. Hình chỉ xem ở đây (gán hình ở Thư viện hình ảnh); giọng đọc mp3 tạo được ngay ở đây khi công tắc “Giọng mp3” bật. */
-function WordDrawer({ data, row, onClose, onExplore }: { data: VocabData; row: VocabRow | undefined; onClose: () => void; onExplore?: (id: number) => void }) {
+function WordDrawer({ data, row, onClose, onExplore, onOpenFamily }: { data: VocabData; row: VocabRow | undefined; onClose: () => void; onExplore?: (id: number) => void; onOpenFamily?: (familyId: number) => void }) {
   const toast = useToast();
   const router = useRouter();
   const batch = useAudioBatch(() => router.refresh());
@@ -321,6 +384,26 @@ function WordDrawer({ data, row, onClose, onExplore }: { data: VocabData; row: V
               <span className={cn(adultStyles.small, adultStyles.muted)}>{row.explorer ? `${row.explorer.count} nhánh · ${row.explorer.status === "published" ? "đã xuất bản" : "nháp"}` : "Từ này chưa có Khám phá (4–6 câu hỏi quanh từ)."}</span>
               <AdultButton label="Sửa Khám phá" icon="branch" variant="secondary" size="s" onClick={() => onExplore(row.id)} />
             </div>
+          </section>
+        )}
+
+        {row && onOpenFamily && (
+          <section className={styles.section} aria-label="Họ vần của từ">
+            <h3 className={adultStyles.h3}>Họ vần</h3>
+            {row.families.length === 0 ? (
+              <p className={cn(adultStyles.small, adultStyles.muted)}>Từ này chưa thuộc họ vần nào. Thêm từ vào họ ở màn Họ vần.</p>
+            ) : (
+              <ul className={styles.famList}>
+                {row.families.map((f) => (
+                  <li key={f.familyId}>
+                    <FamilyChip word={row.word} family={f} onOpen={onOpenFamily} />
+                    <span className={cn(adultStyles.small, adultStyles.muted)}>
+                      <span lang="en">{f.soundIpa}</span> · {f.sameSound ? "cùng âm" : "bẫy chính tả"} · {f.status === "published" ? "đã xuất bản" : "nháp"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         )}
 

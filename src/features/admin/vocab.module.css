@@ -131,3 +131,70 @@
   display: inline-flex;
   gap: var(--space-1);
 }
+
+/* Cột Họ vần (task 30): chip theo từng họ, bấm để mở họ đó. */
+.fams {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+.fam {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-thin) solid transparent;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.fam small {
+  font-size: inherit;
+  font-weight: 800;
+}
+.fam:hover {
+  border-color: var(--line-strong);
+}
+.fam:focus-visible {
+  outline: var(--border-thick) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.famSame {
+  background: var(--success-soft);
+  color: var(--success-shade);
+}
+.famTrap {
+  background: var(--retry-soft);
+  color: var(--ink);
+}
+.famDraft {
+  background: var(--surface-sunk);
+  color: var(--ink-soft);
+  border-style: dashed;
+  border-color: var(--line-strong);
+}
+.famMore {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunk);
+  color: var(--ink-soft);
+  font-size: var(--text-adm-label);
+  font-weight: 700;
+}
+.famList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.famList li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
