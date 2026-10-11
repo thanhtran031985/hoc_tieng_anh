@@ -143,7 +143,7 @@ export function ExplorerMap({ word, branches, open, ask = -1, sel = null, wrong 
               {isOpen ? (
                 <div className={styles.ans}>
                   {b.answers.map((a, j) => (
-                    <button key={j} type="button" className={styles.a} aria-label={`Nghe: ${a.text}${a.textVi ? `, nghĩa: ${a.textVi}` : ""}`} onClick={() => onSayAnswer?.(a)}>
+                    <button key={j} type="button" className={styles.a} data-vi={a.textVi || undefined} aria-label={`Nghe: ${a.text}${a.textVi ? `, nghĩa: ${a.textVi}` : ""}`} onClick={() => onSayAnswer?.(a)}>
                       <WordPicture word={a.text} src={a.image} size={40} label="" aria-hidden="true" />
                       <span lang="en">{a.text}</span>
                     </button>
