@@ -13,6 +13,8 @@ import {
   canPublishFamily,
   familyFieldId,
   familyIssues,
+  guessRimePattern,
+  guessSoundIpa,
   soundMatches,
   splitRime,
   type FamilyIssue,
@@ -42,24 +44,52 @@ function Thumb({ src }: { src: string | null | undefined }) {
 type Props = {
   /** Null là họ mới. */
   familyId: number | null;
+  /** Từ khởi tạo ban đầu khi tạo họ mới từ màn Ngân hàng từ vựng (Task 35). */
+  initialWord?: FamilyEditorWord & { levelId?: number };
   onClose: () => void;
   /** Đã lưu: ngăn kéo được mở lại với dữ liệu mới (để tạo giọng đọc ngay). */
   onSaved: (id: number) => void;
 };
 
 /** Soạn Họ vần (Adult23): ngăn kéo rộng của màn Họ vần. Nạp dữ liệu soạn của họ rồi mở biểu mẫu. */
-export function FamilyDrawer({ familyId, onClose, onSaved }: Props) {
+export function FamilyDrawer({ familyId, initialWord, onClose, onSaved }: Props) {
   const [data, setData] = useState<FamilyEditorData | null | undefined>(undefined);
   const [version, setVersion] = useState(0);
   useEffect(() => {
     let alive = true;
     getFamilyEditorAction({ familyId })
-      .then((d) => alive && setData(d))
+      .then((d) => {
+        if (!alive) return;
+        if (d && familyId === null && initialWord) {
+          const guessedPattern = guessRimePattern(initialWord.word);
+          const guessedIpa = guessSoundIpa(initialWord.ipa);
+          const customLevel = initialWord.levelId && d.levels.some((l) => l.id === initialWord.levelId) ? initialWord.levelId : d.levelId;
+          setData({
+            ...d,
+            pattern: guessedPattern,
+            soundIpa: guessedIpa,
+            levelId: customLevel,
+            members: [
+              {
+                wordId: initialWord.wordId,
+                word: initialWord.word,
+                ipa: initialWord.ipa,
+                partOfSpeech: initialWord.partOfSpeech,
+                meaningVi: initialWord.meaningVi,
+                image: initialWord.image,
+                sameSound: true,
+              },
+            ],
+          });
+        } else {
+          setData(d);
+        }
+      })
       .catch(() => alive && setData(null));
     return () => {
       alive = false;
     };
-  }, [familyId, version]);
+  }, [familyId, initialWord, version]);
 
   if (data === undefined || data === null) {
     return (

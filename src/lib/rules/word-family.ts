@@ -21,6 +21,28 @@ export function splitOnset(word: string, rime: string): string | null {
   return /^[a-z]{1,3}$/.test(onset) ? onset : null;
 }
 
+/** Gợi ý mẫu vần (pattern) từ một từ tiếng Anh (bắt đầu từ nguyên âm đầu tiên sau phụ âm đầu). */
+export function guessRimePattern(word: string): string {
+  const clean = word.trim().toLowerCase().replace(/[^a-z]/g, "");
+  if (!clean) return "";
+  const firstVowelIdx = clean.search(/[aeiouy]/);
+  if (firstVowelIdx < 0) return clean;
+  if (firstVowelIdx === 0) return clean.slice(0, 5);
+  return clean.slice(firstVowelIdx, firstVowelIdx + 6);
+}
+
+/** Gợi ý âm vần (IPA) từ phiên âm IPA của một từ tiếng Anh (bắt đầu từ nguyên âm IPA đầu tiên). */
+export function guessSoundIpa(wordIpa: string | null | undefined): string {
+  if (!wordIpa) return "";
+  const raw = wordIpa.trim().replace(/[/ˈˌ.\s]/g, "");
+  if (!raw) return "";
+  const vowelMatch = raw.search(/[æɑɒɔəʌeɛɪiʊuɜo]/);
+  if (vowelMatch >= 0) {
+    return `/${raw.slice(vowelMatch)}/`;
+  }
+  return `/${raw}/`;
+}
+
 /** Tách chữ của từ thành phần trước vần, vần và phần sau để tô màu vần (lần xuất hiện cuối cùng); không có vần thì cả từ là phần trước. */
 export function splitRime(word: string, pattern: string): { before: string; rime: string; after: string } {
   const at = pattern ? word.toLowerCase().lastIndexOf(pattern.toLowerCase()) : -1;

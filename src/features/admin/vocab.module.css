@@ -199,3 +199,30 @@
   align-items: center;
   gap: var(--space-3);
 }
+.famCreateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--lip-flat) var(--space-2);
+  border: var(--border-thin) dashed var(--line-strong);
+  border-radius: var(--adm-radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-button--line-height);
+  cursor: pointer;
+  transition: color var(--duration-fast), border-color var(--duration-fast), background var(--duration-fast);
+  white-space: nowrap;
+}
+.famCreateBtn:hover {
+  color: var(--ink);
+  border-color: var(--focus);
+  background: var(--surface-soft);
+}
+.famEmptyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}

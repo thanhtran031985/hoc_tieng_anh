@@ -10,6 +10,7 @@ import { TTS_UI_BATCH_SIZE, hasFullAudio } from "@/lib/rules/tts";
 import { PARTS_OF_SPEECH } from "@/lib/schemas/content";
 import { PART_OF_SPEECH_LABEL, saveWordSchema } from "@/lib/schemas/admin-vocab";
 import type { VocabData, VocabRow } from "@/server/admin/vocab";
+import type { FamilyEditorWord } from "@/server/admin/family";
 import { AudioBatchStatus } from "./AudioBatchStatus";
 import { ExplorerDrawer } from "./ExplorerDrawer";
 import { FamilyDrawer } from "./FamilyDrawer";
@@ -48,6 +49,8 @@ export function VocabView({ data }: { data: VocabData }) {
   const [exploring, setExploring] = useState<number | null>(null);
   // `familyOpen`: id họ vần đang mở (ngăn kéo Họ vần của task 26); `familyVersion` mở lại ngăn kéo với dữ liệu mới sau khi lưu.
   const [familyOpen, setFamilyOpen] = useState<number | null>(null);
+  // `familyCreateWord`: từ vựng làm ngữ cảnh tạo họ vần mới (task 35).
+  const [familyCreateWord, setFamilyCreateWord] = useState<(FamilyEditorWord & { levelId: number }) | null>(null);
   const [familyVersion, setFamilyVersion] = useState(0);
   const levelName = new Map(data.levels.map((l) => [l.number, l.name]));
   const router = useRouter();
@@ -129,7 +132,32 @@ export function VocabView({ data }: { data: VocabData }) {
       ),
       sort: true,
       render: (r) => {
-        if (r.families.length === 0) return <span className={cn(adultStyles.small, adultStyles.muted)}>Chưa có</span>;
+        if (r.families.length === 0) {
+          return (
+            <button
+              type="button"
+              className={styles.famCreateBtn}
+              title={`Tạo họ vần mới cho từ “${r.word}”`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFamilyOpen(null);
+                setFamilyCreateWord({
+                  wordId: r.id,
+                  word: r.word,
+                  ipa: r.ipa,
+                  partOfSpeech: r.pos,
+                  meaningVi: r.meaning,
+                  image: r.image,
+                  levelId: r.levelId,
+                  sameSound: true,
+                });
+              }}
+            >
+              <Icon name="plus" size={12} />
+              <span>Tạo họ</span>
+            </button>
+          );
+        }
         const { shown, more } = splitFamilyChips(r.families);
         return (
           <span className={styles.fams}>
@@ -235,16 +263,31 @@ export function VocabView({ data }: { data: VocabData }) {
           </span>
         )}
       />
-      {editing !== null && <WordDrawer key={editing} data={data} row={current} onClose={() => setEditing(null)} onExplore={(id) => (setEditing(null), setExploring(id))} onOpenFamily={(familyId) => (setEditing(null), setFamilyOpen(familyId))} />}
+      {editing !== null && (
+        <WordDrawer
+          key={editing}
+          data={data}
+          row={current}
+          onClose={() => setEditing(null)}
+          onExplore={(id) => (setEditing(null), setExploring(id))}
+          onOpenFamily={(familyId) => (setEditing(null), setFamilyOpen(familyId))}
+          onCreateFamily={(w) => (setEditing(null), setFamilyOpen(null), setFamilyCreateWord(w))}
+        />
+      )}
       {exploring !== null && <ExplorerDrawer key={`x${exploring}`} wordId={exploring} onClose={() => setExploring(null)} />}
-      {familyOpen !== null && (
+      {(familyOpen !== null || familyCreateWord !== null) && (
         <FamilyDrawer
-          key={`f${familyOpen}-${familyVersion}`}
+          key={`f${familyOpen ?? "new"}-${familyCreateWord?.wordId ?? 0}-${familyVersion}`}
           familyId={familyOpen}
-          onClose={() => setFamilyOpen(null)}
+          initialWord={familyCreateWord ?? undefined}
+          onClose={() => {
+            setFamilyOpen(null);
+            setFamilyCreateWord(null);
+          }}
           onSaved={(id) => {
             router.refresh();
             setFamilyOpen(id);
+            setFamilyCreateWord(null);
             setFamilyVersion((v) => v + 1);
           }}
         />
@@ -254,7 +297,21 @@ export function VocabView({ data }: { data: VocabData }) {
 }
 
 /** Ngăn kéo thêm / sửa một từ. Hình chỉ xem ở đây (gán hình ở Thư viện hình ảnh); giọng đọc mp3 tạo được ngay ở đây khi công tắc “Giọng mp3” bật. */
-function WordDrawer({ data, row, onClose, onExplore, onOpenFamily }: { data: VocabData; row: VocabRow | undefined; onClose: () => void; onExplore?: (id: number) => void; onOpenFamily?: (familyId: number) => void }) {
+function WordDrawer({
+  data,
+  row,
+  onClose,
+  onExplore,
+  onOpenFamily,
+  onCreateFamily,
+}: {
+  data: VocabData;
+  row: VocabRow | undefined;
+  onClose: () => void;
+  onExplore?: (id: number) => void;
+  onOpenFamily?: (familyId: number) => void;
+  onCreateFamily?: (word: FamilyEditorWord & { levelId: number }) => void;
+}) {
   const toast = useToast();
   const router = useRouter();
   const batch = useAudioBatch(() => router.refresh());
@@ -397,16 +454,38 @@ function WordDrawer({ data, row, onClose, onExplore, onOpenFamily }: { data: Voc
           </section>
         )}
 
-        {row && onOpenFamily && (
+        {row && (onOpenFamily || onCreateFamily) && (
           <section className={styles.section} aria-label="Họ vần của từ">
             <h3 className={adultStyles.h3}>Họ vần</h3>
             {row.families.length === 0 ? (
-              <p className={cn(adultStyles.small, adultStyles.muted)}>Từ này chưa thuộc họ vần nào. Thêm từ vào họ ở màn Họ vần.</p>
+              <div className={styles.famEmptyRow}>
+                <span className={cn(adultStyles.small, adultStyles.muted)}>Từ này chưa thuộc họ vần nào.</span>
+                {onCreateFamily && (
+                  <AdultButton
+                    label="Tạo họ vần cho từ này"
+                    icon="plus"
+                    variant="secondary"
+                    size="s"
+                    onClick={() =>
+                      onCreateFamily({
+                        wordId: row.id,
+                        word: row.word,
+                        ipa: row.ipa,
+                        partOfSpeech: row.pos,
+                        meaningVi: row.meaning,
+                        image: row.image,
+                        levelId: row.levelId,
+                        sameSound: true,
+                      })
+                    }
+                  />
+                )}
+              </div>
             ) : (
               <ul className={styles.famList}>
                 {row.families.map((f) => (
                   <li key={f.familyId}>
-                    <FamilyChip word={row.word} family={f} onOpen={onOpenFamily} />
+                    <FamilyChip word={row.word} family={f} onOpen={onOpenFamily ?? (() => {})} />
                     <span className={cn(adultStyles.small, adultStyles.muted)}>
                       <span lang="en">{f.soundIpa}</span> · {f.sameSound ? "cùng âm" : "bẫy chính tả"} · {f.status === "published" ? "đã xuất bản" : "nháp"}
                     </span>
