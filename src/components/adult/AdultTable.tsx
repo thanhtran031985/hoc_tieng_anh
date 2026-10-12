@@ -103,43 +103,90 @@ export function AdultTable<Row extends Record<string, unknown>>({ columns, rows,
     return [1, "ellipsis-left", current - 1, current, current + 1, "ellipsis-right", pages] as const;
   }, [current, pages]);
 
+  const hasActiveFilters = Boolean(query.trim()) || Object.values(filterValues).some((v) => v && v !== "all");
+
   return (
     <section className={cn(styles.card, table.card)} aria-label={caption}>
       <div className={table.bar}>
-        {searchKeys && (
-          <div className={table.search}>
-            <Icon name="search" size={18} />
-            <label className="sr-only" htmlFor={`${id}-q`}>
-              Tìm kiếm
-            </label>
-            <input id={`${id}-q`} className={styles.input} placeholder={searchPlaceholder} value={query} onChange={(e) => (setQuery(e.target.value), setPage(1))} />
+        <div className={table.filterControls}>
+          {searchKeys && (
+            <div className={table.search}>
+              <Icon name="search" size={18} />
+              <label className="sr-only" htmlFor={`${id}-q`}>
+                Tìm kiếm
+              </label>
+              <input
+                id={`${id}-q`}
+                className={styles.input}
+                placeholder={searchPlaceholder}
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setPage(1);
+                }}
+              />
+              {query.trim().length > 0 && (
+                <button
+                  type="button"
+                  className={table.clearBtn}
+                  aria-label="Xóa từ khóa tìm kiếm"
+                  title="Xóa từ khóa tìm kiếm"
+                  onClick={() => {
+                    setQuery("");
+                    setPage(1);
+                  }}
+                >
+                  <Icon name="close" size={12} />
+                </button>
+              )}
+            </div>
+          )}
+          {filters.map((f) => {
+            const val = filterValues[f.key] ?? "all";
+            const currentOpt = f.options.find(([optVal]) => optVal === val);
+            const currentText = val === "all" ? `${f.label}: tất cả` : currentOpt ? currentOpt[1] : val;
+            return (
+              <div key={f.key} className={table.filterWrap}>
+                <label className="sr-only" htmlFor={`${id}-f-${f.key}`}>
+                  {f.label}
+                </label>
+                <select
+                  id={`${id}-f-${f.key}`}
+                  className={cn(styles.input, table.filter)}
+                  value={val}
+                  title={currentText}
+                  onChange={(e) => {
+                    setFilterValues((v) => ({ ...v, [f.key]: e.target.value }));
+                    setPage(1);
+                  }}
+                >
+                  <option value="all">{f.label}: tất cả</option>
+                  {f.options.map(([value, text]) => (
+                    <option key={value} value={value}>
+                      {text}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            );
+          })}
+          {hasActiveFilters && (
+            <button
+              type="button"
+              className={table.resetBtn}
+              onClick={clear}
+              title="Xóa bộ lọc và tìm kiếm về mặc định"
+            >
+              <Icon name="rotate" size={14} />
+              <span>Đặt lại</span>
+            </button>
+          )}
+        </div>
+        {toolbarRight && (
+          <div className={table.toolbarRight}>
+            {typeof toolbarRight === "function" ? toolbarRight(visible) : toolbarRight}
           </div>
         )}
-        {filters.map((f) => (
-          <span key={f.key}>
-            <label className="sr-only" htmlFor={`${id}-f-${f.key}`}>
-              {f.label}
-            </label>
-            <select
-              id={`${id}-f-${f.key}`}
-              className={cn(styles.input, table.filter)}
-              value={filterValues[f.key] ?? "all"}
-              onChange={(e) => {
-                setFilterValues((v) => ({ ...v, [f.key]: e.target.value }));
-                setPage(1);
-              }}
-            >
-              <option value="all">{f.label}: tất cả</option>
-              {f.options.map(([value, text]) => (
-                <option key={value} value={value}>
-                  {text}
-                </option>
-              ))}
-            </select>
-          </span>
-        ))}
-        <span className={table.spacer} />
-        {typeof toolbarRight === "function" ? toolbarRight(visible) : toolbarRight}
       </div>
 
       <div className={table.wrap}>

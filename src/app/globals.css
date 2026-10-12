@@ -253,7 +253,8 @@
   --adm-switch-h: 24px;
   --adm-switch-knob: 18px;
   --adm-search-w: 260px;
-  --adm-filter-max: 180px;
+  --adm-filter-min: 160px;
+  --adm-filter-max: 240px;
   --adm-pager-btn: 32px;
   --adm-select-w-s: 80px;
   --adm-chart-axis: 40px;

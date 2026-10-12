@@ -37,6 +37,7 @@ Bảng tổng các task của giai đoạn 1. Mỗi thư mục có một `task.m
 | 31 | [31-ai-family-sentences](31-ai-family-sentences/task.md) — AI gợi ý câu cho đoạn văn vui của Họ vần | 🔄 | 26, 29 | `feat/31-ai-family-sentences` |
 | 32 | [32-family-sentences-ui-ai](32-family-sentences-ui-ai/task.md) — Sửa layout đoạn văn Họ vần và tùy chọn số câu gợi ý AI | ✅ | 26, 31 | `feat/32-family-sentences-ui-ai` |
 | 33 | [33-audit-family-student-preview](33-audit-family-student-preview/task.md) — Audit layout modal Họ vần Xem như học sinh theo Impeccable | ✅ | 26, 32 | `feat/33-audit-family-student-preview` |
+| 34 | [34-adult-table-filters](34-adult-table-filters/task.md) — Sửa layout tìm kiếm, combobox bộ lọc và nâng cấp trải nghiệm AdultTable | ✅ | 26, 30 | `feat/34-adult-table-filters` |
 | 900 | [900-real-db-finalize](900-real-db-finalize/task.md) — Hoàn tất dữ liệu trên database thật (giọng đọc, xuất bản, Playwright) | ⬜ | 28 | `feat/900-real-db-finalize` |
 | 999 | [999-fix-ui-findings](999-fix-ui-findings/task.md) — Sửa lỗi giao diện sau rà soát test tự động (lỗi 1–7, 10, 11) | ✅ | 12 | `feat/29-fix-ui-findings` |
 
