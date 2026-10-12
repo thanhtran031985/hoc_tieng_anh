@@ -1,5 +1,6 @@
 /* Họ vần (Screen50): vần ở giữa, thẻ từ cùng âm hai bên, ô Bẫy chính tả bên cạnh. Vừa 1366×768, không cuộn. */
 .fam {
+  flex: none;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(calc(var(--space-16) * 4), calc(var(--space-16) * 4.7));
   gap: var(--space-5);
@@ -42,7 +43,7 @@
   position: relative;
   z-index: 1;
 }
-.side li:last-child:nth-child(odd) {
+.side li:only-child {
   grid-column: 1 / -1;
   justify-self: center;
 }

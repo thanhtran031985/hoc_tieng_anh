@@ -48,9 +48,12 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-6);
+  overflow: hidden;
 }
 .foot {
   flex: none;
+  position: relative;
+  z-index: var(--z-lift);
   border-top: var(--border-thin) solid var(--line);
   background: var(--bg);
 }

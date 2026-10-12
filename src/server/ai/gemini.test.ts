@@ -116,6 +116,16 @@ describe("gọi Gemini", () => {
     assert.equal(perMinute.calls(), 1);
   });
 
+  it("model bị 503 quá tải thì thử model kế tiếp", async () => {
+    const urls: string[] = [];
+    const fetchImpl = (async (url: string) => {
+      urls.push(url);
+      return url.includes("model-busy") ? new Response("{}", { status: 503 }) : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: "{\"ok\":true}" }] } }] }));
+    }) as unknown as typeof fetch;
+    assert.deepEqual(await call(fetchImpl, { model: "model-busy, model-ok" }), { ok: true });
+    assert.equal(urls.length, 2);
+  });
+
   it("tên model lạ bị từ chối trước khi gọi", async () => {
     await assert.rejects(() => call(ok("{}"), { model: "x/../y" }), /model/);
   });

@@ -184,6 +184,7 @@ export function FamilyPlayer({ mode, family, active = true, accent, onComplete, 
           title={`Đọc cả đoạn · câu vui của họ -${family.pattern}`}
           compact
           hotkeys={active}
+          className={styles.reading}
         />
       )}
     </div>

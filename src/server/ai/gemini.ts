@@ -26,6 +26,14 @@ export class AiQuotaError extends AiBusyError {
   }
 }
 
+/** Model AI đang quá tải hoặc tạm thời không khả dụng (HTTP 503 / 404). */
+export class AiOverloadedError extends AiBusyError {
+  constructor(message = "AI đang bận hoặc model tạm thời không khả dụng. Thử lại sau ít phút nhé.") {
+    super(message);
+    this.name = "AiOverloadedError";
+  }
+}
+
 /** Gọi AI không thành công vì lý do khác (khóa sai, mạng, hết thời gian chờ, kết quả hỏng). `message` đã thân thiện, hiện thẳng cho người soạn. */
 export class AiFailedError extends Error {
   /** Lỗi tạm thời (quá lâu, mất mạng, AI sự cố, dữ liệu hỏng): gọi lại một lần có thể được. Khóa sai thì không. */
@@ -38,7 +46,7 @@ export class AiFailedError extends Error {
 }
 
 // Mỗi model có hạn mức miễn phí riêng theo ngày; liệt kê vài model để hết hạn mức model này thì dùng model kế.
-const DEFAULT_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3.7-flash"];
+const DEFAULT_MODELS = ["gemini-3.5-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash"];
 // Một lượt thường mất 4–13 giây; thỉnh thoảng Gemini treo nên chờ ngắn rồi gọi lại (xem `generateJsonWithRetry`).
 const DEFAULT_TIMEOUT_MS = 25_000;
 const ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
@@ -79,16 +87,19 @@ export async function generateJson(prompt: string, options: GenerateJsonOptions)
   const models = options.model !== undefined ? list(options.model) : [...new Set([...list(process.env.GEMINI_MODEL), ...DEFAULT_MODELS])];
   // Tên model nằm trong đường dẫn: chỉ nhận chữ, số, dấu chấm, gạch ngang và gạch dưới.
   if (models.some((m) => !/^[A-Za-z0-9._-]+$/.test(m))) throw new AiFailedError("Tên model AI (GEMINI_MODEL) không hợp lệ.");
-  let exhausted: AiQuotaError | null = null;
+  let lastError: AiBusyError | null = null;
   for (const model of models) {
     try {
       return await callModel(prompt, options, apiKey, model);
     } catch (error) {
-      if (!(error instanceof AiQuotaError)) throw error;
-      exhausted = error;
+      if (error instanceof AiQuotaError || error instanceof AiOverloadedError) {
+        lastError = error;
+        continue;
+      }
+      throw error;
     }
   }
-  throw exhausted ?? new AiQuotaError();
+  throw lastError ?? new AiQuotaError();
 }
 
 async function callModel(prompt: string, options: GenerateJsonOptions, apiKey: string, model: string): Promise<unknown> {
@@ -120,9 +131,16 @@ async function callModel(prompt: string, options: GenerateJsonOptions, apiKey: s
   if (response.status === 429) {
     // Hạn mức theo ngày (…PerDay…) khác hạn mức theo phút: theo ngày thì thử lại ngay cũng vô ích.
     const detail = await response.text().catch(() => "");
-    throw /PerDay/i.test(detail) ? new AiQuotaError() : new AiBusyError();
+    throw /(per[_-]?day|daily|perday)/i.test(detail) ? new AiQuotaError() : new AiBusyError();
   }
-  if (response.status === 503) throw new AiBusyError();
+  if (response.status === 503) {
+    console.warn(`gọi AI: HTTP 503 (${model} quá tải, thử model tiếp theo)`);
+    throw new AiOverloadedError();
+  }
+  if (response.status === 404) {
+    console.warn(`gọi AI: HTTP 404 (${model} không khả dụng, thử model tiếp theo)`);
+    throw new AiOverloadedError();
+  }
   if (response.status === 400 || response.status === 401 || response.status === 403) {
     console.error("gọi AI: HTTP", response.status);
     throw new AiFailedError("AI từ chối yêu cầu (khóa chưa đúng hoặc chưa được cấp quyền). Kiểm tra GEMINI_API_KEY trong tệp .env.");

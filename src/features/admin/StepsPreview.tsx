@@ -49,27 +49,43 @@ export function StepsPreview({ steps, level, onClose }: Props) {
   return createPortal(
     <div ref={overlay} tabIndex={-1} className={styles.preview} data-theme={level <= 5 ? "tieu-hoc" : "thcs"} role="dialog" aria-modal="true" aria-label="Xem như học sinh">
       {isGame ? (
-        <StepView
-          key={`${index}-${round}`}
-          step={step}
-          active
-          unit={{ title: "Xem thử", titleVi: "Xem thử" }}
-          host={{ level, mascot: "ngoc", onStop: onClose }}
-          onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)}
-        />
+        <>
+          <StepView
+            key={`${index}-${round}`}
+            step={step}
+            active
+            unit={{ title: "Xem thử", titleVi: "Xem thử" }}
+            host={{ level, mascot: "ngoc", onStop: onClose }}
+            onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)}
+          />
+          {steps.length > 1 && (
+            <div className={styles.previewBarFloating} role="group" aria-label="Chuyển bước xem thử">
+              <AdultButton label="Bước trước" icon="back" variant="secondary" size="s" disabled={index === 0} onClick={() => go(index - 1)} />
+              <span aria-live="polite">
+                Bước {index + 1} / {steps.length}
+              </span>
+              <AdultButton label="Bước sau" icon="next" variant="secondary" size="s" disabled={index === steps.length - 1} onClick={() => go(index + 1)} />
+            </div>
+          )}
+        </>
       ) : (
-        <LessonFrame level={level} mascot="ngoc" value={index} max={steps.length} onExit={onClose}>
+        <LessonFrame
+          level={level}
+          mascot="ngoc"
+          value={index}
+          max={steps.length}
+          onExit={onClose}
+          extra={
+            steps.length > 1 ? (
+              <div className={styles.previewBarHeader} role="group" aria-label="Chuyển bước xem thử">
+                <AdultButton label="Bước trước" icon="back" variant="secondary" size="s" disabled={index === 0} onClick={() => go(index - 1)} />
+                <AdultButton label="Bước sau" icon="next" variant="secondary" size="s" disabled={index === steps.length - 1} onClick={() => go(index + 1)} />
+              </div>
+            ) : null
+          }
+        >
           <StepView key={`${index}-${round}`} step={step} active unit={{ title: "Xem thử", titleVi: "Xem thử" }} onComplete={() => go(index + 1 < steps.length ? index + 1 : 0)} />
         </LessonFrame>
-      )}
-      {steps.length > 1 && (
-        <div className={styles.previewBar} role="group" aria-label="Chuyển bước xem thử">
-          <AdultButton label="Bước trước" icon="back" variant="secondary" size="s" disabled={index === 0} onClick={() => go(index - 1)} />
-          <span aria-live="polite">
-            Bước {index + 1} / {steps.length}
-          </span>
-          <AdultButton label="Bước sau" icon="next" variant="secondary" size="s" disabled={index === steps.length - 1} onClick={() => go(index + 1)} />
-        </div>
       )}
     </div>,
     document.body,

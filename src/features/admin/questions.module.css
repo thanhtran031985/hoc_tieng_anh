@@ -150,17 +150,26 @@
 .preview:focus {
   outline: none;
 }
-.previewBar {
+/* Thanh chuyển bước xem thử (nằm gọn trên header, không che lấp nội dung bài học). */
+.previewBarHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+.previewBarFloating {
   position: absolute;
+  top: var(--space-4);
   right: var(--space-6);
-  bottom: calc(var(--size-lesson-foot) + var(--space-4));
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--surface);
+  border: var(--border-thin) solid var(--line);
   box-shadow: var(--adm-shadow-card);
   color: var(--ink);
   font-size: var(--text-adm-small);
+  z-index: var(--z-burst);
 }

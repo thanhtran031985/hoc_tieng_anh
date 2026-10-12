@@ -4,8 +4,8 @@
 .kw {
   border: 0;
   background: none;
-  padding: 0 var(--space-1);
-  margin: 0 calc(-1 * var(--space-1));
+  padding: 0 2px;
+  margin: 0;
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -21,7 +21,7 @@
   background: var(--read-highlight);
 }
 .punct {
-  margin-left: calc(-1 * var(--space-1));
+  margin: 0;
 }
 
 /* Bong bóng "loa · chữ · nghĩa" nằm trên chữ vừa bấm. */
