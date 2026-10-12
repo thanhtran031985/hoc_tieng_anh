@@ -227,10 +227,10 @@ describe("cleanFamily", () => {
   });
 
   it("cắt số từ, chữ đầu nhiễu và câu cho đủ giới hạn", () => {
-    const out = cleanFamily({ ...good, decoys: ["b", "c", "d", "f", "g"], sentences: Array.from({ length: 7 }, (_, i) => ({ en: `Sentence ${i}.`, vi: "Câu." })) }, famCtx);
+    const out = cleanFamily({ ...good, decoys: ["b", "c", "d", "f", "g"], sentences: Array.from({ length: 12 }, (_, i) => ({ en: `Sentence ${i}.`, vi: "Câu." })) }, famCtx);
     assert.ok(out);
     assert.equal(out.decoys.length, 3);
-    assert.equal(out.sentences.length, 4);
+    assert.equal(out.sentences.length, 10);
   });
 
   it("hỏng hoặc rỗng thì null", () => {
@@ -263,12 +263,17 @@ describe("familySentencesPrompt", () => {
       ],
       avoid: ["delighted"],
     });
-    for (const part of ['"-ous"', "/əs/", "level 4", "famous /ˈfeɪməs/ = nổi tiếng", "SPELLING TRAPS", "house /haʊs/ = ngôi nhà", "exactly 3", "max 12 words", "delighted"]) assert.ok(text.includes(part), part);
+    for (const part of ['"-ous"', "/əs/", "level 4", "famous /ˈfeɪməs/ = nổi tiếng", "SPELLING TRAPS", "house /haʊs/ = ngôi nhà", "exactly 3", "10 words", "delighted"]) assert.ok(text.includes(part), part);
   });
 
   it("không có Bẫy thì không nhắc Bẫy", () => {
     const text = familySentencesPrompt({ pattern: "at", soundIpa: null, level: 1, members: [{ word: "cat", ipa: null, meaningVi: "con mèo", sameSound: true }] });
     assert.ok(!text.includes("SPELLING TRAPS") && !text.includes("Do NOT use"));
+  });
+
+  it("nhận tham số count để yêu cầu số câu mong muốn", () => {
+    const text = familySentencesPrompt({ pattern: "at", soundIpa: "/æt/", level: 1, count: 5, members: [{ word: "cat", ipa: "/kæt/", meaningVi: "con mèo", sameSound: true }] });
+    assert.ok(text.includes("Write exactly 5 short, fun"));
   });
 });
 
@@ -286,6 +291,18 @@ describe("cleanFamilySentences", () => {
     const out = cleanFamilySentences({ sentences: [s("A famous dog."), s(""), s("a famous DOG."), s("A nervous cat."), s("A curious dog."), s("A famous cat.")] }, fctx);
     assert.ok(out);
     assert.deepEqual(out.data.sentences.map((x) => x.en), ["A famous dog.", "A nervous cat.", "A curious dog."]);
+  });
+
+  it("cắt theo số câu yêu cầu count khi được truyền vào", () => {
+    const s = (en: string) => ({ en, vi: "Câu." });
+    const list = [s("A famous dog."), s("A nervous cat."), s("A curious dog."), s("A famous cat."), s("A nervous dog.")];
+    const out5 = cleanFamilySentences({ sentences: list }, { ...fctx, count: 5 });
+    assert.ok(out5);
+    assert.equal(out5.data.sentences.length, 5);
+
+    const out1 = cleanFamilySentences({ sentences: list }, { ...fctx, count: 1 });
+    assert.ok(out1);
+    assert.equal(out1.data.sentences.length, 1);
   });
 
   it("nhận từ có đuôi (số nhiều, -ing) là dùng từ của họ", () => {
@@ -363,5 +380,22 @@ describe("suggestFamilySentencesInputSchema", () => {
   it("tối đa 24 từ", () => {
     const many = Array.from({ length: 25 }, (_, i) => ({ wordId: i + 1, sameSound: true }));
     assert.equal(suggestFamilySentencesInputSchema.safeParse({ ...ok, members: many }).success, false);
+  });
+
+  it("hỗ trợ count từ 1 đến 10, mặc định là 3", () => {
+    const def = suggestFamilySentencesInputSchema.safeParse(ok);
+    assert.ok(def.success);
+    assert.equal(def.data.count, 3);
+
+    const c5 = suggestFamilySentencesInputSchema.safeParse({ ...ok, count: 5 });
+    assert.ok(c5.success);
+    assert.equal(c5.data.count, 5);
+
+    const c10 = suggestFamilySentencesInputSchema.safeParse({ ...ok, count: "10" });
+    assert.ok(c10.success);
+    assert.equal(c10.data.count, 10);
+
+    assert.equal(suggestFamilySentencesInputSchema.safeParse({ ...ok, count: 0 }).success, false);
+    assert.equal(suggestFamilySentencesInputSchema.safeParse({ ...ok, count: 11 }).success, false);
   });
 });

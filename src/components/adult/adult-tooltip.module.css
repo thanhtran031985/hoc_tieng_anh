@@ -1,0 +1,87 @@
+/* Tooltip chú thích nghiệp vụ khu người lớn: hiển thị khi hover hoặc Tab focus */
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  margin-left: var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  cursor: help;
+  border-radius: var(--radius-round);
+  transition: color 0.15s ease;
+  line-height: 1;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  color: var(--ink);
+}
+
+/* Tooltip hiển thị qua React Portal lên thẳng document.body để vượt lên trên tất cả layout, bảng biểu và thanh tìm kiếm */
+.portalTip {
+  position: fixed;
+  z-index: 99999;
+  width: max-content;
+  max-width: 280px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: var(--adm-radius-md);
+  font-size: var(--text-adm-small);
+  line-height: 1.45;
+  font-weight: 400;
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+  user-select: none;
+  animation: tipFadeIn 0.12s ease-out;
+}
+
+/* Khi hiển thị bên dưới trigger */
+.portalTip[data-below="true"] {
+  transform: translateX(-50%) translateY(0);
+}
+.portalTip[data-below="true"]::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: calc(50% + var(--arrow-offset, 0px));
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--ink) transparent;
+}
+
+/* Khi hiển thị bên trên trigger */
+.portalTip[data-below="false"] {
+  transform: translateX(-50%) translateY(-100%);
+}
+.portalTip[data-below="false"]::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: calc(50% + var(--arrow-offset, 0px));
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent transparent;
+}
+
+@keyframes tipFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

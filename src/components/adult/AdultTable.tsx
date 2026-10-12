@@ -10,7 +10,7 @@ import table from "./adult-table.module.css";
 
 export type AdultColumn<Row> = {
   key: keyof Row & string;
-  label: string;
+  label: React.ReactNode;
   /** Cho phép sắp xếp (nút trong tiêu đề, cập nhật `aria-sort`). */
   sort?: boolean;
   align?: "right" | "center";
@@ -42,7 +42,7 @@ type Props<Row> = {
   caption: string;
 };
 
-const PAGE_SIZES = [5, 8, 10, 25];
+const PAGE_SIZES = [5, 8, 10, 25, 50];
 
 /**
  * Bảng dữ liệu khu người lớn: tìm kiếm, bộ lọc, sắp xếp theo cột (aria-sort), phân trang, hàng cao `adm-row`.
@@ -89,6 +89,19 @@ export function AdultTable<Row extends Record<string, unknown>>({ columns, rows,
     setFilterValues({});
     setPage(1);
   }
+
+  const paginationItems = useMemo(() => {
+    if (pages <= 7) {
+      return Array.from({ length: pages }, (_, i) => i + 1);
+    }
+    if (current <= 4) {
+      return [1, 2, 3, 4, 5, "ellipsis-right", pages] as const;
+    }
+    if (current >= pages - 3) {
+      return [1, "ellipsis-left", pages - 4, pages - 3, pages - 2, pages - 1, pages] as const;
+    }
+    return [1, "ellipsis-left", current - 1, current, current + 1, "ellipsis-right", pages] as const;
+  }, [current, pages]);
 
   return (
     <section className={cn(styles.card, table.card)} aria-label={caption}>
@@ -186,37 +199,70 @@ export function AdultTable<Row extends Record<string, unknown>>({ columns, rows,
       </div>
 
       <div className={table.foot}>
-        <span className={cn(styles.small, styles.muted)} aria-live="polite">
-          Hiển thị {from}–{to} / {visible.length}
-        </span>
-        <div className={table.pager}>
-          <label className={cn(styles.small, styles.muted)} htmlFor={`${id}-ps`}>
-            Mỗi trang
-          </label>
-          <select
-            id={`${id}-ps`}
-            className={cn(styles.input, table.size)}
-            value={size}
-            onChange={(e) => {
-              setSize(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            {PAGE_SIZES.map((n) => (
-              <option key={n}>{n}</option>
-            ))}
-          </select>
-          <button type="button" className={table.pg} aria-label="Trang trước" disabled={current === 1} onClick={() => setPage(current - 1)}>
-            <Icon name="back" size={16} />
-          </button>
-          {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
-            <button key={p} type="button" className={cn(table.pg, p === current && table.pgOn)} aria-label={`Trang ${p}`} aria-current={p === current ? "page" : undefined} onClick={() => setPage(p)}>
-              {p}
+        <div className={table.footInfo} aria-live="polite">
+          <span>
+            Hiển thị <strong>{from}–{to}</strong> / <strong>{visible.length.toLocaleString("vi-VN")}</strong>
+          </span>
+        </div>
+        <div className={table.footControls}>
+          <div className={table.sizeWrap}>
+            <label className={table.sizeLabel} htmlFor={`${id}-ps`}>
+              Mỗi trang
+            </label>
+            <select
+              id={`${id}-ps`}
+              className={cn(styles.input, table.size)}
+              value={size}
+              onChange={(e) => {
+                setSize(Number(e.target.value));
+                setPage(1);
+              }}
+            >
+              {PAGE_SIZES.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </div>
+          <nav className={table.pager} aria-label="Phân trang">
+            <button
+              type="button"
+              className={table.pg}
+              aria-label="Trang trước"
+              disabled={current <= 1}
+              onClick={() => setPage(Math.max(1, current - 1))}
+            >
+              <Icon name="back" size={16} />
             </button>
-          ))}
-          <button type="button" className={table.pg} aria-label="Trang sau" disabled={current === pages} onClick={() => setPage(current + 1)}>
-            <Icon name="next" size={16} />
-          </button>
+            {paginationItems.map((item, idx) =>
+              typeof item === "number" ? (
+                <button
+                  key={item}
+                  type="button"
+                  className={cn(table.pg, item === current && table.pgOn)}
+                  aria-label={`Trang ${item}`}
+                  aria-current={item === current ? "page" : undefined}
+                  onClick={() => setPage(item)}
+                >
+                  {item}
+                </button>
+              ) : (
+                <span key={`${item}-${idx}`} className={table.ellipsis} aria-hidden="true">
+                  …
+                </span>
+              )
+            )}
+            <button
+              type="button"
+              className={table.pg}
+              aria-label="Trang sau"
+              disabled={current >= pages}
+              onClick={() => setPage(Math.min(pages, current + 1))}
+            >
+              <Icon name="next" size={16} />
+            </button>
+          </nav>
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AdultButton, AdultButtonLink, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSelect, AdultTable, AdultTextarea, adultStyles, useToast, type AdultColumn } from "@/components/adult";
+import { AdultButton, AdultButtonLink, AdultCard, AdultDrawer, AdultEmpty, AdultIconButton, AdultInput, AdultSelect, AdultTable, AdultTextarea, AdultTooltip, adultStyles, useToast, type AdultColumn } from "@/components/adult";
 import { Icon, LevelChip, SpeakerButton, WordPicture } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { familyFilterState, familyRefLabel, splitFamilyChips, type WordFamilyRef } from "@/lib/rules/admin-vocab";
@@ -102,7 +102,12 @@ export function VocabView({ data }: { data: VocabData }) {
     },
     {
       key: "explorerState",
-      label: "Khám phá",
+      label: (
+        <span>
+          Khám phá
+          <AdultTooltip content="Sơ đồ tư duy mở rộng từ vựng: phân nhánh nghĩa, ngữ cảnh sử dụng và hình ảnh minh họa." />
+        </span>
+      ),
       sort: true,
       render: (r) =>
         r.explorer ? (
@@ -116,7 +121,12 @@ export function VocabView({ data }: { data: VocabData }) {
     },
     {
       key: "familyCount",
-      label: "Họ vần",
+      label: (
+        <span>
+          Họ vần
+          <AdultTooltip content="Nhóm các từ có chung vần phát âm (như -at: cat, bat). Nhãn 'Bẫy' là các từ cùng mặt chữ nhưng phát âm khác." />
+        </span>
+      ),
       sort: true,
       render: (r) => {
         if (r.families.length === 0) return <span className={cn(adultStyles.small, adultStyles.muted)}>Chưa có</span>;

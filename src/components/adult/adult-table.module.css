@@ -97,17 +97,58 @@ th[aria-sort="descending"] .sort {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-thin) solid var(--line);
+  background: var(--surface);
 }
-.pager {
-  display: flex;
+.footInfo {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  white-space: nowrap;
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.footInfo strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.footControls {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-left: auto;
+}
+.sizeWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+.sizeLabel {
+  font-size: var(--text-adm-small);
+  line-height: var(--text-adm-small--line-height);
+  color: var(--ink-soft);
+  user-select: none;
 }
 .size {
-  width: var(--adm-select-w-s);
-  margin-right: var(--space-2);
+  width: auto;
+  min-width: var(--adm-select-w-s);
+  min-height: var(--adm-pager-btn);
+  height: var(--adm-pager-btn);
+  padding: 0 var(--space-5) 0 var(--space-2);
+  font-size: var(--text-adm-small);
+  line-height: var(--adm-pager-btn);
+}
+.pager {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 .pg {
   display: inline-grid;
@@ -123,6 +164,11 @@ th[aria-sort="descending"] .sort {
   font-size: var(--text-adm-small);
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.pg:hover:not(:disabled):not(.pgOn) {
+  background: var(--surface-soft);
+  border-color: var(--line-strong);
 }
 .pgOn {
   background: var(--brand);
@@ -130,6 +176,19 @@ th[aria-sort="descending"] .sort {
   color: var(--on-brand);
 }
 .pg:disabled {
+  opacity: 0.45;
   color: var(--ink-disabled);
-  cursor: default;
+  cursor: not-allowed;
+  background: var(--surface-soft);
 }
+.ellipsis {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--adm-pager-btn);
+  height: var(--adm-pager-btn);
+  color: var(--ink-soft);
+  font-size: var(--text-adm-small);
+  font-weight: 600;
+  user-select: none;
+}
+

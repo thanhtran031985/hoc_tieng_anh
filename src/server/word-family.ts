@@ -1,6 +1,6 @@
 import { today } from "@/lib/rules/dates";
 import { buildInfo, type FamilyMemberView, type FamilyTrapView, type FamilyView } from "@/lib/rules/word-family";
-import { parseExplorerSentences, parseFamilyDecoys } from "@/lib/schemas";
+import { parseFamilyDecoys, parseFamilySentences } from "@/lib/schemas";
 import { db } from "./db";
 import { requireLearner } from "./learners";
 import { audioOfWords, glossaryFor, wordsWithExplorer } from "./word-explorer";
@@ -56,7 +56,7 @@ export async function loadFamilies(familyIds: readonly number[], learnedWordIds:
       .filter((m) => !m.sameSound)
       .map((m) => ({ wordId: m.wordId, word: m.word.word, ipa: m.word.ipa, partOfSpeech: m.word.partOfSpeech, meaningVi: m.word.meaningVi }));
     const reading = readingOf.get(family.id);
-    const sentences = reading ? parseExplorerSentences(reading.sentences) : null;
+    const sentences = reading ? parseFamilySentences(reading.sentences) : null;
     return [{ family, members, traps, build, reading: reading && sentences ? { sentences, audio: reading.audio } : null }];
   });
 

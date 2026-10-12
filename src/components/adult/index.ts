@@ -11,6 +11,7 @@ export { AdultShell, type ShellKid } from "./AdultShell";
 export { AdultTable, type AdultColumn, type AdultFilter } from "./AdultTable";
 export { AdultSortable, type SortableApi } from "./useSortable";
 export { AdultToggle } from "./AdultToggle";
+export { AdultTooltip, type AdultTooltipProps } from "./AdultTooltip";
 export { Kpi } from "./Kpi";
 export { AdultEmpty, AdultError, AdultSkeleton } from "./States";
 export { Status, type StatusKind } from "./Status";

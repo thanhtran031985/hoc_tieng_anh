@@ -345,9 +345,9 @@ export function cleanFamily(raw: unknown, ctx: FamilyFilterContext): SuggestedFa
 
 // ---- Gợi ý câu cho đoạn văn vui của họ (task 31) ----
 
-/** Số câu AI được hỏi và giữ lại, và số chữ tối đa của một câu vui. */
+/** Số câu AI được hỏi và giữ lại, và số chữ tối đa của một câu vui (1–10 từ/câu). */
 export const AI_FAMILY_SENTENCES = 3;
-export const AI_SENTENCE_WORDS_MAX = 12;
+export const AI_SENTENCE_WORDS_MAX = 10;
 
 export const FAMILY_SENTENCES_RESPONSE_SCHEMA: JsonSchema = {
   type: S.OBJECT,
@@ -362,6 +362,8 @@ export type FamilySentencesPromptInput = {
   soundIpa: string | null;
   /** Cấp 1–10 của họ. */
   level: number;
+  /** Số câu yêu cầu viết (1–10 câu). */
+  count?: number;
   members: readonly { word: string; ipa: string | null; meaningVi: string; sameSound: boolean }[];
   /** Chữ ngoài cấp ở lần thử trước: yêu cầu tránh. */
   avoid?: readonly string[];
@@ -369,7 +371,8 @@ export type FamilySentencesPromptInput = {
 
 /** Lời nhắc viết câu vui cho một họ vần. Chỉ gửi từ vựng, nghĩa và cấp (nội dung công khai của dự án), không gửi gì về học sinh. */
 export function familySentencesPrompt(input: FamilySentencesPromptInput): string {
-  const { pattern, soundIpa, level, members, avoid } = input;
+  const { pattern, soundIpa, level, count = AI_FAMILY_SENTENCES, members, avoid } = input;
+  const targetCount = Math.max(1, Math.min(FAMILY_SENTENCES_MAX, count));
   const same = members.filter((m) => m.sameSound);
   const traps = members.filter((m) => !m.sameSound);
   const list = (items: typeof members) => items.map((m) => `${m.word}${m.ipa ? ` ${m.ipa}` : ""} = ${m.meaningVi}`).join("; ");
@@ -378,15 +381,19 @@ export function familySentencesPrompt(input: FamilySentencesPromptInput): string
 PATTERN: "-${pattern}"${soundIpa ? ` pronounced ${soundIpa}` : ""}.
 WORDS OF THE FAMILY (same sound): ${list(same) || "(none)"}.${traps.length ? `\nSPELLING TRAPS (same letters, different sound; avoid them unless needed): ${list(traps)}.` : ""}
 
-Write exactly ${AI_FAMILY_SENTENCES} short, fun, grammatically correct English sentences (max ${AI_SENTENCE_WORDS_MAX} words each).
+Write exactly ${targetCount} short, fun, grammatically correct English sentences (from 1 to ${AI_SENTENCE_WORDS_MAX} words each).
+- Sentences and grammatical structures must strictly match children's English level (curriculum level ${level} of 10). Keep sentence structure simple, age-appropriate, and easy to parse.
+- Each sentence must make complete, logical sense in a real-world, child-friendly context (animals, family, school, playtime, nature). NEVER create nonsensical or weird sentences just to force rhyming words together.
 - Use as many words of the family as you naturally can, copied exactly (a word may take a normal ending, e.g. a plural).
 - Every other word must be very simple, known by a child at level ${level}. Never use hard words.${avoid?.length ? `\n- Do NOT use these words (too hard for this level): ${avoid.join(", ")}.` : ""}
-- Each sentence has a natural, child-friendly Vietnamese translation ("vi").
+- Each sentence has a natural, child-friendly Vietnamese translation ("vi") that accurately conveys the meaning without awkward literal translation.
 No text outside the JSON.`;
 }
 
 export type FamilySentencesFilterContext = {
   members: readonly { word: string; sameSound: boolean }[];
+  /** Số câu mong muốn giữ lại (1–10). */
+  count?: number;
   /** Vốn từ của cấp; null khi không nạp được thì bỏ qua kiểm từ ngoài cấp. */
   allowed: ReadonlySet<string> | null;
 };
@@ -398,12 +405,13 @@ const usesWord = (tokens: readonly string[], word: string): boolean => {
 };
 
 /**
- * Sửa kết quả thô của AI cho đoạn văn vui của họ: bỏ câu rỗng hoặc trùng, giữ tối đa `AI_FAMILY_SENTENCES` câu, rồi báo câu quá dài,
+ * Sửa kết quả thô của AI cho đoạn văn vui của họ: bỏ câu rỗng hoặc trùng, giữ tối đa `count` câu, rồi báo câu quá dài,
  * thiếu bản dịch, không dùng từ nào của họ, và chữ ngoài cấp (chữ của các từ trong họ được phép). `outOfLevel` để gọi lại một lần.
  */
 export function cleanFamilySentences(raw: unknown, ctx: FamilySentencesFilterContext): { data: SuggestedFamilySentences; outOfLevel: string[] } | null {
   const parsed = aiFamilySentencesRawSchema.safeParse(raw);
   if (!parsed.success) return null;
+  const targetCount = Math.max(1, Math.min(FAMILY_SENTENCES_MAX, ctx.count ?? AI_FAMILY_SENTENCES));
   const seen = new Set<string>();
   const sentences = parsed.data.sentences
     .filter((s) => {
@@ -412,7 +420,7 @@ export function cleanFamilySentences(raw: unknown, ctx: FamilySentencesFilterCon
       seen.add(key);
       return true;
     })
-    .slice(0, Math.min(AI_FAMILY_SENTENCES, FAMILY_SENTENCES_MAX))
+    .slice(0, targetCount)
     .map((s) => ({ en: clip(s.en, 300), vi: clip(s.vi, 300) }));
   if (sentences.length === 0) return null;
 

@@ -89,7 +89,7 @@ export async function suggestFamily(input: unknown, adminId: number): Promise<Su
 export async function suggestFamilySentences(input: unknown, adminId: number): Promise<SuggestResult<SuggestedFamilySentences>> {
   const parsed = suggestFamilySentencesInputSchema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Dữ liệu chưa hợp lệ.");
-  const { pattern, soundIpa, levelId, members } = parsed.data;
+  const { pattern, soundIpa, levelId, members, count } = parsed.data;
   const blocked = allowCall(adminId);
   if (blocked) return blocked;
 
@@ -103,8 +103,8 @@ export async function suggestFamilySentences(input: unknown, adminId: number): P
   const family = members.map((m) => ({ word: wordOf.get(m.wordId)!.word, ipa: wordOf.get(m.wordId)!.ipa, meaningVi: wordOf.get(m.wordId)!.meaningVi, sameSound: m.sameSound }));
 
   const allowed = await allowedTokensUpToLevel(level.number);
-  const ctx = { members: family, allowed };
-  const base = { pattern, soundIpa: /^\/[^/\s][^/]*\/$/.test(soundIpa) ? soundIpa : null, level: level.number, members: family };
+  const ctx = { members: family, allowed, count };
+  const base = { pattern, soundIpa: /^\/[^/\s][^/]*\/$/.test(soundIpa) ? soundIpa : null, level: level.number, count, members: family };
   try {
     let best = cleanFamilySentences(await generateJsonWithRetry(familySentencesPrompt(base), { schema: FAMILY_SENTENCES_RESPONSE_SCHEMA }), ctx);
     if (best && best.outOfLevel.length > 0) {

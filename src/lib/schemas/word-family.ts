@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { explorerSentenceSchema } from "./word-explorer.ts";
+import { explorerSentenceSchema, type ExplorerSentence } from "./word-explorer.ts";
 
 // Họ vần (dạng bài 8.28, task 26): hình dạng JSON của `word_families.decoys` và các trường dùng chung giữa server và client.
 // Điều kiện xuất bản (đủ từ cùng âm, đoạn văn có dịch và giọng đọc…) kiểm riêng ở src/lib/rules/word-family.ts.
@@ -13,7 +13,7 @@ export const FAMILY_MEMBERS_MAX = 24;
 /** Số chữ đầu nhiễu tối đa. */
 export const FAMILY_DECOYS_MAX = 8;
 /** Số câu tối đa của đoạn văn vui của họ. */
-export const FAMILY_SENTENCES_MAX = 4;
+export const FAMILY_SENTENCES_MAX = 10;
 
 /** Vần: 1–6 chữ cái thường a–z (“at”, “ir”, “irt”). */
 export const familyPatternSchema = z
@@ -59,5 +59,11 @@ export type WordLabEntryInput = z.infer<typeof wordLabEntryInputSchema>;
 /** Đọc JSON từ database về đúng kiểu; hỏng thì trả null để màn bỏ qua họ thay vì vỡ. */
 export function parseFamilyDecoys(data: unknown): string[] | null {
   const result = familyDecoysSchema.safeParse(data);
+  return result.success ? result.data : null;
+}
+
+/** Đọc JSON câu của họ vần từ database về đúng kiểu (1–10 câu); hỏng thì trả null để màn bỏ qua họ thay vì vỡ. */
+export function parseFamilySentences(data: unknown): ExplorerSentence[] | null {
+  const result = familySentencesSchema.safeParse(data);
   return result.success ? result.data : null;
 }

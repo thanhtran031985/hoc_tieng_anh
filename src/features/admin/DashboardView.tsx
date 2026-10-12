@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AdultButton, AdultButtonLink, AdultCard, AdultCardHead, AdultEmpty, AdultGrid, AdultSegmented, AdultTable, Kpi, Status, VBars, adultStyles, type AdultColumn } from "@/components/adult";
+import { AdultButton, AdultButtonLink, AdultCard, AdultCardHead, AdultEmpty, AdultGrid, AdultSegmented, AdultTable, AdultTooltip, Kpi, Status, VBars, adultStyles, type AdultColumn } from "@/components/adult";
 import { ADMIN_NAV } from "@/components/adult/nav";
 import { Icon, type IconName } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -56,11 +56,40 @@ const COLUMNS: readonly AdultColumn<CoverageRow>[] = [
       </span>
     ),
   },
-  { key: "stage", label: "Chặng", sort: true },
+  {
+    key: "stage",
+    label: (
+      <span>
+        Chặng
+        <AdultTooltip content="Cấp 1–5: Tiểu học (giao diện Bông); Cấp 6–10: THCS" />
+      </span>
+    ),
+    sort: true,
+  },
   { key: "topics", label: "Chủ đề", sort: true, align: "right" },
   { key: "words", label: "Từ vựng", sort: true, align: "right", render: (r) => nf(r.words) },
-  { key: "imagePct", label: "Có hình", sort: true, render: (r) => <Coverage value={r.imagePct} /> },
-  { key: "audioPct", label: "Có âm thanh", sort: true, render: (r) => <Coverage value={r.audioPct} /> },
+  {
+    key: "imagePct",
+    label: (
+      <span>
+        Có hình
+        <AdultTooltip content="Tỷ lệ % từ vựng của cấp đã có hình minh họa (đạt chuẩn khi đạt 100%)" />
+      </span>
+    ),
+    sort: true,
+    render: (r) => <Coverage value={r.imagePct} />,
+  },
+  {
+    key: "audioPct",
+    label: (
+      <span>
+        Có âm thanh
+        <AdultTooltip content="Tỷ lệ % từ vựng của cấp đã có giọng đọc mp3 chuẩn (đạt chuẩn khi đạt 100%)" />
+      </span>
+    ),
+    sort: true,
+    render: (r) => <Coverage value={r.audioPct} />,
+  },
   { key: "lessons", label: "Bài học", sort: true, align: "right" },
   { key: "questions", label: "Câu hỏi", sort: true, align: "right", render: (r) => nf(r.questions) },
 ];
@@ -98,16 +127,35 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <span className={cn(styles.updated, adultStyles.small, adultStyles.muted)}>Cập nhật {data.updatedAt}</span>
 
       <div className={styles.kpis}>
-        <Kpi label="TỪ VỰNG" value={nf(totals.words)} icon="notebook" sub={`${nf(totals.wordsWithImage)} từ có hình`} />
-        <Kpi label="BÀI HỌC" value={nf(totals.lessonsPublished + totals.lessonsDraft)} icon="cards" sub={`${nf(totals.lessonsPublished)} đã xuất bản · ${nf(totals.lessonsDraft)} nháp`} />
+        <Kpi
+          label="TỪ VỰNG"
+          value={nf(totals.words)}
+          icon="notebook"
+          tip="Tổng số từ trong ngân hàng từ vựng. Đạt chuẩn khi 100% từ có đủ cả hình ảnh minh họa và file phát âm mp3."
+          sub={`${nf(totals.wordsWithImage)} từ có hình`}
+        />
+        <Kpi
+          label="BÀI HỌC"
+          value={nf(totals.lessonsPublished + totals.lessonsDraft)}
+          icon="cards"
+          tip="Các bài học trong chương trình. Bài 'Xuất bản' sẽ hiển thị cho học sinh học trên bản đồ; bài 'Nháp' đang được biên soạn."
+          sub={`${nf(totals.lessonsPublished)} đã xuất bản · ${nf(totals.lessonsDraft)} nháp`}
+        />
         <Kpi
           label="CÂU HỎI"
           value={nf(totals.questions)}
           icon="exam"
+          tip="Ngân hàng câu hỏi trắc nghiệm, ghép âm, luyện nghe, điền từ và đọc hiểu dùng trong bài học và bài thi."
           delta={totals.questionsThisWeek > 0 ? `+${nf(totals.questionsThisWeek)}` : undefined}
           sub={totals.questionsThisWeek > 0 ? "trong 7 ngày qua" : "chưa thêm câu nào trong 7 ngày qua"}
         />
-        <Kpi label="CHỦ ĐỀ" value={nf(totals.unitsPublished + totals.unitsDraft)} icon="tree" sub={`${nf(totals.unitsPublished)} xuất bản · ${nf(totals.unitsDraft)} nháp · ${nf(totals.unitsPlanned)} chưa có bài`} />
+        <Kpi
+          label="CHỦ ĐỀ"
+          value={nf(totals.unitsPublished + totals.unitsDraft)}
+          icon="tree"
+          tip="Đơn vị chủ đề theo 10 cấp. 'Chưa có bài' là chủ đề đã có trong khung phân phối nhưng chưa có bài học nào."
+          sub={`${nf(totals.unitsPublished)} xuất bản · ${nf(totals.unitsDraft)} nháp · ${nf(totals.unitsPlanned)} chưa có bài`}
+        />
       </div>
 
       <AdultGrid>
@@ -205,6 +253,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
                     </span>
                     <span className={adultStyles.small}>
                       <b className={adultStyles.body}>{nf(u.targetWords)}</b> từ mục tiêu
+                      <AdultTooltip content="Số từ vựng cốt lõi học sinh bắt buộc phải nắm vững khi học xong chủ đề này." />
                     </span>
                     <Status kind="none" label="Chưa có bài" />
                   </li>

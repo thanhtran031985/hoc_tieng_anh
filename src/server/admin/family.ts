@@ -1,5 +1,5 @@
 import { canPublishFamily, canSaveFamily, familyIssues } from "@/lib/rules/word-family";
-import { familyBankSearchSchema, familyEditorInputSchema, generateFamilyAudioSchema, parseExplorerSentences, parseFamilyDecoys, saveFamilySchema, type ExplorerSentence } from "@/lib/schemas";
+import { familyBankSearchSchema, familyEditorInputSchema, generateFamilyAudioSchema, parseFamilyDecoys, parseFamilySentences, saveFamilySchema, type ExplorerSentence } from "@/lib/schemas";
 import { isAiAvailable } from "../ai/gemini";
 import { audioFileExists, removeAudioFile, saveAudioFile } from "../audio/files";
 import { TtsTextError, TtsUnavailableError, currentVoice, isTtsAvailable, synthesizeMp3 } from "../audio/tts";
@@ -84,7 +84,7 @@ export async function getFamilyEditor(input: unknown): Promise<FamilyEditorData 
     decoys: parseFamilyDecoys(family.decoys) ?? [],
     trapNote: family.trapNote,
     members: family.members.map((m) => ({ wordId: m.wordId, word: m.word.word, ipa: m.word.ipa, partOfSpeech: m.word.partOfSpeech, meaningVi: m.word.meaningVi, image: m.word.image, sameSound: m.sameSound })),
-    sentences: parseExplorerSentences(reading?.sentences) ?? [],
+    sentences: parseFamilySentences(reading?.sentences) ?? [],
     readingAudio: reading?.audio ?? null,
     status: family.status === "published" && (reading === null || reading.status === "published") ? "published" : "draft",
     levels,
@@ -140,7 +140,7 @@ export async function saveFamily(input: unknown): Promise<AdminResult> {
   const existing = id === undefined ? null : await db.wordFamily.findUnique({ where: { id }, select: { id: true } });
   if (id !== undefined && !existing) return fail("Họ vần này không còn nữa. Hãy tải lại trang.");
   const oldReading = id === undefined ? null : await db.wordReading.findUnique({ where: { ownerType_ownerId: { ownerType: "family", ownerId: id } } });
-  const oldText = (parseExplorerSentences(oldReading?.sentences) ?? []).map((s) => s.en).join("\n");
+  const oldText = (parseFamilySentences(oldReading?.sentences) ?? []).map((s) => s.en).join("\n");
   const keepAudio = oldReading?.audio && sentences.length > 0 && sentences.map((s) => s.en).join("\n") === oldText ? oldReading.audio : null;
 
   const issues = familyIssues({
@@ -197,7 +197,7 @@ export async function generateFamilyAudio(input: unknown): Promise<GenerateFamil
   if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Dữ liệu chưa hợp lệ." };
   const { familyId, force } = parsed.data;
   const reading = await db.wordReading.findUnique({ where: { ownerType_ownerId: { ownerType: "family", ownerId: familyId } } });
-  const sentences = parseExplorerSentences(reading?.sentences) ?? [];
+  const sentences = parseFamilySentences(reading?.sentences) ?? [];
   if (!reading || sentences.length === 0) return { ok: false, message: "Họ này chưa có câu nào để đọc. Lưu đoạn văn trước." };
   if (!force && (await audioFileExists(reading.audio))) return { ok: true, made: false };
   try {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { familyDecoysSchema, familyIpaSchema, familyPatternSchema, onsetSchema, parseFamilyDecoys, wordLabEntryInputSchema } from "../schemas/word-family.ts";
+import { familyDecoysSchema, familyIpaSchema, familyPatternSchema, familySentencesSchema, onsetSchema, parseFamilyDecoys, parseFamilySentences, wordLabEntryInputSchema } from "../schemas/word-family.ts";
 import {
   BUILD_TILES_MAX,
   buildDone,
@@ -288,6 +288,20 @@ describe("Zod", () => {
     assert.equal(familyDecoysSchema.safeParse(["z", "v"]).success, true);
     assert.equal(parseFamilyDecoys("z"), null);
     assert.deepEqual(parseFamilyDecoys(["z"]), ["z"]);
+  });
+  it("câu đoạn văn họ vần hỗ trợ 1–10 câu", () => {
+    const seven = Array.from({ length: 7 }, (_, i) => ({ en: `Sentence ${i + 1}`, vi: `Câu ${i + 1}` }));
+    assert.equal(familySentencesSchema.safeParse(seven).success, true);
+    assert.deepEqual(parseFamilySentences(seven), seven);
+
+    const ten = Array.from({ length: 10 }, (_, i) => ({ en: `Sentence ${i + 1}`, vi: `Câu ${i + 1}` }));
+    assert.equal(familySentencesSchema.safeParse(ten).success, true);
+    assert.deepEqual(parseFamilySentences(ten), ten);
+
+    const eleven = Array.from({ length: 11 }, (_, i) => ({ en: `Sentence ${i + 1}`, vi: `Câu ${i + 1}` }));
+    assert.equal(familySentencesSchema.safeParse(eleven).success, false);
+    assert.equal(parseFamilySentences(eleven), null);
+    assert.equal(parseFamilySentences("not an array"), null);
   });
   it("mục của khung liên kết", () => {
     assert.equal(wordLabEntryInputSchema.safeParse({ v: "wx", wordId: 3 }).success, true);

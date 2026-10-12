@@ -285,6 +285,11 @@
   gap: var(--space-2);
   align-items: center;
 }
+/* Khi hàng câu có nút thao tác (như nút bỏ câu [x] ở Họ vần), mở rộng thành 4 cột thẳng hàng */
+.sents li:has(button),
+.sentsFamily li {
+  grid-template-columns: var(--space-6) 1fr 1fr var(--adm-control);
+}
 .readAudio {
   display: flex;
   align-items: center;

@@ -102,10 +102,11 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
   const [aiBusy, setAiBusy] = useState(false);
   const [aiConfirm, setAiConfirm] = useState(false);
   const [aiWarnings, setAiWarnings] = useState<string[]>([]);
-  // Gợi ý riêng phần câu (task 31).
+  // Gợi ý riêng phần câu (task 31, 32).
   const [sentBusy, setSentBusy] = useState(false);
   const [sentConfirm, setSentConfirm] = useState(false);
   const [sentWarnings, setSentWarnings] = useState<string[]>([]);
+  const [userAiCount, setUserAiCount] = useState<number | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const payloadOf = () => ({
@@ -129,6 +130,7 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
   const readingValid = readingAudio !== null && sentencesText === saved.text;
 
   const same = members.filter((m) => m.sameSound);
+  const aiCount = userAiCount ?? Math.max(1, Math.min(FAMILY_SENTENCES_MAX, same.length || 3));
   const issues: FamilyIssue[] = familyIssues({
     pattern,
     soundIpa,
@@ -227,7 +229,13 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
     setSentConfirm(false);
     setSentBusy(true);
     try {
-      const result = await suggestFamilySentencesAction({ pattern: patternKey, soundIpa: soundIpa.trim(), levelId, members: members.map((m) => ({ wordId: m.wordId, sameSound: m.sameSound })) });
+      const result = await suggestFamilySentencesAction({
+        pattern: patternKey,
+        soundIpa: soundIpa.trim(),
+        levelId,
+        count: aiCount,
+        members: members.map((m) => ({ wordId: m.wordId, sameSound: m.sameSound })),
+      });
       if (!result.ok) {
         toast(result.message);
         return;
@@ -542,6 +550,23 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
                 Đoạn văn vui “Đọc cả đoạn” ({sentences.length}/{FAMILY_SENTENCES_MAX} câu)
               </h3>
               <span className={editor.audioBtns}>
+                <label className={styles.aiCountLabel} title="Số câu bạn muốn AI viết (1–10 câu, mặc định theo số từ cùng họ)">
+                  <span className={cn(adultStyles.small, adultStyles.muted)}>Số câu:</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={FAMILY_SENTENCES_MAX}
+                    value={aiCount}
+                    disabled={sentBusy}
+                    className={cn(adultStyles.input, styles.aiCountInput)}
+                    aria-label="Số câu AI gợi ý"
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (Number.isNaN(val)) setUserAiCount(1);
+                      else setUserAiCount(Math.max(1, Math.min(FAMILY_SENTENCES_MAX, val)));
+                    }}
+                  />
+                </label>
                 <AdultButton
                   label={sentBusy ? "AI đang viết…" : "Gợi ý câu bằng AI"}
                   icon="wand"
@@ -549,7 +574,7 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
                   size="s"
                   loading={sentBusy}
                   disabled={sentenceAiWhy !== undefined || sentBusy}
-                  title={sentenceAiWhy ?? "AI viết 2–3 câu vui dùng các từ trong họ, kèm bản dịch; bạn đọc, sửa rồi mới lưu"}
+                  title={sentenceAiWhy ?? `AI viết ${aiCount} câu vui dùng các từ trong họ, kèm bản dịch; bạn đọc, sửa rồi mới lưu`}
                   onClick={() => (hasSentences ? setSentConfirm(true) : void suggestSentences())}
                 />
                 <AdultButton label="Thêm câu" icon="plus" variant="secondary" size="s" disabled={sentences.length >= FAMILY_SENTENCES_MAX} onClick={() => setSentences((list) => [...list, toSentence({ en: "", vi: "" })])} />
@@ -571,7 +596,7 @@ function EditorBody({ data, onClose, onSaved, onReload }: { data: FamilyEditorDa
             {sentences.length === 0 ? (
               <p className={cn(adultStyles.small, adultStyles.muted)}>Thêm 1–{FAMILY_SENTENCES_MAX} câu vui dùng các từ trong họ (The fat cat sat on a mat.), mỗi câu kèm bản dịch.</p>
             ) : (
-              <ol className={editor.sents}>
+              <ol className={cn(editor.sents, editor.sentsFamily)}>
                 {sentences.map((s, i) => (
                   <li key={s.key}>
                     <span className={editor.no}>{i + 1}</span>

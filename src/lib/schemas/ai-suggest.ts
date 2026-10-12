@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { wordQuestionKindSchema, type ExplorerSentence, type WordQuestionKind } from "./word-explorer.ts";
-import { FAMILY_MEMBERS_MAX, familyPatternSchema } from "./word-family.ts";
+import { FAMILY_MEMBERS_MAX, FAMILY_SENTENCES_MAX, familyPatternSchema } from "./word-family.ts";
 
 // AI gợi ý khi soạn Khám phá từ (Adult22) và Họ vần (Adult23), task 29: đầu vào của server action, hình dạng thô AI trả về (đọc rất dễ tính,
 // vì AI hay thiếu hoặc sai trường; bộ lọc ở src/lib/rules/ai-suggest.ts sửa lại cho đúng luật) và kết quả đã lọc gửi về form.
@@ -12,12 +12,19 @@ export const questionSetKeySchema = z.enum(QUESTION_SET_KEYS);
 export const suggestExplorerInputSchema = z.object({ wordId: z.number().int().positive(), set: questionSetKeySchema.optional() });
 export const suggestFamilyInputSchema = z.object({ pattern: familyPatternSchema });
 
-/** Gợi ý câu cho đoạn văn vui của một họ (task 31): vần, âm, cấp của họ và các từ đang có trong họ (server tự nạp chữ, IPA, nghĩa từ database theo mã từ). */
+/** Gợi ý câu cho đoạn văn vui của một họ (task 31, 32): vần, âm, cấp của họ, số câu và các từ đang có trong họ. */
 export const suggestFamilySentencesInputSchema = z.object({
   pattern: familyPatternSchema,
   /** Âm IPA đang nhập ở form (có thể trống hoặc chưa đúng dạng: chỉ để AI biết vần đọc thế nào). */
   soundIpa: z.string().trim().max(40).default(""),
   levelId: z.number().int().positive(),
+  /** Số câu muốn AI gợi ý (1–10 câu, mặc định 3). */
+  count: z.coerce
+    .number()
+    .int()
+    .min(1, "Số câu tối thiểu là 1.")
+    .max(FAMILY_SENTENCES_MAX, `Số câu tối đa là ${FAMILY_SENTENCES_MAX}.`)
+    .default(3),
   members: z
     .array(z.object({ wordId: z.number().int().positive(), sameSound: z.boolean() }))
     .min(1, "Họ cần có ít nhất một từ để AI viết câu.")
